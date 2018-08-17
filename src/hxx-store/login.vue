@@ -61,7 +61,7 @@ export default {
       // })
 
       this.axios.request({
-        url: '/manageLogin.do',
+        url: '/telphoneLogin.do',
         // url: '/comment/id?commentId=245',
         method: 'post',
         params: {
