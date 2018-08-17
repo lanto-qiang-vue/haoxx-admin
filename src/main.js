@@ -17,6 +17,8 @@ import env from '../config/env'
 /* eslint-disable */
 env === 'development' ? require('@/mock') : ''
 
+import axios from '@/libs/api.request'
+
 Vue.use(iView, {
   i18n: (key, value) => i18n.t(key, value)
 })
@@ -29,6 +31,9 @@ Vue.prototype.$config = config
  * 注册指令
  */
 importDirective(Vue)
+
+//全局axios
+Vue.prototype.axios = axios;
 
 /* eslint-disable no-new */
 new Vue({

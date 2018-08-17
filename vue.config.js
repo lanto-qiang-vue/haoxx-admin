@@ -16,7 +16,7 @@ fs.writeFileSync(path.join(__dirname, './config/env.js'), `export default '${env
 // 如果您的应用程序部署在子路径中，则需要在这指定子路径
 // 例如：https://www.foobar.com/my-app/
 // 需要将它改为'/my-app/'
-const BASE_URL = '/iview-admin/'
+const BASE_URL = '/'
 
 module.exports = {
   // Project deployment base
@@ -36,5 +36,18 @@ module.exports = {
       .set('_conf', resolve('config'))
   },
   // 打包时不生成.map文件
-  productionSourceMap: false
+  productionSourceMap: false,
+
+  devServer: {
+    proxy: {
+      '/proxy': {
+        target: 'http://hxx.test.hoxiuxiu.com',
+        // target: 'http://api.test.shanghaiqixiu.org',
+        pathRewrite: {'^/proxy': ''},
+        secure: false
+      }
+
+    }
+  }
+
 }

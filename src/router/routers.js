@@ -19,7 +19,16 @@ export default [
       title: 'Login - 登录',
       hideInMenu: true
     },
-    component: () => import('@/view/login/login.vue')
+    component: () => import('@/hxx-store/login.vue')
+  },
+  {
+    path: '/admin-login',
+    name: 'admin-login',
+    meta: {
+      title: 'Login - 登录',
+      hideInMenu: true
+    },
+    component: () => import('@/hxx-admin/login.vue')
   },
   {
     path: '/',

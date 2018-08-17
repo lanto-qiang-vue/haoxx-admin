@@ -1,10 +1,10 @@
 <template>
-  <div>
-    <Card>
-      <tables ref="tables" editable searchable search-place="top" v-model="tableData" :columns="columns" @on-delete="handleDelete"/>
-      <Button style="margin: 10px 0;" type="primary" @click="exportExcel">导出为Csv文件</Button>
-    </Card>
-  </div>
+  <!--<div id="t1">-->
+    <!--<Card>-->
+      <tables ref="tables" editable searchable search-place="top" v-model="tableData" :height="300" :columns="columns" @on-delete="handleDelete"/>
+      <!--<Button style="margin: 10px 0;" type="primary" @click="exportExcel">导出为Csv文件</Button>-->
+    <!--</Card>-->
+  <!--</div>-->
 </template>
 
 <script>
@@ -18,10 +18,12 @@ export default {
   data () {
     return {
       columns: [
-        {title: 'Name', key: 'name', sortable: true},
-        {title: 'Email', key: 'email', editable: true},
-        {title: 'Create-Time', key: 'createTime'},
+        {type: 'selection', width: 50, fixed: 'left'},
+        {title: 'Name', key: 'name', sortable: true, minWidth: 200, fixed: 'left'},
+        {title: 'Email', key: 'email', editable: true, minWidth: 200},
+        {title: 'Create-Time', key: 'createTime', minWidth: 200},
         {
+          minWidth: 200,
           title: 'Handle',
           key: 'handle',
           options: ['delete'],
@@ -60,7 +62,8 @@ export default {
   },
   mounted () {
     getTableData().then(res => {
-      this.tableData = res.data
+      console.log(res)
+      this.tableData = res.data.concat(res.data, res.data, res.data)
     })
   }
 }

@@ -37,7 +37,7 @@ export default {
   data () {
     return {
       form: {
-        userName: '13888888888',
+        userName: 'sa',
         password: '123456'
       }
     }
@@ -61,7 +61,7 @@ export default {
       // })
 
       this.axios.request({
-        url: '/telphoneLogin.do',
+        url: '/manageLogin.do',
         // url: '/comment/id?commentId=245',
         method: 'post',
         params: {
@@ -83,7 +83,7 @@ export default {
   .login{
     width: 100%;
     height: 100%;
-    background-image: url('../../assets/images/login-bg.jpg');
+    background-image: url('../assets/images/login-bg.jpg');
     background-size: cover;
     background-position: center;
     position: relative;

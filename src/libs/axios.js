@@ -42,16 +42,18 @@ class httpRequest {
           // Spin.hide()
         }, 500)
       }
-      if (data.code !== 200) {
+      if (data.success !== true) {
         // 后端服务在个别情况下回报201，待确认
-        if (data.code === 401) {
-          Cookies.remove(TOKEN_KEY)
-          window.location.href = window.location.pathname + '#/login'
-          Message.error('未登录，或登录失效，请登录')
-        } else {
-          if (data.msg) Message.error(data.msg)
-        }
-        return false
+        // if (data.code === 401) {
+        //   Cookies.remove(TOKEN_KEY)
+        //   window.location.href = window.location.pathname + '#/login'
+        //   Message.error('未登录，或登录失效，请登录')
+        // } else {
+        //   if (data.msg) Message.error(data.msg)
+        // }
+        // return false
+
+        Message.error(data.title || '服务内部错误2')
       }
       return data
     }, (error) => {
@@ -61,9 +63,9 @@ class httpRequest {
     })
   }
   // 创建实例
-  create () {
+  create (options) {
     let conf = {
-      baseURL: baseURL,
+      baseURL: options.baseURL || baseURL,
       // timeout: 2000,
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
@@ -78,7 +80,7 @@ class httpRequest {
   }
   // 请求实例
   request (options) {
-    var instance = this.create()
+    var instance = this.create(options)
     this.interceptors(instance, options.url)
     options = Object.assign({}, options)
     this.queue[options.url] = instance
