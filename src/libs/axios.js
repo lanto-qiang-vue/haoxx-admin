@@ -1,8 +1,8 @@
 import Axios from 'axios'
 import baseURL from '_conf/url'
 import { Message } from 'iview'
-import Cookies from 'js-cookie'
-import { TOKEN_KEY } from '@/libs/util'
+// import Cookies from 'js-cookie'
+// import { TOKEN_KEY } from '@/libs/util'
 class httpRequest {
   constructor () {
     this.options = {
@@ -22,9 +22,9 @@ class httpRequest {
   interceptors (instance, url) {
     // 添加请求拦截器
     instance.interceptors.request.use(config => {
-      if (!config.url.includes('/users')) {
-        config.headers['x-access-token'] = Cookies.get(TOKEN_KEY)
-      }
+      // if (!config.url.includes('/users')) {
+      //   config.headers['x-access-token'] = Cookies.get(TOKEN_KEY)
+      // }
       // Spin.show()
       // 在发送请求之前做些什么
       return config
@@ -67,10 +67,20 @@ class httpRequest {
     let conf = {
       baseURL: options.baseURL || baseURL,
       // timeout: 2000,
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-        'X-URL-PATH': location.pathname
-      }
+      headers: options.headers ||
+      {
+        // 'Content-Type': 'application/json; charset=utf-8',
+        'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+      //   'X-URL-PATH': location.pathname
+      },
+      transformRequest: [function (data) {
+        // Do whatever you want to transform the data
+        let ret = ''
+        for (let it in data) {
+          ret += encodeURIComponent(it) + '=' + encodeURIComponent(data[it]) + '&'
+        }
+        return ret
+      }]
     }
     return Axios.create(conf)
   }
@@ -83,6 +93,7 @@ class httpRequest {
     var instance = this.create(options)
     this.interceptors(instance, options.url)
     options = Object.assign({}, options)
+    // console.log('options', options)
     this.queue[options.url] = instance
     return instance(options)
   }
