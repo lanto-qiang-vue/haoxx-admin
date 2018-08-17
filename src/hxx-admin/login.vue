@@ -64,9 +64,9 @@ export default {
         url: '/manageLogin.do',
         // url: '/comment/id?commentId=245',
         method: 'post',
-        params: {
-          telphone: this.form.userName,
-          telpass: this.form.password
+        data: {
+          userCode: this.form.userName,
+          password: this.form.password
         }
       }).then(res => {
         console.log(res)
