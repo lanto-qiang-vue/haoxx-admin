@@ -64,7 +64,7 @@ export default {
         url: '/telphoneLogin.do',
         // url: '/comment/id?commentId=245',
         method: 'post',
-        params: {
+        data: {
           telphone: this.form.userName,
           telpass: this.form.password
         }
