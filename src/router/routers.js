@@ -270,6 +270,37 @@ export default [
       },
     ]
   },
+{
+    path: '/maintain-server',
+    name: 'maintain-server',
+    meta: {
+      icon: 'logo-buffer',
+      title: '维修服务'
+    },
+    component: Main,
+    children:[
+      {
+        path: 'test',
+        name: 'test',
+        meta: {
+          icon: 'md-funnel',
+          title: '测试'
+        },
+        component: () => import('@/hxx-store/test.vue')
+      },
+      {
+        path: 'test2',
+        name: 'test2',
+        meta: {
+          icon: 'md-funnel',
+          title: '测试2'
+        },
+        component: () => import('@/hxx-store/test.vue')
+      }
+    ]
+},
+
+
   {
     path: '/401',
     name: 'error_401',
