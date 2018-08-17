@@ -1,8 +1,26 @@
 <template>
+<div style="width:100%;height:100%;">
+<div style="height:70px;width:1200px;margin:0 auto;">
+<div style="width:960px;height:100%;margin:0 auto;">
+<div style="height:100%;float:left;padding-top:20px;">
+<img src="../assets/images/haoxiuxiu-logo.png" style="width:120px;height:50px;position:absolute;top:10px;"/>
+<span style="font-size:20px;text-shadow: 0px 0px 0px #ffffff, 1px 1px 0px #d0d0d0;margin-left:130px;">好修修智慧门店管理系统</span>
+</div>
+<div style="float:right;padding-top:20px; font-size:18px;">全国客服热线：400-663-8210</div>
+</div>
+</div>
+<div style="clear:both;"></div>
   <div class="login">
     <div class="login-con">
-      <Card icon="log-in" title="欢迎登录" :bordered="false">
+      <Card icon="log-in">
+      &nbsp;&nbsp;&nbsp;
+       <Button type="text" style="font-size:14px;" v-if="qycode" @click="qy">企业登录</Button>
+       <Button type="text" style="font-size:14px;color:#2d8cf0;" v-if="!qycode" @click="qy">企业登录</Button>
+       &nbsp;&nbsp;&nbsp;
+     <Button type="text" style="font-size:14px;" v-if="!ygcode" @click="yg">员工登录</Button>
+       <Button type="text" style="font-size:14px;color:#2d8cf0;" v-if="ygcode" @click="yg">员工登录</Button>
         <div class="form-con">
+             <div class="form-con">
           <!--<login-form @on-success-valid="handleSubmit"></login-form>-->
           <Form ref="loginForm" :model="form"  @keydown.enter.native="handleSubmit">
             <FormItem prop="userName">
@@ -25,8 +43,11 @@
           </Form>
           <p class="login-tip">输入任意用户名和密码即可</p>
         </div>
+        </div>
       </Card>
     </div>
+  </div>
+  <div class="footer-right"> © 2018 Copyright 上海衡益网络技术有限公司 沪ICP备18016827号-1</div>
   </div>
 </template>
 
@@ -69,9 +90,7 @@ export default {
           telpass: this.form.password
         }
       }).then(res => {
-        console.log(res)
-        // if(res.success == 'true')
-        this.$router.push({name: 'home'})
+        if (res.success === 'true') { this.$router.push({name: 'home'}) }
       })
     }
   }
@@ -82,14 +101,14 @@ export default {
   /*@import './login.less';*/
   .login{
     width: 100%;
-    height: 100%;
-    background-image: url('../assets/images/login-bg.jpg');
+    height: 82vh;
+    background-image: url('../assets/images/banner-loginbg.png');
     background-size: cover;
     background-position: center;
     position: relative;
     &-con{
       position: absolute;
-      right: 160px;
+      right: 250px;
       top: 50%;
       transform: translateY(-60%);
       width: 300px;
@@ -109,4 +128,11 @@ export default {
       }
     }
   }
+.footer-right{
+text-align: center;
+font-size: 16px;
+margin-top: 20px;
+padding-bottom: 20px;
+color: #000;
+}
 </style>
