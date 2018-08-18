@@ -18,8 +18,8 @@ export default {
   data () {
     return {
       columns: [
-        {type: 'selection', width: 50, fixed: 'left'},
-        {title: 'Name', key: 'name', sortable: true, minWidth: 200, fixed: 'left'},
+        {type: 'selection', width: 50},
+        {title: 'Name', key: 'name', sortable: true, minWidth: 200},
         {title: 'Email', key: 'email', editable: true, minWidth: 200},
         {title: 'Create-Time', key: 'createTime', minWidth: 200},
         {

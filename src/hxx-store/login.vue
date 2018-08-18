@@ -40,30 +40,30 @@
                         </TabPane>
                         <TabPane label="员工登录"  name="name2">
                             <div class="form-con">
-                                <Form :model="form" @keydown.enter.native="handleSubmit">
+                                <Form :model="form2" @keydown.enter.native="handleSubmit">
                                     <FormItem prop="userName">
-                                        <Input v-model="form.userName" placeholder="请输入商户号">
+                                        <Input v-model="form2.tenantId" placeholder="请输入商户号">
                                         <span slot="prepend">
           <Icon :size="16" type="ios-person"></Icon>
         </span>
                                         </Input>
                                     </FormItem>
                                     <FormItem prop="userName">
-                                        <Input v-model="form.userName" placeholder="请输入用户名">
+                                        <Input v-model="form2.userCode" placeholder="请输入用户名">
                                         <span slot="prepend">
           <Icon :size="16" type="ios-person"></Icon>
         </span>
                                         </Input>
                                     </FormItem>
                                     <FormItem prop="password">
-                                        <Input type="password" v-model="form.password" placeholder="请输入密码">
+                                        <Input type="password" v-model="form2.password" placeholder="请输入密码">
                                         <span slot="prepend">
           <Icon :size="14" type="md-lock"></Icon>
         </span>
                                         </Input>
                                     </FormItem>
                                     <FormItem>
-                                        <Button @click="handleSubmit" type="primary" long>登录</Button>
+                                        <Button @click="handleSubmit2" type="primary" long>登录</Button>
                                     </FormItem>
                                 </Form>
                             </div>
@@ -85,6 +85,11 @@ export default {
     return {
       form: {
         userName: '13888888888',
+        password: '123456'
+      },
+      form2: {
+        tenantId: 'T00001',
+        userCode: 'zzz',
         password: '123456'
       }
     }
@@ -116,7 +121,23 @@ export default {
           telpass: this.form.password
         }
       }).then(res => {
-        if (res.success === 'true') {
+        if (res.success === true) {
+          this.$router.push({name: 'home'})
+        }
+      })
+    },
+    handleSubmit2 () {
+      this.axios.request({
+        url: '/tenantLogin.do',
+        // url: '/comment/id?commentId=245',
+        method: 'post',
+        data: {
+          tenantId: this.form2.tenantId,
+          userCode: this.form2.userCode,
+          password: this.form2.password
+        }
+      }).then(res => {
+        if (res.success === true) {
           this.$router.push({name: 'home'})
         }
       })

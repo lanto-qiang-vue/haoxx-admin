@@ -288,15 +288,15 @@ export default [
         },
         component: () => import('@/hxx-store/test.vue')
       },
-      {
-        path: 'test2',
-        name: 'test2',
-        meta: {
-          icon: 'md-funnel',
-          title: '测试2'
-        },
-        component: () => import('@/hxx-store/test.vue')
-      }
+      // {
+      //   path: 'test2',
+      //   name: 'test2',
+      //   meta: {
+      //     icon: 'md-funnel',
+      //     title: '测试2'
+      //   },
+      //   component: () => import('@/hxx-store/test.vue')
+      // }
     ]
 },
 
