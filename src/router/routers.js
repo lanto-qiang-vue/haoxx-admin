@@ -275,7 +275,9 @@ export default [
     name: 'maintain-server',
     meta: {
       icon: 'logo-buffer',
-      title: '维修服务'
+      title: '维修服务',
+      lgType: "1002",
+      access: '1001',
     },
     component: Main,
     children:[
@@ -284,19 +286,24 @@ export default [
         name: 'test',
         meta: {
           icon: 'md-funnel',
-          title: '测试'
+          title: '测试',
+          ccc:'123',
+          lgType: "1002",
+          access: '100101',
         },
         component: () => import('@/hxx-store/test.vue')
       },
-      // {
-      //   path: 'test2',
-      //   name: 'test2',
-      //   meta: {
-      //     icon: 'md-funnel',
-      //     title: '测试2'
-      //   },
-      //   component: () => import('@/hxx-store/test.vue')
-      // }
+      {
+        path: 'test2',
+        name: 'test2',
+        meta: {
+          icon: 'md-funnel',
+          title: '测试2',
+          lgType: "1002",
+          access: '100101',
+        },
+        component: () => import('@/hxx-store/test.vue')
+      }
     ]
 },
 

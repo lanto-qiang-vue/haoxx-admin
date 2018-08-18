@@ -33,7 +33,7 @@
                                         </Input>
                                     </FormItem>
                                     <FormItem>
-                                        <Button @click="handleSubmit" type="primary" long>登录</Button>
+                                        <Button @click="handleSubmit('tel')" type="primary" long>登录</Button>
                                     </FormItem>
                                 </Form>
                             </div>
@@ -63,7 +63,7 @@
                                         </Input>
                                     </FormItem>
                                     <FormItem>
-                                        <Button @click="handleSubmit2" type="primary" long>登录</Button>
+                                        <Button @click="handleSubmit('tenant')" type="primary" long>登录</Button>
                                     </FormItem>
                                 </Form>
                             </div>
@@ -77,7 +77,7 @@
 </template>
 
 <script>
-import LoginForm from '_c/login-form'
+// import LoginForm from '_c/login-form'
 import {mapActions} from 'vuex'
 
 export default {
@@ -94,8 +94,11 @@ export default {
       }
     }
   },
-  components: {
-    LoginForm
+  // components: {
+  //   LoginForm
+  // },
+  mounted () {
+    // console.log(this.$store.state.user.userInfo)
   },
   methods: {
     ...mapActions([
@@ -103,7 +106,7 @@ export default {
       'getUserInfo'
     ]),
     // handleSubmit ({ userName, password }) {
-    handleSubmit () {
+    handleSubmit (type) {
       // this.handleLogin({ userName, password }).then(res => {
       //   this.getUserInfo().then(res => {
       //     this.$router.push({
@@ -111,35 +114,73 @@ export default {
       //     })
       //   })
       // })
-
-      this.axios.request({
-        url: '/telphoneLogin.do',
-        // url: '/comment/id?commentId=245',
-        method: 'post',
-        data: {
+      let url = '', data = {}
+      if (type == 'tel') {
+        url = '/telphoneLogin.do'
+        data = {
           telphone: this.form.userName,
           telpass: this.form.password
         }
-      }).then(res => {
-        if (res.success === true) {
-          this.$router.push({name: 'home'})
-        }
-      })
-    },
-    handleSubmit2 () {
-      this.axios.request({
-        url: '/tenantLogin.do',
-        // url: '/comment/id?commentId=245',
-        method: 'post',
-        data: {
+      } else {
+        url = '/tenantLogin.do'
+        data = {
           tenantId: this.form2.tenantId,
           userCode: this.form2.userCode,
           password: this.form2.password
         }
+      }
+
+      this.axios.request({
+        url: url,
+        method: 'post',
+        data: data
       }).then(res => {
         if (res.success === true) {
-          this.$router.push({name: 'home'})
+          this.$store.commit('setToken', res.data.tokenStr)
+          this.$store.commit('setDict', res.data.dict)
+          let getInfo = Promise.all([this.getUser(res.data.tokenStr), this.getMenu(res.data.tokenStr)])
+          getInfo.then(() => {
+            this.$router.push({name: 'home'})
+            this.$Message.success('登录成功')
+          })
         }
+      })
+    },
+    getUser (token) {
+      return new Promise((resolve, reject) => {
+        this.axios.request({
+          url: '/tenant/common/getLoginUser',
+          method: 'post',
+          data: {
+            access_token: token
+          }
+        }).then(res => {
+          if (res.success === true) {
+            this.$store.commit('setUser', res.data)
+            resolve()
+          } else reject()
+        }).then(err => {
+          reject(err)
+        })
+      })
+    },
+    getMenu (token) {
+      return new Promise((resolve, reject) => {
+        this.axios.request({
+          url: '/tenant/common/getMenu',
+          method: 'post',
+          data: {
+            node: 'root',
+            access_token: token
+          }
+        }).then(res => {
+          if (res.success === true) {
+            this.$store.commit('setMenu', res.children)
+            resolve()
+          } else reject()
+        }).then(err => {
+          reject(err)
+        })
       })
     }
   }

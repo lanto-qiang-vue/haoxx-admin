@@ -1,30 +1,77 @@
-import Cookies from 'js-cookie'
+// import Cookies from 'js-cookie'
 // cookie保存的天数
-import config from '@/config'
+// import config from '@/config'
 import { forEach, hasOneOf } from '@/libs/tools'
 
-export const TOKEN_KEY = 'token'
+export const TOKEN_KEY = 'ACCESSTOKEN'
+export const USERINFO_KEY = 'USERINFO'
+export const ACCESSMENU_KEY = 'ACCESSMENU'
+export const DICT_KEY = 'DICT'
 
 export const setToken = (token) => {
-  Cookies.set(TOKEN_KEY, token, {expires: config.cookieExpires || 1})
-}
+  // Cookies.set(TOKEN_KEY, token, {expires: config.cookieExpires || 1})
 
+  localStorage.setItem(TOKEN_KEY, token || '')
+}
 export const getToken = () => {
-  const token = Cookies.get(TOKEN_KEY)
-  if (token) return token
-  else return false
+  // const token = Cookies.get(TOKEN_KEY)
+  const token = localStorage.getItem(TOKEN_KEY)
+  return token || false
+}
+export const setUser = (info) => {
+  localStorage.setItem(USERINFO_KEY, info ? JSON.stringify(info) : '')
+}
+export const getUser = () => {
+  const val = localStorage.getItem(USERINFO_KEY)
+  return val ? JSON.parse(val) : false
+}
+export const setMenu = (info) => {
+  localStorage.setItem(ACCESSMENU_KEY, info ? JSON.stringify(info) : '')
+}
+export const getMenu = () => {
+  const val = localStorage.getItem(ACCESSMENU_KEY)
+  return val ? JSON.parse(val) : false
+}
+export const setDict = (info) => {
+  localStorage.setItem(DICT_KEY, info ? JSON.stringify(info) : '')
+}
+export const getDict = () => {
+  const val = localStorage.getItem(DICT_KEY)
+  return val ? JSON.parse(val) : false
 }
 
 export const hasChild = (item) => {
   return item.children && item.children.length !== 0
 }
 
-const showThisMenuEle = (item, access) => {
-  if (item.meta && item.meta.access && item.meta.access.length) {
-    if (hasOneOf(item.meta.access, access)) return true
+const matchMenu = (access, menu) => {
+  let flag = false
+  for (let i in menu) {
+    if (menu[i].id == access) {
+      flag = true
+      break
+    } else if (menu[i].children) {
+      flag = matchMenu(access, menu[i].children)
+      if (flag == true) break
+    }
+  }
+  return flag
+}
+
+export const showThisMenuEle = (item, access) => {
+  // if (item.meta && item.meta.access && item.meta.access.length) {
+  //   if (hasOneOf(item.meta.access, access)) return true
+  //   else return false
+  // } else return true
+
+  if (!access.accessMenu || !access.userInfo) return false
+  if (item.meta && item.meta.lgType && item.meta.access) {
+    let lgType = access.userInfo.user.lgType, menu = access.accessMenu
+    if (item.meta.lgType == lgType && matchMenu(item.meta.access, menu)) return true
     else return false
   } else return true
 }
+
 /**
  * @param {Array} list 通过路由列表得到菜单列表
  * @returns {Array}
