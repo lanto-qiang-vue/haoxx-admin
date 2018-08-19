@@ -35,7 +35,6 @@ router.beforeEach((to, from, next) => {
     next({
       name: loginType == '1002' ? 'home' : 'admin-home' // 跳转到home页
     })
-    // iView.LoadingBar.finish()
   } else {
     console.log('4已登录，判断权限')
     // store.dispatch('getUserInfo').then(user => {
@@ -44,6 +43,7 @@ router.beforeEach((to, from, next) => {
     else next({ replace: true, name: 'error_401' }) // 无权限，重定向到401页面
     // })
   }
+  if(to.name === from.name) iView.LoadingBar.finish()
 
   // next()
 })

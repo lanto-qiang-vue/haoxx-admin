@@ -14,9 +14,16 @@ export default {
     menuList: (state, getters, rootState) => {
       // console.log(rootState)
       return getMenuByRouter(routers, rootState.user)
-    }
+    },
+    loginType: (state, getters, rootState) => {
+      // console.log(rootState)
+      return rootState.user.userInfo? rootState.user.userInfo.user.lgType: false
+    },
   },
   mutations: {
+    setHomeRoute (state){
+      state.homeRoute= getHomeRoute(routers)
+    },
     setBreadCrumb (state, routeMetched) {
       state.breadCrumbList = getBreadCrumbList(routeMetched, state.homeRoute)
     },

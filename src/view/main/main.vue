@@ -1,7 +1,7 @@
 <template>
   <Layout style="height: 100%" class="main">
-    <Sider hide-trigger collapsible :width="256" :collapsed-width="64" v-model="collapsed" class="left-sider" :style="{overflow: 'hidden'}">
-      <side-menu accordion ref="sideMenu" :active-name="$route.name" :collapsed="collapsed" @on-select="turnToPage" :menu-list="menuList">
+    <Sider hide-trigger collapsible :width="256" :collapsed-width="64" v-model="collapsed" @on-collapse="onCollapse" class="left-sider" :style="{overflow: 'hidden'}">
+      <side-menu v-show="showMenu" accordion ref="sideMenu" :active-name="$route.name" :collapsed="collapsed" @on-select="turnToPage" :menu-list="menuList">
         <!-- 需要放在菜单上面的内容，如Logo，写在side-menu标签内部，如下 -->
         <div class="logo-con">
           <img v-show="!collapsed" :src="maxLogo" key="max-logo" />
@@ -61,7 +61,8 @@ export default {
       collapsed: false,
       minLogo,
       maxLogo,
-      isFullscreen: false
+      isFullscreen: false,
+      showMenu: true
     }
   },
   computed: {
@@ -89,11 +90,20 @@ export default {
       'setBreadCrumb',
       'setTagNavList',
       'addTag',
-      'setLocal'
+      'setLocal',
+      'setHomeRoute'
     ]),
     ...mapActions([
       'handleLogin'
     ]),
+    onCollapse(state){
+      // console.log(state)
+      let self= this
+      this.showMenu= false
+      setTimeout(function () {
+        self.showMenu= true
+      },300)
+    },
     turnToPage (name) {
       if (name.indexOf('isTurnByHref_') > -1) {
         window.open(name.split('_')[1])
@@ -134,7 +144,9 @@ export default {
      * @description 初始化设置面包屑导航和标签导航
      */
     this.setTagNavList()
-    this.addTag(this.$store.state.app.homeRoute)
+    // this.addTag(this.$store.state.app.homeRoute)
+    this.setHomeRoute()
+    this.$store.state.app.homeRoute? this.addTag(this.$store.state.app.homeRoute): false;
     this.setBreadCrumb(this.$route.matched)
     // 设置初始语言
     this.setLocal(this.$i18n.locale)

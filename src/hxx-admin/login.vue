@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import LoginForm from '_c/login-form'
+// import LoginForm from '_c/login-form'
 import { mapActions } from 'vuex'
 export default {
   data () {
@@ -70,9 +70,9 @@ export default {
 
     }
   },
-  components: {
-    LoginForm
-  },
+  // components: {
+  //   LoginForm
+  // },
   methods: {
     ...mapActions([
       'handleLogin',
@@ -80,13 +80,6 @@ export default {
     ]),
     // handleSubmit ({ userName, password }) {
     handleSubmit () {
-      // this.handleLogin({ userName, password }).then(res => {
-      //   this.getUserInfo().then(res => {
-      //     this.$router.push({
-      //       name: 'home'
-      //     })
-      //   })
-      // })
 
       this.axios.request({
         url: '/manageLogin.do',
@@ -97,9 +90,52 @@ export default {
           password: this.form.password
         }
       }).then(res => {
-        console.log(res)
-        // if(res.success == 'true')
-        this.$router.push({name: 'home'})
+        if (res.success === true) {
+          this.$store.commit('setToken', res.data.tokenStr)
+          this.$store.commit('setDict', res.data.dict)
+          let getInfo = Promise.all([this.getUser(res.data.tokenStr), this.getMenu(res.data.tokenStr)])
+          getInfo.then(() => {
+            this.$router.push({name: 'admin-home'})
+            this.$Message.success('登录成功')
+          })
+        }
+      })
+    },
+    getUser (token) {
+      return new Promise((resolve, reject) => {
+        this.axios.request({
+          url: '/manage/common/getLoginUser',
+          method: 'post',
+          data: {
+            access_token: token
+          }
+        }).then(res => {
+          if (res.success === true) {
+            this.$store.commit('setUser', res.data)
+            resolve()
+          } else reject()
+        }).then(err => {
+          reject(err)
+        })
+      })
+    },
+    getMenu (token) {
+      return new Promise((resolve, reject) => {
+        this.axios.request({
+          url: '/manage/common/getMenu',
+          method: 'post',
+          data: {
+            node: 'root',
+            access_token: token
+          }
+        }).then(res => {
+          if (res.success === true) {
+            this.$store.commit('setMenu', res.children)
+            resolve()
+          } else reject()
+        }).then(err => {
+          reject(err)
+        })
       })
     }
   }

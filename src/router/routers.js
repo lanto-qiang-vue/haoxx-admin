@@ -26,7 +26,7 @@ export default [
     name: 'admin-login',
     meta: {
       title: 'Login - 登录',
-      hideInMenu: true
+      hideInMenu: true,
     },
     component: () => import('@/hxx-admin/login.vue')
   },
@@ -40,15 +40,37 @@ export default [
       notCache: true
     },
     children: [
+      // {
+      //   path: '/home',
+      //   name: 'home',
+      //   meta: {
+      //     hideInMenu: true,
+      //     title: '首页',
+      //     notCache: true
+      //   },
+      //   component: () => import('@/view/single-page/home')
+      // }
       {
         path: '/home',
         name: 'home',
         meta: {
           hideInMenu: true,
           title: '首页',
+          lgType: "1002",
           notCache: true
         },
-        component: () => import('@/view/single-page/home')
+        component: () => import('@/hxx-store/home')
+      },
+      {
+        path: '/admin-home',
+        name: 'admin-home',
+        meta: {
+          hideInMenu: true,
+          title: '首页',
+          lgType: "1001",
+          notCache: true
+        },
+        component: () => import('@/hxx-admin/home')
       }
     ]
   },

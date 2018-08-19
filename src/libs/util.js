@@ -122,7 +122,7 @@ export const showTitle = (item, vm) => vm.$config.useI18n ? vm.$t(item.name) : (
  * @description 本地存储和获取标签导航列表
  */
 export const setTagNavListInLocalstorage = list => {
-  localStorage.tagNaveList = JSON.stringify(list)
+  // localStorage.tagNaveList = JSON.stringify(list)
 }
 /**
  * @returns {Array} 其中的每个元素只包含路由原信息中的name, path, meta三项
@@ -146,7 +146,9 @@ export const getHomeRoute = routers => {
       let res = getHomeRoute(item.children)
       if (res.name) return res
     } else {
-      if (item.name === 'home') homeRoute = item
+      // console.log('getUser',getUser())
+      if (!getUser()) return false
+      if (item.name === (getUser().user.lgType==='1002' ? 'home' : 'admin-home')) homeRoute = item
     }
   }
   return homeRoute
