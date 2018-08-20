@@ -148,7 +148,7 @@ export default {
         repeatPassword:''
       },
       single:false,
-      isShow:2,
+      isShow:1,
     }
   },
   // components: {

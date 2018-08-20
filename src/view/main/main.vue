@@ -6,8 +6,8 @@
         <div class="logo-con">
           <img v-show="!collapsed" :src="maxLogo" key="max-logo" />
           <img v-show="collapsed" :src="minLogo" key="min-logo" />
-          <!--<p v-show="!collapsed" key="max-logo">好修修门店管理系统</p>-->
-          <!--<p v-show="collapsed"  key="min-logo">好修修</p>-->
+          <!-- <p v-show="!collapsed" key="max-logo">好修修门店管理系统</p> -->
+          <!-- <p v-show="collapsed"  key="min-logo">好修修</p> -->
         </div>
       </side-menu>
     </Sider>
