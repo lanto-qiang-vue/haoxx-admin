@@ -15,8 +15,8 @@
     ref="tablesMain"
     :data="value"
     :columns="columns"
-    :stripe="stripe"
-    :border="border"
+    stripe
+    border
     :show-header="showHeader"
     :width="width"
     :height="tableHeight"
@@ -29,8 +29,10 @@
     :no-filtered-data-text="noFilteredDataText"
   ></Table>
   <div class="table-bottom">
-    <Page :total="100" :page-size="25" show-sizer show-elevator :page-size-opts="[25, 50, 100, 150]" />
+    <Page :page-size="25" show-sizer show-elevator show-total :page-size-opts="[25, 50, 100, 150]"
+      :total="total" @on-change="changePage" @on-page-size-change="changePageSize"/>
   </div>
+  <slot name="detail"></slot>
 </div>
 </template>
 
@@ -95,6 +97,10 @@
         type: Boolean,
         default: false
       },
+      total: {
+        type: [Number, String],
+        default: 0
+      },
       /**
        * @description 全局设置是否可编辑
        */
@@ -138,17 +144,23 @@
         this.timer = setTimeout(function(){
           self.tableHeight= document.querySelector(".common-table").offsetHeight - 20 -
             document.querySelector(".table-search").offsetHeight -
-            document.querySelector(".operate").offsetHeight -
+            document.querySelector(".operate").offsetHeight - 10 -
             document.querySelector(".table-bottom").offsetHeight
 
-          // console.log(".common-table", document.querySelector(".common-table").offsetHeight)
+          console.log(".common-table", document.querySelector(".common-table").offsetHeight)
           console.log(".table-search", document.querySelector(".table-search").offsetHeight)
-          // console.log(".operate", document.querySelector(".operate").offsetHeight)
-          // console.log(".table-bottom", document.querySelector(".table-bottom").offsetHeight)
+          console.log(".operate", document.querySelector(".operate").offsetHeight)
+          console.log(".table-bottom", document.querySelector(".table-bottom").offsetHeight)
         }, time);
       },
       changeCollapse(){
         this.resize(500)
+      },
+      changePage(page){
+        this.$emit('changePage', page)
+      },
+      changePageSize(size){
+        this.$emit('changePageSize', size)
       }
     }
 	}
@@ -174,12 +186,13 @@
   }
   .table-bottom{
     position: absolute;
+    height: 52px;
     padding: 10px;
     width: 100%;
     left: 0;
     bottom: 0;
     background-color: white;
-    z-index: 1;
+    z-index: 4;
   }
 }
 </style>

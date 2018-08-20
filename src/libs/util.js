@@ -319,3 +319,18 @@ export const findNodeDownward = (ele, tag) => {
 export const showByAccess = (access, canViewAccess) => {
   return hasOneOf(canViewAccess, access)
 }
+
+export const getName = (arr, code) => {
+  for (let i in arr){
+    if(arr[i].code==code)
+      return arr[i].name
+  }
+}
+export const getDictGroup = (arr, group) => {
+  let res= []
+  for (let i in arr){
+    if(arr[i].group==group)
+      res.push(arr[i])
+  }
+  return res
+}
