@@ -14,7 +14,8 @@
         <div class="login">
             <div class="login-con">
                 <Card icon="log-in">
-                    <Tabs value="name1">
+                  <!-- 企业商户登录 1 -->
+                    <Tabs v-if="isShow == 1"  value="name1">
                         <TabPane label="企业登录" name="name1">
                             <div class="form-con">
                                 <Form :model="form" @keydown.enter.native="handleSubmit">
@@ -33,6 +34,10 @@
                                         </Input>
                                     </FormItem>
                                     <FormItem>
+                                      <Checkbox v-model="single" style="padding-left:35px;">记住账号</Checkbox>
+                                      <div style="float:right;padding-right:20px;"><a href="javascript:void(0);" @click="register">新用户注册</a></div>
+                                    </FormItem>
+                                    <FormItem>
                                         <Button @click="handleSubmit('tel')" type="primary" long>登录</Button>
                                     </FormItem>
                                 </Form>
@@ -40,16 +45,16 @@
                         </TabPane>
                         <TabPane label="员工登录"  name="name2">
                             <div class="form-con">
-                                <Form :model="form2" @keydown.enter.native="handleSubmit">
+                                <Form :model="form2">
                                     <FormItem prop="userName">
-                                        <Input v-model="form2.tenantId" placeholder="请输入商户号">
+                                        <Input v-model="form2.tenantId" placeholder="请输入手机号码">
                                         <span slot="prepend">
           <Icon :size="16" type="ios-person"></Icon>
         </span>
                                         </Input>
                                     </FormItem>
                                     <FormItem prop="userName">
-                                        <Input v-model="form2.userCode" placeholder="请输入用户名">
+                                        <Input v-model="form2.userCode" placeholder="请输入短信验证码">
                                         <span slot="prepend">
           <Icon :size="16" type="ios-person"></Icon>
         </span>
@@ -62,6 +67,8 @@
         </span>
                                         </Input>
                                     </FormItem>
+                                    <div style="margin-top:-10px;padding-bottom:10px;"><Checkbox v-model="single" style="padding-left:35px;">记住账号</Checkbox></div>
+                                                                        </FormItem>
                                     <FormItem>
                                         <Button @click="handleSubmit('tenant')" type="primary" long>登录</Button>
                                     </FormItem>
@@ -69,6 +76,48 @@
                             </div>
                         </TabPane>
                     </Tabs>
+                    <!-- 企业商户结尾 注册启始 2-->
+                    <div v-if="isShow == 2">
+                            <div><h1 style="font-size:18px;">用户注册</h1></div>
+                            <div class="form-con">
+                                <Form :model="form3">
+                                    <FormItem prop="userName">
+                                        <Input v-model="form3.phone" placeholder="请输入手机号码">
+                                        <span slot="prepend">
+          <Icon :size="16" type="ios-person"></Icon>
+        </span>
+                                        </Input>
+                                    </FormItem>
+                                    <FormItem prop="userName">
+                                        <Input v-model="form3.phoneCode" placeholder="请输入短信验证码">
+                                        <span slot="prepend">
+          <Icon :size="16" type="ios-person"></Icon>
+        </span>
+                <span slot="append"><a href="javascript:void()" @click="getCode">获取</a></span>
+                                        </Input>
+                                    </FormItem>
+                                    <FormItem prop="password">
+                                        <Input type="password" v-model="form3.password" placeholder="请输入密码">
+                                        <span slot="prepend">
+          <Icon :size="14" type="md-lock"></Icon>
+        </span>
+                                        </Input>
+                                    </FormItem>
+                                    <FormItem prop="password">
+                                        <Input type="password" v-model="form3.repeatPassword" placeholder="请输入确认密码">
+                                        <span slot="prepend">
+          <Icon :size="14" type="md-lock"></Icon>
+        </span>
+                                        </Input>
+                                    </FormItem>
+                                      <div style="float:right;padding:0 20px 10px 0;margin-top:-10px;"><a href="javascript:void(0)" @click="login">返回登录</a></div>
+                                    <FormItem>
+                                        <Button @click="handleSubmit('register')" type="primary" long>注册</Button>
+                                    </FormItem>
+                                </Form>
+                            </div>
+                    </div>
+                    <!-- 注册结束 -->
                 </Card>
             </div>
         </div>
@@ -91,7 +140,15 @@ export default {
         tenantId: 'T00001',
         userCode: 'zzz',
         password: '123456'
-      }
+      },
+      form3:{
+        phone:'',
+        phoneCode:'',
+        password:'',
+        repeatPassword:''
+      },
+      single:false,
+      isShow:2,
     }
   },
   // components: {
@@ -182,6 +239,19 @@ export default {
           reject(err)
         })
       })
+    },
+    register:function(){
+      this.isShow = 2;
+    },
+    login:function(){
+      this.isShow = 1;
+    },
+    getCode:function(){
+      var pattern = /^((1[3,5,8][0-9])|(14[5,7])|(17[0,6,7,8])|(19[7]))\d{8}$/;
+      if(!pattern.test(this.form3.phone)){
+       this.$Message.error('请输入正确的手机号');
+       return;
+      }
     }
   }
 }
