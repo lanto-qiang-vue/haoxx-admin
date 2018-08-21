@@ -9,56 +9,49 @@
     scrollable>
     <Collapse v-model="collapse" class="table-search">
     <Panel name="1">查询
-      <!--<div slot="content">
-        <div class="search-block">
-          <Input v-model="search.input" placeholder="预约单号/预约人/联系电话..."></Input>
-        </div>
-      </div>-->
        <Form ref="formInline"  slot="content" :label-width="100" inline>
           <FormItem label="车牌号码:">
-              <Input type="text" v-model="search.input" placeholder="请输入车牌号" style="min-width: 250px;"> </Input>
+              <Input type="text" v-model="listSearch.PLATE_NUM" placeholder="请输入车牌号" style="min-width: 250px;"> </Input>
           </FormItem>
           <FormItem label="车型:">
-              <Input type="text" v-model="search.input" placeholder="请输入车型" style="min-width: 250px;"> </Input>
+              <Input type="text" v-model="listSearch.VEHICLE_MODEL" placeholder="请输入车型" style="min-width: 250px;"> </Input>
           </FormItem>
           <FormItem label="预约维修类型:" :label-width="100">
-              <Select v-model="search.input" placeholder="" style="min-width: 250px;">
-                <Option value="beijing">New York</Option>
-                <Option value="shanghai">London</Option>
-                <Option value="shenzhen">Sydney</Option>
+              <Select v-model="listSearch.REPAIR_TYPE" placeholder="" style="min-width: 250px;">
+                <Option v-for="(item, index) in searchSelectOption"
+                  :key="index" :value="item.code">{{item.name}}</Option>
             </Select>
           </FormItem>
           
           <FormItem label="预约日期:">
-              <DatePicker type="date" placeholder="请选择..." style="min-width: 250px;"></DatePicker>
+              <DatePicker format="yyyy-MM-dd" @on-change="getNewDate" type="date" placeholder="请选择..." style="min-width: 250px;"></DatePicker>
           </FormItem>
           <FormItem label="预约时间:">
-              <TimePicker type="time" placeholder="请选择..." style="min-width: 250px;"></TimePicker>
+              <TimePicker v-model="listSearch.ORDER_TIME" type="time" placeholder="请选择..." style="min-width: 250px;"></TimePicker>
           </FormItem>
           <FormItem label="预约类型:">
-              <Select v-model="search.input" placeholder="" style="min-width: 250px;">
-                <Option value="beijing">New York</Option>
-                <Option value="shanghai">London</Option>
-                <Option value="shenzhen">Sydney</Option>
+              <Select v-model="listSearch.ORDER_TYPE" placeholder="" style="min-width: 250px;">
+                <Option v-for="(item, index) in searchSelectOption1"
+                  :key="index" :value="item.code">{{item.name}}</Option>
                 </Select>
           </FormItem>
           <FormItem label="预约人:">
-              <Input type="text" v-model="search.input" placeholder="" style="min-width: 250px;"> </Input>
+              <Input type="text" v-model="listSearch.ORDER_PERSON" placeholder="" style="min-width: 250px;"> </Input>
           </FormItem>
           <FormItem label="联系电话:">
-              <Input type="text" v-model="search.input" placeholder="" style="min-width: 250px;"> </Input>
+              <Input type="text" v-model="listSearch.TELPHONE" placeholder="" style="min-width: 250px;"> </Input>
           </FormItem>
           <FormItem label="当前里程:">
-              <InputNumber :min="1" v-model="search.input" style="min-width: 250px;" placeholder="最大不超过八位数"></InputNumber>
+              <InputNumber :min="1" v-model="listSearch.MILEAGE" style="min-width: 250px;" placeholder="最大不超过八位数"></InputNumber>
           </FormItem>
        </Form>
        <Form ref="formInline"  slot="content" :label-width="100">
 
           <FormItem label="故障描述:">
-              <Input type="text" v-model="search.input" placeholder="请输入故障描述"> </Input>
+              <Input type="text" v-model="listSearch.FAULT_DESC" placeholder="请输入故障描述"> </Input>
           </FormItem>
           <FormItem label="客诉内容:">
-              <Input type="text" v-model="search.input" placeholder="请输入客诉内容"> </Input>
+              <Input type="text" v-model="listSearch.CUSTOMER_INFO" placeholder="请输入客诉内容"> </Input>
           </FormItem>
 
 
@@ -78,23 +71,12 @@
     <Table
       class="main-table"
       ref="tablesMain"
-      :data="value"
       :columns="columns"
       stripe
       border
-      :show-header="showHeader"
-      :width="width"
-      :height="tableHeight"
-      :loading="loading"
-      :disabled-hover="disabledHover"
-      :highlight-row="highlightRow"
-      :row-class-name="rowClassName"
-      :size="size"
-      :no-data-text="noDataText"
-      :no-filtered-data-text="noFilteredDataText"
     ></Table>
     <div class="r-list-search">
-          <Button type="primary" shape="circle" style="margin-right: 10px;"><Icon type="md-checkmark" size="24"/>选择项目</Button>
+          <Button @click="commitData" type="primary" shape="circle" style="margin-right: 10px;"><Icon type="md-checkmark" size="24"/>选择项目</Button>
           <Button type="primary" shape="circle"><Icon type="md-add" size="24"/>进入维修项目</Button>
     </div>
     <div v-if="testSingle">
@@ -104,20 +86,9 @@
         <Table
           class="main-table"
           ref="tablesMain"
-          :data="value"
           :columns="columns2"
           stripe
           border
-          :show-header="showHeader"
-          :width="width"
-          :height="tableHeight"
-          :loading="loading"
-          :disabled-hover="disabledHover"
-          :highlight-row="highlightRow"
-          :row-class-name="rowClassName"
-          :size="size"
-          :no-data-text="noDataText"
-          :no-filtered-data-text="noFilteredDataText"
         ></Table>
         <div class="r-list-search">
               <Button type="primary" shape="circle" style="margin-right: 10px;"><Icon type="md-checkmark" size="24"/>选择项目套餐</Button>
@@ -130,20 +101,9 @@
     <Table
       class="main-table"
       ref="tablesMain"
-      :data="value"
       :columns="columns1"
       stripe
       border
-      :show-header="showHeader"
-      :width="width"
-      :height="tableHeight"
-      :loading="loading"
-      :disabled-hover="disabledHover"
-      :highlight-row="highlightRow"
-      :row-class-name="rowClassName"
-      :size="size"
-      :no-data-text="noDataText"
-      :no-filtered-data-text="noFilteredDataText"
     ></Table>
     <div class="r-list-choose-parts">
           <Button type="primary" shape="circle" style="margin-right: 10px;"><Icon type="md-checkmark" size="24"/>从配件库存选择配件</Button>
@@ -159,6 +119,8 @@
 </template>
 
 <script>
+  import { getName, getDictGroup } from '@/libs/util.js'
+  import { formatDate } from '@/libs/tools.js'
 	export default {
 		name: "reservation-list-detail",
     data(){
@@ -239,7 +201,34 @@
         collapse: '1',
         search:{
           input: '',
-        }
+          TELPHONE:"",
+        },
+        listSearch:{
+          "ORDER_ID":"",
+          "VEHICLE_ID":"",
+          "VIN_NO":"",
+          "CUSTOMER_NAME":"",
+          "PLATE_NUM":"\u82cfE9927S",
+          "VEHICLE_MODEL":"\u5965\u8feaA5 Cabriolet 2012\u6b3e 2.0TFSI CVT",
+          "REPAIR_TYPE":"10191001",
+          "ORDER_DATE":"",
+          "ORDER_TIME":"",
+          "ORDER_TYPE":"10411001",
+          "ORDER_PERSON":"",
+          "TELPHONE":"",
+          "MILEAGE":"",
+          "FAULT_DESC":"",
+          "CUSTOMER_INFO":"",
+          "IS_ITEM_GROUP":"",
+          "REPAIR_ITEM_DERATE_MONEY":"",
+          "REPAIR_PART_DERATE_MONEY":"",
+          "STATUS":"",
+          "REPAIR_ITEM_MONEY":0,
+          "REPAIR_PART_MONEY":0,
+          "SUM_MONEY":0
+        },
+        searchSelectOption:[],
+        searchSelectOption1:[],
       }
     },
     props: {
@@ -248,12 +237,43 @@
         default: false
       }
     },
+    mounted () {
+      this.searchSelectOption= getDictGroup(this.$store.state.app.dict, '1019');
+      this.searchSelectOption1= getDictGroup(this.$store.state.app.dict, '1041');
+      console.log(this.searchSelectOption);
+
+    },
     methods:{
       ok(){
-
+        
+         
       },
       cancel(){
+      },
+      commitData(){
 
+          this.axios.request({
+            url: 'tenant/repair/ttrepairorder/saveOrSubmit',
+            method: 'post',
+            data: {
+              data: JSON.stringify(this.listSearch),
+              items:JSON.stringify([]),
+              itemGroups: JSON.stringify([]),
+              parts: JSON.stringify([]),
+              access_token: this.$store.state.user.token
+            }
+          }).then(res => {
+            console.log(11111)
+            console.log(res)
+            if (res.success === true) {
+              console.log(res);
+            }
+          })
+          console.log(this.listSearch);
+
+      },
+      getNewDate(val){
+          console.log(val);
       }
     }
 	}
