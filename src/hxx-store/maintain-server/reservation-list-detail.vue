@@ -1,65 +1,73 @@
 <!--预约单管理详情-->
 <template>
   <Modal
-    v-model="showDetail"
+    v-model="showModal"
     title="维修服务预约"
     width="90"
     @on-ok="ok"
     @on-cancel="cancel"
-    scrollable>
-    <Collapse v-model="collapse" class="table-search">
-      <Panel name="1">查询
-        <Form ref="formInline"  slot="content" :label-width="100" inline>
-            <FormItem label="车牌号码:">
-                <Input type="text" v-model="listSearch.PLATE_NUM" placeholder="请输入车牌号" style="min-width: 250px;"> </Input>
-            </FormItem>
-            <FormItem label="车型:">
-                <Input type="text" v-model="listSearch.VEHICLE_MODEL" placeholder="请输入车型" style="min-width: 250px;"> </Input>
-            </FormItem>
-            <FormItem label="预约维修类型:" :label-width="100">
-                <Select v-model="listSearch.REPAIR_TYPE" placeholder="" style="min-width: 250px;">
-                  <Option v-for="(item, index) in searchSelectOption"
-                    :key="index" :value="item.code">{{item.name}}</Option>
-              </Select>
-            </FormItem>
-            
-            <FormItem label="预约日期:">
-                <DatePicker format="yyyy-MM-dd" @on-change="getNewDate" type="date" placeholder="请选择..." style="min-width: 250px;"></DatePicker>
-            </FormItem>
-            <FormItem label="预约时间:">
-                <TimePicker v-model="listSearch.ORDER_TIME" type="time" placeholder="请选择..." style="min-width: 250px;"></TimePicker>
-            </FormItem>
-            <FormItem label="预约类型:">
-                <Select v-model="listSearch.ORDER_TYPE" placeholder="" style="min-width: 250px;">
-                  <Option v-for="(item, index) in searchSelectOption1"
-                    :key="index" :value="item.code">{{item.name}}</Option>
-                  </Select>
-            </FormItem>
-            <FormItem label="预约人:">
-                <Input type="text" v-model="listSearch.ORDER_PERSON" placeholder="" style="min-width: 250px;"> </Input>
-            </FormItem>
-            <FormItem label="联系电话:">
-                <Input @on-keyup="getOnlyNumber"	onkeypress="return event.keyCode>=48&&event.keyCode<=57" type="text" v-model="listSearch.TELPHONE" placeholder="" style="min-width: 250px;"> </Input>
-            </FormItem>
-            <FormItem label="当前里程:">
-                <InputNumber :min="1" v-model="listSearch.MILEAGE" style="min-width: 250px;" placeholder="最大不超过八位数"></InputNumber>
-            </FormItem>
-        </Form>
-        <Form ref="formInline"  slot="content" :label-width="100">
-            <FormItem label="故障描述:">
-                <Input type="textarea" v-model="listSearch.FAULT_DESC" placeholder="请输入故障描述"> </Input>
-            </FormItem>
-            <FormItem label="客诉内容:">
-                <Input type="textarea" v-model="listSearch.CUSTOMER_INFO" placeholder="请输入客诉内容"> </Input>
-            </FormItem>
-        </Form>
-      </Panel>
-    </Collapse>
+    @on-visible-change="visibleChange"
+    :scrollable="true"
+    :transfer= "false"
+    :footer-hide="false"
+  >
+    <Collapse v-model="collapse">
+    <Panel name="1">查询
+       <Form ref="formInline"  slot="content" :label-width="80" inline class="detail-form">
+          <FormItem label="车牌号码:">
+              <Input type="text" v-model="listSearch.PLATE_NUM" placeholder="请输入车牌号" style="min-width: 250px;"> </Input>
+          </FormItem>
+          <FormItem label="车型:">
+              <Input type="text" v-model="listSearch.VEHICLE_MODEL" placeholder="请输入车型" style="min-width: 250px;"> </Input>
+          </FormItem>
+          <FormItem label="预约维修类型:" >
+              <Select v-model="listSearch.REPAIR_TYPE" placeholder="" style="min-width: 250px;">
+                <Option v-for="(item, index) in searchSelectOption"
+                  :key="index" :value="item.code">{{item.name}}</Option>
+            </Select>
+          </FormItem>
+
+          <FormItem label="预约日期:">
+              <DatePicker format="yyyy-MM-dd" @on-change="getNewDate" type="date" placeholder="请选择..." style="min-width: 250px;"></DatePicker>
+          </FormItem>
+          <FormItem label="预约时间:">
+              <TimePicker v-model="listSearch.ORDER_TIME" type="time" placeholder="请选择..." style="min-width: 250px;"></TimePicker>
+          </FormItem>
+          <FormItem label="预约类型:">
+              <Select v-model="listSearch.ORDER_TYPE" placeholder="" style="min-width: 250px;">
+                <Option v-for="(item, index) in searchSelectOption1"
+                  :key="index" :value="item.code">{{item.name}}</Option>
+                </Select>
+          </FormItem>
+          <FormItem label="预约人:">
+              <Input type="text" v-model="listSearch.ORDER_PERSON" placeholder="" style="min-width: 250px;"> </Input>
+          </FormItem>
+          <FormItem label="联系电话:">
+              <Input type="text"  @on-keyup="getOnlyNumber" v-model="listSearch.TELPHONE" onkeypress="return event.keyCode>=48&&event.keyCode<=57" style="min-width: 250px;"> </Input>
+          </FormItem>
+          <FormItem label="当前里程:">
+              <InputNumber :min="1" v-model="listSearch.MILEAGE" style="min-width: 250px;" placeholder="最大不超过八位数"></InputNumber>
+          </FormItem>
+       </Form>
+       <Form ref="formInline"  slot="content" :label-width="80">
+
+          <FormItem label="故障描述:">
+              <Input type="textarea" v-model="listSearch.FAULT_DESC" placeholder="请输入故障描述"> </Input>
+          </FormItem>
+          <FormItem label="客诉内容:">
+              <Input type="textarea" v-model="listSearch.CUSTOMER_INFO" placeholder="请输入客诉内容"> </Input>
+          </FormItem>
+
+
+
+       </Form>
+    </Panel>
+  </Collapse>
     <div class="r-list-chekbox">
       <div>
           <Checkbox v-model="testSingle">是否启用维修套餐</Checkbox>
       </div>
-      
+
     </div>
     <div class="r-list-header">
       <h1>维修项目</h1>
@@ -105,7 +113,7 @@
           <Button type="primary" shape="circle" style="margin-right: 10px;"><Icon type="md-checkmark" size="24"/>从配件库存选择配件</Button>
           <Button type="primary" shape="circle" ><Icon type="md-add" size="24"/>从配件档案选择配件</Button>
     </div>
-    
+
     <div class="r-list-money">
       <p>
         维修项目费用：<span>{{testMsg}}元</span> + 维修配件费用：<span>{{testMsg1}}元</span> + 维修项目优惠金额：<InputNumber :max="10" :min="1"></InputNumber> - 配件优惠金额：<InputNumber :max="10" :min="1"></InputNumber>= 合计应收金额：<span class="r-list-money-reset">{{testMsg2}}元</span>
@@ -137,7 +145,9 @@
 		name: "reservation-list-detail",
     data(){
       return{
+
         titleModel:true,
+        showModal: false,
         testSingle:false,
         testMsg:"2700.00",
         testMsg1:"100.00",
@@ -229,7 +239,7 @@
           "ORDER_TYPE":"10411001",
           "ORDER_PERSON":"",
           "TELPHONE":"",
-          "MILEAGE":"",
+          "MILEAGE": 0,
           "FAULT_DESC":"",
           "CUSTOMER_INFO":"",
           "IS_ITEM_GROUP":"",
@@ -244,10 +254,25 @@
         searchSelectOption1:[],
       }
     },
-    props: {
-      showDetail:{
-        type: Boolean,
-        default: false
+    props:['showDetail', 'detailData'],
+    watch:{
+      showDetail(){
+        this.showModal=true
+        if(this.detailData){
+          for(let key in this.listSearch){
+            this.listSearch[key]= this.detailData[key]
+          }
+        }else{
+          for(let key in this.listSearch){
+            switch (key){
+              case 'MILEAGE':
+              case 'REPAIR_ITEM_MONEY':
+              case 'REPAIR_PART_MONEY':
+              case 'SUM_MONEY': this.listSearch[key]= 0; break
+              default : this.listSearch[key]= ''
+            }
+          }
+        }
       }
     },
     mounted () {
@@ -258,12 +283,15 @@
     },
     methods:{
       ok(){
-        
-         
+
       },
       cancel(){
-        
-        this.$emit('getNewList', false)
+
+      },
+      visibleChange(status){
+        if(status === false){
+          this.$emit('closeDetail')
+        }
       },
       commitData(){
           this.titleModel=true;
@@ -307,7 +335,7 @@
   width: 100%;
   padding: 20px 0;
   text-align: center;
-  
+
 }
 .r-list-choose-parts{
   width: 100%;
