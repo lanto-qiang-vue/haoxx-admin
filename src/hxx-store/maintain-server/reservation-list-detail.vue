@@ -8,57 +8,53 @@
     @on-cancel="cancel"
     scrollable>
     <Collapse v-model="collapse" class="table-search">
-    <Panel name="1">查询
-       <Form ref="formInline"  slot="content" :label-width="100" inline>
-          <FormItem label="车牌号码:">
-              <Input type="text" v-model="listSearch.PLATE_NUM" placeholder="请输入车牌号" style="min-width: 250px;"> </Input>
-          </FormItem>
-          <FormItem label="车型:">
-              <Input type="text" v-model="listSearch.VEHICLE_MODEL" placeholder="请输入车型" style="min-width: 250px;"> </Input>
-          </FormItem>
-          <FormItem label="预约维修类型:" :label-width="100">
-              <Select v-model="listSearch.REPAIR_TYPE" placeholder="" style="min-width: 250px;">
-                <Option v-for="(item, index) in searchSelectOption"
-                  :key="index" :value="item.code">{{item.name}}</Option>
-            </Select>
-          </FormItem>
-          
-          <FormItem label="预约日期:">
-              <DatePicker format="yyyy-MM-dd" @on-change="getNewDate" type="date" placeholder="请选择..." style="min-width: 250px;"></DatePicker>
-          </FormItem>
-          <FormItem label="预约时间:">
-              <TimePicker v-model="listSearch.ORDER_TIME" type="time" placeholder="请选择..." style="min-width: 250px;"></TimePicker>
-          </FormItem>
-          <FormItem label="预约类型:">
-              <Select v-model="listSearch.ORDER_TYPE" placeholder="" style="min-width: 250px;">
-                <Option v-for="(item, index) in searchSelectOption1"
-                  :key="index" :value="item.code">{{item.name}}</Option>
-                </Select>
-          </FormItem>
-          <FormItem label="预约人:">
-              <Input type="text" v-model="listSearch.ORDER_PERSON" placeholder="" style="min-width: 250px;"> </Input>
-          </FormItem>
-          <FormItem label="联系电话:">
-              <Input type="text" v-model="listSearch.TELPHONE" placeholder="" style="min-width: 250px;"> </Input>
-          </FormItem>
-          <FormItem label="当前里程:">
-              <InputNumber :min="1" v-model="listSearch.MILEAGE" style="min-width: 250px;" placeholder="最大不超过八位数"></InputNumber>
-          </FormItem>
-       </Form>
-       <Form ref="formInline"  slot="content" :label-width="100">
-
-          <FormItem label="故障描述:">
-              <Input type="text" v-model="listSearch.FAULT_DESC" placeholder="请输入故障描述"> </Input>
-          </FormItem>
-          <FormItem label="客诉内容:">
-              <Input type="text" v-model="listSearch.CUSTOMER_INFO" placeholder="请输入客诉内容"> </Input>
-          </FormItem>
-
-
-
-       </Form>
-    </Panel>
-  </Collapse>
+      <Panel name="1">查询
+        <Form ref="formInline"  slot="content" :label-width="100" inline>
+            <FormItem label="车牌号码:">
+                <Input type="text" v-model="listSearch.PLATE_NUM" placeholder="请输入车牌号" style="min-width: 250px;"> </Input>
+            </FormItem>
+            <FormItem label="车型:">
+                <Input type="text" v-model="listSearch.VEHICLE_MODEL" placeholder="请输入车型" style="min-width: 250px;"> </Input>
+            </FormItem>
+            <FormItem label="预约维修类型:" :label-width="100">
+                <Select v-model="listSearch.REPAIR_TYPE" placeholder="" style="min-width: 250px;">
+                  <Option v-for="(item, index) in searchSelectOption"
+                    :key="index" :value="item.code">{{item.name}}</Option>
+              </Select>
+            </FormItem>
+            
+            <FormItem label="预约日期:">
+                <DatePicker format="yyyy-MM-dd" @on-change="getNewDate" type="date" placeholder="请选择..." style="min-width: 250px;"></DatePicker>
+            </FormItem>
+            <FormItem label="预约时间:">
+                <TimePicker v-model="listSearch.ORDER_TIME" type="time" placeholder="请选择..." style="min-width: 250px;"></TimePicker>
+            </FormItem>
+            <FormItem label="预约类型:">
+                <Select v-model="listSearch.ORDER_TYPE" placeholder="" style="min-width: 250px;">
+                  <Option v-for="(item, index) in searchSelectOption1"
+                    :key="index" :value="item.code">{{item.name}}</Option>
+                  </Select>
+            </FormItem>
+            <FormItem label="预约人:">
+                <Input type="text" v-model="listSearch.ORDER_PERSON" placeholder="" style="min-width: 250px;"> </Input>
+            </FormItem>
+            <FormItem label="联系电话:">
+                <Input @on-keyup="getOnlyNumber"	onkeypress="return event.keyCode>=48&&event.keyCode<=57" type="text" v-model="listSearch.TELPHONE" placeholder="" style="min-width: 250px;"> </Input>
+            </FormItem>
+            <FormItem label="当前里程:">
+                <InputNumber :min="1" v-model="listSearch.MILEAGE" style="min-width: 250px;" placeholder="最大不超过八位数"></InputNumber>
+            </FormItem>
+        </Form>
+        <Form ref="formInline"  slot="content" :label-width="100">
+            <FormItem label="故障描述:">
+                <Input type="textarea" v-model="listSearch.FAULT_DESC" placeholder="请输入故障描述"> </Input>
+            </FormItem>
+            <FormItem label="客诉内容:">
+                <Input type="textarea" v-model="listSearch.CUSTOMER_INFO" placeholder="请输入客诉内容"> </Input>
+            </FormItem>
+        </Form>
+      </Panel>
+    </Collapse>
     <div class="r-list-chekbox">
       <div>
           <Checkbox v-model="testSingle">是否启用维修套餐</Checkbox>
@@ -76,7 +72,7 @@
       border
     ></Table>
     <div class="r-list-search">
-          <Button @click="commitData" type="primary" shape="circle" style="margin-right: 10px;"><Icon type="md-checkmark" size="24"/>选择项目</Button>
+          <Button  type="primary" shape="circle" style="margin-right: 10px;"><Icon type="md-checkmark" size="24"/>选择项目</Button>
           <Button type="primary" shape="circle"><Icon type="md-add" size="24"/>进入维修项目</Button>
     </div>
     <div v-if="testSingle">
@@ -115,7 +111,23 @@
         维修项目费用：<span>{{testMsg}}元</span> + 维修配件费用：<span>{{testMsg1}}元</span> + 维修项目优惠金额：<InputNumber :max="10" :min="1"></InputNumber> - 配件优惠金额：<InputNumber :max="10" :min="1"></InputNumber>= 合计应收金额：<span class="r-list-money-reset">{{testMsg2}}元</span>
       </p>
     </div>
+
+    <div slot="footer" style="text-align: center; font-size: 18px;">
+        <Button @click="commitData" size="large" type="primary"  style="margin-right: 10px; padding: 0 10px;"><Icon type="md-checkmark" size="24"/>保存</Button>
+        <Button size="large" type="primary"  style="margin-right: 10px; padding: 0 10px;"><Icon type="md-add" size="24"/>提交</Button>
+        <Button size="large" type="primary"  style=" padding: 0 10px;"><Icon type="ios-car" size="24"/>维修接车</Button>
+        <Modal
+            title="Title"
+            v-model="titleModel"
+            :styles="{z-index:2000}"
+            class-name="vertical-center-modal">
+            <p>Content of dialog</p>
+            <p>Content of dialog</p>
+            <p>Content of dialog</p>
+        </Modal>
+    </div>
   </Modal>
+
 </template>
 
 <script>
@@ -125,6 +137,7 @@
 		name: "reservation-list-detail",
     data(){
       return{
+        titleModel:true,
         testSingle:false,
         testMsg:"2700.00",
         testMsg1:"100.00",
@@ -249,31 +262,36 @@
          
       },
       cancel(){
+        
+        this.$emit('getNewList', false)
       },
       commitData(){
-
-          this.axios.request({
-            url: 'tenant/repair/ttrepairorder/saveOrSubmit',
-            method: 'post',
-            data: {
-              data: JSON.stringify(this.listSearch),
-              items:JSON.stringify([]),
-              itemGroups: JSON.stringify([]),
-              parts: JSON.stringify([]),
-              access_token: this.$store.state.user.token
-            }
-          }).then(res => {
-            console.log(11111)
-            console.log(res)
-            if (res.success === true) {
-              console.log(res);
-            }
-          })
-          console.log(this.listSearch);
+          this.titleModel=true;
+          // this.axios.request({
+          //   url: 'tenant/repair/ttrepairorder/saveOrSubmit',
+          //   method: 'post',
+          //   data: {
+          //     data: JSON.stringify(this.listSearch),
+          //     items:JSON.stringify([]),
+          //     itemGroups: JSON.stringify([]),
+          //     parts: JSON.stringify([]),
+          //     access_token: this.$store.state.user.token
+          //   }
+          // }).then(res => {
+          //   console.log(11111)
+          //   console.log(res)
+          //   if (res.success === true) {
+          //     console.log(res);
+          //   }
+          // })
+          // console.log(this.listSearch);
 
       },
       getNewDate(val){
-          console.log(val);
+          this.listSearch.ORDER_DATE=val;
+      },
+      getOnlyNumber(val){
+        this.listSearch.TELPHONE=this.listSearch.TELPHONE.replace(/[^\d]/g,'');
       }
     }
 	}

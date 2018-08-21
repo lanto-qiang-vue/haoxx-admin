@@ -23,7 +23,7 @@
       <Button type="info">编辑/查看</Button>
       <Button type="error">作废</Button>
     </div>
-     <reservation-list-detail slot="detail" :showDetail="showDetail"></reservation-list-detail> 
+     <reservation-list-detail slot="detail" @getNewList="getNewList" :showDetail="showDetail"></reservation-list-detail> 
   </common-table>
 </template>
 <script>
@@ -112,6 +112,11 @@
       changePageSize(size){
 		    this.limit= size
         this.getList()
+      },
+      getNewList(val){
+        console.log(222)
+        this.getList();
+        this.showDetail=val;
       }
     }
 	}
