@@ -136,6 +136,35 @@ export const getRelativeTime = timeStamp => {
 }
 
 /**
+ * @param {String|Number} data 各种日期格式
+ * @param {String} timeStamp 格式字符串,默认值 yyyy-MM-dd
+ * @returns {String} 相对时间字符串
+ */
+export const formatDate= (value, format) => {
+  if (value) {
+    value = new Date(value);
+    let o = {
+      "M+": value.getMonth() + 1, //month
+      "d+": value.getDate(),    //day
+      "h+": value.getHours(),   //hour
+      "m+": value.getMinutes(), //minute
+      "s+": value.getSeconds(), //second
+      "q+": Math.floor((value.getMonth() + 3) / 3),  //quarter
+      "S": value.getMilliseconds() //millisecond
+    }
+    if(!format) format='yyyy-MM-dd'
+    if (/(y+)/.test(format)) format = format.replace(RegExp.$1,
+      (value.getFullYear() + "").substr(4 - RegExp.$1.length));
+    for (let k in o)if (new RegExp("(" + k + ")").test(format))
+      format = format.replace(RegExp.$1,
+        RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));
+    return format;
+  } else {
+    return '';
+  }
+};
+
+/**
  * @returns {String} 当前浏览器名称
  */
 export const getExplorer = () => {
