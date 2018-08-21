@@ -161,6 +161,9 @@
       },
       changePageSize(size){
         this.$emit('changePageSize', size)
+      },
+      changeSelect(selection){
+       this.$emit('changeSelect',selection);
       }
     }
 	}

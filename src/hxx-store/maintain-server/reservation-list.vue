@@ -23,10 +23,9 @@
       <Button type="info">编辑/查看</Button>
       <Button type="error">作废</Button>
     </div>
-    <reservation-list-detail slot="detail" :showDetail="showDetail"></reservation-list-detail>
+<!--     <reservation-list-detail slot="detail" :showDetail="showDetail"></reservation-list-detail> -->
   </common-table>
 </template>
-
 <script>
   import commonTable from '@/hxx-components/common-table.vue'
   import reservationListDetail from './reservation-list-detail.vue'

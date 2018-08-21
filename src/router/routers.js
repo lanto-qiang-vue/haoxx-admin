@@ -327,8 +327,41 @@ export default [
       },
     ]
 },
-
-
+{
+    path: '/customer-relations',
+    name: 'customer-relations',
+    meta: {
+      icon: 'logo-buffer',
+      title: '客户关系',
+      lgType: "1002",
+      access: '1001',
+    },
+    component: Main,
+    children:[
+      {
+        path: '/customer-list',
+        name: 'customer-list',
+        meta: {
+          icon: 'md-funnel',
+          title: '客户档案',
+          lgType: "1002",
+          access: '100504',
+        },
+        component: () => import('@/hxx-store/customer-relations/customer-list.vue')
+      },
+      // {
+      //   path: 'test',
+      //   name: 'test',
+      //   meta: {
+      //     icon: 'md-funnel',
+      //     title: '测试',
+      //     lgType: "1002",
+      //     access: '100101',
+      //   },
+      //   component: () => import('@/hxx-store/test.vue')
+      // },
+    ]
+},
   {
     path: '/401',
     name: 'error_401',
