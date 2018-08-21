@@ -124,15 +124,6 @@
         <Button @click="commitData" size="large" type="primary"  style="margin-right: 10px; padding: 0 10px;"><Icon type="md-checkmark" size="24"/>保存</Button>
         <Button size="large" type="primary"  style="margin-right: 10px; padding: 0 10px;"><Icon type="md-add" size="24"/>提交</Button>
         <Button size="large" type="primary"  style=" padding: 0 10px;"><Icon type="ios-car" size="24"/>维修接车</Button>
-        <Modal
-            title="Title"
-            v-model="titleModel"
-            :styles="{z-index:2000}"
-            class-name="vertical-center-modal">
-            <p>Content of dialog</p>
-            <p>Content of dialog</p>
-            <p>Content of dialog</p>
-        </Modal>
     </div>
   </Modal>
 
