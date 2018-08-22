@@ -37,7 +37,7 @@
     <Page :page-size="25" show-sizer show-elevator show-total :page-size-opts="[25, 50, 100, 150]"
       :total="total" @on-change="changePage" @on-page-size-change="changePageSize"/>
   </div>
-  <slot name="uploadExcel"></slot>
+  <slot name="excel"></slot>
   <slot name="detail"></slot>
   <slot name="modal6"></slot>
 </div>

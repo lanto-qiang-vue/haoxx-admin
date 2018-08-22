@@ -26,29 +26,7 @@
                   :key="index" :value="item.code">{{item.name}}</Option>
             </Select>
           </FormItem>
-
-          <FormItem label="预约日期:">
-              <DatePicker format="yyyy-MM-dd" @on-change="getNewDate" type="date" placeholder="请选择..." style="min-width: 250px;"></DatePicker>
-          </FormItem>
-          <FormItem label="预约时间:">
-              <TimePicker v-model="listSearch.ORDER_TIME" type="time" placeholder="请选择..." style="min-width: 250px;"></TimePicker>
-          </FormItem>
-          <FormItem label="预约类型:">
-              <Select v-model="listSearch.ORDER_TYPE" placeholder="" style="min-width: 250px;">
-                <Option v-for="(item, index) in searchSelectOption1"
-                  :key="index" :value="item.code">{{item.name}}</Option>
-                </Select>
-          </FormItem>
-          <FormItem label="预约人:">
-              <Input type="text" v-model="listSearch.ORDER_PERSON" placeholder="" style="min-width: 250px;"> </Input>
-          </FormItem>
-          <FormItem label="联系电话:">
-              <Input type="text"  @on-keyup="getOnlyNumber" v-model="listSearch.TELPHONE" onkeypress="return event.keyCode>=48&&event.keyCode<=57" style="min-width: 250px;"> </Input>
-          </FormItem>
-          <FormItem label="当前里程:">
-              <InputNumber :min="1" v-model="listSearch.MILEAGE" style="min-width: 250px;" placeholder="最大不超过八位数"></InputNumber>
-          </FormItem>
-       </Form>
+        </Form>
        <Form ref="formInline"  slot="content" :label-width="80">
 
           <FormItem label="故障描述:">

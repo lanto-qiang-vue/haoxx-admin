@@ -1,9 +1,10 @@
 <template>
     <div>
     <Modal
-        v-model="modal6"
+        v-model="show"
         :title="title"
         :loading="loading"
+        :mask-closable="false"
         @on-ok="asyncOK"
         @on-cancel="asyncNo">
         <p>{{description}}</p>
@@ -16,23 +17,28 @@
         data () {
             return {
                 loading: true,
+                show:false
             }
         },
         props:{
             title:{type:String,default(){return '传递组件title'}},
             description:{type:String,default(){return '传递组件说明'}},
-            modal6:{type:Boolean,default(){ return false}},
+            modal6:{},
             fun:{type:String,default(){return '父级接收函数'}}
+        },
+        // props:['title','description','modal6','fun '],
+        watch:{
+            modal6(){
+            this.show=true
+            }
         },
         methods: {
             asyncOK () {
                 this.$emit(this.fun);
-                setTimeout(() => {
-                this.$emit('changeModal6',false);
-                }, 0);
+                this.show = false;
             },
             asyncNo(){
-                this.$emit('changeModal6',false);
+             // this.$emit('changeModal6',false);
             }
         }
     }  

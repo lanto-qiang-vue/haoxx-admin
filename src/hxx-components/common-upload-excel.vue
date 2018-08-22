@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<Modal v-model="modal2" :mask-closable="false" width="360" @on-cancel="uploadClose">
+		<Modal v-model="show" :mask-closable="false" width="360" @on-cancel="uploadClose">
         <p slot="header" style="color:#f60;text-align:left;">
             <span>客户档案导入</span>
         </p>
@@ -8,7 +8,7 @@
     <Upload
         ref="upload"
         :before-upload = "beforeUpload"
-        :name="filenames"
+        :name="uploadName"
         :show-upload-list="false"
         :on-success="uploadSuccess"
         :data="token"
@@ -25,14 +25,60 @@
         </div>
      <div slot="footer">
             <Button type="success" @click="down" style="float:left;">下载模板</Button>
-            <Button type="primary" @click="upload" :loading="loadingStatus">确定</Button>
+            <Button type="primary" @click="upload">确定</Button>
             <Button type="error" @click="uploadClose">关闭</Button>
         </div>
     </Modal>
 	</div>
 </template>
 <script>
+	import env from '_conf/url'
 	export default {
-		name:'common-upload-excel'
+		name:'common-upload-excel',
+		data(){
+			return {
+				filename:'请选择文件',
+				token:{access_token:''},
+				baseUrl: '',
+				show:false
+			}
+		},
+		mounted(){
+	    this.token.access_token = this.$store.state.user.token
+	    this.baseUrl=env
+		},
+		props:{
+			type:{},//默认隐藏
+			success:{type:String,default(){return ''}},//成功上传传递函数
+			uploadName:{type:String,default(){return 'uploadFile'}}
+		},
+		watch:{
+			type(){
+this.show=true
+			}
+		},
+        methods:{
+        	  beforeUpload(files){
+        this.filename = files.name;
+        this.file = files;
+        return false;
+      },
+      upload(){
+      if(this.filename == '请选择文件'){
+       this.$Message.error('请选择文件');
+       return;
+      }
+      this.$refs.upload.post(this.file);
+      },
+    uploadClose(){
+      this.show = false
+    },
+    uploadSuccess(res){
+      this.$emit(this.success,res);
+    },
+    down(){
+        window.location.href = "http://hxx.test.hoxiuxiu.com/resources/excel/customer.xls";
+    },
+        }
 	}
 </script>

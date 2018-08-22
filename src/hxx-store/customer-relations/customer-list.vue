@@ -1,4 +1,5 @@
 <template>
+  <div>
   <common-table v-model="tableData" :columns="columns" :total="total"
     @changePage="changePage" @changePageSize="changePageSize" @changeSelect="changeSelect">
     <div  slot="search"  >
@@ -18,28 +19,28 @@
       <Button type="info">编辑/查看</Button>
       <Button type="error" @click="remove">作废</Button>
       <Button type="success" @click="lead()">导入</Button>
-      <!-- 上传文件 -->
-
-      <!-- 这里结束 -->
-      <!--多重提示开始-->
-
-      <!--多重提示结束-->
+      <Button type="primary" @click="expor">导出</Button>
     </div>
-    </div>
+    <!-- 添加查询修改-->
+    <!-- Excel上传 -->
+    <common-upload-excel slot="excel" :type="etype" :success="'esuccess'" @esuccess="esuccess"></common-upload-excel>
     <!-- 警告提示 -->
-    <common-modal6 slot="modal6" @changeModal6="changeModal6" :description="description" :title="title" :modal6="mshow" :fun="funName" @del="del"></common-modal6>
+    <common-modal6 slot="modal6" :description="description" :title="title" :modal6="mshow" :fun="funName" @del="del"></common-modal6>
     <!-- 警告提示 -->
-<!--     <reservation-list-detail slot="detail" :showDetail="showDetail"></reservation-list-detail> -->
   </common-table>
+  <customer-list-detail :showDetail="showDetail"></customer-list-detail>
+</div>
 </template>
 <script>
     import commonTable from '@/hxx-components/common-table.vue'
-      import { getName, getDictGroup } from '@/libs/util.js'
-      import commonModal6 from '@/hxx-components/common-modal6.vue'
-      import env from '_conf/url'
+    import { getName, getDictGroup } from '@/libs/util.js'
+    import commonModal6 from '@/hxx-components/common-modal6.vue'
+    import commonUploadExcel from '@/hxx-components/common-upload-excel.vue'
+    import customerListDetail from '@/hxx-store/customer-relations/customer-list-detail.vue'
+    import env from '_conf/url'
   export default {
     name: "customer-list",
-    components: {commonTable,commonModal6},
+    components: {commonTable,commonModal6,commonUploadExcel,customerListDetail},
     data(){
       return{
         columns: [
@@ -73,25 +74,16 @@
         page: 1,
         limit: 25,
         total: 0,
-        showDetail: false,
-        list:[],
-        mshow:false,
-        funName:'del',
-        description:'',
-        title:'',
-        modal2:false,
-        modal3:true,
-        modal_loading:false,
-        loadingStatus: false,
-        file:'',
-        filename:'请选择文件excel',
-        token:{access_token:''},
-        filenames:'uploadFile',
-        baseUrl: ''
+        list:[],//复选框选中参数
+        mshow:false,//modal6显示隐藏
+        funName:'del',//modal6确认回调
+        description:'',//modal6提示说明
+        title:'',//modal6标题
+        etype:false,//excel上传显示
+        showDetail:true,//detail查询修改
       }
     },
     mounted () {
-      this.token.access_token = this.$store.state.user.token;
       this.getList()
       this.baseUrl=env
       console.log(env)
@@ -141,15 +133,17 @@
         });
       },
       remove(){
+        //移除前提示
         if(this.list.length == 0){
           this.$Message.info("未选择到数据!");
         }else{
            this.title = '系统提示!';
            this.description = '客户档案作废后，该客户下属车辆也将作废，确认要作废吗？';
-           this.mshow = true;
+           this.mshow = Math.random();
         }
       },
       del(){
+        //调用接口删除list中数据
           this.axios.request({
           url: 'tenant/basedata/ttcustomerfile/cancel',
           method: 'post',
@@ -164,32 +158,38 @@
           } 
         })
       },
-      changeModal6(type){
-        this.mshow = type;
-      },
-      down(){
-        window.location.href = "http://hxx.test.hoxiuxiu.com/resources/excel/customer.xls";
-      },
-      beforeUpload(files){
-        this.filename = files.name;
-        this.file = files;
-        return false;
-      },
-      upload(){
-      if(this.filename == '请选择文件excel'){
-       this.$Message.error('请选择excel');
-       return;
-      }
-      this.$refs.upload.post(this.file);
-      },
-    uploadClose(){
-      this.modal2 = false;
-    },
     lead(){
-    this.modal2 = true;
+      //导入显示弹出上传
+      this.etype = Math.random();
     },
-    uploadSuccess(res){
-    alert(res);
+    esuccess(res){
+      //Excel成功上传回调
+      var title = "导入错误信息";
+      var content = "";
+      if(res.data === true){
+        title = "提示信息";
+        content = "批量导入成功";
+        this.getList();
+                 this.$Modal.success({
+                            title: title,
+                            content: content
+                        });
+      return;
+      }
+      //有错误集合展示
+      if(res.data.errorList.length > 0){
+           res.data.errorList.filter(function(item){
+            content += '<p>'+ '第' + item.rowNum + '行,'+ item.errorMsg + '</p>';
+           });
+           this.$Modal.error({
+                            title: title,
+                            content: content
+                        });
+      }
+    },
+    expor(){
+      //导出Excel文件
+      window.location.href = "http://hxx.test.hoxiuxiu.com/tenant/basedata/ttcustomerfile/doExport?KEYWORD="+this.search.input+"&PLATE_NUM="+this.search.number+"&access_token="+this.$store.state.user.token;
     },
     }
   }
