@@ -10,7 +10,10 @@
   <div class="operate">
     <slot name="operate"></slot>
   </div>
+  <div>
+  </div>
   <Table
+    @on-selection-change="changeSelect"
     class="main-table"
     ref="tablesMain"
     :data="value"
@@ -34,7 +37,9 @@
     <Page :page-size="25" show-sizer show-elevator show-total :page-size-opts="[25, 50, 100, 150]"
       :total="total" @on-change="changePage" @on-page-size-change="changePageSize"/>
   </div>
+  <slot name="uploadExcel"></slot>
   <slot name="detail"></slot>
+  <slot name="modal6"></slot>
 </div>
 </template>
 
