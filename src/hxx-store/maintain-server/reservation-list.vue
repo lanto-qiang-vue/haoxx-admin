@@ -1,7 +1,5 @@
 <!--预约单管理-->
 <template>
-  
-<div>
   <common-table v-model="tableData" :columns="columns" :total="total" :clearSelect="clearTableSelect"
                 @changePage="changePage" @changePageSize="changePageSize" @onRowClick="onRowClick"
                 @onRowDblclick="onRowDblclick">
@@ -11,11 +9,15 @@
       </div>
       <div class="search-block">
         <Select v-model="search.select" placeholder="选择状态...">
-          <Option value="">全部</Option>
-          <Option v-for="(item, index) in searchSelectOption"
+          <Option v-for="(item, index) in searchSelectOption1"
                   :key="index" :value="item.code">{{item.name}}</Option>
         </Select>
       </div>
+      <div class="search-block"style="width:250px;">
+        <DatePicker @on-change="getOrderDateGte" type="date" placeholder="开始时间" style="width: 120px;"></DatePicker>
+        <DatePicker @on-change="getOrderDateIte" type="date" placeholder="结束时间" style="width: 120px;margin-left: 5px;"></DatePicker>
+      </div>
+      
       <ButtonGroup size="small">
         <Button type="primary" @click="page=1;getList()"><Icon type="ios-search" size="24"/></Button>
         <Button type="primary" @click="clear()"><Icon type="ios-undo" size="24"/></Button>
@@ -24,35 +26,33 @@
     <div slot="operate">
       <Button type="primary" @click="detailData=null,showDetail=Math.random()">新增</Button>
       <Button type="info" @click="showDetail=Math.random()" :disabled="!detailData">编辑/查看</Button>
-      <Button type="error" @click="deleteDetailData">作废</Button>
+      <Button type="error" @click="deleteDetailData" :disabled="isOrderSuccess">作废</Button>
     </div>
 
-    <reservation-list-detail slot="detail" class="table-modal-detail" :showDetail="showDetail"
+    <reservation-list-detail class="table-modal-detail" :showDetail="showDetail"
                              :detailData="detailData" @closeDetail="closeDetail"
       ></reservation-list-detail>
-      
+      <!--弹出层组建-->
+      <common-modal6 @changeModal6="changeModal6" :description="tooltipObj.description" 
+      :title="tooltipObj.title" :modal6="tooltipObj.mshow" :fun="tooltipObj.funName" @del="del"></common-modal6>
   </common-table>
-
-    <Modal
-        v-model="tooltipModel"
-        title="系统提示"
-        @on-ok="okdd"
-        @on-cancel="cancelss">
-        <p>是否删除</p>
-    </Modal>
-    
-</div>
 </template>
 <script>
   import commonTable from '@/hxx-components/common-table.vue'
   import reservationListDetail from './reservation-list-detail.vue'
   import { getName, getDictGroup } from '@/libs/util.js'
+  import commonModal6 from '@/hxx-components/common-modal6.vue'
 	export default {
 		name: "reservation-list",
-    components: {commonTable, reservationListDetail},
+    components: {commonTable, reservationListDetail,commonModal6},
     data(){
 		  return{
-        tooltipModel:false,
+        tooltipObj:{
+            mshow:false,
+            funName:'del',
+            description:'',
+            title:'',
+        },
         columns: [
           // {type: 'selection', width: 50, fixed: 'left'},
           {title: '序号',  minWidth: 60,
@@ -82,21 +82,34 @@
         ],
         tableData: [],
         searchSelectOption:[],
+        searchSelectOption1:[],//重新赋值--
         search:{
           input: '',
-          select: ''
+          select: '',
+          orderDateGte:'',    //开始-时间
+          orderDateIte:'',    //结束时间
         },
         page: 1,
         limit: 25,
         total: 0,
-
         showDetail: false,
         detailData: null,
         clearTableSelect: null,
+        isOrderSuccess:false,//判断是不是预约成功
+        
       }
     },
     mounted () {
-      this.searchSelectOption= getDictGroup(this.$store.state.app.dict, '1042')
+      this.searchSelectOption= getDictGroup(this.$store.state.app.dict, '1042');
+      this.searchSelectOption1.push({
+          "code":"",
+          "order":0,
+          "group":"1042",
+          "name":"全部"
+      });
+      for(let i=0;i<this.searchSelectOption.length;i++){
+        this.searchSelectOption1.push(this.searchSelectOption[i]);
+      }
       this.getList()
     },
     methods:{
@@ -107,6 +120,8 @@
           data: {
             KEYWORD: this.search.input,
             STATUS_eq: this.search.select,
+            ORDER_DATE_gte:this.search.orderDateGte,
+            ORDER_DATE_lte: this.search.orderDateIte,
             page: this.page,
             limit: this.limit,
             access_token: this.$store.state.user.token
@@ -135,10 +150,18 @@
       },
 
       onRowClick( row, index){
+          console.log('row：',row);
+          if(row.STATUS=="10421003"){
+              this.isOrderSuccess=true;
+          }else{
+              this.isOrderSuccess=false;
+          }
+        
         this.detailData=row
       },
       onRowDblclick( row, index){
         this.detailData=row
+        console.log('row：',row);
         this.showDetail=Math.random()
       },
       closeDetail(){
@@ -146,32 +169,44 @@
         this.clearTableSelect= Math.random()
         this.getList()
       },
+      //作废按钮---------
       deleteDetailData(){
-        //作废数据接口
-        this.tooltipModel=true;
-        console.log(this.tooltipModel);
-          // this.axios.request({
-          //   url: '/tenant/repair/ttrepairorder/delete',
-          //   method: 'post',
-          //   data: {
-          //     ids: this.detailData.ORDER_ID,
-          //     access_token: this.$store.state.user.token
-          //   }
-          // }).then(res => {
-          //   if (res.success === true) {
-          //     console.log('delete success');
-          //     this.detailData=null;
-          //     this.tooltipModel=true;
-          //     this.getList();
-          //   }
-          // })
+          if(this.detailData == null){
+            this.$Message.info("未选择到数据!");
+          }else{
+            this.tooltipObj.title = '系统提示!';
+            this.tooltipObj.description = '确定要作废吗？';
+            this.tooltipObj.mshow = true;
+          }
       },
-      okdd(){
-
+      del(){
+          this.axios.request({
+            url: '/tenant/repair/ttrepairorder/delete',
+            method: 'post',
+            data: {
+              ids: this.detailData.ORDER_ID,
+              access_token: this.$store.state.user.token
+            }
+          }).then(res => {
+            if (res.success === true) {
+              this.$Message.info("数据作废成功!");
+              this.detailData=null;
+              this.getList();
+            }
+          })
       },
-      cancelss(){
-
-      }
+      changeModal6(type){
+        this.tooltipObj.mshow = type;
+      },
+      //获取搜索框开始时间
+      getOrderDateGte(val){
+        this.search.orderDateGte=val;
+      },
+      //获取搜索框结束时间
+      getOrderDateIte(val){
+        this.search.orderDateIte=val;
+      },
+      
     }
 	}
 </script>
