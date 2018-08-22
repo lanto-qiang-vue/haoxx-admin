@@ -12,8 +12,8 @@
     :footer-hide="false"
   >
     <Collapse v-model="collapse">
-    <Panel name="1">查询
-       <Form ref="formInline"  slot="content" :label-width="80" inline class="detail-form">
+      <Panel name="1">查询
+       <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="80" inline class="detail-form">
           <FormItem label="车牌号码:">
               <Input type="text" v-model="listSearch.PLATE_NUM" placeholder="请输入车牌号" style="min-width: 250px;"> </Input>
           </FormItem>
@@ -26,11 +26,11 @@
                   :key="index" :value="item.code">{{item.name}}</Option>
             </Select>
           </FormItem>
-
-          <FormItem label="预约日期:">
-              <DatePicker format="yyyy-MM-dd" @on-change="getNewDate" type="date" placeholder="请选择..." style="min-width: 250px;"></DatePicker>
+<!--@on-change="getNewDate"-->
+          <FormItem label="预约日期:" prop="ORDER_DATE">
+              <DatePicker format="yyyy-MM-dd" v-model="listSearch.ORDER_DATE" type="date" placeholder="请选择..." style="min-width: 250px;"></DatePicker>
           </FormItem>
-          <FormItem label="预约时间:">
+          <FormItem label="预约时间:" prop="ORDER_TIME">
               <TimePicker v-model="listSearch.ORDER_TIME" type="time" placeholder="请选择..." style="min-width: 250px;"></TimePicker>
           </FormItem>
           <FormItem label="预约类型:">
@@ -67,7 +67,6 @@
       <div>
           <Checkbox v-model="testSingle">是否启用维修套餐</Checkbox>
       </div>
-
     </div>
     <div class="r-list-header">
       <h1>维修项目</h1>
@@ -123,7 +122,7 @@
     <div slot="footer" style="text-align: center; font-size: 18px;">
         <Button @click="commitData" size="large" type="primary"  style="margin-right: 10px; padding: 0 10px;"><Icon type="md-checkmark" size="24"/>保存</Button>
         <Button size="large" type="primary"  style="margin-right: 10px; padding: 0 10px;"><Icon type="md-add" size="24"/>提交</Button>
-        <Button size="large" type="primary"  style=" padding: 0 10px;"><Icon type="ios-car" size="24"/>维修接车</Button>
+        <Button @click="handleSubmit('listSearch')" size="large" type="primary"  style=" padding: 0 10px;"><Icon type="ios-car" size="24"/>维修接车</Button>
     </div>
   </Modal>
 
@@ -136,7 +135,6 @@
 		name: "reservation-list-detail",
     data(){
       return{
-
         titleModel:true,
         showModal: false,
         testSingle:false,
@@ -243,6 +241,14 @@
         },
         searchSelectOption:[],
         searchSelectOption1:[],
+        ruleValidate: {
+            ORDER_DATE: [
+                { required: true, type: 'date', message: '请选择日期', trigger: 'change' }
+            ],
+            ORDER_TIME: [
+                { required: true, type: 'string', message: '请选择时间', trigger: 'change' }
+            ]
+        },
       }
     },
     props:['showDetail', 'detailData'],
@@ -306,7 +312,23 @@
           // console.log(this.listSearch);
 
       },
-      getNewDate(val){
+      handleSubmit (name) {
+          console.log(name);
+          console.log(this.$refs);
+          console.log(this.listSearch);
+          this.$refs[name].validate((valid) => {
+            console.log(valid);
+              if (valid) {
+                  console.log(666);
+                  this.$Message.success('Success!');
+                  
+              } else {
+                  this.$Message.error('Fail!');
+              }
+          })
+      },
+      getNewDate(val,currentVal){
+          console.log("val",val,currentVal);
           this.listSearch.ORDER_DATE=val;
       },
       getOnlyNumber(val){
@@ -317,42 +339,42 @@
 </script>
 
 <style scoped lang="less">
-.search-block{
-  display: inline-block;
-  width: 200px;
-  margin-right: 10px;
-}
-.r-list-search{
-  width: 100%;
-  padding: 20px 0;
-  text-align: center;
-
-}
-.r-list-choose-parts{
-  width: 100%;
-  padding: 20px 0;
-  text-align: center;
-}
-.r-list-money{
-  width: 100%;
-  font-size: 18px;
-  text-align: center;
-
-  span{
-    color:red;
+  .search-block{
+    display: inline-block;
+    width: 200px;
+    margin-right: 10px;
+  }
+  .r-list-search{
+    width: 100%;
+    padding: 20px 0;
+    text-align: center;
 
   }
-  .r-list-money-reset{
-    font-size: 22px;
+  .r-list-choose-parts{
+    width: 100%;
+    padding: 20px 0;
+    text-align: center;
   }
-}
-.r-list-chekbox{
-  width: 100%;
-  overflow: hidden;
-  font-size: 18px;
-  padding: 5px 10px;
-  div{
-    float:right;
+  .r-list-money{
+    width: 100%;
+    font-size: 18px;
+    text-align: center;
+
+    span{
+      color:red;
+
+    }
+    .r-list-money-reset{
+      font-size: 22px;
+    }
   }
-}
+  .r-list-chekbox{
+    width: 100%;
+    overflow: hidden;
+    font-size: 18px;
+    padding: 5px 10px;
+    div{
+      float:right;
+    }
+  }
 </style>

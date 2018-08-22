@@ -93,11 +93,11 @@
         this.page=1;
         this.getList()
       },
-              changePage(page){
+      changePage(page){
         this.page= page
         this.getList()
       },
-            changePageSize(size){
+      changePageSize(size){
         this.limit= size
         this.getList()
       },
