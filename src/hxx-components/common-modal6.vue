@@ -5,7 +5,8 @@
         :title="title"
         :loading="loading"
         @on-ok="asyncOK"
-        @on-cancel="asyncNo">
+        @on-cancel="asyncNo"
+        >
         <p>{{description}}</p>
     </Modal>
 </div>
@@ -37,3 +38,4 @@
         }
     }  
 </script>
+
