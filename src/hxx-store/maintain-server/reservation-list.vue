@@ -1,8 +1,9 @@
 <!--预约单管理-->
 <template>
-  <common-table v-model="tableData" :columns="columns" :total="total"
-    @changePage="changePage" @changePageSize="changePageSize">
-    <div  slot="search">
+  <common-table v-model="tableData" :columns="columns" :total="total" :clearSelect="clearTableSelect"
+                @changePage="changePage" @changePageSize="changePageSize" @onRowClick="onRowClick"
+                @onRowDblclick="onRowDblclick">
+    <div  slot="search"  >
       <div class="search-block">
         <Input v-model="search.input" placeholder="预约单号/预约人/联系电话..."></Input>
       </div>
@@ -19,11 +20,15 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="primary" @click="showDetail=true">新增</Button>
-      <Button type="info">编辑/查看</Button>
+      <Button type="primary" @click="detailData=null,showDetail=Math.random()">新增</Button>
+      <Button type="info" @click="showDetail=Math.random()" :disabled="!detailData">编辑/查看</Button>
       <Button type="error">作废</Button>
     </div>
-    <reservation-list-detail slot="detail" :showDetail="showDetail"></reservation-list-detail>
+
+    <reservation-list-detail slot="detail" class="table-modal-detail" :showDetail="showDetail"
+                             :detailData="detailData" @closeDetail="closeDetail"
+      ></reservation-list-detail>
+
   </common-table>
 </template>
 <script>
@@ -72,7 +77,9 @@
         limit: 25,
         total: 0,
 
-        showDetail: false
+        showDetail: false,
+        detailData: null,
+        clearTableSelect: null,
       }
     },
     mounted () {
@@ -111,6 +118,19 @@
       },
       changePageSize(size){
 		    this.limit= size
+        this.getList()
+      },
+
+      onRowClick( row, index){
+        this.detailData=row
+      },
+      onRowDblclick( row, index){
+        this.detailData=row
+        this.showDetail=Math.random()
+      },
+      closeDetail(){
+        this.detailData= null
+        this.clearTableSelect= Math.random()
         this.getList()
       }
     }

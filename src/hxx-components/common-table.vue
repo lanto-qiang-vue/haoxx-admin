@@ -20,16 +20,18 @@
     :columns="columns"
     stripe
     border
+    :highlight-row="true"
     :show-header="showHeader"
     :width="width"
     :height="tableHeight"
     :loading="loading"
     :disabled-hover="disabledHover"
-    :highlight-row="highlightRow"
     :row-class-name="rowClassName"
     :size="size"
     :no-data-text="noDataText"
     :no-filtered-data-text="noFilteredDataText"
+    @on-row-click="onRowClick"
+    @on-row-dblclick="onRowDblclick"
   ></Table>
   <div class="table-bottom">
     <Page :page-size="25" show-sizer show-elevator show-total :page-size-opts="[25, 50, 100, 150]"
@@ -126,13 +128,19 @@
       searchPlace: {
         type: String,
         default: 'top'
-      }
+      },
+      clearSelect:{}
     },
     data(){
 		  return{
         collapse: ['1','2'],
         tableHeight: 500,
         timer: null
+      }
+    },
+    watch:{
+      clearSelect(val){
+        this.$refs.tablesMain.clearCurrentRow()
       }
     },
     mounted() {
@@ -169,7 +177,13 @@
       },
       changeSelect(selection){
        this.$emit('changeSelect',selection);
-      }
+      },
+      onRowClick( row, index){
+        this.$emit('onRowClick',row, index);
+      },
+      onRowDblclick( row, index){
+        this.$emit('onRowDblclick',row, index);
+      },
     }
 	}
 </script>

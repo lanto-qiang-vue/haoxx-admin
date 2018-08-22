@@ -1,0 +1,54 @@
+.table-modal-detail{
+  max-height: 100%;
+  .ivu-modal-mask{
+    position: absolute;
+  }
+  .ivu-modal-wrap{
+    position: absolute;
+    height: 100%;
+    .ivu-modal{
+      height: 90%;
+      overflow: hidden;
+      top: 50%;
+      transform: translateY(-50%);
+      .ivu-modal-content{
+        overflow: hidden;
+        height: 100%;
+        .ivu-modal-close{
+          z-index: 6;
+        }
+        .ivu-modal-header{
+          position: absolute;
+          left: 0;
+          top: 0;
+          width: 100%;
+          background-color: white;
+          z-index: 5;
+        }
+        .ivu-modal-body{
+          height: 100%;
+          overflow: auto;
+          padding-top: 65px;
+        }
+        .ivu-modal-footer{
+          position: absolute;
+          left: 0;
+          bottom: 0;
+          width: 100%;
+          background-color: white;
+          z-index: 5;
+        }
+      }
+    }
+  }
+}
+
+.detail-form{
+  .ivu-form-item{
+    width: 250px;
+    .ivu-form-item-content>*{
+      width: 100%;
+      min-width: auto!important;
+    }
+  }
+}
