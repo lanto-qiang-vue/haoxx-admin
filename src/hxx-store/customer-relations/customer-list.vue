@@ -17,16 +17,29 @@
       <Button type="primary" @click="showDetail=true">新增</Button>
       <Button type="info">编辑/查看</Button>
       <Button type="error" @click="remove">作废</Button>
+      <Button type="success" @click="lead()">导入</Button>
+      <!-- 上传文件 -->
+
+      <!-- 这里结束 -->
+      <!--多重提示开始-->
+
+      <!--多重提示结束-->
     </div>
+    </div>
+    <!-- 警告提示 -->
+    <common-modal6 slot="modal6" @changeModal6="changeModal6" :description="description" :title="title" :modal6="mshow" :fun="funName" @del="del"></common-modal6>
+    <!-- 警告提示 -->
 <!--     <reservation-list-detail slot="detail" :showDetail="showDetail"></reservation-list-detail> -->
   </common-table>
 </template>
 <script>
     import commonTable from '@/hxx-components/common-table.vue'
       import { getName, getDictGroup } from '@/libs/util.js'
+      import commonModal6 from '@/hxx-components/common-modal6.vue'
+      import env from '_conf/url'
   export default {
     name: "customer-list",
-    components: {commonTable},
+    components: {commonTable,commonModal6},
     data(){
       return{
         columns: [
@@ -60,12 +73,28 @@
         page: 1,
         limit: 25,
         total: 0,
-
-        showDetail: false
+        showDetail: false,
+        list:[],
+        mshow:false,
+        funName:'del',
+        description:'',
+        title:'',
+        modal2:false,
+        modal3:true,
+        modal_loading:false,
+        loadingStatus: false,
+        file:'',
+        filename:'请选择文件excel',
+        token:{access_token:''},
+        filenames:'uploadFile',
+        baseUrl: ''
       }
     },
     mounted () {
+      this.token.access_token = this.$store.state.user.token;
       this.getList()
+      this.baseUrl=env
+      console.log(env)
     },
     methods:{
       getList:function(){
@@ -81,6 +110,7 @@
           }
         }).then(res => {
           if (res.success === true) {
+            this.list = [];
             this.tableData= res.data
             this.total= res.total
           }
@@ -91,6 +121,7 @@
           this.search[i]= ''
         }
         this.page=1;
+        this.list = [];
         this.getList()
       },
               changePage(page){
@@ -99,19 +130,68 @@
       },
             changePageSize(size){
         this.limit= size
+         this.list = [];
         this.getList()
       },
       changeSelect(selection){
-       var list = [];
+        var that = this;
+        that.list = [];
         selection.filter(function(item){
-          list.push(item.CUSTOMER_ID);
+          that.list.push(item.CUSTOMER_ID);
         });
-        console.log(list);
       },
       remove(){
-        alert(1);
+        if(this.list.length == 0){
+          this.$Message.info("未选择到数据!");
+        }else{
+           this.title = '系统提示!';
+           this.description = '客户档案作废后，该客户下属车辆也将作废，确认要作废吗？';
+           this.mshow = true;
+        }
+      },
+      del(){
+          this.axios.request({
+          url: 'tenant/basedata/ttcustomerfile/cancel',
+          method: 'post',
+          data: {
+            ids:this.list.join(','),
+            access_token: this.$store.state.user.token
+          }
+        }).then(res => {
+          if (res.success === true) {
+            this.$Message.success('作废成功');
+            this.getList();
+          } 
+        })
+      },
+      changeModal6(type){
+        this.mshow = type;
+      },
+      down(){
+        window.location.href = "http://hxx.test.hoxiuxiu.com/resources/excel/customer.xls";
+      },
+      beforeUpload(files){
+        this.filename = files.name;
+        this.file = files;
+        return false;
+      },
+      upload(){
+      if(this.filename == '请选择文件excel'){
+       this.$Message.error('请选择excel');
+       return;
       }
+      this.$refs.upload.post(this.file);
+      },
+    uploadClose(){
+      this.modal2 = false;
     },
+    lead(){
+    this.modal2 = true;
+    },
+    uploadSuccess(res){
+    alert(res);
+    },
+    }
   }
 </script>
 <style lang="less" scoped>
@@ -119,5 +199,8 @@
   display: inline-block;
   width: 200px;
   margin-right: 10px;
+}
+.ftext{
+  text-align:left;
 }
 </style>

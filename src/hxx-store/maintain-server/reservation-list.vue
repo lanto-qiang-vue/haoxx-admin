@@ -2,7 +2,7 @@
 <template>
   <common-table v-model="tableData" :columns="columns" :total="total"
     @changePage="changePage" @changePageSize="changePageSize">
-    <div  slot="search"  >
+    <div  slot="search">
       <div class="search-block">
         <Input v-model="search.input" placeholder="预约单号/预约人/联系电话..."></Input>
       </div>
@@ -23,7 +23,7 @@
       <Button type="info">编辑/查看</Button>
       <Button type="error">作废</Button>
     </div>
-<!--     <reservation-list-detail slot="detail" :showDetail="showDetail"></reservation-list-detail> -->
+    <reservation-list-detail slot="detail" :showDetail="showDetail"></reservation-list-detail>
   </common-table>
 </template>
 <script>
