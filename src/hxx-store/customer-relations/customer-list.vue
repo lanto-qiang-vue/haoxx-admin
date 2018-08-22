@@ -23,12 +23,12 @@
     </div>
     <!-- 添加查询修改-->
     <!-- Excel上传 -->
+    <customer-list-detail slot="detail" :showDetail="showDetail" class="table-modal-detail"></customer-list-detail>
     <common-upload-excel slot="excel" :type="etype" :success="'esuccess'" @esuccess="esuccess"></common-upload-excel>
     <!-- 警告提示 -->
     <common-modal6 slot="modal6" :description="description" :title="title" :modal6="mshow" :fun="funName" @del="del"></common-modal6>
     <!-- 警告提示 -->
   </common-table>
-  <customer-list-detail :showDetail="showDetail"></customer-list-detail>
 </div>
 </template>
 <script>
@@ -116,11 +116,11 @@
         this.list = [];
         this.getList()
       },
-              changePage(page){
+      changePage(page){
         this.page= page
         this.getList()
       },
-            changePageSize(size){
+      changePageSize(size){
         this.limit= size
          this.list = [];
         this.getList()

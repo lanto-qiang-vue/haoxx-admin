@@ -1,5 +1,7 @@
 <!--预约单管理-->
 <template>
+  
+<div>
   <common-table v-model="tableData" :columns="columns" :total="total" :clearSelect="clearTableSelect"
                 @changePage="changePage" @changePageSize="changePageSize" @onRowClick="onRowClick"
                 @onRowDblclick="onRowDblclick">
@@ -22,14 +24,24 @@
     <div slot="operate">
       <Button type="primary" @click="detailData=null,showDetail=Math.random()">新增</Button>
       <Button type="info" @click="showDetail=Math.random()" :disabled="!detailData">编辑/查看</Button>
-      <Button type="error">作废</Button>
+      <Button type="error" @click="deleteDetailData">作废</Button>
     </div>
 
     <reservation-list-detail slot="detail" class="table-modal-detail" :showDetail="showDetail"
                              :detailData="detailData" @closeDetail="closeDetail"
       ></reservation-list-detail>
-
+      
   </common-table>
+
+    <Modal
+        v-model="tooltipModel"
+        title="系统提示"
+        @on-ok="okdd"
+        @on-cancel="cancelss">
+        <p>是否删除</p>
+    </Modal>
+    
+</div>
 </template>
 <script>
   import commonTable from '@/hxx-components/common-table.vue'
@@ -40,6 +52,7 @@
     components: {commonTable, reservationListDetail},
     data(){
 		  return{
+        tooltipModel:false,
         columns: [
           // {type: 'selection', width: 50, fixed: 'left'},
           {title: '序号',  minWidth: 60,
@@ -132,6 +145,32 @@
         this.detailData= null
         this.clearTableSelect= Math.random()
         this.getList()
+      },
+      deleteDetailData(){
+        //作废数据接口
+        this.tooltipModel=true;
+        console.log(this.tooltipModel);
+          // this.axios.request({
+          //   url: '/tenant/repair/ttrepairorder/delete',
+          //   method: 'post',
+          //   data: {
+          //     ids: this.detailData.ORDER_ID,
+          //     access_token: this.$store.state.user.token
+          //   }
+          // }).then(res => {
+          //   if (res.success === true) {
+          //     console.log('delete success');
+          //     this.detailData=null;
+          //     this.tooltipModel=true;
+          //     this.getList();
+          //   }
+          // })
+      },
+      okdd(){
+
+      },
+      cancelss(){
+
       }
     }
 	}
