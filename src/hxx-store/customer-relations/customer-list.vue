@@ -23,10 +23,10 @@
     </div>
     <!-- 添加查询修改-->
     <!-- Excel上传 -->
-    <customer-list-detail slot="detail" :showDetail="showDetail" class="table-modal-detail"></customer-list-detail>
-    <common-upload-excel slot="excel" :type="etype" :success="'esuccess'" @esuccess="esuccess"></common-upload-excel>
+    <customer-list-detail  :showDetail="showDetail" class="table-modal-detail"></customer-list-detail>
+    <common-upload-excel  :type="etype" :success="'esuccess'" @esuccess="esuccess"></common-upload-excel>
     <!-- 警告提示 -->
-    <common-modal6 slot="modal6" :description="description" :title="title" :modal6="mshow" :fun="funName" @del="del"></common-modal6>
+    <common-modal6  :description="description" :title="title" :modal6="mshow" :fun="funName" @del="del"></common-modal6>
     <!-- 警告提示 -->
   </common-table>
 </div>
