@@ -35,6 +35,7 @@
   ></Table>
   <div class="table-bottom">
     <Page :page-size="25" show-sizer show-elevator show-total :page-size-opts="[25, 50, 100, 150]"
+    placement="top"
       :total="total" @on-change="changePage" @on-page-size-change="changePageSize"/>
   </div>
   <slot></slot>
@@ -127,7 +128,8 @@
         type: String,
         default: 'top'
       },
-      clearSelect:{}
+      clearSelect:{},
+      show:{}
     },
     data(){
 		  return{
@@ -139,6 +141,9 @@
     watch:{
       clearSelect(val){
         this.$refs.tablesMain.clearCurrentRow()
+      },
+      show(){
+        this.resize(200)
       }
     },
     mounted() {
