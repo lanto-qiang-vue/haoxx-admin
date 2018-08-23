@@ -1,5 +1,5 @@
 <template>
-<div class="common-table">
+<div class="common-table" ref="commonTable">
   <Collapse v-model="collapse" class="table-search" @on-change="changeCollapse">
     <Panel name="1">查询
       <div slot="content">
@@ -151,17 +151,18 @@
     methods:{
       resize(time){
         let self= this
+        let commonTable=this.$refs.commonTable
         clearTimeout(this.timer);
         this.timer = setTimeout(function(){
-          self.tableHeight= document.querySelector(".common-table").offsetHeight - 20 -
-            document.querySelector(".table-search").offsetHeight -
-            document.querySelector(".operate").offsetHeight - 10 -
-            document.querySelector(".table-bottom").offsetHeight
+          self.tableHeight= commonTable.offsetHeight - 20 -
+            commonTable.querySelector(".table-search").offsetHeight -
+            commonTable.querySelector(".operate").offsetHeight - 10 -
+            commonTable.querySelector(".table-bottom").offsetHeight
 
-          console.log(".common-table", document.querySelector(".common-table").offsetHeight)
-          console.log(".table-search", document.querySelector(".table-search").offsetHeight)
-          console.log(".operate", document.querySelector(".operate").offsetHeight)
-          console.log(".table-bottom", document.querySelector(".table-bottom").offsetHeight)
+          console.log(".common-table", commonTable.offsetHeight)
+          console.log(".table-search", commonTable.querySelector(".table-search").offsetHeight)
+          console.log(".operate", commonTable.querySelector(".operate").offsetHeight)
+          console.log(".table-bottom", commonTable.querySelector(".table-bottom").offsetHeight)
         }, time);
       },
       changeCollapse(){
