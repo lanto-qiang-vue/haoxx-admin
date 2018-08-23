@@ -54,7 +54,7 @@
               <InputNumber :min="1" v-model="listSearch.MILEAGE" style="min-width: 250px;" placeholder="最大不超过八位数"></InputNumber>
           </FormItem>
        </Form>
-       <Form ref="formInline"  slot="content" :label-width="80">
+       <Form ref="formInline"  slot="content" :label-width="80">2
 
           <FormItem label="故障描述:">
               <Input type="textarea" v-model="listSearch.FAULT_DESC" placeholder="请输入故障描述"> </Input>
