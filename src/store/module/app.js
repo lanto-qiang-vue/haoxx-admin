@@ -1,4 +1,4 @@
-import { getBreadCrumbList, setTagNavListInLocalstorage, getMenuByRouter, getTagNavListFromLocalstorage, getHomeRoute, setDict, getDict} from '@/libs/util'
+import { getBreadCrumbList, setTagNavListInLocalstorage, getMenuByRouter, getTagNavListFromLocalstorage, getHomeRoute, setDict, getDict,getTenant,setTenant} from '@/libs/util'
 import routers from '@/router/routers'
 export default {
   state: {
@@ -7,7 +7,8 @@ export default {
     homeRoute: getHomeRoute(routers),
     local: '',
 
-    dict: getDict() || ''
+    dict: getDict() || '',
+    tenant: getTenant() || '',
   },
   getters: {
     // menuList: (state, getters, rootState) => getMenuByRouter(routers, rootState.user.access)
@@ -47,6 +48,10 @@ export default {
     setDict (state, info) {
       state.dict = info
       setDict(info)
+    },
+    setTenant(state,info){
+       state.tenant = info
+       setTenant(info)
     }
   }
 }
