@@ -10,7 +10,7 @@
     :transfer= "false"
     :footer-hide="true"
   >
-      <Tabs>
+      <Tabs >
                 <!-- 车辆档案 -->
         <TabPane label="车辆档案" :disabled="tabshow > 1" icon="logo-windows">
           <!-- <Form> -->
@@ -23,9 +23,9 @@
 <!--           </FormItem>
         </Form> -->
         <!-- 车辆档案列表 -->
-        <div>
-        <common-table :columns="columns"  v-model="tableData" ></common-table>
-      </div>
+        
+        <common-table :columns="columns"  v-model="tableData" :show="show"></common-table>
+    
         </TabPane>
         <!-- 车辆档案结束 -->
         <!-- 基本信息 -->
@@ -125,16 +125,16 @@
   </Modal>
 </template>
 <script>
+    import commonTable from '@/hxx-components/common-table.vue'
     import { getName, getDictGroup } from '@/libs/util.js'
      import { formatDate } from '@/libs/tools.js'
        import commonModal6 from '@/hxx-components/common-modal6.vue'
-       import commonTable from '@/hxx-components/common-table.vue'
 	export default {
 		name: "customer-list-detail",
     components: {commonModal6,commonTable},
     data(){
       return {
-        showModal:true ,
+        showModal:true,
         collapse:'1',
         tabshow:0,
         sexGroup:[],
@@ -288,6 +288,7 @@
       this.formData.attach = 0;
       // console.log(this.formData);
       //下拉数据处理结束
+      
     },
     methods:{
       visibleChange(){},
@@ -430,6 +431,16 @@
       float:right;
     }
   }
+      .table-bottom{
+            position:relative;
+            height: 52px;
+            padding: 100px;
+            width: 100%;
+            left: 0;
+            bottom: 0;
+            background-color: white;
+            z-index: 4;
+        }
 </style>
 <style lang="less">
 .table-modal-detail .ivu-modal-wrap .ivu-modal .ivu-modal-content .ivu-modal-body{

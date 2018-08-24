@@ -7,40 +7,8 @@
         :transfer= "false"
         :footer-hide="false"
     >
-    <common-table v-model="tableData" :columns="columns" :show="showTenanceItems" :total="total" @changePage="changePage" 
-        @changePageSize="changePageSize" @onRowClick="onRowClick">
-        <div slot="search">
-            <Form :model="formItem" inline>
-                <FormItem>
-                    <Select v-model="formItem.select" style="min-width: 250px;" @on-change="changeCarType">
-                        <Option v-for="(item, index) in getCarTypeData" :key="index" :value="item.cartype">{{item.CARNAME}}</Option>
-                    </Select>
-                </FormItem>
-                <FormItem>
-                    <Select :disabled="isdisabled" v-model="formItem.select1" style="min-width: 250px;">
-                        <Option v-for="(item, index) in carItemType" :key="index" :value="item.cartype">{{item.TYPE_NAME}}</Option>
-                    </Select>
-                </FormItem>
-                <FormItem>
-                    <Select :disabled="isdisabled" v-model="formItem.select2" style="min-width: 250px;">
-                        <Option v-for="(item, index) in banJinListData" :key="index" :value="item.ENGINE_TYPE">{{item.ENGINE_TYPE_NAME}}</Option>
-                    </Select>
-                </FormItem>
-                <FormItem>
-                    <Select :disabled="isdisabled" v-model="formItem.select3" style="min-width: 250px;">
-                        <Option v-for="(item, index) in carListData" :key="index" :value="item.CLASS_TYPE">{{item.CLASS_NAME}}</Option>
-                    </Select>
-                </FormItem>
-           </Form>
-           <div class="search-block">
-                <Input  placeholder="预约单号/预约人/联系电话..." v-model="search.input"></Input>
-            </div>
-            <ButtonGroup size="small">
-                <Button type="primary" @click="searchVehicle"><Icon type="ios-search" size="24"/></Button>
-                <Button type="primary" @click="resetVehicle" style="margin-right:20px; margin-left: 1px;"><Icon type="ios-undo" size="24"/></Button>
-                <Button type="primary" ><Icon type="md-add" size="24"/>添加客户车辆</Button>
-            </ButtonGroup>
-        </div>
+    <common-table v-model="tableData" :columns="columns" :show="showTenanceItems" :total="total" @changePage="changePage"> 
+ 
     </common-table>
   </Modal>
 </template>
@@ -350,39 +318,3 @@ import commonTable from '@/hxx-components/common-table.vue'
         }
 	}
 </script>
-
-<style lang="less" scoped>
-    .search-block{
-        display: inline-block;
-        width: 200px;
-        margin-right: 10px;
-    }
-    .common-table{
-        padding: 10px;
-        background-color: white;
-        height: 100%;
-        overflow: hidden;
-        position: relative;
-        .table-search{
-        }
-        .operate{
-            margin-top: 10px;
-            padding: 15px;
-            border: 1px solid #dcdee2;
-            border-radius: 3px;
-        }
-        .main-table{
-            margin-top: 10px;
-        }
-        .table-bottom{
-            position: absolute;
-            height: 52px;
-            padding: 10px;
-            width: 100%;
-            left: 0;
-            bottom: 0;
-            background-color: white;
-            z-index: 4;
-        }
-    }
-</style>
