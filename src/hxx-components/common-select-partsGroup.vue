@@ -9,41 +9,29 @@
         :transfer= "false"
         :footer-hide="false"
     >
-
-    <common-table v-model="tableData" :columns="columns" :show="showTenanceItems" :total="total" @changePage="changePage" 
+    <common-table v-model="tableData" :columns="columns" :show="showSelectPartsGroup" :total="total" @changePage="changePage" 
         @changePageSize="changePageSize" @onRowClick="onRowClick">
         <div slot="search">
-            <Form inline>
-                <FormItem>
-                    <Select v-model="test1" style="min-width: 250px;" @on-change="changeCarType">
-                        <Option v-for="(item, index) in getCarTypeData" :key="index" :value="item.cartype">{{item.CARNAME}}</Option>
+            <Form inline :label-width="70">
+                <FormItem label="配件分类:">
+                    <Select v-model="test1" style="min-width: 200px;">
+                        <Option v-for="(item, index) in getSellItem" :key="index" :value="item.TYPE_ID">{{item.TYPE_NAME}}</Option>
                     </Select>
                 </FormItem>
-                <FormItem>
-                    <Select :disabled="isdisabled" v-model="test2" style="min-width: 250px;">
-                        <Option v-for="(item, index) in carItemType" :key="index" :value="item.TYPE_ID">{{item.TYPE_NAME}}</Option>
-                    </Select>
-                </FormItem>
-                <FormItem>
-                    <Select :disabled="isdisabled" v-model="test3" style="min-width: 250px;">
-                        <Option v-for="(item, index) in banJinListData" :key="index" :value="item.ENGINE_TYPE">{{item.ENGINE_TYPE_NAME}}</Option>
-                    </Select>
-                </FormItem>
-                <FormItem>
-                    <Select :disabled="isdisabled" v-model="test4" style="min-width: 250px;" >
-                        <Option v-for="(item, index) in carListData" :key="index" :value="item.CLASS_TYPE">{{item.CLASS_NAME}}</Option>
-                    </Select>
-                </FormItem>
-           </Form>
-           <div class="search-block">
-                <Input  placeholder="预约单号/预约人/联系电话..." v-model="test5"></Input>
-            </div>
-            <ButtonGroup size="small">
-                <Button type="primary" title="查询" @click="searchVehicle"><Icon type="ios-search" size="24"/></Button>
-                <Button type="primary" title="重置" @click="resetVehicle" style="margin-right:20px; margin-left: 1px;"><Icon type="ios-undo" size="24"/></Button>
-            </ButtonGroup>
-        </div>
+                <FormItem :label-width="10">
+                    <Input  placeholder="预约单号/预约人/联系电话..." v-model="test3" class="search-block"></Input>
+                    <ButtonGroup size="small">
+                        <Button type="primary" title="查询" @click="searchVehicle"><Icon type="ios-search" size="24"/></Button>
+                        <Button type="primary" title="重置" @click="resetVehicle"><Icon type="ios-undo" size="24"/></Button>
+                        <Button type="primary"><Icon type="md-add" size="24"/>新增配件</Button>
+                    </ButtonGroup>
+                    
 
+                </FormItem>
+                
+           </Form>
+           
+        </div>
     </common-table>
   </Modal>
 </template>
@@ -52,16 +40,14 @@
 import commonTable from '@/hxx-components/common-table.vue'
   import { getName, getDictGroup } from '@/libs/util.js'
 	export default {
-		name: "common-tenance-items",
-        props:['showTenanceItems','initGetItem'],
+		name: "common-select-partsGroup",
+        props:['showSelectPartsGroup','initPartsGroup'],
         components: {commonTable},
         data(){
             return{
                 test1:'',
                 test2:'',
                 test3:'',
-                test4:'',
-                test5:'',
                 getCarTypeData:[],//汽车类型集合
                 getBanJinListData:[],//发动机类型集合
                 getCarListData:[],//汽车参数集合
@@ -119,29 +105,34 @@ import commonTable from '@/hxx-components/common-table.vue'
                 showOnoff:false,
                 tableData:[],
                 selectData:[],
-                
+                //表格内容数据----
+
                 columns: [
                     // {type: 'selection', width: 50, fixed: 'left'},
                     {title: '序号',  minWidth: 60,
                         render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
                     },
-                    {title: '项目编号', key: 'ITEM_NO', sortable: true, minWidth: 200,
+                    {title: '配件名称', key: 'NAME', sortable: true, minWidth: 200,
                         //render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.ORDER_TYPE))
                     },
-                    {title: '项目名称', key: 'NAME', sortable: true, minWidth: 200,
+                    {title: '原厂编号', key: 'FACTORY_NO', sortable: true, minWidth: 200,
                         // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.VEHICLE_COLOR))
                     },
-                    {title: '项目分类', key: 'TYPE_NAME', sortable: true, minWidth: 200},
-                    {title: '计费标准', key: 'CHARGE_TYPE', sortable: true, minWidth: 200,
-                        render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.CHARGE_TYPE))
+                    {title: '配件分类', key: 'TYPE_NAME', sortable: true, minWidth: 200},
+                    {title: '品牌', key: 'BRAND', sortable: true, minWidth: 200,
+                        render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.BRAND))
                     },
-                    {title: '标准金额', key: 'REPAIR_MONEY', sortable: true, minWidth: 200},
-                    {title: '标准工时', key: 'REPAIR_TIME', sortable: true, minWidth: 200,
-                        // render: (h, params) => h('span', params.row.ORDER_DATE.substr(0, 10))
+                    {title: '规格', key: 'FORMAT', sortable: true, minWidth: 200},
+                    {title: '包装单位', key: 'UNIT', sortable: true, minWidth: 200,
+                        render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.UNIT))
                     },
-                    {title: '油漆面数', key: 'PAINT_NUM', sortable: true, minWidth: 200},
-                    {title: '发动机类型', key: 'ENGINE_TYPE_NAME', sortable: true, minWidth: 200},
-                    {title: '汽车排量', key: 'CLASS_NAME', sortable: true, minWidth: 200},
+                    {title: '采购指导价(元)', key: 'PURCHASE_PRICE', sortable: true, minWidth: 100},
+                    {title: '含税销售价(元)', key: 'SALES_PRICE', sortable: true, minWidth: 70,
+                        // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.UNIT))
+                    },
+                    {title: '销售税率', key: 'RATE', sortable: true, minWidth: 70,
+                        // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.UNIT))
+                    },
                     {title: '操作', key: 'operation', sortable: true, minWidth: 80,
                         render: (h, params) => {
                             let buttonContent= this.state(params.row)? '取消选择':'选择';
@@ -171,26 +162,21 @@ import commonTable from '@/hxx-components/common-table.vue'
                     },
                 ],
                 total: 0,
-                
                 page: 1,
                 limit: 25,
-                buttonContent:"选择",//自定义按钮内容
-                isdisabled:true,//判断下拉框是否下拉
+
+                getSellItem:[],//配件分类
+                
 
             }
         },
         watch:{
-            showTenanceItems(){
-                console.log("点击选择项目了");
+            showSelectPartsGroup(){
+                console.log("点击选择配件了");
                 this.showOnoff=true;
-                // this.resetVehicle();//首次进来数据重置
-                this.selectData=this.initGetItem;
-
                 this.getList();
-                this.getCarType();
-                this.getBanJinList();
-                this.getCarList();
-                
+                this.getTypeSellList();
+                this.selectData=this.initPartsGroup;
             }
         },
         mounted() {
@@ -199,7 +185,7 @@ import commonTable from '@/hxx-components/common-table.vue'
         methods:{
             state(item){
                 for(let i in this.selectData){
-                    if(this.selectData[i].ITEM_ID== item.ITEM_ID){
+                    if(this.selectData[i].PART_NO== item.PART_NO){
                         return true
                     }
                 }
@@ -208,26 +194,24 @@ import commonTable from '@/hxx-components/common-table.vue'
             select(item){
                 let flag=true
                 for(let i in this.selectData){
-                    if(this.selectData[i].ITEM_ID== item.ITEM_ID){
+                    if(this.selectData[i].PART_NO== item.PART_NO){
                         this.selectData.splice(i,1)
                         flag= false
                         break;
                     }
                 }
                 if(flag) this.selectData.push(item);
-                this.$emit('sTenanceItem', this.selectData);
+                this.$emit('selectPartsGroup', this.selectData);
                 console.log('this.selectData',this.selectData)
             },
+            //获取表格数据
             getList(){
                 this.axios.request({
-                    url: '/tenant/basedata/repairiteminfo/infolist1',
+                    url: '/tenant/basedata/partinfo/infolist',
                     method: 'post',
                     data: {
-                        cartype_eq: this.test1,
-                        TYPE_ID_eq: this.test2,
-                        ENGINE_TYPE_eq: this.test3,
-                        CLASS_TYPE_eq: this.test4,
-                        KEYWORD: this.test5,
+                        TYPE_ID_eq: this.test1,
+                        KEYWORD: this.test3,
                         page: this.page,
                         limit: this.limit,
                         access_token: this.$store.state.user.token
@@ -241,9 +225,10 @@ import commonTable from '@/hxx-components/common-table.vue'
                     }
               })
             },
-            getCarType(){
+            //获取配件分类列表数据----------
+            getTypeSellList(){
                 this.axios.request({
-                    url: '/tenant/basedata/repairiteminfo/getCarTypeSelList',
+                    url: '/tenant/basedata/partinfo/getTypeSelList',
                     method: 'post',
                     data: {
                         page: this.page,
@@ -252,95 +237,11 @@ import commonTable from '@/hxx-components/common-table.vue'
                     }
                 }).then(res => {
                     if (res.success === true) {
-                        this.getCarTypeData=res.data;
+                        console.log(res.data);
+                        this.getSellItem=res.data;
                     }
               })
             },
-            getBanJinList(){
-                this.axios.request({
-                    url: '/tenant/basedata/repairiteminfo/getBanJinList',
-                    method: 'post',
-                    data: {
-                        page: this.page,
-                        limit: this.limit,
-                        access_token: this.$store.state.user.token
-                    }
-                }).then(res => {
-                    if (res.success === true) {
-                        this.getBanJinListData=res.data;
-                    }
-              })
-            },
-            getCarList(){
-                this.axios.request({
-                    url: '/tenant/basedata/repairiteminfo/getCarList',
-                    method: 'post',
-                    data: {
-                        page: this.page,
-                        limit: this.limit,
-                        access_token: this.$store.state.user.token
-                    }
-                }).then(res => {
-                    if (res.success === true) {
-                        this.getCarListData=res.data;
-                    }
-              })
-            },
-            //改变汽车类型时过滤参数;
-            changeCarType(val){
-                console.log(val);
-                // console.log(this.search.select1)
-                
-                
-                this.test2="";
-                this.test3="";
-                this.test4="";
-                this.test5="";
-
-                this.carItemType=[];
-                this.carListData=[];
-                this.banJinListData=[];
-                if(val){
-                    this.isdisabled=false;
-                    let carType=null;
-                    for(let i in this.getCarTypeData){
-                        if(val==this.getCarTypeData[i].cartype){
-                            carType=this.getCarTypeData[i].CARNAME;
-                            break;
-                        }
-                    }
-                    
-                    for(let i in this.getItemType){
-                        if(val==this.getItemType[i].cartype){
-                            this.carItemType.push(this.getItemType[i]);
-                        }
-                    }
-                    for(let i in this.getCarListData){
-                        let carListArr=this.getCarListData[i].CLASS_NAME.split('-');
-                        // console.log(carListArr);
-                        if(carListArr[0]==carType){
-                            let newJson={"CLASS_TYPE":this.getCarListData[i].CLASS_TYPE,"CLASS_NAME":carListArr[1]};
-                            this.carListData.push(newJson);
-                            // console.log(this.carListData);
-                        }
-                    }
-                    if(val==3){
-                        this.banJinListData=[{ENGINE_TYPE: 1, ENGINE_TYPE_NAME: "化油器"},{ENGINE_TYPE: 2, ENGINE_TYPE_NAME: "电喷"}];
-                    }else if(val==4){
-                        this.banJinListData=[{ENGINE_TYPE: 1, ENGINE_TYPE_NAME: "化油器"},{ENGINE_TYPE: 2, ENGINE_TYPE_NAME: "电喷"}];
-                    }else if(val==5){
-                        this.banJinListData=[];
-                        this.banJinListData=[{ENGINE_TYPE: 0, ENGINE_TYPE_NAME: "其他"}];
-                    }else{
-                        this.banJinListData=[];
-                    }
-                }
-                console.log("this.test1",this.test1);
-                console.log("this.carItemType",this.carItemType)
-                console.log("this.carListData",this.carListData)
-                console.log("this.banJinListData",this.banJinListData)
-            },
-
             changePage(page){
                 this.page= page
                 this.getList()
@@ -351,26 +252,57 @@ import commonTable from '@/hxx-components/common-table.vue'
             },
             onRowClick( row, index){
                 console.log(row);
-                // this.showOnoff=false;
-                // this.$emit('selectCar', row);
+                
             },
             searchVehicle(){
-                
                 this.page=1;
                 this.getList();
             },
             resetVehicle(){
-                // console.log("重置之前先打印",this.test1,this.test2,this.test3,this.test4,this.test5);
                 this.test1="";
                 this.test2="";
                 this.test3="";
-                this.test4="";
-                this.test5="";
-                // console.log("重置之 后 打印",this.test1,this.test2,this.test3,this.test4,this.test5);
-                this.isdisabled=true;
+                this.page=1;
+                this.getList();
             },
             
 
         }
 	}
 </script>
+
+<style lang="less" scoped>
+    .search-block{
+        display: inline-block;
+        width: 200px;
+        margin-right: 10px;
+    }
+    .common-table{
+        padding: 10px;
+        background-color: white;
+        height: 100%;
+        overflow: hidden;
+        position: relative;
+        .table-search{
+        }
+        .operate{
+            margin-top: 10px;
+            padding: 15px;
+            border: 1px solid #dcdee2;
+            border-radius: 3px;
+        }
+        .main-table{
+            margin-top: 10px;
+        }
+        .table-bottom{
+            position: absolute;
+            height: 52px;
+            padding: 10px;
+            width: 100%;
+            left: 0;
+            bottom: 0;
+            background-color: white;
+            z-index: 4;
+        }
+    }
+</style>
