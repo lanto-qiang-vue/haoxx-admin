@@ -11,6 +11,23 @@
     :footer-hide="true"
   >
       <Tabs>
+                <!-- 车辆档案 -->
+        <TabPane label="车辆档案" :disabled="tabshow > 1" icon="logo-windows">
+          <!-- <Form> -->
+          <!-- <FormItem> -->
+<!--             <Button @click="showModal = false">返回</Button>
+            <Button type="primary" style="margin-left: 8px">新增</Button>
+            <Button type="primary" style="margin-left: 8px">修改</Button>
+            <Button type="primary" style="margin-left: 8px">查看</Button>
+            <div style="clear:both;"></div> -->
+<!--           </FormItem>
+        </Form> -->
+        <!-- 车辆档案列表 -->
+        <div>
+        <common-table :columns="columns"  v-model="tableData" ></common-table>
+      </div>
+        </TabPane>
+        <!-- 车辆档案结束 -->
         <!-- 基本信息 -->
         <TabPane label="基本信息" icon="logo-apple">
     <Form ref="formData" :model="formData" :label-width="80" :rules="ruleValidate" inline>
@@ -37,7 +54,7 @@
                   <FormItem label="生日:">
            <!--    <Input type="text" style="min-width: 250px;"> </Input> -->
                       <Col span="11">
-                    <DatePicker type="date" placeholder="Select date" v-model="formData.birthday"  format="yyyy-MM-dd" style="min-width: 200px;"></DatePicker>
+                    <DatePicker type="date" placeholder="" v-model="formData.birthday"  format="yyyy-MM-dd" style="min-width: 200px;"></DatePicker>
                 </Col>
           </FormItem>
                    </FormItem>
@@ -98,10 +115,7 @@
           </FormItem>
        </Form>
         </TabPane>
-        <!-- 车辆档案 -->
-        <TabPane label="车辆档案" :disabled="tabshow < 1" icon="logo-windows">
-          
-        </TabPane>
+
         <!-- 会员卡信息 -->
         <TabPane label="会员卡信息" :disabled="tabshow < 1" icon="logo-tux">
           
@@ -114,12 +128,13 @@
     import { getName, getDictGroup } from '@/libs/util.js'
      import { formatDate } from '@/libs/tools.js'
        import commonModal6 from '@/hxx-components/common-modal6.vue'
+       import commonTable from '@/hxx-components/common-table.vue'
 	export default {
 		name: "customer-list-detail",
-    components: {commonModal6},
+    components: {commonModal6,commonTable},
     data(){
       return {
-        showModal:false,
+        showModal:true ,
         collapse:'1',
         tabshow:0,
         sexGroup:[],
@@ -127,6 +142,8 @@
         levelGroup:[],
         typeGroup:[],
         attachGroup:[],
+        store:{},//存储使用
+        tableData:[],
         formData:{
           name:'',
           phone:'',
@@ -157,21 +174,76 @@
           { type:'string',pattern:/^[1][3,4,5,7,8][0-9]{9}$/, message:'请输入有效手机号码', trigger:'blur'}
           ],
           idcard:[{ type:'string',pattern:/(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/, message:'请输入正确的身份证号码', trigger:'blur'}]
-        }
+        },
+                columns: [
+          {title: '序号',  minWidth: 80,
+            render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
+          },
+           {title: '车牌号', key: 'CODE', sortable: true, minWidth: 300},
+          {title: '车辆颜色', key: 'NAME', sortable: true, minWidth: 300},
+          {title: '车型', key: 'MOBILE_PHONE', sortable: true, minWidth: 300},
+          {title: '车架号', key: 'CUSTOMER_TYPE', sortable: true, minWidth: 300,
+            render: (h, params) => h('span',getName(this.$store.state.app.dict, params.row.CUSTOMER_TYPE))
+          },
+          {title: '发动机型号', key: 'CUSTOMER_LEVEL', sortable: true, minWidth: 300,
+            render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.CUSTOMER_LEVEL))
+          },
+          {title: '最近来厂日期', key: 'FOLLOW_PERSON', sortable: true, minWidth: 150},
+          {title: '创建人', key: 'CREATER', sortable: true, minWidth: 150
+            // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.CREATER))
+          },
+          {title: '创建时间', key: 'CREATE_TIME', sortable: true, minWidth: 150
+          },
+        ]
       }
+
     },
-    props:['show','detail'],
+    props:['show','detail','sign'],
     watch:{
       show(){
         this.showModal = true;
       },
       detail(row){
-        console.log(row);
+       // console.log(row);
+       var name = row.FOLLOW_PERSON;
+       var attach = 0;
+       for(var i=0;i<this.attachGroup.length;i++){
+         if(this.attachGroup[i].USER_NAME == name){
+          attach = this.attachGroup[i].USER_ID;
+          break;
+         }
+       }
+       this.tabshow = row.CUSTOMER_ID;
+       var that = this.formData;
+       that.name = row.NAME;
+       that.email = row.EMAIL;
+       that.phone = row.MOBILE_PHONE;
+       that.qq = row.QQ_NO;
+       that.wx = row.WEIXIN_NO;
+       that.address = row.ADDRESS;
+       that.tel = row.TELPHONE;
+       that.idcard = row.LICENSE_NO;
+       that.birthday = row.BIRTHDAY;
+       that.sex = row.SEX;
+       that.resource = row.CUSTOMER_SOURCE;
+       that.level = row.CUSTOMER_LEVEL;
+       that.type = row.CUSTOMER_TYPE;
+       that.remark = row.REMARK;
+       that.snumber = row.TAX_NO;
+       that.attach = attach;
+       this.store = that;
+       // console.log(row.FOLLOW_PERSON);
+      },
+      sign(type){
+      //1新增 2 双击新增 3 单选新增
+      if(type === 1) this.clear();
+      if(type === 3) this.formData = this.store;
       }
     },
     mounted(){
       // 下拉数据处理开始
       //性别组
+      this.getList();
       this.sexGroup = getDictGroup(this.$store.state.app.dict, '1003');
       //默认选中性别第一个
       this.formData.sex = this.sexGroup[0].code;
@@ -273,6 +345,46 @@
               this.$Message.success('修改成功');
              }
           } 
+        })
+      },
+      clear(){
+        this.tabshow = 0;
+        this.formData = {
+          name:'',
+          phone:'',
+          address:'',
+          tel:'',
+          idcard:'',
+          birthday:'',
+          sex:'',
+          resource:'',
+          level:'',
+          type:'',
+          qq:'',
+          wx:'',
+          attach:'',
+          email:'',
+          snumber:'',
+          remark:'',
+        }
+      },
+      getList(){
+                     this.axios.request({
+          url: 'tenant/basedata/ttcustomerfile/list',
+          method: 'post',
+          data: {
+            KEYWORD:"",
+            PLATE_NUM:"",
+            page: 1,
+            limit: 25,
+            access_token: this.$store.state.user.token
+          }
+        }).then(res => {
+          if (res.success === true) {
+            this.list = [];
+            this.tableData= res.data
+            this.total= res.total
+          }
         })
       }
     }

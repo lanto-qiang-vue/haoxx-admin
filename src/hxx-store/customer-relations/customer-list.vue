@@ -1,7 +1,7 @@
 <template>
   <common-table v-model="tableData" :columns="columns" :total="total"
-    @changePage="changePage" @changePageSize="changePageSize" @changeSelect="changeSelect" @onRowDblclick="double">
-    <div  slot="search"  >
+    @changePage="changePage" ref="selection" @changePageSize="changePageSize" @changeSelect="changeSelect" @onRowDblclick="double">
+    <div slot="search"  >
       <div class="search-block">
         <Input v-model="search.input" placeholder="客户编号/名称/手机号码..."></Input>
       </div>
@@ -14,14 +14,14 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="primary" @click="showDetail=Math.random()">新增</Button>
-      <Button type="info">编辑/查看</Button>
-      <Button type="error" @click="remove">作废</Button>
+      <Button type="primary" @click="showDetail=Math.random(),sign=1">新增</Button>
+      <Button type="info" @click="edit()">编辑/查看</Button>
+      <Button type="error" @click="remove()">作废</Button>
       <Button type="success" @click="lead()">导入</Button>
-      <Button type="primary" @click="expor">导出</Button>
+      <Button type="primary" @click="expor()">导出</Button>
     </div>
     <!-- 添加查询修改-->
-    <customer-list-detail :show="showDetail" :detail="detail" class="table-modal-detail"></customer-list-detail>
+    <customer-list-detail :show="showDetail" :sign="sign" :detail="detail" class="table-modal-detail"></customer-list-detail>
     <!-- Excel上传 -->
     <common-upload-excel  :type="etype" :success="'esuccess'" @esuccess="esuccess"></common-upload-excel>
     <!-- 警告提示 -->
@@ -80,6 +80,8 @@
         title:'',//modal6标题
         etype:false,//excel上传显示
         showDetail:true,//detail查询修改
+        sign:1,//1新增,2修改
+        selection:{},//存储选择的对象
       }
     },
     mounted () {
@@ -125,6 +127,7 @@
         this.getList()
       },
       changeSelect(selection){
+        this.selection = selection;
         var that = this;
         that.list = [];
         selection.filter(function(item){
@@ -192,8 +195,16 @@
     },
     double(row,index){
      this.showDetail = Math.random();
+     this.sign = 2;
      this.detail = row;
-    }
+    },
+    edit(){
+     if(this.list.length < 1) {this.$Message.info("未选择到数据!");return;}
+     if(this.list.length > 1) {this.$Message.info("至多选取一条!");return;}
+     this.showDetail = Math.random();
+     this.sign = 3;
+     this.detail = this.selection[0];
+    },
     }
   }
 </script>

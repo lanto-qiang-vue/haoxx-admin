@@ -1,13 +1,13 @@
 <template>
 <div class="common-table" ref="commonTable">
-  <Collapse v-model="collapse" class="table-search" @on-change="changeCollapse">
+  <Collapse v-show="headerShow" v-model="collapse" class="table-search" @on-change="changeCollapse">
     <Panel name="1">查询
       <div slot="content">
         <slot name="search"></slot>
       </div>
     </Panel>
   </Collapse>
-  <div class="operate">
+  <div v-show="operateShow" class="operate">
     <slot name="operate"></slot>
   </div>
   <div>
@@ -50,6 +50,18 @@
         type: Array,
         default () {
           return []
+        }
+      },
+      operateShow:{
+        type:Boolean,
+        default(){
+          return true
+        }
+      },
+      headerShow:{
+        type:Boolean,
+        default(){
+          return true
         }
       },
       columns: {
@@ -159,10 +171,11 @@
         let commonTable=this.$refs.commonTable
         clearTimeout(this.timer);
         this.timer = setTimeout(function(){
+          // alert(commonTable.offsetHeight);
           self.tableHeight= commonTable.offsetHeight - 20 -
             commonTable.querySelector(".table-search").offsetHeight -
             commonTable.querySelector(".operate").offsetHeight - 10 -
-            commonTable.querySelector(".table-bottom").offsetHeight
+            commonTable.querySelector(".table-bottom").offsetHeight + 40
 
           console.log(".common-table", commonTable.offsetHeight)
           console.log(".table-search", commonTable.querySelector(".table-search").offsetHeight)
