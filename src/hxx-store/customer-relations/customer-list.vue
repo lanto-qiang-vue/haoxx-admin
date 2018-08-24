@@ -1,7 +1,6 @@
 <template>
-  <div>
   <common-table v-model="tableData" :columns="columns" :total="total"
-    @changePage="changePage" @changePageSize="changePageSize" @changeSelect="changeSelect">
+    @changePage="changePage" @changePageSize="changePageSize" @changeSelect="changeSelect" @onRowDblclick="double">
     <div  slot="search"  >
       <div class="search-block">
         <Input v-model="search.input" placeholder="客户编号/名称/手机号码..."></Input>
@@ -15,21 +14,20 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="primary" @click="showDetail=true">新增</Button>
+      <Button type="primary" @click="showDetail=Math.random()">新增</Button>
       <Button type="info">编辑/查看</Button>
       <Button type="error" @click="remove">作废</Button>
       <Button type="success" @click="lead()">导入</Button>
       <Button type="primary" @click="expor">导出</Button>
     </div>
     <!-- 添加查询修改-->
+    <customer-list-detail :show="showDetail" :detail="detail" class="table-modal-detail"></customer-list-detail>
     <!-- Excel上传 -->
-    <customer-list-detail  :showDetail="showDetail" class="table-modal-detail"></customer-list-detail>
     <common-upload-excel  :type="etype" :success="'esuccess'" @esuccess="esuccess"></common-upload-excel>
     <!-- 警告提示 -->
     <common-modal6  :description="description" :title="title" :modal6="mshow" :fun="funName" @del="del"></common-modal6>
     <!-- 警告提示 -->
   </common-table>
-</div>
 </template>
 <script>
     import commonTable from '@/hxx-components/common-table.vue'
@@ -73,6 +71,7 @@
         },
         page: 1,
         limit: 25,
+        detail:{},
         total: 0,
         list:[],//复选框选中参数
         mshow:false,//modal6显示隐藏
@@ -191,6 +190,10 @@
       //导出Excel文件
       window.location.href = "http://hxx.test.hoxiuxiu.com/tenant/basedata/ttcustomerfile/doExport?KEYWORD="+this.search.input+"&PLATE_NUM="+this.search.number+"&access_token="+this.$store.state.user.token;
     },
+    double(row,index){
+     this.showDetail = Math.random();
+     this.detail = row;
+    }
     }
   }
 </script>

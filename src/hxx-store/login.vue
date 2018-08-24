@@ -195,6 +195,7 @@ export default {
         if (res.success === true) {
           this.$store.commit('setToken', res.data.tokenStr)
           this.$store.commit('setDict', res.data.dict)
+          this.$store.commit('setTenant',res.data.tenantUsers);
           let getInfo = Promise.all([this.getUser(res.data.tokenStr), this.getMenu(res.data.tokenStr)])
           getInfo.then(() => {
             this.$router.push({name: 'home'})

@@ -7,11 +7,18 @@ export const TOKEN_KEY = 'ACCESSTOKEN'
 export const USERINFO_KEY = 'USERINFO'
 export const ACCESSMENU_KEY = 'ACCESSMENU'
 export const DICT_KEY = 'DICT'
-
+export const TENANT_KEY = 'Tenant';
 export const setToken = (token) => {
   // Cookies.set(TOKEN_KEY, token, {expires: config.cookieExpires || 1})
 
   localStorage.setItem(TOKEN_KEY, token || '')
+}
+export const setTenant = (info)=>{
+  localStorage.setItem(TENANT_KEY, info ? JSON.stringify(info) : '')
+}
+export const getTenant = () => {
+  const tean = localStorage.getItem(TENANT_KEY)
+  return tean ? JSON.parse(tean) : false
 }
 export const getToken = () => {
   // const token = Cookies.get(TOKEN_KEY)
