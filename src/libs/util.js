@@ -333,6 +333,13 @@ export const getName = (arr, code) => {
       return arr[i].name
   }
 }
+export const getCreate = (arr,code) =>{
+for(let i in arr){
+if(arr[i].USER_ID ==code){
+return arr[i].USER_NAME
+}
+}
+}
 export const getDictGroup = (arr, group) => {
   let res= []
   for (let i in arr){

@@ -10,26 +10,9 @@
     :transfer= "false"
     :footer-hide="true"
   >
-      <Tabs >
-                <!-- 车辆档案 -->
-        <TabPane label="车辆档案" :disabled="tabshow > 1" icon="logo-windows">
-          <!-- <Form> -->
-          <!-- <FormItem> -->
-<!--             <Button @click="showModal = false">返回</Button>
-            <Button type="primary" style="margin-left: 8px">新增</Button>
-            <Button type="primary" style="margin-left: 8px">修改</Button>
-            <Button type="primary" style="margin-left: 8px">查看</Button>
-            <div style="clear:both;"></div> -->
-<!--           </FormItem>
-        </Form> -->
-        <!-- 车辆档案列表 -->
-        
-        <common-table :columns="columns"  v-model="tableData" :show="show"></common-table>
-    
-        </TabPane>
-        <!-- 车辆档案结束 -->
+      <Tabs @on-click="qh" v-model="pname">
         <!-- 基本信息 -->
-        <TabPane label="基本信息" icon="logo-apple">
+        <TabPane label="基本信息" name="1" icon="logo-apple">
     <Form ref="formData" :model="formData" :label-width="80" :rules="ruleValidate" inline>
           <FormItem style="margin-left:-80px;">
             <Button @click="showModal = false">返回</Button>
@@ -117,16 +100,28 @@
         </TabPane>
 
         <!-- 会员卡信息 -->
-        <TabPane label="会员卡信息" :disabled="tabshow < 1" icon="logo-tux">
+                              <!-- 车辆档案 -->
+        <TabPane label="车辆档案" name="2":disabled="tabshow < 1" icon="logo-windows">
+            <Button @click="showModal = false">返回</Button>
+            <Button type="primary" style="margin-left: 8px">新增</Button>
+            <Button type="primary" style="margin-left: 8px">修改</Button>
+            <Button type="primary" style="margin-left: 8px">查看</Button>
+        
+        <common-table :columns="columns" :headerShow="false" @changePageSize="changePageSize" @changePage="changePage"  v-model="tableData" :show="show" :total="total"></common-table>
+    
+        </TabPane>
+        <!-- 车辆档案结束 -->
+        <TabPane label="会员卡信息" name="3" :disabled="tabshow < 1" icon="logo-tux">
           
         </TabPane>
+
     </Tabs>
         <common-modal6 @dpost="dpost"  :description="obj.description" :title="obj.title" :modal6="obj.show" :fun="obj.funName"></common-modal6>
   </Modal>
 </template>
 <script>
     import commonTable from '@/hxx-components/common-table.vue'
-    import { getName, getDictGroup } from '@/libs/util.js'
+    import { getName, getDictGroup, getCreate} from '@/libs/util.js'
      import { formatDate } from '@/libs/tools.js'
        import commonModal6 from '@/hxx-components/common-modal6.vue'
 	export default {
@@ -134,7 +129,7 @@
     components: {commonModal6,commonTable},
     data(){
       return {
-        showModal:true,
+        showModal:false,
         collapse:'1',
         tabshow:0,
         sexGroup:[],
@@ -144,6 +139,10 @@
         attachGroup:[],
         store:{},//存储使用
         tableData:[],
+        page:1,
+        limit:25,
+        total:0,
+        pname:'1',
         formData:{
           name:'',
           phone:'',
@@ -179,18 +178,16 @@
           {title: '序号',  minWidth: 80,
             render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
           },
-           {title: '车牌号', key: 'CODE', sortable: true, minWidth: 300},
-          {title: '车辆颜色', key: 'NAME', sortable: true, minWidth: 300},
-          {title: '车型', key: 'MOBILE_PHONE', sortable: true, minWidth: 300},
-          {title: '车架号', key: 'CUSTOMER_TYPE', sortable: true, minWidth: 300,
-            render: (h, params) => h('span',getName(this.$store.state.app.dict, params.row.CUSTOMER_TYPE))
+           {title: '车牌号', key: 'PLATE_NUM', sortable: true, minWidth: 150},
+          {title: '车辆颜色', key: 'VEHICLE_COLOR', sortable: true, minWidth: 150},
+          {title: '车型', key: 'VEHICLE_MODEL', sortable: true, minWidth: 150},
+          {title: '车架号', key: 'VIN_NO', sortable: true, minWidth: 150,
           },
-          {title: '发动机型号', key: 'CUSTOMER_LEVEL', sortable: true, minWidth: 300,
-            render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.CUSTOMER_LEVEL))
+          {title: '发动机型号', key: 'ENGINE_NO', sortable: true, minWidth: 150,
           },
-          {title: '最近来厂日期', key: 'FOLLOW_PERSON', sortable: true, minWidth: 150},
-          {title: '创建人', key: 'CREATER', sortable: true, minWidth: 150
-            // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.CREATER))
+          {title: '最近来厂日期', key: 'COME_DATE', sortable: true, minWidth: 150},
+          {title: '创建人', key: 'CREATER', sortable: true, minWidth: 150,
+            render: (h, params) => h('span', getCreate(this.$store.state.app.tenant, params.row.CREATER))
           },
           {title: '创建时间', key: 'CREATE_TIME', sortable: true, minWidth: 150
           },
@@ -288,7 +285,7 @@
       this.formData.attach = 0;
       // console.log(this.formData);
       //下拉数据处理结束
-      
+
     },
     methods:{
       visibleChange(){},
@@ -370,23 +367,38 @@
         }
       },
       getList(){
-                     this.axios.request({
-          url: 'tenant/basedata/ttcustomerfile/list',
+  
+      },
+      changePage(page){
+        this.page = page;
+      },
+      changePageSize(size){
+        this.size = size;
+      },
+      qh(name){
+        // alert(this.pname);
+        switch(name){
+            case '2':
+                    this.axios.request({
+          url: 'tenant/basedata/ttvehiclefile/list',
           method: 'post',
           data: {
-            KEYWORD:"",
-            PLATE_NUM:"",
-            page: 1,
-            limit: 25,
+            CUSTOMER_ID_eq:this.tabshow,
+            page: this.page,
+            limit: this.limit,
             access_token: this.$store.state.user.token
           }
         }).then(res => {
           if (res.success === true) {
-            this.list = [];
+            // this.list = [];
             this.tableData= res.data
             this.total= res.total
           }
         })
+            break;
+            case 3:
+            break;
+        }
       }
     }
  }
