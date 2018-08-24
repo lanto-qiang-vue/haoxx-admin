@@ -14,7 +14,9 @@
       <Panel name="1">查询
        <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="80" inline class="detail-form">
           <FormItem label="车牌号码:">
-              <Input type="text" v-model="listSearch.PLATE_NUM" placeholder="请输入车牌号" style="min-width: 250px;"> </Input>
+              <Input @on-focus="showoff=Math.random();"	type="text" v-model="listSearch.PLATE_NUM" placeholder="请输入车牌号" style="min-width: 250px;" > 
+                  <Icon type="ios-search" slot="suffix"/>
+              </Input>
           </FormItem>
           <FormItem label="车型:">
               <Input type="text" disabled v-model="listSearch.VEHICLE_MODEL" placeholder="请输入车型" style="min-width: 250px;"> </Input>
@@ -40,7 +42,7 @@
               <Select v-model="listSearch.ORDER_TYPE" placeholder="" style="min-width: 250px;">
                 <Option v-for="(item, index) in searchSelectOption1"
                   :key="index" :value="item.code">{{item.name}}</Option>
-                </Select>
+              </Select>
           </FormItem>
           <FormItem label="预约人:">
               <Input type="text" v-model="listSearch.ORDER_PERSON" placeholder="" style="min-width: 250px;"> </Input>
@@ -80,7 +82,7 @@
       border
     ></Table>
     <div class="r-list-search">
-          <Button  type="primary" shape="circle" style="margin-right: 10px;"><Icon type="md-checkmark" size="24"/>选择项目</Button>
+          <Button @click="showTenanceItems=Math.random();" type="primary" shape="circle" style="margin-right: 10px;"><Icon type="md-checkmark" size="24"/>选择项目</Button>
           <Button type="primary" shape="circle"><Icon type="md-add" size="24"/>进入维修项目</Button>
     </div>
     <div v-if="testSingle">
@@ -138,6 +140,13 @@
     </div>
     <common-modal6 @changeModal6="changeModal6" :description="tooltipObj.description" 
       :title="tooltipObj.title" :modal6="tooltipObj.mshow" :fun="tooltipObj.funName" @saveData="saveData" @commitdata="commitdata"></common-modal6>
+      
+      <common-select-vehicle :showoff="showoff" @selectCar="selectCar">
+      </common-select-vehicle>
+
+      <common-tenance-items :showTenanceItems="showTenanceItems" @sTenanceItem="sTenanceItem">
+
+      </common-tenance-items>
   </Modal>
   
 </template>
@@ -146,12 +155,17 @@
   import { getName, getDictGroup } from '@/libs/util.js'
   import { formatDate } from '@/libs/tools.js'
   import commonModal6 from '@/hxx-components/common-modal6.vue'
+  import commonSelectVehicle from '@/hxx-components/common-select-vehicle.vue'
+  import commonTenanceItems from '@/hxx-components/common-tenance-items.vue'
 
 	export default {
 		name: "reservation-list-detail",
-    components: {commonModal6},
+    components: {commonModal6,commonSelectVehicle,commonTenanceItems},
     data(){
       return{
+        showoff:null,//选择车辆
+        showTenanceItems:null,//选择项目
+
         tooltipObj:{
             mshow:false,
             funName:'saveData',
@@ -401,6 +415,9 @@
 
     },
     methods:{
+      test111(){
+        this.showoff=Math.random();
+      },
       visibleChange(status){
         if(status === false){
           this.$emit('closeDetail');
@@ -556,6 +573,17 @@
         console.log(val);
         this.listSearch["SUM_MONEY"]=parseInt(this.listSearch["REPAIR_ITEM_MONEY"])+parseInt(this.listSearch["REPAIR_PART_MONEY"])-parseInt(this.listSearch["REPAIR_ITEM_DERATE_MONEY"])-parseInt(this.listSearch["REPAIR_PART_DERATE_MONEY"]);
         
+      },
+      //监听选择车辆----
+      selectCar(val){
+        this.listSearch["VEHICLE_MODEL"]=val["VEHICLE_MODEL"];
+        this.listSearch["PLATE_NUM"]=val["PLATE_NUM"];
+        
+      },
+      //获取维修项目数据-------
+      sTenanceItem(val){
+        console.log("父级收到数据",val);
+        this.getItem=val;
       }
     }
 	}

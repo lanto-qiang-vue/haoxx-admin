@@ -39,7 +39,7 @@
                 this.show = false;
             },
             asyncNo(){
-             // this.$emit('changeModal6',false);
+            //  this.$emit('changeModal6',false);
             }
         }
     }  

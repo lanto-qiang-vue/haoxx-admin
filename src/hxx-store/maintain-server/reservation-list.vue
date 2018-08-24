@@ -33,7 +33,7 @@
                              :detailData="detailData" @closeDetail="closeDetail"
       ></reservation-list-detail>
       <!--弹出层组建-->
-      <common-modal6 @changeModal6="changeModal6" :description="tooltipObj.description" 
+      <common-modal6 :description="tooltipObj.description" 
       :title="tooltipObj.title" :modal6="tooltipObj.mshow" :fun="tooltipObj.funName" @del="del"></common-modal6>
   </common-table>
 </template>
@@ -48,7 +48,7 @@
     data(){
 		  return{
         tooltipObj:{
-            mshow:false,
+            mshow:null,
             funName:'del',
             description:'',
             title:'',
@@ -174,9 +174,11 @@
           if(this.detailData == null){
             this.$Message.info("未选择到数据!");
           }else{
+            console.log("进入作废系统");
             this.tooltipObj.title = '系统提示!';
             this.tooltipObj.description = '确定要作废吗？';
-            this.tooltipObj.mshow = true;
+            this.tooltipObj.mshow = Math.random();
+            console.log(this.tooltipObj);
           }
       },
       del(){
@@ -195,9 +197,9 @@
             }
           })
       },
-      changeModal6(type){
-        this.tooltipObj.mshow = type;
-      },
+      // changeModal6(type){
+      //   this.tooltipObj.mshow = type;
+      // },
       //获取搜索框开始时间
       getOrderDateGte(val){
         this.search.orderDateGte=val;
