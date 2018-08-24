@@ -54,8 +54,7 @@
               <InputNumber :min="1" v-model="listSearch.MILEAGE" style="min-width: 250px;" placeholder="最大不超过八位数"></InputNumber>
           </FormItem>
        </Form>
-       <Form ref="formInline"  slot="content" :label-width="80">2
-
+       <Form ref="formInline"  slot="content" :label-width="80">
           <FormItem label="故障描述:">
               <Input type="textarea" v-model="listSearch.FAULT_DESC" placeholder="请输入故障描述"> </Input>
           </FormItem>
@@ -81,8 +80,8 @@
       stripe
       border
     ></Table>
-    <div class="r-list-search">
-          <Button @click="showTenanceItems=Math.random();" type="primary" shape="circle" style="margin-right: 10px;"><Icon type="md-checkmark" size="24"/>选择项目</Button>
+    <div class="r-list-search" v-if="isOrderSuccess">
+          <Button @click="goOnTenanceItem" type="primary" shape="circle" style="margin-right: 10px;"><Icon type="md-checkmark" size="24"/>选择项目</Button>
           <Button type="primary" shape="circle"><Icon type="md-add" size="24"/>进入维修项目</Button>
     </div>
     <div v-if="testSingle">
@@ -97,7 +96,7 @@
           stripe
           border
         ></Table>
-        <div class="r-list-search">
+        <div class="r-list-search" v-if="isOrderSuccess">
               <Button type="primary" shape="circle" style="margin-right: 10px;"><Icon type="md-checkmark" size="24"/>选择项目套餐</Button>
               <Button type="primary" shape="circle"><Icon type="md-add" size="24"/>进入项目套餐</Button>
         </div>
@@ -113,9 +112,9 @@
       stripe
       border
     ></Table>
-    <div class="r-list-choose-parts">
-          <Button type="primary" shape="circle" style="margin-right: 10px;"><Icon type="md-checkmark" size="24"/>从配件库存选择配件</Button>
-          <Button type="primary" shape="circle" ><Icon type="md-add" size="24"/>从配件档案选择配件</Button>
+    <div class="r-list-choose-parts" v-if="isOrderSuccess" >
+          <Button @click="goOnSelectParts " type="primary" shape="circle" style="margin-right: 10px;"><Icon type="md-checkmark" size="24"/>从配件库存选择配件</Button>
+          <Button @click="goOnSelectPartsGroup" type="primary" shape="circle" ><Icon type="md-add" size="24"/>从配件档案选择配件</Button>
     </div>
 
     <div class="r-list-money">
@@ -138,15 +137,20 @@
         <Button v-if="isButton" @click="handleCommit" size="large" type="primary"  style="margin-right: 10px; padding: 0 10px;"><Icon type="md-add" size="24"/>提交</Button>
         <Button v-if="isCar"  size="large" type="primary"  style=" padding: 0 10px;"><Icon type="ios-car" size="24"/>维修接车</Button>
     </div>
-    <common-modal6 @changeModal6="changeModal6" :description="tooltipObj.description" 
+    <common-modal6 :description="tooltipObj.description" 
       :title="tooltipObj.title" :modal6="tooltipObj.mshow" :fun="tooltipObj.funName" @saveData="saveData" @commitdata="commitdata"></common-modal6>
       
       <common-select-vehicle :showoff="showoff" @selectCar="selectCar">
       </common-select-vehicle>
-
-      <common-tenance-items :showTenanceItems="showTenanceItems" @sTenanceItem="sTenanceItem">
-
+      <common-tenance-items :showTenanceItems="showTenanceItems" @sTenanceItem="sTenanceItem" :initGetItem="initGetItem">
       </common-tenance-items>
+
+      <common-select-parts :showSelectParts="showSelectParts" @selectPartsItem="selectPartsItem" :initParts="initParts">
+
+      </common-select-parts>
+      <common-select-partsGroup :showSelectPartsGroup="showSelectPartsGroup" @selectPartsGroup="selectPartsGroup" :initPartsGroup="initPartsGroup">
+
+      </common-select-partsGroup>
   </Modal>
   
 </template>
@@ -157,15 +161,22 @@
   import commonModal6 from '@/hxx-components/common-modal6.vue'
   import commonSelectVehicle from '@/hxx-components/common-select-vehicle.vue'
   import commonTenanceItems from '@/hxx-components/common-tenance-items.vue'
+  import commonSelectParts from '@/hxx-components/common-select-parts.vue'
+  import commonSelectPartsGroup from '@/hxx-components/common-select-partsGroup.vue'
 
 	export default {
 		name: "reservation-list-detail",
-    components: {commonModal6,commonSelectVehicle,commonTenanceItems},
+    components: {commonModal6,commonSelectVehicle,commonTenanceItems,commonSelectParts,commonSelectPartsGroup},
     data(){
       return{
         showoff:null,//选择车辆
         showTenanceItems:null,//选择项目
+        initGetItem:[],//初始化选择项目数据
 
+        showSelectParts:null,//选择配件开关
+        initParts:null,
+        showSelectPartsGroup:null,
+        initPartsGroup:null,
         tooltipObj:{
             mshow:false,
             funName:'saveData',
@@ -187,16 +198,34 @@
           {title: '标准工时', key: 'REPAIR_TIME', sortable: true, minWidth: 150},
           {title: '标准金额', key: 'REPAIR_MONEY', sortable: true, minWidth: 150},
           {title: '油漆面数', key: 'PAINT_NUM', sortable: true, minWidth: 150},
-          {title: '小计金额', key: 'ITEM_MONEY', sortable: true, minWidth: 150},
+          {title: '小计金额', key: 'ITEM_MONEY', sortable: true, minWidth: 150,
+            render: (h, params) => h('span', (params.row.REPAIR_TIME*100+params.row.PAINT_NUM*1200))
+          },
           {title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 150,
             // render: (h, params) => h('span', params.row.ORDER_DATE.substr(0, 10))
           },
-          {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 150},
-          {title: '备注', key: '', sortable: true, minWidth: 150,
+          {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 150,
+            render: (h, params) => h('span', (params.row.REPAIR_TIME*100+params.row.PAINT_NUM*1200))
+          },
+          {title: '备注', key: 'REMARK', sortable: true, minWidth: 150,
             // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.REPAIR_TYPE))
           },
           {title: '操作', key: '', sortable: true, minWidth: 150,
-            // render: (h, params) => h('span', params.row.SUM_MONEY|| '0.00')
+            render: (h, params) => {
+                return h('div', [
+                    h('Button', {
+                        props: {
+                            type: 'error',
+                            size: 'small'
+                        },
+                        on: {
+                            click: () => {
+                                this.deleteTenanceItem(params.index);
+                            }
+                        }
+                    }, 'Delete')
+                ]);
+            }
           },
         ],
         getItem:[],
@@ -209,7 +238,9 @@
             // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.ORDER_TYPE))s
           },
           {title: '配件名称', key: 'NAME', sortable: true, minWidth: 150},
-          {title: '数量', key: 'PART_NUM', sortable: true, minWidth: 150},
+          {title: '数量', key: 'PART_NUM', sortable: true, minWidth: 150,
+            render: (h, params) => h('span', 1)
+          },
           {title: '单位', key: 'UNIT', sortable: true, minWidth: 150,
             render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.UNIT))
           },
@@ -228,7 +259,8 @@
             // render: (h, params) => h('span', params.row.SUM_MONEY|| '0.00')
           },
         ],
-        getItemGroup:[],
+        getParts:[],
+        
         columns2: [
           // {type: 'selection', width: 50, fixed: 'left'},
           {title: '序号',  minWidth: 60,type:'index',
@@ -249,7 +281,7 @@
             // render: (h, params) => h('span', params.row.SUM_MONEY|| '0.00')
           },
         ],
-        getParts:[],
+        getItemGroup:[],
         collapse: '1',
         search:{
           input: '',
@@ -278,6 +310,79 @@
           "REPAIR_ITEM_MONEY":0,
           "REPAIR_PART_MONEY":0,
           "SUM_MONEY":0
+        },
+        listItems:{
+          "DETAIL_ID":153696,
+          "ITEM_ID":53386,
+          "TENANT_ID":1,
+          "CREATE_TIME":"2018-07-18 17:43:21",
+          "NAME":"发动机大修*1 - U",
+          "ITEM_NO":"5-1-4",
+          "TYPE_ID":38,
+          "STATUS":"10011001",
+          "CHARGE_TYPE":"10141002",
+          "REPAIR_TIME":325,
+          "REPAIR_MONEY":0,
+          "PAINT_NUM":0,
+          "REMARK":"含综合性能检测作业",
+          "IS_PREINSTALL":"10041001",
+          "CLASS_NAME":"货车-载质量≥8吨",
+          "CLASS_TYPE":"U",
+          "ENGINE_TYPE_NAME":"货车-其他",
+          "ENGINE_TYPE":"0",
+          "SORT":49,
+          "TYPE_NAME":"货车-维护和大修",
+          "cartype":5,
+          "BUSINESS_TYPE":"10331001",
+          "UPDATE_TIME":null,
+          "id":"repair.Repair-261",
+          "ITEM_MONEY":32500,
+          "ITEM_DERATE_MONEY":0,
+          "ITEM_LAST_MONEY":32500,
+          "SUM_MONEY":0,
+          "COME_DATE":null,
+          "PLAN_END_DATE":null,
+          "REPAIR_ITEM_MONEY":0,
+          "REPAIR_PART_MONEY":0,
+          "REPAIR_ITEM_DERATE_MONEY":0,
+          "REPAIR_PART_DERATE_MONEY":0,
+          "ACCOUNT_TIME":null,
+          "ORDER_DATE":null,
+          "IS_SEL":true
+        },
+        listParts:{
+          "STOCK_ID":10,
+          "TENANT_ID":1,
+          "CREATE_TIME":"2018-03-25 22:44:13",
+          "CREATER":1,
+          "UPDATE_TIME":"2018-08-24 09:58:26",
+          "UPDATER":1,
+          "PART_ID":4,
+          "STORE_ID":3,
+          "STOCK_NUM":-7,
+          "UNIT_COST":133,
+          "LAST_IN_DATE":"2018-03-25 22:44:13",
+          "LAST_OUT_DATE":"2018-08-24 09:58:26",
+          "NAME":"雨刷器",
+          "PART_NO":"P1000004",
+          "TYPE_ID":11,
+          "SALES_PRICE":388,
+          "UNIT":"10151001",
+          "BRAND":"",
+          "FORMAT":"",
+          "FACTORY_NO":"YSQ001",
+          "PURCHASE_PRICE":133,
+          "STORE_NAME":"北京路仓库",
+          "id":"repair.PartStock-1",
+          "PART_MONEY":388,
+          "PART_DERATE_MONEY":0,
+          "PART_LAST_MONEY":388,
+          "PART_NUM":1,
+          "GET_PART_TIME":null,
+          "REMARK":"",
+          "IS_SELF":false,
+          "COST_MONEY":0,
+          "IS_SEL":true
         },
         searchSelectOption:[],
         searchSelectOption1:[],
@@ -324,9 +429,7 @@
           {value:"23:30",label:"23:30"},
         ],
         ruleValidate: {
-            ORDER_DATE: [
-                { required: true, type: 'date', message: '请选择日期', trigger: 'change' }
-            ],
+            
             ORDER_TIME: [
                 { required: true, type: 'string', message: '请选择时间', trigger: 'change' }
             ]
@@ -336,6 +439,7 @@
         isButton:true,
         listDisabled:false,
         orderDate:"",
+        isOrderSuccess:true,//判断是否是预约状态---
         
       }
     },
@@ -361,12 +465,16 @@
               this.isButton=true;
               this.listDisabled=false;
               this.orderDate="";
+              this.isOrderSuccess=true;
+
           }else if(this.detailData['STATUS']=='10421002'){
               this.titleMsg="已预约";
               this.isCar=true;
               this.isButton=false;
               this.listDisabled=true;
               this.orderDate="";
+              this.isOrderSuccess=false;
+
           }else if(this.detailData['STATUS']=='10421003'){
               this.titleMsg="已接车";
               this.isCar=false;
@@ -394,7 +502,6 @@
             }
           }
           //新建功能表------
-
           this.titleMsg="新建";
           this.isCar=false;
           this.isButton=true;
@@ -403,7 +510,7 @@
           this.getItem=[];
           this.getItemGroup=[];
           this.getParts=[];
-
+          this.isOrderSuccess=true;
           console.log(this.listSearch);
         }
       }
@@ -425,24 +532,26 @@
         }
       },
       handleSubmit (name) {
-          this.$refs[name].validate((valid) => {
-              if (valid) {
+          // this.$refs[name].validate((valid) => {
+          //     if (valid) {
+            
+                  console.log("保存数据----");
                   this.orderdate=this.listSearch["ORDER_DATE"];
                   this.listSearch["ORDER_DATE"]=formatDate(this.listSearch["ORDER_DATE"]);
                   this.tooltipObj.title = '系统提示!';
                   this.tooltipObj.description = '确定要保存吗？';
-                  this.tooltipObj.mshow = true;
+                  this.tooltipObj.mshow = Math.random();
                   this.tooltipObj.funName='saveData';
-              } else {
+          //     } else {
                   
-              }
-          });
+          //     }
+          // });
           
       },
       handleCommit(){
           this.tooltipObj.title = '系统提示!';
           this.tooltipObj.description = '确定要提交吗？';
-          this.tooltipObj.mshow = true;
+          this.tooltipObj.mshow = Math.random();
           this.tooltipObj.funName='commitdata';
           
 
@@ -461,9 +570,9 @@
             method: 'post',
             data: {
               data: JSON.stringify(this.listSearch),
-              items:JSON.stringify([]),
+              items:JSON.stringify(this.getItem),
               itemGroups: JSON.stringify([]),
-              parts: JSON.stringify([]),
+              parts: JSON.stringify(this.getParts),
               access_token: this.$store.state.user.token
             }
           }).then(res => {
@@ -491,9 +600,9 @@
             method: 'post',
             data: {
               data: JSON.stringify(this.listSearch),
-              items:JSON.stringify([]),
+              items:JSON.stringify(this.getItem),
               itemGroups: JSON.stringify([]),
-              parts: JSON.stringify([]),
+              parts: JSON.stringify(this.getParts),
               access_token: this.$store.state.user.token
             }
           }).then(res => {
@@ -507,9 +616,6 @@
               this.listDisabled=true;
             }
           })
-      },
-      changeModal6(type){
-        this.tooltipObj.mshow = type;
       },
       handleReset (name) {
           this.$refs[name].resetFields();
@@ -526,6 +632,8 @@
           }).then(res => {
             if (res.success === true) {
               this.getItem=res.data;
+              console.log("this.getitem-res",this.getItem);
+              this.computedMoney();
             }
           })
       },
@@ -566,7 +674,7 @@
       },
       //计算费用加减
       computeOne(val){
-        console.log(val);
+        console.log(val,this.listSearch["REPAIR_ITEM_MONEY"],this.listSearch["REPAIR_PART_MONEY"],this.listSearch["REPAIR_ITEM_DERATE_MONEY"],this.listSearch["REPAIR_PART_DERATE_MONEY"]);
         this.listSearch["SUM_MONEY"]=parseInt(this.listSearch["REPAIR_ITEM_MONEY"])+parseInt(this.listSearch["REPAIR_PART_MONEY"])-parseInt(this.listSearch["REPAIR_ITEM_DERATE_MONEY"])-parseInt(this.listSearch["REPAIR_PART_DERATE_MONEY"]);
       },
       computeTwo(val){
@@ -580,11 +688,100 @@
         this.listSearch["PLATE_NUM"]=val["PLATE_NUM"];
         
       },
+      //选择维修项目按钮----------
+      goOnTenanceItem(){
+          this.showTenanceItems=Math.random();
+          this.initGetItem=this.getItem;
+      },
       //获取维修项目数据-------
       sTenanceItem(val){
         console.log("父级收到数据",val);
         this.getItem=val;
+
+        var listItemsModel={
+          "DETAIL_ID":'',
+          "ITEM_ID":'',
+          "TENANT_ID":'',
+          "CREATE_TIME":"",
+          "NAME":"",
+          "ITEM_NO":"",
+          "TYPE_ID":'',
+          "STATUS":"",
+          "CHARGE_TYPE":"",
+          "REPAIR_TIME":0,
+          "REPAIR_MONEY":0,
+          "PAINT_NUM":0,
+          "REMARK":"",
+          "IS_PREINSTALL":"",
+          "CLASS_NAME":"",
+          "CLASS_TYPE":"",
+          "ENGINE_TYPE_NAME":"",
+          "ENGINE_TYPE":"",
+          "SORT":'',
+          "TYPE_NAME":"",
+          "cartype":'',
+          "BUSINESS_TYPE":"",
+          "UPDATE_TIME":null,
+          "id":"",
+          "ITEM_MONEY":0,
+          "ITEM_DERATE_MONEY":0,
+          "ITEM_LAST_MONEY":0,
+          "SUM_MONEY":0,
+          "COME_DATE":null,
+          "PLAN_END_DATE":null,
+          "REPAIR_ITEM_MONEY":0,
+          "REPAIR_PART_MONEY":0,
+          "REPAIR_ITEM_DERATE_MONEY":0,
+          "REPAIR_PART_DERATE_MONEY":0,
+          "ACCOUNT_TIME":null,
+          "ORDER_DATE":null,
+          "IS_SEL":true
+        }
+        this.computedMoney();
+      },
+
+      //删除维修项目数据
+      deleteTenanceItem(index){
+        this.getItem.splice(index,1);
+        this.computedMoney();
+      },
+      //同步金额计算
+      computedMoney(){
+          this.listSearch["REPAIR_ITEM_MONEY"]=0;
+          this.listSearch["REPAIR_PART_MONEY"]=0;
+          for(let i in this.getItem){
+            this.listSearch["REPAIR_ITEM_MONEY"]+=(this.getItem[i].REPAIR_TIME*100+this.getItem[i].PAINT_NUM*1200);
+          }
+          for(let i in this.getParts){
+            this.listSearch["REPAIR_PART_MONEY"]+=(this.getParts[i].SALES_PRICE*1);
+          }
+          this.computeOne();//计算金额
+      },
+      //获取选择配件数据
+      selectPartsItem(val){
+        console.log("选择配件数据",val);
+        this.getParts=val;
+        this.computedMoney();
+      },
+      //获取选择配件档案数据----
+      selectPartsGroup(val){
+        console.log("选择配件数据组",val);
+        this.getParts=val;
+        this.computedMoney();
+      },
+      //选择配件按钮------
+      goOnSelectParts(){
+          this.showSelectParts=Math.random();
+          this.initParts=this.getParts;
+      },
+      //选择配件组按钮--------
+      goOnSelectPartsGroup(){
+          this.showSelectPartsGroup=Math.random();
+          this.initPartsGroup=this.getParts;
+
       }
+
+
     }
 	}
 </script>
