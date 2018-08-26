@@ -16,7 +16,7 @@
     @on-selection-change="changeSelect"
     class="main-table"
     ref="tablesMain"
-    :data="value"
+    :data="data"
     :columns="columns"
     stripe
     border
@@ -133,10 +133,11 @@
       headerShow:{
         type:Boolean,
         default:true
-      } 
+      }
     },
     data(){
 		  return{
+		    data:[],
         collapse: ['1','2'],
         tableHeight: 500,
         timer: null
@@ -147,12 +148,15 @@
         this.$refs.tablesMain.clearCurrentRow()
       },
       show(){
-        this.resize(200)
+        this.resize(500)
+      },
+      value(data){
+        this.data= data
       }
     },
     mounted() {
 		  let self= this
-      self.resize(1000)
+      // self.resize(1000)
       window.onresize = function(){
         self.resize(200)
       }
@@ -166,7 +170,8 @@
           self.tableHeight= commonTable.offsetHeight - 20 -
             commonTable.querySelector(".table-search").offsetHeight -
             commonTable.querySelector(".operate").offsetHeight - 10 -
-            commonTable.querySelector(".table-bottom").offsetHeight
+            commonTable.querySelector(".table-bottom").offsetHeight;
+          commonTable.style.opacity= 1
 
           console.log(".common-table", commonTable.offsetHeight)
           console.log(".table-search", commonTable.querySelector(".table-search").offsetHeight)
@@ -203,6 +208,8 @@
   height: 100%;
   overflow: hidden;
   position: relative;
+  opacity: 0;
+  transition: opacity .2s;
   .table-search{
   }
   .operate{
