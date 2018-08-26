@@ -14,7 +14,7 @@
       <Panel name="1">查询
        <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="80" inline class="detail-form">
           <FormItem label="车牌号码:">
-              <Input @on-focus="showoff=Math.random();"	type="text" v-model="listSearch.PLATE_NUM" placeholder="请输入车牌号" style="min-width: 250px;" > 
+              <Input @on-focus="showoff=Math.random();"	type="text" v-model="listSearch.PLATE_NUM" placeholder="请输入车牌号" style="min-width: 250px;" >
                   <Icon type="ios-search" slot="suffix"/>
               </Input>
           </FormItem>
@@ -29,7 +29,7 @@
           </FormItem>
           <FormItem label="预约日期:" prop="ORDER_DATE">
               <DatePicker format="yyyy-MM-dd" v-model="listSearch.ORDER_DATE" type="date" placeholder="请选择..." style="min-width: 250px;"></DatePicker>
-              
+
           </FormItem>
           <FormItem label="预约时间:" prop="ORDER_TIME">
               <!--<TimePicker v-model="listSearch.ORDER_TIME" type="time" placeholder="请选择..." style="min-width: 250px;"></TimePicker>-->
@@ -137,9 +137,9 @@
         <Button v-if="isButton" @click="handleCommit" size="large" type="primary"  style="margin-right: 10px; padding: 0 10px;"><Icon type="md-add" size="24"/>提交</Button>
         <Button v-if="isCar"  size="large" type="primary"  style=" padding: 0 10px;"><Icon type="ios-car" size="24"/>维修接车</Button>
     </div>
-    <common-modal6 :description="tooltipObj.description" 
+    <common-modal6 :description="tooltipObj.description"
       :title="tooltipObj.title" :modal6="tooltipObj.mshow" :fun="tooltipObj.funName" @saveData="saveData" @commitdata="commitdata"></common-modal6>
-      
+
       <common-select-vehicle :showoff="showoff" @selectCar="selectCar">
       </common-select-vehicle>
       <common-tenance-items :showTenanceItems="showTenanceItems" @sTenanceItem="sTenanceItem" :initGetItem="initGetItem">
@@ -152,7 +152,7 @@
 
       </common-select-partsGroup>
   </Modal>
-  
+
 </template>
 
 <script>
@@ -163,6 +163,7 @@
   import commonTenanceItems from '@/hxx-components/common-tenance-items.vue'
   import commonSelectParts from '@/hxx-components/common-select-parts.vue'
   import commonSelectPartsGroup from '@/hxx-components/common-select-partsGroup.vue'
+  import ColumnInput from '@/hxx-components/column-input.vue'
 
 	export default {
 		name: "reservation-list-detail",
@@ -202,7 +203,19 @@
             render: (h, params) => h('span', (params.row.REPAIR_TIME*100+params.row.PAINT_NUM*1200))
           },
           {title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 150,
-            // render: (h, params) => h('span', params.row.ORDER_DATE.substr(0, 10))
+            render: (h, params) =>  h(ColumnInput, {
+                props: {
+                  params: params,
+                  type: 'number',
+                  min: 0
+                },
+                on: {
+                  'change': val => {
+                    this.getItem[params.index][params.column.key]= val
+                    // console.log('change',params.column.key,this.getItem[params.index])
+                  },
+                }
+              })
           },
           {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 150,
             render: (h, params) => h('span', (params.row.REPAIR_TIME*100+params.row.PAINT_NUM*1200))
@@ -210,7 +223,7 @@
           {title: '备注', key: 'REMARK', sortable: true, minWidth: 150,
             // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.REPAIR_TYPE))
           },
-          {title: '操作', key: '', sortable: true, minWidth: 150,
+          {title: '操作', key: '', sortable: true, minWidth: 150, fixed: 'right',
             render: (h, params) => {
                 return h('div', [
                     h('Button', {
@@ -260,7 +273,7 @@
           },
         ],
         getParts:[],
-        
+
         columns2: [
           // {type: 'selection', width: 50, fixed: 'left'},
           {title: '序号',  minWidth: 60,type:'index',
@@ -429,7 +442,7 @@
           {value:"23:30",label:"23:30"},
         ],
         ruleValidate: {
-            
+
             ORDER_TIME: [
                 { required: true, type: 'string', message: '请选择时间', trigger: 'change' }
             ]
@@ -440,7 +453,7 @@
         listDisabled:false,
         orderDate:"",
         isOrderSuccess:true,//判断是否是预约状态---
-        
+
       }
     },
     props:['showDetail', 'detailData'],
@@ -488,11 +501,11 @@
         }else{
           for(let key in this.listSearch){
             switch (key){
-              case 'MILEAGE': 
-              case 'REPAIR_ITEM_MONEY': 
-              case 'REPAIR_PART_MONEY': 
-              case 'REPAIR_ITEM_DERATE_MONEY': 
-              case 'REPAIR_PART_DERATE_MONEY': 
+              case 'MILEAGE':
+              case 'REPAIR_ITEM_MONEY':
+              case 'REPAIR_PART_MONEY':
+              case 'REPAIR_ITEM_DERATE_MONEY':
+              case 'REPAIR_PART_DERATE_MONEY':
               case 'SUM_MONEY': this.listSearch[key]= 0; break
               case 'STATUS': this.listSearch[key]= "10421001"; break
               case 'REPAIR_TYPE': this.listSearch[key]= "10191001"; break
@@ -534,7 +547,7 @@
       handleSubmit (name) {
           // this.$refs[name].validate((valid) => {
           //     if (valid) {
-            
+
                   console.log("保存数据----");
                   this.orderdate=this.listSearch["ORDER_DATE"];
                   this.listSearch["ORDER_DATE"]=formatDate(this.listSearch["ORDER_DATE"]);
@@ -543,17 +556,17 @@
                   this.tooltipObj.mshow = Math.random();
                   this.tooltipObj.funName='saveData';
           //     } else {
-                  
+
           //     }
           // });
-          
+
       },
       handleCommit(){
           this.tooltipObj.title = '系统提示!';
           this.tooltipObj.description = '确定要提交吗？';
           this.tooltipObj.mshow = Math.random();
           this.tooltipObj.funName='commitdata';
-          
+
 
       },
       getNewDate(val,currentVal){
@@ -680,13 +693,13 @@
       computeTwo(val){
         console.log(val);
         this.listSearch["SUM_MONEY"]=parseInt(this.listSearch["REPAIR_ITEM_MONEY"])+parseInt(this.listSearch["REPAIR_PART_MONEY"])-parseInt(this.listSearch["REPAIR_ITEM_DERATE_MONEY"])-parseInt(this.listSearch["REPAIR_PART_DERATE_MONEY"]);
-        
+
       },
       //监听选择车辆----
       selectCar(val){
         this.listSearch["VEHICLE_MODEL"]=val["VEHICLE_MODEL"];
         this.listSearch["PLATE_NUM"]=val["PLATE_NUM"];
-        
+
       },
       //选择维修项目按钮----------
       goOnTenanceItem(){
