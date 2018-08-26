@@ -334,7 +334,7 @@ export default [
       icon: 'logo-buffer',
       title: '客户关系',
       lgType: "1002",
-      access: '1001',
+      access: '1003',
     },
     component: Main,
     children:[
