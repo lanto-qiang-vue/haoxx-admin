@@ -142,8 +142,8 @@
 
       <select-vehicle :showoff="showoff" @selectCar="selectCar">
       </select-vehicle>
-      <tenance-items :showTenanceItems="showTenanceItems" @sTenanceItem="sTenanceItem" :initGetItem="initGetItem">
-      </tenance-items>
+      <select-items :showTenanceItems="showTenanceItems" @sTenanceItem="sTenanceItem" :initGetItem="initGetItem">
+      </select-items>
 
       <select-parts :showSelectParts="showSelectParts" @selectPartsItem="selectPartsItem" :initParts="initParts">
 
@@ -163,7 +163,7 @@
   import { formatDate } from '@/libs/tools.js'
   import commonModal6 from '@/hxx-components/common-modal6.vue'
   import selectVehicle from '@/hxx-components/select-vehicle.vue'
-  import tenanceItems from '@/hxx-components/tenance-items.vue'
+  import selectItems from '@/hxx-components/select-items.vue'
   import selectParts from '@/hxx-components/select-parts.vue'
   import selectPartsGroup from '@/hxx-components/select-partsGroup.vue'
 
@@ -174,7 +174,7 @@
 
 	export default {
 		name: "reservation-list-detail",
-    components: {commonModal6,commonSelectVehicle,commonTenanceItems,commonSelectParts,commonSelectPartsGroup,commonSelectItemPackage},
+    components: {commonModal6,selectVehicle,selectItems,selectParts,selectPartsGroup,selectItemPackage},
     data(){
       return{
         showoff:null,//选择车辆
@@ -360,7 +360,7 @@
                 ]);
             }
           },
-          {title: '操作', key: '', sortable: true, minWidth: 150,
+          {title: '操作', key: '', sortable: true, minWidth: 150,fixed: 'right',
             render: (h, params) => {
                 return h('div', [
                     h('Button', {
@@ -439,7 +439,7 @@
                 ]);
             }
           },
-          {title: '操作', key: '', sortable: true, minWidth: 150,
+          {title: '操作', key: '', sortable: true, minWidth: 150,fixed: 'right',
             render: (h, params) => {
                 return h('div', [
                     h('Button', {
@@ -954,8 +954,8 @@
 
       //删除维修项目数据
       deleteTenanceItem(index){
-        this.getItem.splice(index,1);
-        this.computedMoney();
+        this.commitItem.splice(index,1);
+        this.computItemMoney();
       },
       //同步金额计算
       computedMoney(){
@@ -990,15 +990,18 @@
               "LAST_OUT_DATE":"",
               "NAME":"",
               "PART_NO":"",
+              "TYPE_ID":"",
               "SALES_PRICE":"",
               "UNIT":"",
               "BRAND":"",
               "FORMAT":"",
               "FACTORY_NO":"",
-              "PURCHASE_PRICE":"",
+              "PURCHASE_PRICE":0,
+              "MIN_SALES_PRICE":"",
+              "MAX_SALES_PRICE":"",
               "STORE_NAME":"",
               "id":"",
-              "PART_MONEY":"",
+              "PART_MONEY":0,
               "PART_DERATE_MONEY":0,
               "PART_LAST_MONEY":0,
               "PART_NUM":1,
@@ -1021,32 +1024,34 @@
         }
         for(let j in this.getParts1){
           var commitParts={
-              "STOCK_ID":"",
+              "PART_ID":"",
               "TENANT_ID":"",
               "CREATE_TIME":"",
               "CREATER":"",
-              "UPDATE_TIME":"",
-              "UPDATER":"",
-              "PART_ID":"",
-              "STORE_ID":"",
-              "STOCK_NUM":"",
-              "UNIT_COST":"",
-              "LAST_IN_DATE":"",
-              "LAST_OUT_DATE":"",
               "NAME":"",
               "PART_NO":"",
-              "SALES_PRICE":"",
-              "UNIT":"",
+              "TYPE_ID":1355,
+              "SALES_PRICE":600,
+              "UNIT":"10151003",
               "BRAND":"",
               "FORMAT":"",
               "FACTORY_NO":"",
-              "PURCHASE_PRICE":"",
-              "STORE_NAME":"",
-              "id":"",
-              "PART_MONEY":"",
+              "PART_SOURCE":"",
+              "IS_CANCEL":"10041002",
+              "RATE":0.06,
+              "TAX":36,
+              "NOT_CONTAINS_TAX_SALE_PRICE":564,
+              "TYPE_NAME":"前翼子板",
+              "FATHER_ID":3,
+              "GRAND_ID":0,
+              "UPDATE_TIME":null,
+              "id":"repair.PartStock-311",
+              "STOCK_NUM":0,
+              "PART_MONEY":600,
               "PART_DERATE_MONEY":0,
-              "PART_LAST_MONEY":0,
+              "PART_LAST_MONEY":600,
               "PART_NUM":1,
+              "UNIT_COST":0,
               "GET_PART_TIME":null,
               "REMARK":"",
               "IS_SELF":false,
@@ -1176,7 +1181,7 @@
       //删除配件数据
       deletePartsGroup(index){
         this.commitParts.splice(index,1);
-        
+        this.computItemMoney();
       },
       //选择项目套餐按钮-------
       goOnItemGroup(){

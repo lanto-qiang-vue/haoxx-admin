@@ -31,7 +31,7 @@
 import commonTable from '@/hxx-components/common-table.vue'
   import { getName, getDictGroup } from '@/libs/util.js'
 	export default {
-		name: "common-select-itemPackage",
+		name: "select-itemPackage",
         props:['showSelectItemGroup','initItemGroup'],
         components: {commonTable},
         data(){
@@ -60,7 +60,7 @@ import commonTable from '@/hxx-components/common-table.vue'
                     {title: '状态', key: 'STATUS', sortable: true, minWidth: 80,
                         render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.STATUS))
                     },
-                    {title: '操作', key: 'operation', sortable: true, minWidth: 80,
+                    {title: '操作', key: 'operation', sortable: true, minWidth: 80,fixed: 'right',
                         render: (h, params) => {
                             let buttonContent= this.state(params.row)? '取消选择':'选择';
                             let buttonStatus= this.state(params.row)? 'warning':'primary';

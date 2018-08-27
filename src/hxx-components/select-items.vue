@@ -52,7 +52,7 @@
 import commonTable from '@/hxx-components/common-table.vue'
   import { getName, getDictGroup } from '@/libs/util.js'
 	export default {
-		name: "common-tenance-items",
+		name: "select-items",
         props:['showTenanceItems','initGetItem'],
         components: {commonTable},
         data(){
@@ -142,7 +142,7 @@ import commonTable from '@/hxx-components/common-table.vue'
                     {title: '油漆面数', key: 'PAINT_NUM', sortable: true, minWidth: 200},
                     {title: '发动机类型', key: 'ENGINE_TYPE_NAME', sortable: true, minWidth: 200},
                     {title: '汽车排量', key: 'CLASS_NAME', sortable: true, minWidth: 200},
-                    {title: '操作', key: 'operation', sortable: true, minWidth: 80,
+                    {title: '操作', key: 'operation', sortable: true, minWidth: 80,fixed: 'right',
                         render: (h, params) => {
                             let buttonContent= this.state(params.row)? '取消选择':'选择';
                             let buttonStatus= this.state(params.row)? 'warning':'primary';

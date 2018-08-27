@@ -40,7 +40,7 @@
 import commonTable from '@/hxx-components/common-table.vue'
   import { getName, getDictGroup } from '@/libs/util.js'
 	export default {
-		name: "common-select-partsGroup",
+		name: "select-partsGroup",
         props:['showSelectPartsGroup','initPartsGroup'],
         components: {commonTable},
         data(){
@@ -133,7 +133,7 @@ import commonTable from '@/hxx-components/common-table.vue'
                     {title: '销售税率', key: 'RATE', sortable: true, minWidth: 70,
                         // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.UNIT))
                     },
-                    {title: '操作', key: 'operation', sortable: true, minWidth: 80,
+                    {title: '操作', key: 'operation', sortable: true, minWidth: 80,fixed: 'right',
                         render: (h, params) => {
                             let buttonContent= this.state(params.row)? '取消选择':'选择';
                             let buttonStatus= this.state(params.row)? 'warning':'primary';
