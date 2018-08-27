@@ -8,6 +8,7 @@
         :scrollable="true"
         :transfer= "false"
         :footer-hide="false"
+        :transition-names="['', '']"
     >
     <common-table v-model="tableData" :columns="columns" :show="showSelectPartsGroup" :total="total" @changePage="changePage" 
         @changePageSize="changePageSize" @onRowClick="onRowClick">
@@ -23,7 +24,7 @@
                     <ButtonGroup size="small">
                         <Button type="primary" title="查询" @click="searchVehicle"><Icon type="ios-search" size="24"/></Button>
                         <Button type="primary" title="重置" @click="resetVehicle"><Icon type="ios-undo" size="24"/></Button>
-                        <Button type="primary"><Icon type="md-add" size="24"/>新增配件</Button>
+                        <Button @click="showSelectAddParts=Math.random()" type="primary"><Icon type="md-add" size="24"/>新增配件</Button>
                     </ButtonGroup>
                     
 
@@ -33,18 +34,23 @@
            
         </div>
     </common-table>
+    <select-addParts :showSelectAddParts="showSelectAddParts">
+
+    </select-addParts>
   </Modal>
 </template>
 
 <script>
 import commonTable from '@/hxx-components/common-table.vue'
+import selectAddParts from '@/hxx-components/select-addParts.vue'
   import { getName, getDictGroup } from '@/libs/util.js'
 	export default {
 		name: "select-partsGroup",
         props:['showSelectPartsGroup','initPartsGroup'],
-        components: {commonTable},
+        components: {commonTable,selectAddParts},
         data(){
             return{
+                showSelectAddParts:'',//监听新增配件弹框-------
                 test1:'',
                 test2:'',
                 test3:'',
@@ -218,7 +224,7 @@ import commonTable from '@/hxx-components/common-table.vue'
                     }
                 }).then(res => {
                     if (res.success === true) {
-                        console.log("得到列表数据",res);
+                        
                         this.tableData= res.data
                         this.total= res.total
 
@@ -237,7 +243,7 @@ import commonTable from '@/hxx-components/common-table.vue'
                     }
                 }).then(res => {
                     if (res.success === true) {
-                        console.log(res.data);
+                        
                         this.getSellItem=res.data;
                     }
               })

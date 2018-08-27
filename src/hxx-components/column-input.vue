@@ -25,7 +25,7 @@
       }
     },
     mounted(){
-		  console.log(this.params)
+		  // console.log(this.params)
       let val= this.params.row[this.params.column.key]
       this.val= this.type=='number'? parseInt((val||0)): val
     },

@@ -348,3 +348,9 @@ export const getDictGroup = (arr, group) => {
   }
   return res
 }
+export const getUserInfo = (arr, group) => {
+  for (let i in arr){
+    if(arr[i].PARAM_ID==group)
+      return arr[i].PARAM_VALUE
+  }
+}
