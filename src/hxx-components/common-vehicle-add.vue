@@ -5,10 +5,10 @@
     title="车辆新增"
     :mask-closable="false"
     :scrollable="true"
-    :transfer= "false"
+    :transfer= "true"
     :footer-hide="false">	
     <!-- 车辆车辆档案新增调用 -->
-    <div style="height:50px;"></div>
+    <!-- <div style="height:50px;"></div> -->
     <Form :label-width="120" :model="formData" ref="formData" :rules="ruleValidate" inline>
     	              <FormItem label="车牌号:" style="width:45%;"  prop="PLATE_NUM">
               <Input type="text" v-model="formData.PLATE_NUM"  style="min-width: 100%;"> </Input>
@@ -194,7 +194,7 @@
 				color:[],
 			}
 		},
-		props:['show','CUSTOMER_ID'],
+		props:['show','CUSTOMER_ID','row'],
 		watch:{
            show(){
            	this.showModal=true;
@@ -209,6 +209,9 @@
            },
            CUSTOMER_ID(name){
            	this.formData.CUSTOMER_ID = name;
+           },
+           row(obj){
+           this.fromData = obj;
            }
 		},
 		methods:{
