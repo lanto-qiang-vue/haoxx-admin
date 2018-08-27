@@ -408,5 +408,4 @@ export const deepClone = (data) => {
     }
   }
   return obj;
->>>>>>> 232bc42b77765762d85bab237d38ad996d6a65fa
 }
