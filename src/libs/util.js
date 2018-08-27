@@ -355,7 +355,7 @@ export const getUserInfo = (arr, group) => {
       return arr[i].PARAM_VALUE
   }
 
-
+}
 /**
  * @param {obj} 任意参数
  * @returns {String}
