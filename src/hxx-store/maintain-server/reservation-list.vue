@@ -2,7 +2,7 @@
 <template>
   <common-table v-model="tableData" :columns="columns" :total="total" :clearSelect="clearTableSelect"
                 @changePage="changePage" @changePageSize="changePageSize" @onRowClick="onRowClick"
-                @onRowDblclick="onRowDblclick">
+                @onRowDblclick="onRowDblclick" :show="showTable">
     <div  slot="search"  >
       <div class="search-block">
         <Input v-model="search.input" placeholder="预约单号/预约人/联系电话..."></Input>
@@ -17,7 +17,7 @@
         <DatePicker @on-change="getOrderDateGte" type="date" placeholder="开始时间" style="width: 120px;"></DatePicker>
         <DatePicker @on-change="getOrderDateIte" type="date" placeholder="结束时间" style="width: 120px;margin-left: 5px;"></DatePicker>
       </div>
-      
+
       <ButtonGroup size="small">
         <Button type="primary" @click="page=1;getList()"><Icon type="ios-search" size="24"/></Button>
         <Button type="primary" @click="clear()"><Icon type="ios-undo" size="24"/></Button>
@@ -33,7 +33,7 @@
                              :detailData="detailData" @closeDetail="closeDetail"
       ></reservation-list-detail>
       <!--弹出层组建-->
-      <common-modal6 :description="tooltipObj.description" 
+      <common-modal6 :description="tooltipObj.description"
       :title="tooltipObj.title" :modal6="tooltipObj.mshow" :fun="tooltipObj.funName" @del="del"></common-modal6>
   </common-table>
 </template>
@@ -92,11 +92,12 @@
         page: 1,
         limit: 25,
         total: 0,
+        showTable:false,
         showDetail: false,
         detailData: null,
         clearTableSelect: null,
         isOrderSuccess:false,//判断是不是预约成功
-        
+
       }
     },
     mounted () {
@@ -111,6 +112,7 @@
         this.searchSelectOption1.push(this.searchSelectOption[i]);
       }
       this.getList()
+      this.showTable= Math.random()
     },
     methods:{
 		  getList(){
@@ -156,7 +158,7 @@
           }else{
               this.isOrderSuccess=false;
           }
-        
+
         this.detailData=row
       },
       onRowDblclick( row, index){
@@ -208,7 +210,7 @@
       getOrderDateIte(val){
         this.search.orderDateIte=val;
       },
-      
+
     }
 	}
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <common-table v-model="tableData" :columns="columns" :total="total"
+  <common-table v-model="tableData" :columns="columns" :total="total" :show="showTable"
     @changePage="changePage" ref="selection" @changePageSize="changePageSize" @changeSelect="changeSelect" @onRowDblclick="double">
     <div slot="search"  >
       <div class="search-block">
@@ -83,12 +83,14 @@
         showDetail:true,//detail查询修改
         sign:1,//1新增,2修改
         selection:{},//存储选择的对象
+        showTable: false
       }
     },
     mounted () {
       this.getList()
       this.baseUrl=env
       console.log(env)
+      this.showTable= true
     },
     methods:{
       getList:function(){
@@ -158,7 +160,7 @@
           if (res.success === true) {
             this.$Message.success('作废成功');
             this.getList();
-          } 
+          }
         })
       },
     lead(){
