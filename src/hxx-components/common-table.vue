@@ -1,13 +1,13 @@
 <template>
 <div class="common-table" ref="commonTable">
-  <Collapse v-model="collapse" class="table-search" @on-change="changeCollapse">
-    <Panel v-show="headerShow" name="1">查询
+  <Collapse v-show="headerShow" v-model="collapse" class="table-search" @on-change="changeCollapse">
+    <Panel  name="1">查询
       <div slot="content">
         <slot name="search"></slot>
       </div>
     </Panel>
   </Collapse>
-  <div v-show="headerShow" class="operate">
+  <div class="operate">
     <slot name="operate"></slot>
   </div>
   <div>

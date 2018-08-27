@@ -21,6 +21,7 @@
       <Button type="primary" @click="expor()">导出</Button>
     </div>
     <!-- 添加查询修改-->
+    <!-- class="table-modal-detail" -->
     <customer-list-detail :show="showDetail" :sign="sign" :detail="detail" class="table-modal-detail"></customer-list-detail>
     <!-- Excel上传 -->
     <common-upload-excel  :type="etype" :success="'esuccess'" @esuccess="esuccess"></common-upload-excel>
