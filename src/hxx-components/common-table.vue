@@ -1,14 +1,14 @@
 <template>
 <div class="common-table" ref="commonTable">
-  <Collapse v-show="headerShow" v-model="collapse" class="table-search" @on-change="changeCollapse">
-    <Panel  name="1">查询
+  <Collapse v-model="collapse" v-show="showSearch"  class="table-search" @on-change="changeCollapse">
+    <Panel name="1">查询
 
-      <div slot="content">
+      <div slot="content" >
         <slot name="search"></slot>
       </div>
     </Panel>
   </Collapse>
-  <div class="operate">
+  <div class="operate" v-show="showOperate" >
     <slot name="operate"></slot>
   </div>
   <div>
@@ -131,10 +131,14 @@
       },
       clearSelect:{},
       show:{},
-      headerShow:{
+      showSearch:{
         type:Boolean,
         default:true
-      } 
+      },
+      showOperate:{
+        type:Boolean,
+        default:true
+      },
 
     },
     data(){
@@ -213,15 +217,16 @@
   opacity: 0;
   transition: opacity .2s;
   .table-search{
+    margin-bottom: 10px;
   }
   .operate{
-    margin-top: 10px;
+    margin-bottom: 10px;
     padding: 15px;
     border: 1px solid #dcdee2;
     border-radius: 3px;
   }
   .main-table{
-    margin-top: 10px;
+
   }
   .table-bottom{
     position: absolute;

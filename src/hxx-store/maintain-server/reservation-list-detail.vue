@@ -8,6 +8,7 @@
     :scrollable="true"
     :transfer= "false"
     :footer-hide="false"
+    :transition-names="['', '']"
   >
     <div style="font-size: 18px;text-align: right;color: red;padding-right: 30px;">{{titleMsg}}</div>
     <Collapse v-model="collapse">
@@ -124,9 +125,9 @@
          + 维修配件费用：
          <span>{{listSearch.REPAIR_PART_MONEY}}元</span>
           + 维修项目优惠金额：
-          <InputNumber @on-change="computeOne" :disabled="listDisabled" v-model="listSearch.REPAIR_ITEM_DERATE_MONEY" :min="0">
+          <InputNumber @on-change="computedMoney" :disabled="listDisabled" v-model="listSearch.REPAIR_ITEM_DERATE_MONEY" :min="0">
           </InputNumber> - 配件优惠金额：
-          <InputNumber @on-change="computeTwo" :disabled="listDisabled" v-model="listSearch.REPAIR_PART_DERATE_MONEY" :min="0">
+          <InputNumber @on-change="computedMoney1" :disabled="listDisabled" v-model="listSearch.REPAIR_PART_DERATE_MONEY" :min="0">
           </InputNumber>= 合计应收金额：
           <span class="r-list-money-reset">{{listSearch.SUM_MONEY}}元</span>
       </p>
@@ -159,7 +160,7 @@
 </template>
 
 <script>
-  import { getName, getDictGroup } from '@/libs/util.js'
+  import { getName, getDictGroup ,getUserInfo} from '@/libs/util.js'
   import { formatDate } from '@/libs/tools.js'
   import commonModal6 from '@/hxx-components/common-modal6.vue'
   import selectVehicle from '@/hxx-components/select-vehicle.vue'
@@ -194,13 +195,9 @@
             funName:'saveData',
             description:'',
             title:'',
-        },
-        titleModel:true,
-        showModal: false,
+        },//弹出层数据
+        showModal: false,//本界面是否显示判断
         testSingle:false,//判断是否启用维修项目套餐
-        testMsg:"2700.00",
-        testMsg1:"100.00",
-        testMsg2:"5000.00",
         //维修项目
         columns: [
           {title: '序号',  minWidth: 60,type:"index",
@@ -212,46 +209,24 @@
           {title: '标准金额', key: 'REPAIR_MONEY', sortable: true, minWidth: 150},
           {title: '油漆面数', key: 'PAINT_NUM', sortable: true, minWidth: 150},
           {title: '小计金额', key: 'ITEM_MONEY', sortable: true, minWidth: 150,
-            render: (h, params) => h('span', (params.row.REPAIR_TIME*100+params.row.PAINT_NUM*1200))
+            render: (h, params) => h('span', (params.row.REPAIR_TIME*getUserInfo(this.$store.state.user.userInfo.params, 'P1001')+params.row.PAINT_NUM*getUserInfo(this.$store.state.user.userInfo.params, 'P1002')))
           },
           {title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 150,
-             render: (h, params) => {
-                return h('div', [
-                    h('InputNumber', {
-                        props: {
-                            min:0,
-                            value: params.row.ITEM_DERATE_MONEY,
-                            // disabled:true,
-                        },
-                        
-                        on: {
-                          "on-change": (e) => {
-                                this.ITEM_DERATE_MONEY=e;
-                            },
-                            "on-blur": (e,xxx) => {
-                                this.commitItem[params.index]['ITEM_DERATE_MONEY']=this.ITEM_DERATE_MONEY;
-                                this.commitItem[params.index]['ITEM_LAST_MONEY']=params.row.REPAIR_TIME*100+params.row.PAINT_NUM*1200-this.ITEM_DERATE_MONEY;
-                                this.computItemMoney();
-                            }
-                        }
-                    },
-                    )
-                ]);
-            }
-
-            // render: (h, params) =>  h(ColumnInput, {
-            //     props: {
-            //       params: params,
-            //       type: 'number',
-            //       min: 0
-            //     },
-            //     on: {
-            //       'change': val => {
-            //         this.getItem[params.index][params.column.key]= val
-            //         // console.log('change',params.column.key,this.getItem[params.index])
-            //       },
-            //     }
-            //   })
+            render: (h, params) =>  h(ColumnInput, {
+                props: {
+                  params: params,
+                  type: 'number',
+                  min: 0
+                },
+                on: {
+                  'change': val => {
+                    // this.getItem[params.index][params.column.key]= val
+                    this.commitItem[params.index]['ITEM_DERATE_MONEY']=val;
+                    this.commitItem[params.index]['ITEM_LAST_MONEY']=params.row.REPAIR_TIME*getUserInfo(this.$store.state.user.userInfo.params, 'P1001')+params.row.PAINT_NUM*getUserInfo(this.$store.state.user.userInfo.params, 'P1002')-val;
+                    this.computItemMoney();
+                  },
+                }
+              })
 
           },
           {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 150,
@@ -277,71 +252,78 @@
           },
           {title: '操作', key: '', sortable: true, minWidth: 150, fixed: 'right',
             render: (h, params) => {
-                return h('div', [
-                    h('Button', {
-                        props: {
-                            type: 'error',
-                            size: 'small'
-                        },
-                        on: {
-                            click: () => {
-                                this.deleteTenanceItem(params.index);
-                            }
-                        }
-                    }, 'Delete')
-                ]);
+                if(this.titleMsg=='新建'){
+                  return h('div', [
+                      h('Button', {
+                          props: {
+                              type: 'error',
+                              size: 'small'
+                          },
+                          on: {
+                              click: () => {
+                                  this.deleteTenanceItem(params.index);
+                              }
+                          }
+                      }, 'Delete')
+                  ]);
+                }else if(this.titleMsg=='已预约'){
+                  return h('div', [
+                      h('span', '已预约')
+                  ]);
+                }else if(this.titleMsg=='已接车'){
+                  return h('div', [
+                      h('span', '已接车')
+                  ]);
+                }
+                
             }
           },
         ],
         getItem:[],
         //维修配件
         columns1: [
-          // {type: 'selection', width: 50, fixed: 'left'},
-          {title: '序号',  minWidth: 60,type:'index',
-            // render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
-          },
-          {title: '配件编号', key: 'PART_NO', sortable: true, minWidth: 200,
-            // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.ORDER_TYPE))s
-          },
+          {title: '序号',  minWidth: 60,type:'index',},
+          {title: '配件编号', key: 'PART_NO', sortable: true, minWidth: 200,},
           {title: '配件名称', key: 'NAME', sortable: true, minWidth: 150},
           {title: '数量', key: 'PART_NUM', sortable: true, minWidth: 150,
-            render: (h, params) => h('span', 1)
+            render: (h, params) =>  h(ColumnInput, {
+                props: {
+                  params: params,
+                  type: 'number',
+                  min: 0
+                },
+                on: {
+                  'change': val => {
+                    this.commitParts[params.index]['PART_NUM']=val;
+                    this.commitParts[params.index]['PART_MONEY']=params.row.SALES_PRICE*val;
+                    this.commitParts[params.index]['PART_LAST_MONEY']=params.row.SALES_PRICE*val-params.row.PART_DERATE_MONEY;
+                    this.computItemMoney();
+                  },
+                }
+              })
           },
           {title: '单位', key: 'UNIT', sortable: true, minWidth: 150,
             render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.UNIT))
           },
           {title: '单价', key: 'SALES_PRICE', sortable: true, minWidth: 150},
-          {title: '小计金额', key: 'PART_MONEY', sortable: true, minWidth: 150,
-            // render: (h, params) => h('span', params.row.ORDER_DATE.substr(0, 10))
-          },
+          {title: '小计金额', key: 'PART_MONEY', sortable: true, minWidth: 150,},
           {title: '优惠金额', key: 'PART_DERATE_MONEY', sortable: true, minWidth: 150,
-            render: (h, params) => {
-                return h('div', [
-                    h('InputNumber', {
-                        props: {
-                            min:0,
-                            value: params.row.ITEM_DERATE_MONEY,
-                            // disabled:true,
-                        },
-                        
-                        on: {
-                          "on-change": (e) => {
-                                // this.ITEM_DERATE_MONEY=e
-                            },
-                            "on-blur": (e,xxx) => {
-                                // this.commitItem[params.index]['ITEM_DERATE_MONEY']=this.ITEM_DERATE_MONEY;
-                                // this.commitItem[params.index]['ITEM_LAST_MONEY']=params.row.REPAIR_TIME*100+params.row.PAINT_NUM*1200-this.ITEM_DERATE_MONEY;
-                                // this.computItemMoney();
-                            }
-                        }
-                    },
-                    )
-                ]);
-            }
+            render: (h, params) =>  h(ColumnInput, {
+                props: {
+                  params: params,
+                  type: 'number',
+                  min: 0
+                },
+                on: {
+                  'change': val => {
+                    this.commitParts[params.index]['PART_DERATE_MONEY']=val;
+                    this.commitParts[params.index]['PART_LAST_MONEY']=params.row.SALES_PRICE*params.row.PART_NUM-val;
+                    this.computItemMoney();
+                  },
+                }
+              })
           },
-          {title: '优惠后金额', key: 'PART_LAST_MONEY', sortable: true, minWidth: 150,
-            // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.REPAIR_TYPE))
-          },
+          {title: '优惠后金额', key: 'PART_LAST_MONEY', sortable: true, minWidth: 150,},
           {title: '备注', key: 'REMARK', sortable: true, minWidth: 150,
             render: (h, params) => {
                 return h('div', [
@@ -352,7 +334,8 @@
                         },
                         on: {
                             "on-blur":(e)=>{
-                              // this.commitItem[params.index]["REMARK"]=e.target.value;
+                            
+                              this.commitParts[params.index]['REMARK']=e.target.value;
                             }
                         }
                     },
@@ -362,62 +345,61 @@
           },
           {title: '操作', key: '', sortable: true, minWidth: 150,fixed: 'right',
             render: (h, params) => {
-                return h('div', [
-                    h('Button', {
-                        props: {
-                            type: 'error',
-                            size: 'small'
-                        },
-                        on: {
-                            click: () => {
-                                this.deletePartsGroup(params.index);
-                            }
-                        }
-                    }, 'Delete')
-                ]);
+                
+                if(this.titleMsg=='新建'){
+                  return h('div', [
+                      h('Button', {
+                          props: {
+                              type: 'error',
+                              size: 'small'
+                          },
+                          on: {
+                              click: () => {
+                                  this.deletePartsGroup(params.index,params.row.STOCK_ID,params.row.PART_ID);
+                              }
+                          }
+                      }, 'Delete')
+                  ]);
+                }else if(this.titleMsg=='已预约'){
+                  return h('div', [
+                      h('span', '已预约')
+                  ]);
+                }else if(this.titleMsg=='已接车'){
+                  return h('div', [
+                      h('span', '已接车')
+                  ]);
+                }
             }
+            
           },
         ],
         getParts:[],
         getParts1:[],
         //维修项目套餐
-
         columns2: [
-          // {type: 'selection', width: 50, fixed: 'left'},
-          {title: '序号',  minWidth: 60,type:'index',
-            // render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
-          },
-          {title: '项目套餐名称', key: 'GROUP_NAME', sortable: true, minWidth: 200,
-            // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.ORDER_TYPE))
-          },
+          {title: '序号',  minWidth: 60,type:'index',},
+          {title: '项目套餐名称', key: 'GROUP_NAME', sortable: true, minWidth: 200,},
           {title: '套餐价格', key: 'SALES_PRICE', sortable: true, minWidth: 150},
           {title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 150,
-            render: (h, params) => {
-                return h('div', [
-                    h('InputNumber', {
-                        props: {
-                            min:0,
-                            value: params.row.ITEM_DERATE_MONEY,
-                        },
-                        
-                        on: {
-                            
-                            "on-change": (e) => {
-                                this.ITEM_DERATE_MONEY=e;
-                            },
-                            "on-blur": (e,xxx) => {
-                                this.commitItemGroup[params.index]['ITEM_DERATE_MONEY']=this.ITEM_DERATE_MONEY;
-                                this.commitItemGroup[params.index]['ITEM_LAST_MONEY']=params.row.SALES_PRICE-this.ITEM_DERATE_MONEY;
-                                this.computItemMoney();
-                            }
-                        }
+              render: (h, params) =>  h(ColumnInput, {
+                    props: {
+                      params: params,
+                      type: 'number',
+                      min: 0
                     },
-                    )
-                ]);
-            }
+                    on: {
+                      'change': val => {
+                        this.commitItemGroup[params.index]['ITEM_DERATE_MONEY']=val;
+                        this.commitItemGroup[params.index]['ITEM_LAST_MONEY']=params.row.SALES_PRICE-val;
+                        this.computItemMoney();
+                      },
+                    }
+              })
+            
+            
           },
           {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 150,
-            // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.REPAIR_TYPE))
+            render: (h, params) => h('span', params.row.SALES_PRICE-params.row.ITEM_DERATE_MONEY)
           },
           {title: '备注', key: 'REMARK', sortable: true, minWidth: 150,
             render: (h, params) => {
@@ -441,28 +423,35 @@
           },
           {title: '操作', key: '', sortable: true, minWidth: 150,fixed: 'right',
             render: (h, params) => {
-                return h('div', [
-                    h('Button', {
-                        props: {
-                            type: 'error',
-                            size: 'small'
-                        },
-                        on: {
-                            click: () => {
-                                this.deleteItemGroup(params.index);
-                            }
-                        }
-                    }, 'Delete')
-                ]);
+                
+                if(this.titleMsg=='新建'){
+                  return h('div', [
+                      h('Button', {
+                          props: {
+                              type: 'error',
+                              size: 'small'
+                          },
+                          on: {
+                              click: () => {
+                                  this.deleteItemGroup(params.index);
+                              }
+                          }
+                      }, 'Delete')
+                  ]);
+                }else if(this.titleMsg=='已预约'){
+                  return h('div', [
+                      h('span', '已预约')
+                  ]);
+                }else if(this.titleMsg=='已接车'){
+                  return h('div', [
+                      h('span', '已接车')
+                  ]);
+                }
             }
           },
         ],
         getItemGroup:[],
         collapse: '1',
-        search:{
-          input: '',
-          TELPHONE:"",
-        },
         listSearch:{
           "ORDER_ID":"",
           "VEHICLE_ID":"",
@@ -487,79 +476,7 @@
           "REPAIR_PART_MONEY":0,
           "SUM_MONEY":0
         },
-        listItems:{
-          "DETAIL_ID":153696,
-          "ITEM_ID":53386,
-          "TENANT_ID":1,
-          "CREATE_TIME":"2018-07-18 17:43:21",
-          "NAME":"发动机大修*1 - U",
-          "ITEM_NO":"5-1-4",
-          "TYPE_ID":38,
-          "STATUS":"10011001",
-          "CHARGE_TYPE":"10141002",
-          "REPAIR_TIME":325,
-          "REPAIR_MONEY":0,
-          "PAINT_NUM":0,
-          "REMARK":"含综合性能检测作业",
-          "IS_PREINSTALL":"10041001",
-          "CLASS_NAME":"货车-载质量≥8吨",
-          "CLASS_TYPE":"U",
-          "ENGINE_TYPE_NAME":"货车-其他",
-          "ENGINE_TYPE":"0",
-          "SORT":49,
-          "TYPE_NAME":"货车-维护和大修",
-          "cartype":5,
-          "BUSINESS_TYPE":"10331001",
-          "UPDATE_TIME":null,
-          "id":"repair.Repair-261",
-          "ITEM_MONEY":32500,
-          "ITEM_DERATE_MONEY":0,
-          "ITEM_LAST_MONEY":32500,
-          "SUM_MONEY":0,
-          "COME_DATE":null,
-          "PLAN_END_DATE":null,
-          "REPAIR_ITEM_MONEY":0,
-          "REPAIR_PART_MONEY":0,
-          "REPAIR_ITEM_DERATE_MONEY":0,
-          "REPAIR_PART_DERATE_MONEY":0,
-          "ACCOUNT_TIME":null,
-          "ORDER_DATE":null,
-          "IS_SEL":true
-        },
-        listParts:{
-          "STOCK_ID":10,
-          "TENANT_ID":1,
-          "CREATE_TIME":"2018-03-25 22:44:13",
-          "CREATER":1,
-          "UPDATE_TIME":"2018-08-24 09:58:26",
-          "UPDATER":1,
-          "PART_ID":4,
-          "STORE_ID":3,
-          "STOCK_NUM":-7,
-          "UNIT_COST":133,
-          "LAST_IN_DATE":"2018-03-25 22:44:13",
-          "LAST_OUT_DATE":"2018-08-24 09:58:26",
-          "NAME":"雨刷器",
-          "PART_NO":"P1000004",
-          "TYPE_ID":11,
-          "SALES_PRICE":388,
-          "UNIT":"10151001",
-          "BRAND":"",
-          "FORMAT":"",
-          "FACTORY_NO":"YSQ001",
-          "PURCHASE_PRICE":133,
-          "STORE_NAME":"北京路仓库",
-          "id":"repair.PartStock-1",
-          "PART_MONEY":388,
-          "PART_DERATE_MONEY":0,
-          "PART_LAST_MONEY":388,
-          "PART_NUM":1,
-          "GET_PART_TIME":null,
-          "REMARK":"",
-          "IS_SELF":false,
-          "COST_MONEY":0,
-          "IS_SEL":true
-        },
+        
         searchSelectOption:[],
         searchSelectOption1:[],
         timeGruop:[
@@ -605,7 +522,6 @@
           {value:"23:30",label:"23:30"},
         ],
         ruleValidate: {
-
             ORDER_TIME: [
                 { required: true, type: 'string', message: '请选择时间', trigger: 'change' }
             ]
@@ -620,7 +536,7 @@
         commitItemGroup:[],
         commitItem:[],//提交选择项目
         commitParts:[],//提交配件
-        ITEM_DERATE_MONEY:0,
+
         
 
       }
@@ -628,15 +544,26 @@
     props:['showDetail', 'detailData'],
     watch:{
       showDetail(){
-        console.log('进来的参数：',this.detailData);
+        console.log('进来的参数：',this.detailData,);
         this.showModal=true
+
+        //清空公共数据值------
+        this.getItem=[];
+        this.getItemGroup=[];
+        this.getParts=[];
+        this.getParts1=[];
+        this.commitItemGroup=[];
+        this.commitItem=[];
+        this.commitParts=[];
+        this.testSingle=false;
+        //判断进来的参数是否存在---------------------
         if(this.detailData){
           for(let key in this.listSearch){
             if(this.detailData[key]){
               this.listSearch[key]= this.detailData[key]
             }
           }
-          console.log(this.listSearch);
+
           this.getItemFun(this.listSearch["ORDER_ID"]);
           this.getItemGroupFun(this.listSearch["ORDER_ID"]);
           this.getPartsFun(this.listSearch["ORDER_ID"]);
@@ -688,6 +615,7 @@
               case 'STATUS': this.listSearch[key]= "10421001"; break
               case 'REPAIR_TYPE': this.listSearch[key]= "10191001"; break
               case 'ORDER_TYPE': this.listSearch[key]= "10411001"; break
+              case 'IS_ITEM_GROUP': this.listSearch[key]= "10041002"; break
               default : this.listSearch[key]= ''
 
             }
@@ -698,9 +626,6 @@
           this.isButton=true;
           this.listDisabled=false;
           this.orderDate="";
-          this.getItem=[];
-          this.getItemGroup=[];
-          this.getParts=[];
           this.isOrderSuccess=true;
           console.log(this.listSearch);
         }
@@ -709,13 +634,8 @@
     mounted () {
       this.searchSelectOption= getDictGroup(this.$store.state.app.dict, '1019');
       this.searchSelectOption1= getDictGroup(this.$store.state.app.dict, '1041');
-      console.log('谁先：',this.searchSelectOption);
-
     },
     methods:{
-      test111(){
-        this.showoff=Math.random();
-      },
       visibleChange(status){
         if(status === false){
           this.$emit('closeDetail');
@@ -764,21 +684,18 @@
               data: JSON.stringify(this.listSearch),
               items:JSON.stringify(this.commitItem),
               itemGroups: JSON.stringify(this.commitItemGroup),
-              parts: JSON.stringify(this.getParts),
+              parts: JSON.stringify(this.commitParts),
               access_token: this.$store.state.user.token
             }
           }).then(res => {
             console.log(11111)
             console.log(res)
             if (res.success === true) {
-              for(let key in this.listSearch){
-                if(res.data[key]){
-                  this.listSearch[key]= res.data[key];
-                }
-              }
-              this.listSearch["ORDER_DATE"]=this.orderdate;
-              console.log("res",res);
-              console.log("替换：",this.listSearch)
+              // for(let key in this.listSearch){
+              //   if(res.data[key]){
+              //     this.listSearch[key]= res.data[key];
+              //   }
+              // }
               this.$Message.info('successful')
             }
           })
@@ -792,9 +709,9 @@
             method: 'post',
             data: {
               data: JSON.stringify(this.listSearch),
-              items:JSON.stringify(this.getItem),
+              items:JSON.stringify(this.commitItem),
               itemGroups: JSON.stringify(this.commitItemGroup),
-              parts: JSON.stringify(this.getParts),
+              parts: JSON.stringify(this.commitParts),
               access_token: this.$store.state.user.token
             }
           }).then(res => {
@@ -824,8 +741,7 @@
           }).then(res => {
             if (res.success === true) {
               this.commitItem=res.data;
-              console.log("this.getitem-res",this.getItem);
-              this.computedMoney();
+
             }
           })
       },
@@ -840,7 +756,7 @@
             }
           }).then(res => {
             if (res.success === true) {
-              this.getItemGroup=res.data;
+              this.commitItemGroup=res.data;
             }
           })
       },
@@ -857,32 +773,31 @@
             console.log(11111)
             console.log(res)
             if (res.success === true) {
-              this.getParts=res.data;
+              this.commitParts=res.data;
               console.log(res.data[0]);
-              this.listSearch["REPAIR_PART_MONEY"]=res.data[0]['PART_MONEY'];
-              // console.log("ccccc",res.data,res.data['PART_MONEY']);
+              this.listSearch["REPAIR_PART_MONEY"]=0;
+              for(let i in res.data){
+                this.listSearch["REPAIR_PART_MONEY"]+=res.data[i]['PART_MONEY'];
+              }
+              
             }
           })
       },
-      //计算费用加减
-      computeOne(val){
-        console.log(val,this.listSearch["REPAIR_ITEM_MONEY"],this.listSearch["REPAIR_PART_MONEY"],this.listSearch["REPAIR_ITEM_DERATE_MONEY"],this.listSearch["REPAIR_PART_DERATE_MONEY"]);
-        this.listSearch["SUM_MONEY"]=parseInt(this.listSearch["REPAIR_ITEM_MONEY"])+parseInt(this.listSearch["REPAIR_PART_MONEY"])-parseInt(this.listSearch["REPAIR_ITEM_DERATE_MONEY"])-parseInt(this.listSearch["REPAIR_PART_DERATE_MONEY"]);
-      },
-      computeTwo(val){
-        console.log(val);
-        this.listSearch["SUM_MONEY"]=parseInt(this.listSearch["REPAIR_ITEM_MONEY"])+parseInt(this.listSearch["REPAIR_PART_MONEY"])-parseInt(this.listSearch["REPAIR_ITEM_DERATE_MONEY"])-parseInt(this.listSearch["REPAIR_PART_DERATE_MONEY"]);
-
-      },
+      
       //监听选择车辆----
       selectCar(val){
+        console.log(val);
         this.listSearch["VEHICLE_MODEL"]=val["VEHICLE_MODEL"];
         this.listSearch["PLATE_NUM"]=val["PLATE_NUM"];
-
+        this.listSearch["ORDER_PERSON"]=val["CUSTOMER_NAME"];
+        this.listSearch["CUSTOMER_NAME"]=val["CUSTOMER_NAME"];
+        this.listSearch["TELPHONE"]=val["MOBILE_PHONE"];
+        this.listSearch["VIN_NO"]=val["VIN_NO"];
+        this.listSearch["VEHICLE_ID"]=val["VEHICLE_ID"];
       },
+
       //选择维修项目按钮----------
       goOnTenanceItem(){
-          console.log("进入维修项目前数据：",this.commitItem);
           this.showTenanceItems=Math.random();
           this.initGetItem=this.commitItem;
       },
@@ -890,8 +805,6 @@
       sTenanceItem(val){
           console.log("父级收到数据",val);
           this.getItem=val;
-
-        
           this.commitItem=[];
           for(let j in this.getItem){
             var listItemsModel={
@@ -904,7 +817,7 @@
               "TYPE_ID":"",
               "STATUS":"",
               "CHARGE_TYPE":"",
-              "REPAIR_TIME":"",
+              "REPAIR_TIME":0,
               "REPAIR_MONEY":0,
               "PAINT_NUM":0,
               "IS_PREINSTALL":"",
@@ -933,143 +846,136 @@
               "IS_SEL":true,
               "REMARK":""
             }
-
             for(let i in listItemsModel){
               if(this.getItem[j][i]){
                 listItemsModel[i]=this.getItem[j][i];
               }else if(i=="ITEM_MONEY"){
                 
-                listItemsModel[i]=this.getItem[j]["REPAIR_TIME"]*100+this.getItem[j]["PAINT_NUM"]*1200;
+                listItemsModel[i]=this.getItem[j]["REPAIR_TIME"]*getUserInfo(this.$store.state.user.userInfo.params, 'P1001')+this.getItem[j]["PAINT_NUM"]*getUserInfo(this.$store.state.user.userInfo.params, 'P1002');
               }else if(i=="ITEM_LAST_MONEY"){
-                listItemsModel[i]=parseInt(this.getItem[j]["REPAIR_TIME"]*100)+parseInt(this.getItem[j]["PAINT_NUM"]*1200);
+                listItemsModel[i]=parseInt(this.getItem[j]["REPAIR_TIME"]*getUserInfo(this.$store.state.user.userInfo.params, 'P1001'))+parseInt(this.getItem[j]["PAINT_NUM"]*getUserInfo(this.$store.state.user.userInfo.params, 'P1002'));
               }
               
-              parseInt
             }
             this.commitItem.push(listItemsModel);
           }
-          console.log("sTenanceItem",this.commitItem);
           this.computItemMoney();
       },
-
       //删除维修项目数据
       deleteTenanceItem(index){
         this.commitItem.splice(index,1);
         this.computItemMoney();
       },
-      //同步金额计算
-      computedMoney(){
-          this.listSearch["REPAIR_ITEM_MONEY"]=0;
-          this.listSearch["REPAIR_PART_MONEY"]=0;
-          for(let i in this.getItem){
-            this.listSearch["REPAIR_ITEM_MONEY"]+=(this.getItem[i].REPAIR_TIME*100+this.getItem[i].PAINT_NUM*1200);
-          }
-          for(let i in this.getParts){
-            this.listSearch["REPAIR_PART_MONEY"]+=(this.getParts[i].SALES_PRICE*1);
-          }
-          this.computeOne();//计算金额
-      },
+
       //获取选择配件数据
       selectPartsItem(val){
         console.log("选择配件数据",val);
         this.getParts=val;
         this.commitParts=[];
         for(let j in this.getParts){
-          var commitParts={
-              "STOCK_ID":"",
-              "TENANT_ID":"",
-              "CREATE_TIME":"",
-              "CREATER":"",
-              "UPDATE_TIME":"",
-              "UPDATER":"",
-              "PART_ID":"",
-              "STORE_ID":"",
-              "STOCK_NUM":"",
-              "UNIT_COST":"",
-              "LAST_IN_DATE":"",
-              "LAST_OUT_DATE":"",
-              "NAME":"",
-              "PART_NO":"",
-              "TYPE_ID":"",
-              "SALES_PRICE":"",
-              "UNIT":"",
-              "BRAND":"",
-              "FORMAT":"",
-              "FACTORY_NO":"",
-              "PURCHASE_PRICE":0,
-              "MIN_SALES_PRICE":"",
-              "MAX_SALES_PRICE":"",
-              "STORE_NAME":"",
-              "id":"",
-              "PART_MONEY":0,
-              "PART_DERATE_MONEY":0,
-              "PART_LAST_MONEY":0,
-              "PART_NUM":1,
-              "GET_PART_TIME":null,
-              "REMARK":"",
-              "IS_SELF":false,
-              "COST_MONEY":0,
-              "IS_SEL":true
+          if(this.getParts[j]["STOCK_ID"]){
+              var commitParts={
+                  "STOCK_ID":"",
+                  "TENANT_ID":"",
+                  "CREATE_TIME":"",
+                  "CREATER":"",
+                  "UPDATE_TIME":"",
+                  "UPDATER":"",
+                  "PART_ID":"",
+                  "STORE_ID":"",
+                  "STOCK_NUM":"",
+                  "UNIT_COST":"",
+                  "LAST_IN_DATE":"",
+                  "LAST_OUT_DATE":"",
+                  "NAME":"",
+                  "PART_NO":"",
+                  "TYPE_ID":"",
+                  "SALES_PRICE":0,
+                  "UNIT":"",
+                  "BRAND":"",
+                  "FORMAT":"",
+                  "FACTORY_NO":"",
+                  "PURCHASE_PRICE":0,
+                  "MIN_SALES_PRICE":"",
+                  "MAX_SALES_PRICE":"",
+                  "STORE_NAME":"",
+                  "id":"",
+                  "PART_MONEY":0,
+                  "PART_DERATE_MONEY":0,
+                  "PART_LAST_MONEY":0,
+                  "PART_NUM":1,
+                  "GET_PART_TIME":null,
+                  "REMARK":"",
+                  "IS_SELF":false,
+                  "COST_MONEY":0,
+                  "IS_SEL":true
+              }
+              for(let i in commitParts){
+                if(this.getParts[j][i]){
+                  commitParts[i]=this.getParts[j][i];
+                }else if(i=="PART_MONEY"){
+                  commitParts[i]=this.getParts[j]["SALES_PRICE"]*(this.getParts[j]["PART_NUM"]||1);
+                }else if(i=="PART_LAST_MONEY"){
+                  commitParts[i]=this.getParts[j]["SALES_PRICE"]*(this.getParts[j]["PART_NUM"]||1);
+                }
+              }
+              this.commitParts.push(commitParts);
           }
-          for(let i in commitParts){
-            if(this.getParts[j][i]){
-              commitParts[i]=this.getParts[j][i];
-            }else if(i=="PART_MONEY"){
-              commitParts[i]=this.getParts[j]["SALES_PRICE"]*1;
-            }else if(i=="PART_LAST_MONEY"){
-              commitParts[i]=this.getParts[j]["SALES_PRICE"]*1;
-            }
-          }
-          this.commitParts.push(commitParts);
+          
         }
         for(let j in this.getParts1){
-          var commitParts={
-              "PART_ID":"",
-              "TENANT_ID":"",
-              "CREATE_TIME":"",
-              "CREATER":"",
-              "NAME":"",
-              "PART_NO":"",
-              "TYPE_ID":1355,
-              "SALES_PRICE":600,
-              "UNIT":"10151003",
-              "BRAND":"",
-              "FORMAT":"",
-              "FACTORY_NO":"",
-              "PART_SOURCE":"",
-              "IS_CANCEL":"10041002",
-              "RATE":0.06,
-              "TAX":36,
-              "NOT_CONTAINS_TAX_SALE_PRICE":564,
-              "TYPE_NAME":"前翼子板",
-              "FATHER_ID":3,
-              "GRAND_ID":0,
-              "UPDATE_TIME":null,
-              "id":"repair.PartStock-311",
-              "STOCK_NUM":0,
-              "PART_MONEY":600,
-              "PART_DERATE_MONEY":0,
-              "PART_LAST_MONEY":600,
-              "PART_NUM":1,
-              "UNIT_COST":0,
-              "GET_PART_TIME":null,
-              "REMARK":"",
-              "IS_SELF":false,
-              "COST_MONEY":0,
-              "IS_SEL":true
+          if(this.getParts1[j]["STOCK_ID"]){
+
+          }else{
+              var commitParts={
+                  "PART_ID":"",
+                  "TENANT_ID":"",
+                  "CREATE_TIME":"",
+                  "CREATER":"",
+                  "NAME":"",
+                  "PART_NO":"",
+                  "TYPE_ID":"",
+                  "SALES_PRICE":0,
+                  "UNIT":"",
+                  "BRAND":"",
+                  "FORMAT":"",
+                  "FACTORY_NO":"",
+                  "PART_SOURCE":"",
+                  "IS_CANCEL":"",
+                  "RATE":"",
+                  "TAX":"",
+                  "NOT_CONTAINS_TAX_SALE_PRICE":"",
+                  "TYPE_NAME":"",
+                  "FATHER_ID":"",
+                  "GRAND_ID":"",
+                  "UPDATE_TIME":null,
+                  "id":"",
+                  "STOCK_NUM":0,
+                  "PART_MONEY":0,
+                  "PART_DERATE_MONEY":0,
+                  "PART_LAST_MONEY":0,
+                  "PART_NUM":1,
+                  "UNIT_COST":0,
+                  "GET_PART_TIME":null,
+                  "REMARK":"",
+                  "IS_SELF":false,
+                  "COST_MONEY":0,
+                  "IS_SEL":true
+              }
+              for(let i in commitParts){
+                if(this.getParts1[j][i]){
+                  commitParts[i]=this.getParts1[j][i];
+                }else if(i=="PART_MONEY"){
+                  commitParts[i]=this.getParts1[j]["SALES_PRICE"]*(this.getParts1[j]["PART_NUM"]||1);
+                }else if(i=="PART_LAST_MONEY"){
+                  commitParts[i]=this.getParts1[j]["SALES_PRICE"]*(this.getParts1[j]["PART_NUM"]||1);
+                }
+              }
+              this.commitParts.push(commitParts);
           }
-          for(let i in commitParts){
-            if(this.getParts1[j][i]){
-              commitParts[i]=this.getParts1[j][i];
-            }else if(i=="PART_MONEY"){
-              commitParts[i]=this.getParts1[j]["SALES_PRICE"]*1;
-            }else if(i=="PART_LAST_MONEY"){
-              commitParts[i]=this.getParts1[j]["SALES_PRICE"]*1;
-            }
-          }
-          this.commitParts.push(commitParts);
+
         }
-        
+        this.computItemMoney();
       },
       //获取选择配件档案数据----
       selectPartsGroup(val){
@@ -1077,95 +983,110 @@
         this.getParts1=val;
         this.commitParts=[];
         for(let j in this.getParts){
-          var commitParts={
-              "STOCK_ID":"",
-              "TENANT_ID":"",
-              "CREATE_TIME":"",
-              "CREATER":"",
-              "UPDATE_TIME":"",
-              "UPDATER":"",
-              "PART_ID":"",
-              "STORE_ID":"",
-              "STOCK_NUM":"",
-              "UNIT_COST":"",
-              "LAST_IN_DATE":"",
-              "LAST_OUT_DATE":"",
-              "NAME":"",
-              "PART_NO":"",
-              "SALES_PRICE":"",
-              "UNIT":"",
-              "BRAND":"",
-              "FORMAT":"",
-              "FACTORY_NO":"",
-              "PURCHASE_PRICE":"",
-              "STORE_NAME":"",
-              "id":"",
-              "PART_MONEY":"",
-              "PART_DERATE_MONEY":0,
-              "PART_LAST_MONEY":0,
-              "PART_NUM":1,
-              "GET_PART_TIME":null,
-              "REMARK":"",
-              "IS_SELF":false,
-              "COST_MONEY":0,
-              "IS_SEL":true
+          if(this.getParts[j]["STOCK_ID"]){
+              var commitParts={
+                  "STOCK_ID":"",
+                  "TENANT_ID":"",
+                  "CREATE_TIME":"",
+                  "CREATER":"",
+                  "UPDATE_TIME":"",
+                  "UPDATER":"",
+                  "PART_ID":"",
+                  "STORE_ID":"",
+                  "STOCK_NUM":"",
+                  "UNIT_COST":"",
+                  "LAST_IN_DATE":"",
+                  "LAST_OUT_DATE":"",
+                  "NAME":"",
+                  "PART_NO":"",
+                  "TYPE_ID":"",
+                  "SALES_PRICE":0,
+                  "UNIT":"",
+                  "BRAND":"",
+                  "FORMAT":"",
+                  "FACTORY_NO":"",
+                  "PURCHASE_PRICE":0,
+                  "MIN_SALES_PRICE":"",
+                  "MAX_SALES_PRICE":"",
+                  "STORE_NAME":"",
+                  "id":"",
+                  "PART_MONEY":0,
+                  "PART_DERATE_MONEY":0,
+                  "PART_LAST_MONEY":0,
+                  "PART_NUM":1,
+                  "GET_PART_TIME":null,
+                  "REMARK":"",
+                  "IS_SELF":false,
+                  "COST_MONEY":0,
+                  "IS_SEL":true
+              }
+              for(let i in commitParts){
+                if(this.getParts[j][i]){
+                  commitParts[i]=this.getParts[j][i];
+                }else if(i=="PART_MONEY"){
+                  commitParts[i]=this.getParts[j]["SALES_PRICE"]*(this.getParts[j]["PART_NUM"]||1);
+                }else if(i=="PART_LAST_MONEY"){
+                  commitParts[i]=this.getParts[j]["SALES_PRICE"]*(this.getParts[j]["PART_NUM"]||1);
+                }
+              }
+              this.commitParts.push(commitParts);
           }
-          for(let i in commitParts){
-            if(this.getParts[j][i]){
-              commitParts[i]=this.getParts[j][i];
-            }else if(i=="PART_MONEY"){
-              commitParts[i]=this.getParts[j]["SALES_PRICE"]*1;
-            }else if(i=="PART_LAST_MONEY"){
-              commitParts[i]=this.getParts[j]["SALES_PRICE"]*1;
-            }
-          }
-          this.commitParts.push(commitParts);
+          
         }
         for(let j in this.getParts1){
-          var commitParts={
-              "STOCK_ID":"",
-              "TENANT_ID":"",
-              "CREATE_TIME":"",
-              "CREATER":"",
-              "UPDATE_TIME":"",
-              "UPDATER":"",
-              "PART_ID":"",
-              "STORE_ID":"",
-              "STOCK_NUM":"",
-              "UNIT_COST":"",
-              "LAST_IN_DATE":"",
-              "LAST_OUT_DATE":"",
-              "NAME":"",
-              "PART_NO":"",
-              "SALES_PRICE":"",
-              "UNIT":"",
-              "BRAND":"",
-              "FORMAT":"",
-              "FACTORY_NO":"",
-              "PURCHASE_PRICE":"",
-              "STORE_NAME":"",
-              "id":"",
-              "PART_MONEY":"",
-              "PART_DERATE_MONEY":0,
-              "PART_LAST_MONEY":0,
-              "PART_NUM":1,
-              "GET_PART_TIME":null,
-              "REMARK":"",
-              "IS_SELF":false,
-              "COST_MONEY":0,
-              "IS_SEL":true
+          if(this.getParts1[j]["STOCK_ID"]){
+
+          }else{
+              var commitParts={
+                  "PART_ID":"",
+                  "TENANT_ID":"",
+                  "CREATE_TIME":"",
+                  "CREATER":"",
+                  "NAME":"",
+                  "PART_NO":"",
+                  "TYPE_ID":"",
+                  "SALES_PRICE":0,
+                  "UNIT":"",
+                  "BRAND":"",
+                  "FORMAT":"",
+                  "FACTORY_NO":"",
+                  "PART_SOURCE":"",
+                  "IS_CANCEL":"",
+                  "RATE":"",
+                  "TAX":"",
+                  "NOT_CONTAINS_TAX_SALE_PRICE":"",
+                  "TYPE_NAME":"",
+                  "FATHER_ID":"",
+                  "GRAND_ID":"",
+                  "UPDATE_TIME":null,
+                  "id":"",
+                  "STOCK_NUM":0,
+                  "PART_MONEY":0,
+                  "PART_DERATE_MONEY":0,
+                  "PART_LAST_MONEY":0,
+                  "PART_NUM":1,
+                  "UNIT_COST":0,
+                  "GET_PART_TIME":null,
+                  "REMARK":"",
+                  "IS_SELF":false,
+                  "COST_MONEY":0,
+                  "IS_SEL":true
+              }
+              for(let i in commitParts){
+                if(this.getParts1[j][i]){
+                  commitParts[i]=this.getParts1[j][i];
+                }else if(i=="PART_MONEY"){
+                  commitParts[i]=this.getParts1[j]["SALES_PRICE"]*(this.getParts1[j]["PART_NUM"]||1);
+                }else if(i=="PART_LAST_MONEY"){
+                  commitParts[i]=this.getParts1[j]["SALES_PRICE"]*(this.getParts1[j]["PART_NUM"]||1);
+                }
+              }
+              console.log(commitParts);
+              this.commitParts.push(commitParts);
           }
-          for(let i in commitParts){
-            if(this.getParts1[j][i]){
-              commitParts[i]=this.getParts1[j][i];
-            }else if(i=="PART_MONEY"){
-              commitParts[i]=this.getParts1[j]["SALES_PRICE"]*1;
-            }else if(i=="PART_LAST_MONEY"){
-              commitParts[i]=this.getParts1[j]["SALES_PRICE"]*1;
-            }
-          }
-          this.commitParts.push(commitParts);
+
         }
+        this.computItemMoney();
       },
       //选择配件按钮------
       goOnSelectParts(){
@@ -1179,8 +1100,24 @@
 
       },
       //删除配件数据
-      deletePartsGroup(index){
+      deletePartsGroup(index,STOCK_ID,PART_ID){
         this.commitParts.splice(index,1);
+        if(STOCK_ID){
+          for(let i in this.getParts){
+            if(this.getParts[i]['STOCK_ID']==STOCK_ID){
+              this.getParts.splice(i,1);
+              break;
+            }
+          }
+        }else{
+          for(let i in this.getParts1){
+            if(this.getParts1[i]['PART_ID']==PART_ID){
+              this.getParts1.splice(i,1);
+              break;
+            }
+          }
+        }
+        console.log(index,STOCK_ID,PART_ID);
         this.computItemMoney();
       },
       //选择项目套餐按钮-------
@@ -1243,25 +1180,53 @@
         this.listSearch["REPAIR_ITEM_MONEY"]=0;
         this.listSearch["REPAIR_ITEM_DERATE_MONEY"]=0;
         this.listSearch["SUM_MONEY"]=0;
+        this.listSearch["REPAIR_PART_MONEY"]=0;
+        this.listSearch["REPAIR_PART_DERATE_MONEY"]=0;
         for(let i in this.commitItem){
-          this.listSearch["REPAIR_ITEM_MONEY"]+=this.commitItem[i]["REPAIR_TIME"]*100+this.commitItem[i]["PAINT_NUM"]*1200;
+          this.listSearch["REPAIR_ITEM_MONEY"]+=this.commitItem[i]["REPAIR_TIME"]*getUserInfo(this.$store.state.user.userInfo.params, 'P1001')+this.commitItem[i]["PAINT_NUM"]*getUserInfo(this.$store.state.user.userInfo.params, 'P1002');
+          this.listSearch["REPAIR_ITEM_DERATE_MONEY"]+=this.commitItem[i]["ITEM_DERATE_MONEY"];
+        }
+        for(let i in this.commitItemGroup){
+          this.listSearch["REPAIR_ITEM_MONEY"]+=this.commitItemGroup[i]["SALES_PRICE"];
+          this.listSearch["REPAIR_ITEM_DERATE_MONEY"]+=this.commitItemGroup[i]["ITEM_DERATE_MONEY"];
+        }
+        for(let i in this.commitParts){
+          this.listSearch["REPAIR_PART_MONEY"]+=this.commitParts[i]["SALES_PRICE"]*(this.commitParts[i]["PART_NUM"]||1);
+          this.listSearch["REPAIR_PART_DERATE_MONEY"]+=this.commitParts[i]["PART_DERATE_MONEY"];
+        }
+        this.listSearch["SUM_MONEY"]=this.listSearch["REPAIR_ITEM_MONEY"]+this.listSearch["REPAIR_PART_MONEY"]-this.listSearch["REPAIR_ITEM_DERATE_MONEY"]-this.listSearch["REPAIR_PART_DERATE_MONEY"];
+      },
+      //手动金额计算值---------------
+      computedMoney(val){
+        console.log('手动金额计算值',val);
+        this.listSearch["REPAIR_ITEM_MONEY"]=0;
+        this.listSearch["REPAIR_ITEM_DERATE_MONEY"]=0;
+        this.listSearch["SUM_MONEY"]=0;
+        for(let i in this.commitItem){
+          this.listSearch["REPAIR_ITEM_MONEY"]+=this.commitItem[i]["REPAIR_TIME"]*getUserInfo(this.$store.state.user.userInfo.params, 'P1001')+this.commitItem[i]["PAINT_NUM"]*getUserInfo(this.$store.state.user.userInfo.params, 'P1002');
         }
         for(let i in this.commitItemGroup){
           this.listSearch["REPAIR_ITEM_MONEY"]+=this.commitItemGroup[i]["SALES_PRICE"];
         }
-        for(let i in this.commitItem){
-          this.listSearch["REPAIR_ITEM_DERATE_MONEY"]+=this.commitItem[i]["ITEM_DERATE_MONEY"];
+        this.listSearch["REPAIR_ITEM_DERATE_MONEY"]=val;
+        this.listSearch["SUM_MONEY"]=this.listSearch["REPAIR_ITEM_MONEY"]+this.listSearch["REPAIR_PART_MONEY"]-val-this.listSearch["REPAIR_PART_DERATE_MONEY"];
+      },
+      computedMoney1(val){
+        console.log('手动金额计算值',val);
+        this.listSearch["SUM_MONEY"]=0;
+        this.listSearch["REPAIR_PART_MONEY"]=0;
+        this.listSearch["REPAIR_PART_DERATE_MONEY"]=0;
+        for(let i in this.commitParts){
+          this.listSearch["REPAIR_PART_MONEY"]+=this.commitParts[i]["SALES_PRICE"]*(this.commitParts[i]["PART_NUM"]||1);
         }
-        for(let i in this.commitItemGroup){
-          this.listSearch["REPAIR_ITEM_DERATE_MONEY"]+=this.commitItemGroup[i]["ITEM_DERATE_MONEY"];
-        }
-        this.listSearch["SUM_MONEY"]=this.listSearch["REPAIR_ITEM_MONEY"]-this.listSearch["REPAIR_ITEM_DERATE_MONEY"];
+        this.listSearch["REPAIR_PART_DERATE_MONEY"]=val;
+        this.listSearch["SUM_MONEY"]=this.listSearch["REPAIR_ITEM_MONEY"]+this.listSearch["REPAIR_PART_MONEY"]-this.listSearch["REPAIR_ITEM_DERATE_MONEY"]-val;
       },
       
-      //删除维修项目数据
+      //删除维修项目组数据
       deleteItemGroup(index){
         this.commitItemGroup.splice(index,1);
-        this.computedMoney();
+        this.computItemMoney();
       },
       //是否选择项目套餐
       isItemGroupFun(val){
