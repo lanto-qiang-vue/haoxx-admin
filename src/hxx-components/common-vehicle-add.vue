@@ -211,7 +211,7 @@
            	this.formData.CUSTOMER_ID = name;
            },
            row(obj){
-           
+           this.fromData = obj;
            }
 		},
 		methods:{
