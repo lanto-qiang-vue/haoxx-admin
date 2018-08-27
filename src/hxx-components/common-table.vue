@@ -1,12 +1,8 @@
 <template>
 <div class="common-table" ref="commonTable">
-<<<<<<< HEAD
   <Collapse v-model="collapse" class="table-search" @on-change="changeCollapse">
     <Panel v-show="headerShow" name="1">查询
-=======
-  <Collapse v-show="headerShow" v-model="collapse" class="table-search" @on-change="changeCollapse">
-    <Panel  name="1">查询
->>>>>>> 75f72396f9b81d1d9b7148aa577444460d0c72a6
+
       <div slot="content">
         <slot name="search"></slot>
       </div>
@@ -138,11 +134,8 @@
       headerShow:{
         type:Boolean,
         default:true
-<<<<<<< HEAD
       } 
-=======
-      }
->>>>>>> 75f72396f9b81d1d9b7148aa577444460d0c72a6
+
     },
     data(){
 		  return{

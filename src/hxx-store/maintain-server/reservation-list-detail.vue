@@ -140,20 +140,20 @@
     <common-modal6 :description="tooltipObj.description"
       :title="tooltipObj.title" :modal6="tooltipObj.mshow" :fun="tooltipObj.funName" @saveData="saveData" @commitdata="commitdata"></common-modal6>
 
-      <common-select-vehicle :showoff="showoff" @selectCar="selectCar">
-      </common-select-vehicle>
-      <common-tenance-items :showTenanceItems="showTenanceItems" @sTenanceItem="sTenanceItem" :initGetItem="initGetItem">
-      </common-tenance-items>
+      <select-vehicle :showoff="showoff" @selectCar="selectCar">
+      </select-vehicle>
+      <tenance-items :showTenanceItems="showTenanceItems" @sTenanceItem="sTenanceItem" :initGetItem="initGetItem">
+      </tenance-items>
 
-      <common-select-parts :showSelectParts="showSelectParts" @selectPartsItem="selectPartsItem" :initParts="initParts">
+      <select-parts :showSelectParts="showSelectParts" @selectPartsItem="selectPartsItem" :initParts="initParts">
 
-      </common-select-parts>
-      <common-select-partsGroup :showSelectPartsGroup="showSelectPartsGroup" @selectPartsGroup="selectPartsGroup" :initPartsGroup="initPartsGroup">
+      </select-parts>
+      <select-partsGroup :showSelectPartsGroup="showSelectPartsGroup" @selectPartsGroup="selectPartsGroup" :initPartsGroup="initPartsGroup">
 
-      </common-select-partsGroup>
-      <common-select-itemPackage :showSelectItemGroup="showSelectItemGroup" @selectItemGroup="selectItemGroup" :initItemGroup="initItemGroup">
+      </select-partsGroup>
+      <select-itemPackage :showSelectItemGroup="showSelectItemGroup" @selectItemGroup="selectItemGroup" :initItemGroup="initItemGroup">
 
-      </common-select-itemPackage>
+      </select-itemPackage>
   </Modal>
 
 </template>
@@ -162,12 +162,12 @@
   import { getName, getDictGroup } from '@/libs/util.js'
   import { formatDate } from '@/libs/tools.js'
   import commonModal6 from '@/hxx-components/common-modal6.vue'
-  import commonSelectVehicle from '@/hxx-components/common-select-vehicle.vue'
-  import commonTenanceItems from '@/hxx-components/common-tenance-items.vue'
-  import commonSelectParts from '@/hxx-components/common-select-parts.vue'
-  import commonSelectPartsGroup from '@/hxx-components/common-select-partsGroup.vue'
+  import selectVehicle from '@/hxx-components/select-vehicle.vue'
+  import tenanceItems from '@/hxx-components/tenance-items.vue'
+  import selectParts from '@/hxx-components/select-parts.vue'
+  import selectPartsGroup from '@/hxx-components/select-partsGroup.vue'
 
-  import commonSelectItemPackage from '@/hxx-components/common-select-itemPackage.vue'
+  import selectItemPackage from '@/hxx-components/select-itemPackage.vue'
 
   import ColumnInput from '@/hxx-components/column-input.vue'
 
