@@ -22,24 +22,20 @@
     </div>
     <!-- 添加查询修改-->
     <!-- class="table-modal-detail" -->
-    <customer-list-detail :show="showDetail" :sign="sign" :detail="detail" class="table-modal-detail"></customer-list-detail>
+    <customer-list-detail :show="showDetail" @refresh="getList()" :sign="sign" :detail="detail" class="table-modal-detail"></customer-list-detail>
     <!-- Excel上传 -->
-    <common-upload-excel  :type="etype" :success="'esuccess'" @esuccess="esuccess"></common-upload-excel>
-    <!-- 警告提示 -->
-    <common-modal6  :description="description" :title="title" :modal6="mshow" :fun="funName" @del="del"></common-modal6>
-    <!-- 警告提示 -->
+    <upload-excel  :type="etype" :success="'esuccess'" @esuccess="esuccess"></upload-excel>
   </common-table>
 </template>
 <script>
     import commonTable from '@/hxx-components/common-table.vue'
     import { getName, getDictGroup } from '@/libs/util.js'
-    import commonModal6 from '@/hxx-components/common-modal6.vue'
-    import commonUploadExcel from '@/hxx-components/common-upload-excel.vue'
+    import uploadExcel from '@/hxx-components/upload-excel.vue'
     import customerListDetail from '@/hxx-store/customer-relations/customer-list-detail.vue'
     import env from '_conf/url'
   export default {
     name: "customer-list",
-    components: {commonTable,commonModal6,commonUploadExcel,customerListDetail},
+    components: {commonTable,uploadExcel,customerListDetail},
     data(){
       return{
         columns: [
@@ -142,9 +138,14 @@
         if(this.list.length == 0){
           this.$Message.info("未选择到数据!");
         }else{
-           this.title = '系统提示!';
-           this.description = '客户档案作废后，该客户下属车辆也将作废，确认要作废吗？';
-           this.mshow = Math.random();
+           // this.title = '系统提示!';
+           // this.description = '客户档案作废后，该客户下属车辆也将作废，确认要作废吗？';
+           // this.mshow = Math.random();
+                    this.$Modal.confirm({
+                      title:'系统提示!',
+                      content:'客户档案作废后，该客户下属车辆也将作废，确认要作废吗？',
+                      onOk:this.del,
+                    });
         }
       },
       del(){

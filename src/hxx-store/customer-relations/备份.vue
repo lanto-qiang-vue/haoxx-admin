@@ -1,7 +1,6 @@
 <!--预约单管理详情-->
 <template>
   <Modal
-    :transition-names="['', '']"
     v-model="showModal"
     width="90"
     @on-visible-change="visibleChange"
@@ -118,7 +117,8 @@
         <!-- 会员结束 -->
     </Tabs>
     <!-- 到时候改成vehicleShow -->
-        <vehicle-add @refresh="refresh()" :CUSTOMER_ID="tabshow" :row="row" :show="vehicleShow"></vehicle-add>
+        <common-vehicle-add @refresh="refresh()" :CUSTOMER_ID="tabshow" :row="row" :show="vehicleShow"></common-vehicle-add>
+        <common-modal6 @dpost="dpost"  :description="obj.description" :title="obj.title" :modal6="obj.show" :fun="obj.funName"></common-modal6>
   </Modal>
   <!-- 车辆档案新增组件 -->
 <!-- 车辆答案组件结束 -->
@@ -127,10 +127,11 @@
     import commonTable from '@/hxx-components/common-table.vue'
     import { getName, getDictGroup, getCreate } from '@/libs/util.js'
     import { formatDate } from '@/libs/tools.js'
-    import vehicleAdd from '@/hxx-components/vehicle-add.vue'
+    import commonModal6 from '@/hxx-components/common-modal6.vue'
+    import commonVehicleAdd from '@/hxx-components/common-vehicle-add.vue'
 	export default {
 		name: "customer-list-detail",
-    components: {commonTable,vehicleAdd},
+    components: {commonModal6,commonTable,commonVehicleAdd},
     data(){
       return {
         showModal:false,
@@ -302,12 +303,7 @@
             this.$refs[name].validate((valid) => {
                     if (valid) {
                       // alert(1);
-                     // this.obj = {title:'系统提示!',description:'确认保存吗?',show:Math.random(),funName:'dpost'};
-                      this.$Modal.confirm({
-                      title:'系统提示!',
-                      content:'<div style="color:red;">确认保存吗？</div>',
-                      onOk:this.dpost,
-                    });
+                     this.obj = {title:'系统提示!',description:'确认保存吗?',show:Math.random(),funName:'dpost'};
                     } else {
                         this.$Message.error("请校对红框信息");
                     }

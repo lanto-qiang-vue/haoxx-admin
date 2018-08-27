@@ -1,5 +1,6 @@
 <template>
 	<Modal
+  :transition-names="['', '']"
 	v-model="showModal"
     width="90"
     title="车辆新增"
@@ -142,7 +143,7 @@
 <script>
 	    import { getName, getDictGroup, getCreate } from '@/libs/util.js'
 	export default{
-		name:'common-vehicle-add',
+		name:'vehicle-add',
 		data(){
 			     const validatePass = (rule, value, callback) => {
 			     	var p1 = /\d?[A-Z]+\d?/
@@ -174,6 +175,7 @@
 				NEXT_REPAIR_DATE:'',
 				YEAR_CHECK_DATE:'',
 				MUST_SAFE_VALIDITY:'',
+				BUSINESS_SAFE_VALIDITY:'',
 				REMARK:'',
 				TID:24715,
 				CUSTOMER_ID:'',
@@ -211,7 +213,31 @@
            	this.formData.CUSTOMER_ID = name;
            },
            row(obj){
-           this.fromData = obj;
+           	this.formData.REMARK = obj.REMARK;
+            this.formData.MUST_SAFE_CORP = obj.MUST_SAFE_CORP;
+			this.formData.BUSINESS_SAFE_CORP = obj.BUSINESS_SAFE_CORP;
+		    this.formData.VEHICLE_COLOR = obj.VEHICLE_COLOR;
+			this.formData.COME_MILEAGE = parseFloat(obj.COME_MILEAGE);
+		    this.formData.REPAIR_MILEAGE = parseFloat(obj.REPAIR_MILEAGE);
+			this.formData.LAST_REPAIR_MILEAGE = parseFloat(obj.LAST_REPAIR_MILEAGE);
+			this.formData.NEXT_REPAIR_MILEAGE = parseFloat(obj.NEXT_REPAIR_MILEAGE);
+			this.formData.VEHICLE_ID= obj.VEHICLE_ID;
+			this.formData.REGULAR_REPAIR = parseFloat(obj.REGULAR_REPAIR);
+			this.formData.PLATE_NUM = obj.PLATE_NUM;
+			this.formData.VIN_NO = obj.VIN_NO;
+			this.formData.VEHICLE_MODEL = obj.VEHICLE_MODEL;
+			this.formData.BUY_DATE = obj.BUY_DATE;
+			this.formData.ENGINE_NO = obj.ENGINE_NO;
+			this.formData.LEAVE_FACTORY_DATE = obj.LEAVE_FACTORY_DATE;
+			this.formData.COME_DATE = obj.COME_DATE;
+			this.formData.LAST_REPAIR_DATE = obj.LAST_REPAIR_DATE;
+			this.formData.NEXT_REPAIR_DATE = obj.NEXT_REPAIR_DATE;
+			this.formData.YEAR_CHECK_DATE = obj.YEAR_CHECK_DATE;
+			this.formData.MUST_SAFE_VALIDITY = obj.MUST_SAFE_VALIDITY;
+			this.formData.REMARK = obj.REMARK;
+			this.formData.TID = obj.TID;
+			this.formData.CUSTOMER_ID = obj.CUSTOMER_ID;
+			this.formData.BUSINESS_SAFE_VALIDITY = obj.BUSINESS_SAFE_VALIDITY;
            }
 		},
 		methods:{

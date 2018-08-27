@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<Modal v-model="show" :mask-closable="false" width="360" @on-cancel="uploadClose">
+		<Modal :transition-names="['', '']" v-model="show" :mask-closable="false" width="360" @on-cancel="uploadClose">
         <p slot="header" style="color:#f60;text-align:left;">
             <span>客户档案导入</span>
         </p>
@@ -34,7 +34,7 @@
 <script>
 	import env from '_conf/url'
 	export default {
-		name:'common-upload-excel',
+		name:'upload-excel',
 		data(){
 			return {
 				filename:'请选择文件',
