@@ -16,6 +16,7 @@
 		  return{
 		    val: null,
         show: 'span',
+        timer:null
       }
     },
     computed:{
@@ -34,7 +35,11 @@
             (this.show='input', this.$refs.input.focus())
       },
       change(val){
-        this.$emit('change', val)
+        let self= this
+        clearTimeout(this.timer);
+        this.timer = setTimeout(function(){
+          self.$emit('change', val)
+        },1000)
       }
     }
 	}
