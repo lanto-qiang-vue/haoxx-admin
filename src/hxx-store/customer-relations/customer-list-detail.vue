@@ -10,7 +10,28 @@
     :transfer= "false"
     :footer-hide="true"
   >
+<<<<<<< HEAD
+      <Tabs class="modal-tabs">
+                <!-- 车辆档案 -->
+        <TabPane label="车辆档案" :disabled="tabshow > 1" icon="logo-windows">
+          <!-- <Form> -->
+          <!-- <FormItem> -->
+<!--             <Button @click="showModal = false">返回</Button>
+            <Button type="primary" style="margin-left: 8px">新增</Button>
+            <Button type="primary" style="margin-left: 8px">修改</Button>
+            <Button type="primary" style="margin-left: 8px">查看</Button>
+            <div style="clear:both;"></div> -->
+<!--           </FormItem>
+        </Form> -->
+        <!-- 车辆档案列表 -->
+
+        <common-table :columns="columns"  v-model="tableData" :show="show"></common-table>
+
+        </TabPane>
+        <!-- 车辆档案结束 -->
+=======
       <Tabs @on-click="qh" v-model="indexName" class="modal-tabs">
+>>>>>>> 75f72396f9b81d1d9b7148aa577444460d0c72a6
         <!-- 基本信息 -->
         <TabPane label="基本信息" name="m1" icon="logo-apple">
     <Form ref="formData" :model="formData" :label-width="80" :rules="ruleValidate" inline>
@@ -108,7 +129,11 @@
         </TabPane>
         <!-- 车辆档案结束 -->
         <!-- 会员卡信息 -->
+<<<<<<< HEAD
+        <TabPane label="会员卡信息" :disabled="tabshow < 1" icon="logo-tux">
+=======
         <TabPane label="会员卡信息" name="m3" :disabled="tabshow < 1" icon="logo-tux">
+>>>>>>> 75f72396f9b81d1d9b7148aa577444460d0c72a6
 
         </TabPane>
         <!-- 会员结束 -->
