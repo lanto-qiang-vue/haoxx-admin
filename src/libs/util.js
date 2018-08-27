@@ -129,7 +129,7 @@ export const showTitle = (item, vm) => vm.$config.useI18n ? vm.$t(item.name) : (
  * @description 本地存储和获取标签导航列表
  */
 export const setTagNavListInLocalstorage = list => {
-  // localStorage.tagNaveList = JSON.stringify(list)
+  localStorage.tagNaveList = JSON.stringify(list)
 }
 /**
  * @returns {Array} 其中的每个元素只包含路由原信息中的name, path, meta三项
@@ -332,6 +332,13 @@ export const getName = (arr, code) => {
     if(arr[i].code==code)
       return arr[i].name
   }
+}
+export const getCreate = (arr,code) =>{
+for(let i in arr){
+if(arr[i].USER_ID ==code){
+return arr[i].USER_NAME
+}
+}
 }
 export const getDictGroup = (arr, group) => {
   let res= []

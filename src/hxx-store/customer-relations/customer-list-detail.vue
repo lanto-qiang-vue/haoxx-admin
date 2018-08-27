@@ -8,8 +8,10 @@
     :closable="false"
     :scrollable="true"
     :transfer= "false"
+    :fullscreen="true"
     :footer-hide="true"
   >
+<<<<<<< HEAD
       <Tabs class="modal-tabs">
                 <!-- 车辆档案 -->
         <TabPane label="车辆档案" :disabled="tabshow > 1" icon="logo-windows">
@@ -28,85 +30,82 @@
 
         </TabPane>
         <!-- 车辆档案结束 -->
+=======
+      <Tabs @on-click="qh" v-model="indexName" class="modal-tabs">
+>>>>>>> 75f72396f9b81d1d9b7148aa577444460d0c72a6
         <!-- 基本信息 -->
-        <TabPane label="基本信息" icon="logo-apple">
+        <TabPane label="基本信息" name="m1" icon="logo-apple">
     <Form ref="formData" :model="formData" :label-width="80" :rules="ruleValidate" inline>
-          <FormItem style="margin-left:-80px;">
-            <Button @click="showModal = false">返回</Button>
+          <FormItem style="margin-left:-80px;width:100%;">
+              <div class="operate">
+                            <Button @click="showModal = false">返回</Button>
             <Button type="primary" style="margin-left: 8px" @click="hsubmit('formData')">保存</Button>
+               </div>
           </FormItem>
           <div></div>
-          <FormItem label="客户名称" prop="name">
-              <Input type="text" v-model="formData.name"  style="min-width: 200px;"> </Input>
+          <FormItem label="客户名称" style="width:30%;" prop="name">
+              <Input type="text" v-model="formData.name"  style="min-width: 100%;"> </Input>
           </FormItem>
-          <FormItem label="移动电话:" prop="phone">
-              <Input type="text" v-model="formData.phone" style="min-width: 200px;"> </Input>
+          <FormItem label="移动电话:" style="width:30%;" prop="phone">
+              <Input type="text" v-model="formData.phone" style="min-width: 100%;"> </Input>
           </FormItem>
-          <FormItem label="联系地址:">
-              <Input type="text" v-model="formData.address" style="min-width: 200px;"> </Input>
+          <FormItem label="联系地址:" style="width:30%;">
+              <Input type="text" v-model="formData.address" style="min-width: 100%;"> </Input>
           </FormItem>
-                  <FormItem label="固定电话:">
-              <Input type="text" v-model="formData.tel"  style="min-width: 200px;"> </Input>
+          <div style="clear:both;"></div>
+                  <FormItem label="固定电话:" style="width:30%;">
+              <Input type="text" v-model="formData.tel"  style="min-width: 100%;"> </Input>
           </FormItem>
-                  <FormItem label="身份证号:" prop="idcard">
-              <Input type="text" v-model="formData.idcard"  style="min-width: 200px;"> </Input>
+                  <FormItem label="身份证号:" prop="idcard" style="width:30%;">
+              <Input type="text" v-model="formData.idcard"  style="min-width: 100%;"> </Input>
           </FormItem>
-                  <FormItem label="生日:">
-           <!--    <Input type="text" style="min-width: 250px;"> </Input> -->
-                      <Col span="11">
-                    <DatePicker type="date" placeholder="" v-model="formData.birthday"  format="yyyy-MM-dd" style="min-width: 200px;"></DatePicker>
+                  <FormItem label="生日:" style="width:30%;">
+           <!--    <Input type="text" style="min-width: 100%;"> </Input> -->
+                      <Col span="11" style="width:100%;">
+                    <DatePicker type="date" placeholder="" v-model="formData.birthday"  format="yyyy-MM-dd" style="min-width: 100%;"></DatePicker>
                 </Col>
           </FormItem>
-                   </FormItem>
-                  <FormItem label="性别:">
-               <Select v-model="formData.sex" placeholder="" style="min-width: 200px;">
+                  <FormItem label="性别:" style="width:30%;">
+               <Select v-model="formData.sex" placeholder="" style="min-width: 100%;">
                 <Option v-for="(item, index) in sexGroup"
                   :key="index" :value="item.code">{{item.name}}</Option>
               </Select>
           </FormItem>
-                   </FormItem>
-                  <FormItem label="客户来源:">
-                             <Select v-model="formData.resource" placeholder="" style="min-width: 200px;">
+                  <FormItem label="客户来源:" style="width:30%;">
+                             <Select v-model="formData.resource" placeholder="" style="min-width: 100%;">
                 <Option v-for="(item, index) in resourceGroup"
                   :key="index" :value="item.code">{{item.name}}</Option>
               </Select>
           </FormItem>
-                   </FormItem>
-                  <FormItem label="客户等级:">
-                            <Select v-model="formData.level" placeholder="" style="min-width: 200px;">
+                  <FormItem label="客户等级:" style="width:30%;">
+                            <Select v-model="formData.level" placeholder="" style="min-width: 100%;">
                 <Option v-for="(item, index) in levelGroup"
                   :key="index" :value="item.code">{{item.name}}</Option>
               </Select>
           </FormItem>
-                   </FormItem>
-                  <FormItem label="客户类型:">
-                                    <Select v-model="formData.type" placeholder="" style="min-width: 200px;">
+                  <FormItem label="客户类型:" style="width:30%;">
+                                    <Select v-model="formData.type" placeholder="" style="min-width: 100%;">
                 <Option v-for="(item, index) in typeGroup"
                   :key="index" :value="item.code">{{item.name}}</Option>
               </Select>
           </FormItem>
-                   </FormItem>
-                  <FormItem label="QQ:">
-              <Input type="text" v-model="formData.qq"  style="min-width: 200px;"> </Input>
+                  <FormItem label="QQ:" style="width:30%;">
+              <Input type="text" v-model="formData.qq"  style="min-width: 100%;"> </Input>
           </FormItem>
-                   </FormItem>
-                  <FormItem label="微信:">
-              <Input type="text" v-model="formData.wx"  style="min-width: 200px;"> </Input>
+                  <FormItem label="微信:" style="width:30%;">
+              <Input type="text" v-model="formData.wx"  style="min-width: 100%;"> </Input>
           </FormItem>
-                   </FormItem>
-                  <FormItem label="客户专员:">
-                <Select v-model="formData.attach" placeholder="" style="min-width: 200px;">
+                  <FormItem label="客户专员:" style="width:30%;">
+                <Select v-model="formData.attach" placeholder="" style="min-width: 100%;">
                 <Option v-for="(item, index) in attachGroup"
                   :key="index" :value="item.USER_ID">{{item.USER_NAME}}</Option>
                 </Select>
           </FormItem>
-                   </FormItem>
-                  <FormItem label="邮箱:">
-              <Input type="text" v-model="formData.email"  style="min-width: 200px;"> </Input>
+                  <FormItem label="邮箱:" style="width:30%;">
+              <Input type="text" v-model="formData.email"  style="min-width: 100%;"> </Input>
           </FormItem>
-                   </FormItem>
-                  <FormItem label="开票税号:">
-              <Input type="text" v-model="formData.snumber"  style="min-width: 200px;"> </Input>
+                  <FormItem label="开票税号:" style="width:30%;">
+              <Input type="text" v-model="formData.snumber"  style="min-width: 100%;"> </Input>
           </FormItem>
     </Form>
            <Form ref="formInline" :label-width="80">
@@ -115,26 +114,51 @@
           </FormItem>
        </Form>
         </TabPane>
+                <!-- 车辆档案 -->
+        <TabPane label="车辆档案" name="m2" :disabled="tabshow < 1" icon="logo-windows">
+        <!-- 车辆档案列表 -->
 
-        <!-- 会员卡信息 -->
-        <TabPane label="会员卡信息" :disabled="tabshow < 1" icon="logo-tux">
+        <common-table :columns="columns" @changePageSize="changePageSize" @changePage="changePage" :total="total" :headerShow="false"  v-model="tableData" :show="show">
+            <div slot="operate">
+            <Button @click="showModal = false">返回</Button>
+            <Button type="primary" style="margin-left: 8px" @click="vehicleShow = Math.random()">新增</Button>
+            <Button type="primary" style="margin-left: 8px" @click="vehicleEdit">修改</Button>
+            <Button type="primary" style="margin-left: 8px" @click="vehicleLook">查看</Button>
+            </div>
+        </common-table>
 
         </TabPane>
+        <!-- 车辆档案结束 -->
+        <!-- 会员卡信息 -->
+<<<<<<< HEAD
+        <TabPane label="会员卡信息" :disabled="tabshow < 1" icon="logo-tux">
+=======
+        <TabPane label="会员卡信息" name="m3" :disabled="tabshow < 1" icon="logo-tux">
+>>>>>>> 75f72396f9b81d1d9b7148aa577444460d0c72a6
+
+        </TabPane>
+        <!-- 会员结束 -->
     </Tabs>
+    <!-- 到时候改成vehicleShow -->
+        <common-vehicle-add @refresh="refresh()" :CUSTOMER_ID="tabshow" :show="vehicleShow"></common-vehicle-add>
         <common-modal6 @dpost="dpost"  :description="obj.description" :title="obj.title" :modal6="obj.show" :fun="obj.funName"></common-modal6>
   </Modal>
+  <!-- 车辆档案新增组件 -->
+<!-- 车辆答案组件结束 -->
 </template>
 <script>
     import commonTable from '@/hxx-components/common-table.vue'
-    import { getName, getDictGroup } from '@/libs/util.js'
-     import { formatDate } from '@/libs/tools.js'
-       import commonModal6 from '@/hxx-components/common-modal6.vue'
+    import { getName, getDictGroup, getCreate } from '@/libs/util.js'
+    import { formatDate } from '@/libs/tools.js'
+    import commonModal6 from '@/hxx-components/common-modal6.vue'
+    import commonVehicleAdd from '@/hxx-components/common-vehicle-add.vue'
 	export default {
 		name: "customer-list-detail",
-    components: {commonModal6,commonTable},
+    components: {commonModal6,commonTable,commonVehicleAdd},
     data(){
       return {
-        showModal:true,
+        showModal:false,
+        indexName:'m1',
         collapse:'1',
         tabshow:0,
         sexGroup:[],
@@ -144,6 +168,10 @@
         attachGroup:[],
         store:{},//存储使用
         tableData:[],
+        total:0,
+        page:1,
+        limit:25,
+        vehicleShow:false,//车辆档案新增
         formData:{
           name:'',
           phone:'',
@@ -179,18 +207,18 @@
           {title: '序号',  minWidth: 80,
             render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
           },
-           {title: '车牌号', key: 'CODE', sortable: true, minWidth: 300},
-          {title: '车辆颜色', key: 'NAME', sortable: true, minWidth: 300},
-          {title: '车型', key: 'MOBILE_PHONE', sortable: true, minWidth: 300},
-          {title: '车架号', key: 'CUSTOMER_TYPE', sortable: true, minWidth: 300,
-            render: (h, params) => h('span',getName(this.$store.state.app.dict, params.row.CUSTOMER_TYPE))
+           {title: '车牌号', key: 'PLATE_NUM', sortable: true, minWidth: 150},
+          {title: '车辆颜色', key: 'VEHICLE_COLOR', sortable: true, minWidth: 150,
+           render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.VEHICLE_COLOR))
           },
-          {title: '发动机型号', key: 'CUSTOMER_LEVEL', sortable: true, minWidth: 300,
-            render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.CUSTOMER_LEVEL))
+          {title: '车型', key: 'VEHICLE_MODEL', sortable: true, minWidth: 150},
+          {title: '车架号', key: 'VIN_NO', sortable: true, minWidth: 150
           },
-          {title: '最近来厂日期', key: 'FOLLOW_PERSON', sortable: true, minWidth: 150},
-          {title: '创建人', key: 'CREATER', sortable: true, minWidth: 150
-            // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.CREATER))
+          {title: '发动机型号', key: 'ENGINE_NO', sortable: true, minWidth: 150
+          },
+          {title: '最近来厂日期', key: 'COME_DATE', sortable: true, minWidth: 150},
+          {title: '创建人', key: 'CREATER', sortable: true, minWidth: 150,
+           render: (h, params) => h('span', getCreate(this.$store.state.app.tenant, params.row.CREATER))
           },
           {title: '创建时间', key: 'CREATE_TIME', sortable: true, minWidth: 150
           },
@@ -202,6 +230,7 @@
     watch:{
       show(){
         this.showModal = true;
+        this.indexName = "m1";
       },
       detail(row){
        // console.log(row);
@@ -295,13 +324,17 @@
       hsubmit(name){
             this.$refs[name].validate((valid) => {
                     if (valid) {
-                      alert(1);
+                      // alert(1);
                      this.obj = {title:'系统提示!',description:'确认保存吗?',show:Math.random(),funName:'dpost'};
                     } else {
                         this.$Message.error("请校对红框信息");
                     }
                 })
       },
+      changePage(page){this.page=page},
+      changePageSize(size){this.limit=size},
+      vehicleEdit(){},
+      vehicleLook(){},
       dpost(){
                   var person;
                 var that = this;
@@ -370,14 +403,13 @@
         }
       },
       getList(){
-                     this.axios.request({
-          url: 'tenant/basedata/ttcustomerfile/list',
+                this.axios.request({
+          url: 'tenant/basedata/ttvehiclefile/list',
           method: 'post',
           data: {
-            KEYWORD:"",
-            PLATE_NUM:"",
-            page: 1,
-            limit: 25,
+            page: this.page,
+            limit: this.limit,
+            CUSTOMER_ID_eq:this.tabshow,
             access_token: this.$store.state.user.token
           }
         }).then(res => {
@@ -387,12 +419,31 @@
             this.total= res.total
           }
         })
+      },
+      refresh(){
+      this.getList();
+      },
+      qh(name){
+      switch(name){
+        case 'm2':
+        this.getList();
+        break;
+        case 'm3':
+        break;
       }
+    },
     }
  }
 </script>
 
 <style scoped lang="less">
+  .operate{
+    margin-top: 10px;
+    padding: 15px;
+    border: 1px solid #dcdee2;
+    border-radius: 3px;
+    width:100%;
+  }
   .search-block{
     display: inline-block;
     width: 200px;

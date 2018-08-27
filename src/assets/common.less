@@ -1,3 +1,12 @@
+@import '~iview/src/styles/index.less';
+@menu-dark-title: #001529;
+@menu-dark-active-bg: #000c17;
+@layout-sider-background: #001529;
+@font-size-small: 14px;
+@btn-font-size: 14px;
+@tag-font-size: 14px;
+@table-td-hover-bg: #bfe9ff;
+@table-td-highlight-bg: #bfe9ff;
 .table-modal-detail{
   max-height: 100%;
   .ivu-modal-mask{
@@ -41,6 +50,21 @@
         }
       }
     }
+  }
+}
+
+.modal-tabs{
+  height: 100%;
+  .ivu-tabs-bar{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1;
+  }
+  .ivu-tabs-content{
+    height: 100%;
+    padding-top: 52px;
   }
 }
 
