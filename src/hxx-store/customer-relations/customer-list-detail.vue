@@ -10,7 +10,7 @@
     :transfer= "false"
     :footer-hide="true"
   >
-      <Tabs >
+      <Tabs class="modal-tabs">
                 <!-- 车辆档案 -->
         <TabPane label="车辆档案" :disabled="tabshow > 1" icon="logo-windows">
           <!-- <Form> -->
@@ -23,9 +23,9 @@
 <!--           </FormItem>
         </Form> -->
         <!-- 车辆档案列表 -->
-        
+
         <common-table :columns="columns"  v-model="tableData" :show="show"></common-table>
-    
+
         </TabPane>
         <!-- 车辆档案结束 -->
         <!-- 基本信息 -->
@@ -118,7 +118,7 @@
 
         <!-- 会员卡信息 -->
         <TabPane label="会员卡信息" :disabled="tabshow < 1" icon="logo-tux">
-          
+
         </TabPane>
     </Tabs>
         <common-modal6 @dpost="dpost"  :description="obj.description" :title="obj.title" :modal6="obj.show" :fun="obj.funName"></common-modal6>
@@ -288,7 +288,7 @@
       this.formData.attach = 0;
       // console.log(this.formData);
       //下拉数据处理结束
-      
+
     },
     methods:{
       visibleChange(){},
@@ -345,7 +345,7 @@
              }else{
               this.$Message.success('修改成功');
              }
-          } 
+          }
         })
       },
       clear(){

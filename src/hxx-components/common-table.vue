@@ -1,13 +1,13 @@
 <template>
 <div class="common-table" ref="commonTable">
   <Collapse v-model="collapse" class="table-search" @on-change="changeCollapse">
-    <Panel name="1">查询
+    <Panel v-show="headerShow" name="1">查询
       <div slot="content">
         <slot name="search"></slot>
       </div>
     </Panel>
   </Collapse>
-  <div class="operate">
+  <div v-show="headerShow" class="operate">
     <slot name="operate"></slot>
   </div>
   <div>
@@ -129,7 +129,11 @@
         default: 'top'
       },
       clearSelect:{},
-      show:{}
+      show:{},
+      headerShow:{
+        type:Boolean,
+        default:true
+      } 
     },
     data(){
 		  return{
