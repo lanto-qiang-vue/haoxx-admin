@@ -24,9 +24,9 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="primary" @click="detailData=null,showDetail=Math.random()">新增</Button>
-      <Button type="info" @click="showDetail=Math.random()" :disabled="!detailData">编辑/查看</Button>
-      <Button type="error" @click="deleteDetailData" :disabled="isOrderSuccess">作废</Button>
+      <Button type="primary" v-if="accessBtn('add')" @click="detailData=null,showDetail=Math.random()">新增</Button>
+      <Button type="info" v-if="accessBtn('edit')" @click="showDetail=Math.random()" :disabled="!detailData">编辑/查看</Button>
+      <Button type="error" v-if="accessBtn('ban')"  @click="deleteDetailData" :disabled="isOrderSuccess">作废</Button>
     </div>
 
     <reservation-list-detail class="table-modal-detail" :showDetail="showDetail"
@@ -42,9 +42,11 @@
   import reservationListDetail from './reservation-list-detail.vue'
   import { getName, getDictGroup } from '@/libs/util.js'
   import commonModal6 from '@/hxx-components/common-modal6.vue'
+  import mixin from '@/hxx-components/mixin'
 	export default {
 		name: "reservation-list",
     components: {commonTable, reservationListDetail,commonModal6},
+    mixins: [mixin],
     data(){
 		  return{
         tooltipObj:{

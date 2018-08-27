@@ -27,7 +27,7 @@
 import commonTable from '@/hxx-components/common-table.vue'
   import { getName, getDictGroup } from '@/libs/util.js'
 	export default {
-		name: "common-select-vehicle",
+		name: "select-vehicle",
         props:['showoff'],
         components: {commonTable},
         data(){

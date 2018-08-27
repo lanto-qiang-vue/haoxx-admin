@@ -42,7 +42,7 @@
 import commonTable from '@/hxx-components/common-table.vue'
   import { getName, getDictGroup } from '@/libs/util.js'
 	export default {
-		name: "common-select-parts",
+		name: "select-parts",
         props:['showSelectParts','initParts'],
         components: {commonTable},
         data(){
@@ -131,7 +131,7 @@ import commonTable from '@/hxx-components/common-table.vue'
                     {title: '单位', key: 'UNIT', sortable: true, minWidth: 70,
                         render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.UNIT))
                     },
-                    {title: '操作', key: 'operation', sortable: true, minWidth: 80,
+                    {title: '操作', key: 'operation', sortable: true, minWidth: 80,fixed: 'right',
                         render: (h, params) => {
                             let buttonContent= this.state(params.row)? '取消选择':'选择';
                             let buttonStatus= this.state(params.row)? 'warning':'primary';
@@ -185,7 +185,7 @@ import commonTable from '@/hxx-components/common-table.vue'
         methods:{
             state(item){
                 for(let i in this.selectData){
-                    if(this.selectData[i].PART_ID== item.PART_ID){
+                    if(this.selectData[i].STOCK_ID== item.STOCK_ID){
                         return true
                     }
                 }
@@ -194,7 +194,7 @@ import commonTable from '@/hxx-components/common-table.vue'
             select(item){
                 let flag=true
                 for(let i in this.selectData){
-                    if(this.selectData[i].PART_ID== item.PART_ID){
+                    if(this.selectData[i].STOCK_ID== item.STOCK_ID){
                         this.selectData.splice(i,1)
                         flag= false
                         break;
