@@ -1,23 +1,38 @@
 <template>
-	<Modal
-  :transition-names="['', '']"
-	v-model="showModal"
+	  <Modal
+    :transition-names="['', '']"
+    v-model="showModal"
     width="90"
-    title="车辆新增"
-    :mask-closable="false"
     :scrollable="true"
-    :transfer= "true"
-    :footer-hide="false">	
-    <!-- 车辆车辆档案新增调用 -->
-    <!-- <div style="height:50px;"></div> -->
-    <Form :label-width="120" :model="formData" ref="formData" :rules="ruleValidate" inline>
-          <FormItem label="车牌号:" style="width:45%;"  prop="PLATE_NUM">
+    :transfer= "false"
+    :footer-hide="true"
+  >
+	<!-- @on-click="qh" v-model="indexName" -->
+	    <Tabs style="height:auto;">
+
+        <!-- 基本信息 -->
+        <TabPane label="基本信息" name="m1" icon="logo-apple">
+  		    <Form :label-width="120" :model="formData" ref="formData" :rules="ruleValidate" inline>
+      <!-- 调整字段个数和位置 -->
+             <FormItem style="margin-left:-80px;width:100%;">
+              <div class="operate">
+                            <Button @click="showModal = false">返回</Button>
+            <Button type="primary" style="margin-left: 8px" @click="submit('formData')">保存</Button>
+               </div>
+          </FormItem>
+    	    <FormItem label="车牌号:" style="width:30%;"  prop="PLATE_NUM">
               <Input type="text" v-model="formData.PLATE_NUM"  style="min-width: 100%;"> </Input>
           </FormItem>
-          <FormItem label="车架号:" style="width:46%;" prop="VIN_NO" >
+          <FormItem label="客户编号:" style="width:30%;"  prop="CUSTOMER_CODE">
+              <Input type="text" v-model="formData.CUSTOMER_CODE" :readonly="true" icon="ios-search" @on-click="customerChange"  style="min-width: 100%;"> </Input>
+          </FormItem>
+           <FormItem label="客户名称:" style="width:30%;"  prop="CUSTOMER_NAME">
+              <Input type="text" v-model="formData.CUSTOMER_NAME" :disabled="true"  style="min-width: 100%;"> </Input>
+          </FormItem>
+         <FormItem label="车架号:" style="width:30%;" prop="VIN_NO" >
               <Input type="text" v-model="formData.VIN_NO" style="min-width: 100%;"> </Input>
           </FormItem>
-                    <FormItem label="车型:" style="width:91%;" prop="VEHICLE_MODEL">
+            <FormItem label="车型:" style="width:60%;" prop="VEHICLE_MODEL">
               <Input type="text"  style="min-width: 100%;" v-model="formData.VEHICLE_MODEL" :disabled="true" @on-click="vehicleChange" icon="ios-search"> </Input>
           </FormItem>
       <!-- 调整字段个数和位置 -->
@@ -136,15 +151,29 @@
           </FormItem>
        </Form>
        <div style="height:50px;"></div>
-          <div slot="footer" style="text-align:center;">
-           <Button size="large" type="primary" @click="submit('formData')">保存</Button><Button size="large" type="primary" @click="showModal=false">关闭</Button>
-        </div>
-	</Modal>
+        </TabPane>
+                <!-- 车辆档案 -->
+        <TabPane label="维修记录" name="m2"  :disabled="formData.VEHICLE_ID < 1"  icon="logo-windows">
+        车辆档案列表
+
+        </TabPane>
+        <!-- 车辆档案结束 -->
+        <!-- 会员卡信息 -->
+
+        <TabPane label="保养规则" name="m3" :disabled="formData.VEHICLE_ID < 1"   icon="logo-tux">
+
+        </TabPane>
+        <!-- 会员结束 -->
+    </Tabs>
+<select-customer @select="select" :showoff="showoff"></select-customer>
+</Modal>
 </template>
 <script>
-	    import { getName, getDictGroup, getCreate } from '@/libs/util.js'
+    import { getName, getDictGroup, getCreate } from '@/libs/util.js'
+    import selectCustomer from '@/hxx-components/select-customer.vue'
 	export default{
-		name:'vehicle-add',
+		name:'cart-modal',
+		components:{selectCustomer},
 		data(){
 			     const validatePass = (rule, value, callback) => {
 			     	var p1 = /\d?[A-Z]+\d?/
@@ -154,7 +183,10 @@
                 	  callback();
                 }
             };
-			return{showModal:false,
+			return{
+				store:[],
+				showModal:false,
+				showoff:false,
 				formData:{
 				MUST_SAFE_CORP:0,
 				BUSINESS_SAFE_CORP:0,
@@ -180,8 +212,9 @@
 				REMARK:'',
 				TID:24715,
 				CUSTOMER_ID:'',
-        CUSTOMER_CODE:'',
-        CUSTOMER_NAME:'',
+                CUSTOMER_CODE:'',
+                CUSTOMER_NAME:'',
+                VEHICLE_ID:'',
 				},
 				ruleValidate:{
 					 PLATE_NUM:[{required: true, message: '车牌号必填', trigger: 'blur' },
@@ -206,6 +239,8 @@
            show(){
            	this.showModal=true;
            	// alert(1);
+           	//重置数据。
+           	this.resotre();
            	if(this.must.length === 0) this.getInsure();
            },store(){
            	 this.must.push({'INSURER_ID':0,'CORP_NAME':'请选择'});
@@ -262,7 +297,7 @@
         })
 			},
 			submit(name){
-				            this.$refs[name].validate((valid) => {
+		    this.$refs[name].validate((valid) => {
                     if (valid) {
                      console.log(this.formData);
                     this.$Modal.confirm({
@@ -286,18 +321,52 @@
           if (res.success === true) {
              if(this.formData.VEHICLE_ID < 1){
               this.$Message.success('新增成功');
-              this.formData.VEHICLE_ID = res.data.VEHICLE_ID;
+             this.formData.VEHICLE_ID = res.data.VEHICLE_ID;
              }else{
               this.$Message.success('修改成功');
              }
               this.$emit('refresh');
-              this.showModal = false;
           }
         })
 			},
       customerChange(){
-        alert(2);
-      }
+        this.showoff = Math.random();
+      },select(row){
+      	this.formData.CUSTOMER_ID = row.CUSTOMER_ID;
+        this.formData.CUSTOMER_CODE = row.CODE;
+        this.formData.CUSTOMER_NAME = row.NAME;
+      },resotre(){
+      	var data = {
+				MUST_SAFE_CORP:0,
+				BUSINESS_SAFE_CORP:0,
+				VEHICLE_COLOR:0,
+				COME_MILEAGE:0,
+				REPAIR_MILEAGE:0,
+				LAST_REPAIR_MILEAGE:0,
+				NEXT_REPAIR_MILEAGE:0,
+				VEHICLE_ID:0,
+				REGULAR_REPAIR:0,
+				PLATE_NUM:'',
+				VIN_NO:'',
+				VEHICLE_MODEL:'法拉利360 Spider 敞篷版 2004款 3.6L Spider AMT',
+				BUY_DATE:'',
+				ENGINE_NO:'',
+				LEAVE_FACTORY_DATE:'',
+				COME_DATE:'',
+				LAST_REPAIR_DATE:'',
+				NEXT_REPAIR_DATE:'',
+				YEAR_CHECK_DATE:'',
+				MUST_SAFE_VALIDITY:'',
+				BUSINESS_SAFE_VALIDITY:'',
+				REMARK:'',
+				TID:24715,
+				CUSTOMER_ID:'',
+                CUSTOMER_CODE:'',
+                CUSTOMER_NAME:'',
+                VEHICLE_ID:'',
+				};
+				this.formData = data;
+      },
 		},
 		mounted(){
         var color = getDictGroup(this.$store.state.app.dict,'1013');
@@ -313,3 +382,17 @@
 		}
 	}
 </script>
+<style scoped lang="less">
+	  .operate{
+    margin-top: 10px;
+    padding: 15px;
+    border: 1px solid #dcdee2;
+    border-radius: 3px;
+    width:100%;
+  }
+</style>
+<style lang="less">
+.table-modal-detail .ivu-modal-wrap .ivu-modal .ivu-modal-content .ivu-modal-body{
+  padding-top:10px;
+}
+</style>
