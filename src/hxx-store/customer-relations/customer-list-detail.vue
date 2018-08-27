@@ -8,7 +8,6 @@
     :closable="false"
     :scrollable="true"
     :transfer= "false"
-    :fullscreen="true"
     :footer-hide="true"
   >
       <Tabs @on-click="qh" v-model="indexName" class="modal-tabs">
@@ -97,7 +96,7 @@
         <TabPane label="车辆档案" name="m2" :disabled="tabshow < 1" icon="logo-windows">
         <!-- 车辆档案列表 -->
 
-        <common-table :columns="columns" @changePageSize="changePageSize" @changePage="changePage" :total="total" :headerShow="false"  v-model="tableData" :show="show">
+        <common-table :columns="columns" @changePageSize="changePageSize" @changePage="changePage" :total="total" :headerShow="false" @onRowClick="rowClick"  v-model="tableData" :show="show">
             <div slot="operate">
             <Button @click="showModal = false">返回</Button>
             <Button type="primary" style="margin-left: 8px" @click="vehicleShow = Math.random()">新增</Button>
@@ -115,7 +114,7 @@
         <!-- 会员结束 -->
     </Tabs>
     <!-- 到时候改成vehicleShow -->
-        <common-vehicle-add @refresh="refresh()" :CUSTOMER_ID="tabshow" :show="vehicleShow"></common-vehicle-add>
+        <common-vehicle-add @refresh="refresh()" :CUSTOMER_ID="tabshow" :row="row" :show="vehicleShow"></common-vehicle-add>
         <common-modal6 @dpost="dpost"  :description="obj.description" :title="obj.title" :modal6="obj.show" :fun="obj.funName"></common-modal6>
   </Modal>
   <!-- 车辆档案新增组件 -->
@@ -147,6 +146,7 @@
         page:1,
         limit:25,
         vehicleShow:false,//车辆档案新增
+        row:[],//存储车辆档案单选数据
         formData:{
           name:'',
           phone:'',
@@ -308,7 +308,13 @@
       },
       changePage(page){this.page=page},
       changePageSize(size){this.limit=size},
-      vehicleEdit(){},
+      vehicleEdit(){
+        if(this.row.length === 0){
+        this.$Message.info('未选取数据');
+        return;
+        }
+        this.vehicleShow = Math.random();
+      },
       vehicleLook(){},
       dpost(){
                   var person;
@@ -394,6 +400,9 @@
             this.total= res.total
           }
         })
+      },
+      rowClick(row){
+        this.row = row;
       },
       refresh(){
       this.getList();
