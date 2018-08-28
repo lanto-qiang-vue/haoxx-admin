@@ -99,10 +99,10 @@
         <TabPane label="车辆档案" name="m2" :disabled="tabshow < 1" icon="logo-windows">
         <!-- 车辆档案列表 -->
 
-        <common-table :columns="columns" @changePageSize="changePageSize" @changePage="changePage" :total="total" :headerShow="false" @onRowClick="rowClick" :row="row"  v-model="tableData" :show="show">
+        <common-table :columns="columns" @changePageSize="changePageSize" @changePage="changePage" :total="total" :headerShow="false" :showSearch="false" @onRowClick="rowClick" :row="row"  v-model="tableData" :show="show">
             <div slot="operate">
             <Button @click="showModal = false">返回</Button>
-            <Button type="primary" style="margin-left: 8px" @click="vehicleShow = Math.random()">新增</Button>
+            <Button type="primary" style="margin-left: 8px" @click="vehicleAdd">新增</Button>
             <Button type="primary" style="margin-left: 8px" @click="vehicleEdit">修改</Button>
             <Button type="primary" style="margin-left: 8px" @click="vehicleLook">查看</Button>
             </div>
@@ -118,6 +118,7 @@
         <!-- 会员结束 -->
     </Tabs>
     <!-- 到时候改成vehicleShow -->
+        <cart-modal class="table-modal-detail" :info="row"   :show="showLook"></cart-modal>
         <vehicle-add @refresh="refresh()" :CUSTOMER_ID="tabshow" :row="row" :show="vehicleShow"></vehicle-add>
   </Modal>
   <!-- 车辆档案新增组件 -->
@@ -128,12 +129,14 @@
     import { getName, getDictGroup, getCreate } from '@/libs/util.js'
     import { formatDate } from '@/libs/tools.js'
     import vehicleAdd from '@/hxx-components/vehicle-add.vue'
+    import cartModal from '@/hxx-store/customer-relations/cart-modal.vue'
 	export default {
 		name: "customer-list-detail",
-    components: {commonTable,vehicleAdd},
+    components: {commonTable,vehicleAdd,cartModal},
     data(){
       return {
         showModal:false,
+        showLook:false,
         indexName:'m1',
         collapse:'1',
         tabshow:0,
@@ -149,6 +152,7 @@
         limit:25,
         vehicleShow:false,//车辆档案新增
         row:[],//存储车辆档案单选数据
+        objlist:[],
         formData:{
           name:'',
           phone:'',
@@ -313,17 +317,23 @@
                     }
                 })
       },
-      changePage(page){this.page=page},
-      changePageSize(size){this.limit=size},
+      changePage(page){this.page=page;this.getList();},
+      changePageSize(size){this.limit=size;this.getList();},
       vehicleEdit(){
-        if(this.row.length === 0){
+        if(this.objlist.length === 0){
         this.$Message.info('未选取数据');
         return;
         }
+        this.row = this.objlist[0];
         this.vehicleShow = Math.random();
       },
       vehicleLook(){
-        alert("查看放一放");
+        if(this.objlist.length === 0){
+          this.$Message.info('未选取数据');
+          return;
+        }
+        this.row = this.objlist[0];
+        this.showLook = Math.random();
       },
       dpost(){
                   var person;
@@ -393,6 +403,38 @@
           remark:'',
         }
       },
+      vehicleAdd(){
+        this.vehicleShow = Math.random();
+        var data = {
+        MUST_SAFE_CORP:0,
+        BUSINESS_SAFE_CORP:0,
+        VEHICLE_COLOR:0,
+        COME_MILEAGE:0,
+        REPAIR_MILEAGE:0,
+        LAST_REPAIR_MILEAGE:0,
+        NEXT_REPAIR_MILEAGE:0,
+        VEHICLE_ID:0,
+        REGULAR_REPAIR:0,
+        PLATE_NUM:'',
+        VIN_NO:'',
+        VEHICLE_MODEL:'法拉利360 Spider 敞篷版 2004款 3.6L Spider AMT',
+        BUY_DATE:'',
+        ENGINE_NO:'',
+        LEAVE_FACTORY_DATE:'',
+        COME_DATE:'',
+        LAST_REPAIR_DATE:'',
+        NEXT_REPAIR_DATE:'',
+        YEAR_CHECK_DATE:'',
+        MUST_SAFE_VALIDITY:'',
+        BUSINESS_SAFE_VALIDITY:'',
+        REMARK:'',
+        TID:24715,
+        CUSTOMER_ID:'',
+        CUSTOMER_CODE:'',
+        CUSTOMER_NAME:'',
+        }
+        this.row = data;
+      },
       getList(){
                 this.axios.request({
           url: 'tenant/basedata/ttvehiclefile/list',
@@ -412,7 +454,8 @@
         })
       },
       rowClick(row){
-        this.row = row;
+       this.objlist = [];
+       this.objlist.push(row);
       },
       refresh(){
       this.getList();

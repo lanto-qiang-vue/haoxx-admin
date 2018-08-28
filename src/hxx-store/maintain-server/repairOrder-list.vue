@@ -30,14 +30,18 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="primary" v-if="accessBtn('add')" @click="detailData=null,showDetail=Math.random()">新增</Button>
-      <Button type="info" v-if="accessBtn('edit')" @click="showDetail=Math.random()" :disabled="!detailData">编辑/查看</Button>
+      <Button type="primary" v-if="accessBtn('add')" @click="detailData=null,showDetail=Math.random()">维修开单</Button>
+      <Button type="info"  @click="showDetail=Math.random()" :disabled="!detailData">快速开单</Button>
+      <Button type="error" v-if="accessBtn('edit')"  @click="deleteDetailData" :disabled="isOrderSuccess">编辑/查看</Button>
+      <Button type="primary"  @click="detailData=null,showDetail=Math.random()">反派工</Button>
+      <Button type="info"    @click="showDetail=Math.random()" :disabled="!detailData">反完工</Button>
+      <Button type="error"  @click="deleteDetailData" :disabled="isOrderSuccess">反结算</Button>
       <Button type="error" v-if="accessBtn('ban')"  @click="deleteDetailData" :disabled="isOrderSuccess">作废</Button>
     </div>
 
-    <reservation-list-detail class="table-modal-detail" :showDetail="showDetail"
+    <repairOrder-list-detail class="table-modal-detail" :showDetail="showDetail"
                              :detailData="detailData" @closeDetail="closeDetail"
-      ></reservation-list-detail>
+      ></repairOrder-list-detail>
       <!--弹出层组建-->
       <common-modal6 :description="tooltipObj.description"
       :title="tooltipObj.title" :modal6="tooltipObj.mshow" :fun="tooltipObj.funName" @del="del"></common-modal6>
@@ -45,14 +49,14 @@
 </template>
 <script>
   import commonTable from '@/hxx-components/common-table.vue'
-  import reservationListDetail from './reservation-list-detail.vue'
+  import repairOrderListDetail from './repairOrder-list-detail.vue'
   import { getName, getDictGroup } from '@/libs/util.js'
   import commonModal6 from '@/hxx-components/common-modal6.vue'
   import mixin from '@/hxx-components/mixin'
   import { formatDate } from '@/libs/tools.js'
 	export default {
 	name: "repairOrder-list",
-    components: {commonTable, reservationListDetail,commonModal6},
+    components: {commonTable, repairOrderListDetail,commonModal6},
     mixins: [mixin],
     data(){
 		  return{
@@ -67,27 +71,30 @@
           {title: '序号',  minWidth: 60,
             render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
           },
-          {title: '预约类别', key: 'ORDER_TYPE', sortable: true, minWidth: 150,
-            render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.ORDER_TYPE))
+          {title: '送修人', key: 'GIVE_REPAIR_PERSON', sortable: true, minWidth: 150,
+            // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.ORDER_TYPE))
           },
-          {title: '预约人', key: 'ORDER_PERSON', sortable: true, minWidth: 150},
           {title: '联系电话', key: 'TELPHONE', sortable: true, minWidth: 150},
-          {title: '车牌号', key: 'PLATE_NUM', sortable: true, minWidth: 100},
-          {title: '车型', key: 'VEHICLE_MODEL', sortable: true, minWidth: 200},
-          {title: '预约日期', key: 'ORDER_DATE', sortable: true, minWidth: 150,
-            render: (h, params) => h('span', params.row.ORDER_DATE.substr(0, 10))
-          },
-          {title: '预约时间', key: 'ORDER_TIME', sortable: true, minWidth: 100},
+          {title: '车牌号', key: 'PLATE_NUM', sortable: true, minWidth: 150},
+          {title: '车型', key: 'VEHICLE_MODEL', sortable: true, minWidth: 100},
+          {title: '进厂日期', key: 'COME_DATE', sortable: true, minWidth: 200},
           {title: '维修类型', key: 'REPAIR_TYPE', sortable: true, minWidth: 150,
             render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.REPAIR_TYPE))
           },
+          {title: '工单类型', key: 'GD_TYPE', sortable: true, minWidth: 100,
+            render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.GD_TYPE))
+          },
           {title: '应收金额', key: 'SUM_MONEY', sortable: true, minWidth: 150,
-            render: (h, params) => h('span', params.row.SUM_MONEY|| '0.00')
+            // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.REPAIR_TYPE))
+          },
+          {title: '主修人', key: 'REPAIR_PERSON', sortable: true, minWidth: 150,
+            // render: (h, params) => h('span', params.row.SUM_MONEY|| '0.00')
           },
           {title: '状态', key: 'STATUS', sortable: true, minWidth: 150,
             render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.STATUS))
           },
-          {title: '预约单号', key: 'ORDER_NO', sortable: true, minWidth: 150},
+          {title: '服务顾问', key: 'FOLLOW_PERSON', sortable: true, minWidth: 150},
+          {title: '工单单号', key: 'REPAIR_NO', sortable: true, minWidth: 150},
         ],
         tableData: [],
         searchSelectOption:[],//搜索框选择工单类型
@@ -140,105 +147,118 @@
 
       this.getList()
       this.showTable= Math.random()
+
+            
     },
     methods:{
+            
+
 		  getList(){
-        this.axios.request({
-          url: '/tenant/repair/ttrepairorder/list',
-          method: 'post',
-          data: {
-            KEYWORD: this.search.input,
-            STATUS_eq: this.search.select,
-            ORDER_DATE_gte:this.search.orderDateGte,
-            ORDER_DATE_lte: this.search.orderDateIte,
-            page: this.page,
-            limit: this.limit,
-            access_token: this.$store.state.user.token
-          }
-        }).then(res => {
-          if (res.success === true) {
-            this.tableData= res.data
-            this.total= res.total
-          }
-        })
-      },
-      clear(){
-		    for(var i in this.search){
-                this.search[i]= ''
+            if(this.search.orderDateGte){
+                this.search.orderDateGte=formatDate(this.search.orderDateGte);
             }
-            this.page=1;
-		    this.getList()
-      },
-      changePage(page){
-		    this.page= page
-        this.getList()
-      },
-      changePageSize(size){
-		    this.limit= size
-        this.getList()
-      },
 
-      onRowClick( row, index){
-          console.log('row：',row);
-          if(row.STATUS=="10421003"){
-              this.isOrderSuccess=true;
-          }else{
-              this.isOrderSuccess=false;
-          }
-
-        this.detailData=row
-      },
-      onRowDblclick( row, index){
-        this.detailData=row
-        console.log('row：',row);
-        this.showDetail=Math.random()
-      },
-      closeDetail(){
-        this.detailData= null
-        this.clearTableSelect= Math.random()
-        this.getList()
-      },
-      //作废按钮---------
-      deleteDetailData(){
-          if(this.detailData == null){
-            this.$Message.info("未选择到数据!");
-          }else{
-            console.log("进入作废系统");
-            this.tooltipObj.title = '系统提示!';
-            this.tooltipObj.description = '确定要作废吗？';
-            this.tooltipObj.mshow = Math.random();
-            console.log(this.tooltipObj);
-          }
-      },
-      del(){
-          this.axios.request({
-            url: '/tenant/repair/ttrepairorder/delete',
-            method: 'post',
-            data: {
-              ids: this.detailData.ORDER_ID,
-              access_token: this.$store.state.user.token
+            if(this.search.orderDateIte){
+                this.search.orderDateIte=formatDate(this.search.orderDateIte);
             }
-          }).then(res => {
-            if (res.success === true) {
-              this.$Message.info("数据作废成功!");
-              this.detailData=null;
-              this.getList();
-            }
-          })
-      },
-      // changeModal6(type){
-      //   this.tooltipObj.mshow = type;
-      // },
-      //获取搜索框开始时间
-      getOrderDateGte(val){
-        this.search.orderDateGte=val;
-      },
-      //获取搜索框结束时间
-      getOrderDateIte(val){
-        this.search.orderDateIte=val;
-      },
+            console.log(this.search);
+            this.axios.request({
+                url: '/tenant/repair/ttrepairworkorder/list',
+                method: 'post',
+                data: {
+                    KEYWORD: this.search.input,
+                    GD_TYPE_eq: this.search.select,
+                    STATUS: this.search.select1,
+                    ACCOUNT_TIME_gte: this.search.orderDateGte,
+                    ACCOUNT_TIME_lte: this.search.orderDateIte,
+                    page: this.page,
+                    limit: this.limit,
+                    access_token: this.$store.state.user.token
+                }
+                }).then(res => {
+                if (res.success === true) {
+                    this.tableData= res.data
+                    this.total= res.total
+                }
+            })
+          },
+        clear(){
+                for(var i in this.search){
+                    this.search[i]= ''
+                }
+                this.page=1;
+                this.getList()
+        },
+        changePage(page){
+                this.page= page
+            this.getList()
+        },
+        changePageSize(size){
+                this.limit= size
+            this.getList()
+        },
 
-    }
+        onRowClick( row, index){
+            console.log('row：',row);
+            if(row.STATUS=="10421003"){
+                this.isOrderSuccess=true;
+            }else{
+                this.isOrderSuccess=false;
+            }
+
+            this.detailData=row
+        },
+        onRowDblclick( row, index){
+            this.detailData=row
+            console.log('row：',row);
+            this.showDetail=Math.random()
+        },
+        closeDetail(){
+            this.detailData= null
+            this.clearTableSelect= Math.random()
+            this.getList()
+        },
+        //作废按钮---------
+        deleteDetailData(){
+            if(this.detailData == null){
+                this.$Message.info("未选择到数据!");
+            }else{
+                console.log("进入作废系统");
+                this.tooltipObj.title = '系统提示!';
+                this.tooltipObj.description = '确定要作废吗？';
+                this.tooltipObj.mshow = Math.random();
+                console.log(this.tooltipObj);
+            }
+        },
+        del(){
+            this.axios.request({
+                url: '/tenant/repair/ttrepairorder/delete',
+                method: 'post',
+                data: {
+                ids: this.detailData.ORDER_ID,
+                access_token: this.$store.state.user.token
+                }
+            }).then(res => {
+                if (res.success === true) {
+                this.$Message.info("数据作废成功!");
+                this.detailData=null;
+                this.getList();
+                }
+            })
+        },
+        // changeModal6(type){
+        //   this.tooltipObj.mshow = type;
+        // },
+        //获取搜索框开始时间
+        getOrderDateGte(val){
+            this.search.orderDateGte=val;
+        },
+        //获取搜索框结束时间
+        getOrderDateIte(val){
+            this.search.orderDateIte=val;
+        },
+
+        }
 	}
 </script>
 

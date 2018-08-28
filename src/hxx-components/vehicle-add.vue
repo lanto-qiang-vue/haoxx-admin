@@ -218,16 +218,16 @@
            	this.formData.CUSTOMER_ID = name;
            },
            row(obj){
-           	this.formData.REMARK = obj.REMARK;
-            this.formData.MUST_SAFE_CORP = obj.MUST_SAFE_CORP;
+      this.formData.REMARK = obj.REMARK;
+      this.formData.MUST_SAFE_CORP = obj.MUST_SAFE_CORP;
 			this.formData.BUSINESS_SAFE_CORP = obj.BUSINESS_SAFE_CORP;
-		    this.formData.VEHICLE_COLOR = obj.VEHICLE_COLOR;
-			this.formData.COME_MILEAGE = parseFloat(obj.COME_MILEAGE);
-		    this.formData.REPAIR_MILEAGE = parseFloat(obj.REPAIR_MILEAGE);
-			this.formData.LAST_REPAIR_MILEAGE = parseFloat(obj.LAST_REPAIR_MILEAGE);
-			this.formData.NEXT_REPAIR_MILEAGE = parseFloat(obj.NEXT_REPAIR_MILEAGE);
+		  this.formData.VEHICLE_COLOR = obj.VEHICLE_COLOR;
+			this.formData.COME_MILEAGE = obj.COME_MILEAGE ? parseFloat(obj.COME_MILEAGE) : 0;
+		  this.formData.REPAIR_MILEAGE = obj.REPAIR_MILEAGE ? parseFloat(obj.REPAIR_MILEAGE) : 0;
+			this.formData.LAST_REPAIR_MILEAGE = obj.LAST_REPAIR_MILEAGE ? parseFloat(obj.LAST_REPAIR_MILEAGE) : 0;
+			this.formData.NEXT_REPAIR_MILEAGE = obj.NEXT_REPAIR_MILEAGE ? parseFloat(obj.NEXT_REPAIR_MILEAGE) : 0;
 			this.formData.VEHICLE_ID= obj.VEHICLE_ID;
-			this.formData.REGULAR_REPAIR = parseFloat(obj.REGULAR_REPAIR);
+			this.formData.REGULAR_REPAIR = obj.REGULAR_REPAIR ? parseFloat(obj.REGULAR_REPAIR) : 0;
 			this.formData.PLATE_NUM = obj.PLATE_NUM;
 			this.formData.VIN_NO = obj.VIN_NO;
 			this.formData.VEHICLE_MODEL = obj.VEHICLE_MODEL;

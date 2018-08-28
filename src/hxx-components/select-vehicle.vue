@@ -4,7 +4,7 @@
         title="选择车辆"
         width="90"
         :scrollable="true"
-        :transfer= "true"
+        :transfer= "false"
         :footer-hide="false"
         class="table-modal-detail"
         :transition-names="['', '']"
