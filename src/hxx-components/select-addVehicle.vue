@@ -24,7 +24,7 @@
               </Select>
           </FormItem>
           <FormItem label="发动机号:">
-              <Input type="text" v-model="listSearch.ENGINE_NO" placeholder="选择分类" style="min-width: 250px;" search >
+              <Input type="text" v-model="listSearch.ENGINE_NO" placeholder="选择分类" style="min-width: 250px;" >
               </Input>
           </FormItem>
           <FormItem label="车架号:">
@@ -32,7 +32,7 @@
               </Input>
           </FormItem>
           <FormItem label="车型:">
-              <Input type="text" v-model="listSearch.VEHICLE_MODEL" placeholder="选择分类" style="min-width: 250px;" search >
+              <Input @on-focus="showVehicleModel=true;" type="text" v-model="listSearch.VEHICLE_MODEL" placeholder="选择分类" style="min-width: 250px;" search >
               </Input>
           </FormItem>
           <FormItem label="出厂日期:" >
@@ -79,21 +79,35 @@
     </div>
     <common-modal6 :description="tooltipObj.description"
       :title="tooltipObj.title" :modal6="tooltipObj.mshow" :fun="tooltipObj.funName" @del="del"></common-modal6>
-    </common-table>
+
+    
+        <Modal
+            v-model="showVehicleModel"
+            title=""
+            width="90"
+            :scrollable="true"
+            :transfer= "false"
+            :footer-hide="false"
+            :transition-names="['', '']"
+        >
+            <vehicle-model @onRowClick="onRowClick"></vehicle-model>
+        </Modal>
   </Modal>
 </template>
 
 <script>
 
   import { getName, getDictGroup } from '@/libs/util.js'
-    import { formatDate } from '@/libs/tools.js'
+  import { formatDate } from '@/libs/tools.js'
   import commonModal6 from '@/hxx-components/common-modal6.vue'
+  import vehicleModel from '@/hxx-components/vehicle-model.vue'
 	export default {
 		name: "select-addVehicle",
         props:['showAddVehicle'],
-        components: {commonModal6},
+        components: {commonModal6,vehicleModel},
         data(){
             return{
+                showVehicleModel:false,
                 tooltipObj:{
                     mshow:null,
                     funName:'del',
@@ -190,7 +204,9 @@
                     }
                 })
             },
-            
+            onRowClick(val){
+                console.log(val);
+            }
 
         }
 	}

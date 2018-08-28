@@ -28,7 +28,7 @@
 <script>
 import commonTable from '@/hxx-components/common-table.vue'
 import selectAddVehicle from '@/hxx-components/select-addVehicle.vue'
-  import { getName, getDictGroup } from '@/libs/util.js'
+import { getName, getDictGroup } from '@/libs/util.js'
 	export default {
 		name: "select-vehicle",
         props:['showoff'],
