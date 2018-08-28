@@ -14,9 +14,9 @@
     <Layout>
       <Header class="header-con">
         <header-bar :collapsed="collapsed" @on-coll-change="handleCollapsedChange">
-          <user :user-avator="userAvator"/>
-          <!--<language @on-lang-change="setLocal" style="margin-right: 10px;" :lang="local"/>-->
           <fullscreen v-model="isFullscreen" style="margin-right: 10px;"/>
+          <user slot="right" :user-avator="userAvator"/>
+          <!--<language @on-lang-change="setLocal" style="margin-right: 10px;" :lang="local"/>-->
         </header-bar>
       </Header>
       <Content class="main-content-con">

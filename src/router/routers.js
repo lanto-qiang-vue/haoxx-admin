@@ -332,7 +332,7 @@ export default [
           icon: 'md-funnel',
           title: '工单管理',
           lgType: "1002",
-          access: '100101',
+          access: '100102',
         },
         component: () => import('@/hxx-store/maintain-server/repairOrder-list.vue')
       },

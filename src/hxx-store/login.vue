@@ -171,6 +171,7 @@ export default {
       //     })
       //   })
       // })
+      this.$Spin.show();
       let url = '', data = {}
       if (type == 'tel') {
         url = '/telphoneLogin.do'
@@ -199,8 +200,11 @@ export default {
           let getInfo = Promise.all([this.getUser(res.data.tokenStr), this.getMenu(res.data.tokenStr)])
           getInfo.then(() => {
             this.$router.push({name: 'home'})
+            this.$Spin.hide()
             this.$Message.success('登录成功')
           })
+        }else{
+          this.$Spin.hide()
         }
       })
     },
