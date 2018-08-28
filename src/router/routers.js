@@ -104,7 +104,7 @@ export default [
     name: 'components',
     meta: {
       icon: 'logo-buffer',
-      title: '组件'
+      title: '测试'
     },
     component: Main,
     children: [
@@ -125,6 +125,15 @@ export default [
           title: '多功能表格'
         },
         component: () => import('@/view/components/tables/tables.vue')
+      },
+      {
+        path: 'test',
+        name: 'test',
+        meta: {
+          icon: 'md-funnel',
+          title: '测试',
+        },
+        component: () => import('@/hxx-store/test.vue')
       },
   //     {
   //       path: 'split_pane_page',
@@ -313,17 +322,6 @@ export default [
           access: '100101',
         },
         component: () => import('@/hxx-store/maintain-server/reservation-list.vue')
-      },
-      {
-        path: 'test',
-        name: 'test',
-        meta: {
-          icon: 'md-funnel',
-          title: '测试',
-          lgType: "1002",
-          access: '100101',
-        },
-        component: () => import('@/hxx-store/test.vue')
       },
       {
         path: '/repairOrder-list',
