@@ -3,8 +3,8 @@
   <Split v-model="split" :min="0.1" :max="0.5" class="split" @on-move-end="moveEnd">
     <div slot="left" class="split-pane">
       <Input v-model="treeKEYWORD" placeholder="品牌/厂商/车型名称..." icon="md-refresh"
-             class="tree-input" @on-click="getTree()"></Input>
-      <Tree :data="treeData" ref="tree" class="vehicle-tree" @on-select-change="select"></Tree>
+             class="tree-input" @on-click="render=false;getTree()" @on-change="queryTree" clearable></Input>
+      <Tree :data="treeData" ref="tree" class="vehicle-tree" @on-select-change="select" ></Tree>
     </div>
     <div slot="right" class="split-pane">
       <common-table v-model="tableData" :columns="columns" :total="total" :show="showTable" :showSearch="false"
@@ -23,6 +23,7 @@
   import { deepClone } from '@/libs/util.js'
 	export default {
 		name: "vehicle-model",
+    props:['show'],
     data () {
       return {
         split: 0.2,
@@ -48,13 +49,19 @@
         total: 0,
         KEYWORD:'',
         treeKEYWORD:'',
-        showTable: false
+        showTable: false,
+        timer: null,
+        render: false
+      }
+    },
+    watch:{
+      show(){
+        this.showTable= Math.random()
       }
     },
     mounted(){
 		  this.getTree()
 		  this.getList()
-		  this.showTable=true
     },
     methods:{
       getList(mdtype, mdid){
@@ -94,49 +101,62 @@
               // render:this.renderTree,
               children: this.sortTree(res.data, 10, 0)
             }]
-
-            setTimeout(function () {
-              self.treeDataTemp = deepClone(self.treeData)
-            },2000)
-
+            self.treeDataTemp =res.data
           }
         })
       },
-      sortTree(arr, type, id){
+      sortTree(arr, type, id, match){
         let tree=[]
         for(let i in arr){
           if(parseInt(arr[i].type)== parseInt(type) && arr[i].parentId== id){
-            let node= arr[i]
+            let node= deepClone(arr[i])
             node.title= arr[i].jkName? (arr[i].jkName+ '-'+ arr[i].text ):arr[i].text
             node.expand=false
-            // node.render=this.renderTree
-            if(parseInt(type)< 12) node.children= this.sortTree(arr, type+1, arr[i].id)
-            tree.push(node)
+            if(match){
+              node.title= this.highLight(node.title, this.treeKEYWORD)
+              node.render= this.renderTree
+            }
+            if(parseInt(type)< 12) node.children= this.sortTree(arr, type+1, arr[i].id, match)
+            if(!node.hide || (node.children&& node.children.length)) tree.push(node)
           }
         }
         return tree
       },
-      renderTree(h, { data }){
+      queryTree(){
+        let self= this
+        clearTimeout(this.timer);
+        this.timer = setTimeout(function(){
+          self.matchTree(self.treeKEYWORD)
+        },500)
+      },
+      matchTree(text){
+        let arr= this.treeDataTemp
+        for (let i in arr){
+          let title= arr[i].jkName? (arr[i].jkName+ '-'+ arr[i].text ):arr[i].text
+          if(title.toLowerCase().indexOf(text.toLowerCase())>=0) arr[i].hide=false
+          else arr[i].hide= true
+        }
+        this.treeData=[{
+          title: '所有厂家/品牌/车系',
+          id: 0,
+          expand: true,
+          children: this.sortTree(arr, 10, 0, (text? true: false))
+        }]
+      },
+      renderTree(h, { root, node, data }){
+        // console.log(data)
         return h('span', {
-          style: {
-            display: 'inline-block',
-          }
-        }, [
-          h('span', [
-            h('Icon', {
-              props: {
-                type: 'ios-folder-outline'
-              },
-              style: {
-                marginRight: '8px'
-              }
-            }),
-            h('span', data.title)
-          ]),
-          ])
+          class: {'ivu-tree-title': true},
+          domProps: {
+            innerHTML: data.title
+          },
+          on: {
+            click: () => {this.select(data,root, node)}
+          },
+        })
       },
       moveEnd(){
-        // this.showTable= Math.random()
+
       },
       changePage(page){
         this.page= page
@@ -151,8 +171,18 @@
         this.$emit('onRowClick', row, index);
       },
       select(data){
-        console.log(data)
-        this.getList(data[0].type, data[0].id)
+        let type=  data instanceof Array? data[0].type: data.type
+        let id= data instanceof Array? data[0].id: data.id
+        console.log(data instanceof Array, type, id, data)
+        this.getList(type, id)
+      },
+      highLight(text, words, tag) {
+        tag = tag || 'span';
+        let re = new RegExp(words, 'gi');
+        if (re.test(text)) {
+          text = text.replace(re, '<'+ tag +' class="highlight">$&</'+ tag +'>');
+        }
+        return text;
       }
     },
     components: {commonTable},
@@ -169,16 +199,10 @@
     overflow: auto;
     position: relative;
     .tree-search{
-      /*margin-bottom: 10px;*/
       padding: 15px;
-      /*border: 1px solid #dcdee2;*/
       border-radius: 3px;
     }
     .tree-input{
-      /*margin: 10px;*/
-      /*position: absolute;*/
-      /*left: 0;*/
-      /*top: 0;*/
       z-index: 1;
     }
     .vehicle-tree{
@@ -189,7 +213,6 @@
       top: 0;
       padding: 50px 0 10px 10px;
       overflow: hidden;
-
     }
   }
 }
@@ -199,6 +222,9 @@
     >.ivu-tree-children{
       height: 100%;
       overflow: auto;
+    }
+    .highlight{
+      color: red;
     }
   }
 </style>

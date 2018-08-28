@@ -325,6 +325,17 @@ export default [
         },
         component: () => import('@/hxx-store/test.vue')
       },
+      {
+        path: '/repairOrder-list',
+        name: 'repairOrder-list',
+        meta: {
+          icon: 'md-funnel',
+          title: '工单管理',
+          lgType: "1002",
+          access: '100101',
+        },
+        component: () => import('@/hxx-store/maintain-server/repairOrder-list.vue')
+      },
     ]
 },
 {

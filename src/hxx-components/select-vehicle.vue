@@ -4,10 +4,12 @@
         title="选择车辆"
         width="90"
         :scrollable="true"
-        :transfer= "true"
+        :transfer= "false"
         :footer-hide="false"
+        class="table-modal-detail"
+        :transition-names="['', '']"
     >
-    <common-table v-model="tableData" :columns="columns" :show="showoff" :total="total" @changePage="changePage" 
+    <common-table v-model="tableData" :columns="columns" :show="showoff" :total="total" @changePage="changePage"
         @changePageSize="changePageSize" @onRowClick="onRowClick">
         <div slot="search">
            <div class="search-block">
@@ -16,22 +18,26 @@
             <ButtonGroup size="small">
                 <Button type="primary" @click="searchVehicle"><Icon type="ios-search" size="24"/></Button>
                 <Button type="primary" @click="resetVehicle" style="margin-right:20px; margin-left: 1px;"><Icon type="ios-undo" size="24"/></Button>
-                <Button type="primary" ><Icon type="md-add" size="24"/>添加客户车辆</Button>
+                <Button type="primary" @click="showAddVehicle=Math.random()"><Icon type="md-add" size="24" />添加客户车辆</Button>
             </ButtonGroup>
         </div>
     </common-table>
+
+    <select-addVehicle :showAddVehicle="showAddVehicle" @selectAddVehicleFun="selectAddVehicleFun"></select-addVehicle>
   </Modal>
 </template>
 
 <script>
 import commonTable from '@/hxx-components/common-table.vue'
-  import { getName, getDictGroup } from '@/libs/util.js'
+import selectAddVehicle from '@/hxx-components/select-addVehicle.vue'
+import { getName, getDictGroup } from '@/libs/util.js'
 	export default {
 		name: "select-vehicle",
         props:['showoff'],
-        components: {commonTable},
+        components: {commonTable,selectAddVehicle},
         data(){
             return{
+                showAddVehicle:"",
                 collapse: ['1','2'],
                 tableHeight: 500,
                 timer: null,
@@ -73,7 +79,7 @@ import commonTable from '@/hxx-components/common-table.vue'
             }
         },
         mounted() {
-            
+
         },
         methods:{
             getList(){
@@ -116,7 +122,12 @@ import commonTable from '@/hxx-components/common-table.vue'
                 }
                 this.page=1;
                 this.getList();
+            },
+            selectAddVehicleFun(){
+                this.page=1;
+                this.getList();
             }
+
 
         }
 	}
