@@ -1,68 +1,63 @@
 <template>
     <Modal
         v-model="showOnoff"
-        title="选择车辆"
+        title="选择客户"
         width="90"
         :scrollable="true"
-        :transfer= "true"
-        :footer-hide="false"
+        :transfer= "false"
+        :footer-hide="true"
     >
     <common-table v-model="tableData" :columns="columns" :show="showoff" :total="total" @changePage="changePage" 
         @changePageSize="changePageSize" @onRowClick="onRowClick">
         <div slot="search">
            <div class="search-block">
-                <Input  placeholder="预约单号/预约人/联系电话..." v-model="search.input"></Input>
+                <Input  placeholder="客户编号/手机号/联系电话..." v-model="search.input"></Input>
+            </div>
+            <div class="search-block">
+                <Input placeholder="车牌号码..." v-model="search.num"></Input>
             </div>
             <ButtonGroup size="small">
                 <Button type="primary" @click="searchVehicle"><Icon type="ios-search" size="24"/></Button>
                 <Button type="primary" @click="resetVehicle" style="margin-right:20px; margin-left: 1px;"><Icon type="ios-undo" size="24"/></Button>
-                <Button type="primary" @click="showAddVehicle=Math.random()"><Icon type="md-add" size="24" />添加客户车辆</Button>
+                <Button type="primary" ><Icon type="md-add" size="24"/>新增客户</Button>
             </ButtonGroup>
         </div>
     </common-table>
-
-    <select-addVehicle :showAddVehicle="showAddVehicle" @selectAddVehicleFun="selectAddVehicleFun"></select-addVehicle>
   </Modal>
 </template>
 
 <script>
 import commonTable from '@/hxx-components/common-table.vue'
-import selectAddVehicle from '@/hxx-components/select-addVehicle.vue'
   import { getName, getDictGroup } from '@/libs/util.js'
 	export default {
-		name: "select-vehicle",
+		name: "select-customer",
         props:['showoff'],
-        components: {commonTable,selectAddVehicle},
+        components: {commonTable},
         data(){
             return{
-                showAddVehicle:"",
                 collapse: ['1','2'],
                 tableHeight: 500,
                 timer: null,
                 showOnoff:false,
                 tableData:[],
                 columns: [
-                    // {type: 'selection', width: 50, fixed: 'left'},
                     {title: '序号',  minWidth: 60,
                         render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
                     },
-                    {title: '车牌号', key: 'PLATE_NUM', sortable: true, minWidth: 100,
-                        //render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.ORDER_TYPE))
-                    },
-                    {title: '车辆颜色', key: 'VEHICLE_COLOR', sortable: true, minWidth: 100,
-                        render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.VEHICLE_COLOR))
-                    },
-                    {title: '客户名称', key: 'CUSTOMER_NAME', sortable: true, minWidth: 100},
+                    {title: '客户名称', key: 'NAME', sortable: true, minWidth: 100},
                     {title: '联系电话', key: 'MOBILE_PHONE', sortable: true, minWidth: 150},
-                    {title: '车架号', key: 'VIN_NO', sortable: true, minWidth: 200},
-                    {title: '发动机号', key: 'ENGINE_NO', sortable: true, minWidth: 200,
-                        // render: (h, params) => h('span', params.row.ORDER_DATE.substr(0, 10))
-                    },
-                    {title: '最近来厂日期', key: 'COME_DATE', sortable: true, minWidth: 200},
+                     {title: '客户类型', key: 'CUSTOMER_TYPE', sortable: true, minWidth: 150,
+            render: (h, params) => h('span',getName(this.$store.state.app.dict, params.row.CUSTOMER_TYPE))
+          },
+          {title: '客户等级', key: 'CUSTOMER_LEVEL', sortable: true, minWidth: 150,
+            render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.CUSTOMER_LEVEL))
+          },
+          {title: '客户专员', key: 'FOLLOW_PERSON', sortable: true, minWidth: 150},
                 ],
                 total: 0,
                 search:{
-                    input:''
+                    input:'',
+                    num:'',
                 },
                 page: 1,
                 limit: 25,
@@ -82,12 +77,13 @@ import selectAddVehicle from '@/hxx-components/select-addVehicle.vue'
         methods:{
             getList(){
                 this.axios.request({
-                    url: '/tenant/basedata/ttvehiclefile/list',
+                    url: '/tenant/basedata/ttcustomerfile/list',
                     method: 'post',
                     data: {
                         KEYWORD: this.search.input,
                         page: this.page,
                         limit: this.limit,
+                        PLATE_NUM:this.search.num,
                         access_token: this.$store.state.user.token
                     }
                 }).then(res => {
@@ -106,9 +102,8 @@ import selectAddVehicle from '@/hxx-components/select-addVehicle.vue'
                 this.getList()
             },
             onRowClick( row, index){
-                console.log(row);
                 this.showOnoff=false;
-                this.$emit('selectCar', row);
+                this.$emit('select', row);
             },
             searchVehicle(){
                 this.page=1;
@@ -120,12 +115,7 @@ import selectAddVehicle from '@/hxx-components/select-addVehicle.vue'
                 }
                 this.page=1;
                 this.getList();
-            },
-            selectAddVehicleFun(){
-                this.page=1;
-                this.getList();
             }
-            
 
         }
 	}
