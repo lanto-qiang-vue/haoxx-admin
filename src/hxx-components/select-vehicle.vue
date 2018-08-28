@@ -4,7 +4,7 @@
         title="选择车辆"
         width="90"
         :scrollable="true"
-        :transfer= "true"
+        :transfer= "false"
         :footer-hide="false"
     >
     <common-table v-model="tableData" :columns="columns" :show="showoff" :total="total" @changePage="changePage" 
