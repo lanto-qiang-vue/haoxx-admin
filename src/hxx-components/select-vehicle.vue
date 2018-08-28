@@ -6,8 +6,10 @@
         :scrollable="true"
         :transfer= "true"
         :footer-hide="false"
+        class="table-modal-detail"
+        :transition-names="['', '']"
     >
-    <common-table v-model="tableData" :columns="columns" :show="showoff" :total="total" @changePage="changePage" 
+    <common-table v-model="tableData" :columns="columns" :show="showoff" :total="total" @changePage="changePage"
         @changePageSize="changePageSize" @onRowClick="onRowClick">
         <div slot="search">
            <div class="search-block">
@@ -77,7 +79,7 @@ import { getName, getDictGroup } from '@/libs/util.js'
             }
         },
         mounted() {
-            
+
         },
         methods:{
             getList(){
@@ -125,7 +127,7 @@ import { getName, getDictGroup } from '@/libs/util.js'
                 this.page=1;
                 this.getList();
             }
-            
+
 
         }
 	}

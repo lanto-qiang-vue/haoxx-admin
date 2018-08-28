@@ -23,6 +23,7 @@
   import { deepClone } from '@/libs/util.js'
 	export default {
 		name: "vehicle-model",
+    props:['show'],
     data () {
       return {
         split: 0.2,
@@ -53,10 +54,14 @@
         render: false
       }
     },
+    watch:{
+      show(){
+        this.showTable= Math.random()
+      }
+    },
     mounted(){
 		  this.getTree()
 		  this.getList()
-		  this.showTable=true
     },
     methods:{
       getList(mdtype, mdid){
