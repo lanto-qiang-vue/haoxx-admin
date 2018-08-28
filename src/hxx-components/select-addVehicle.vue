@@ -9,6 +9,7 @@
         :transfer= "false"
         :footer-hide="false"
         :transition-names="['', '']"
+        class="table-modal-detail"
     >
     <Collapse v-model="collapse">
       <Panel name="1">车辆基本信息
@@ -38,7 +39,7 @@
           <FormItem label="出厂日期:" >
               <DatePicker v-model="listSearch.LEAVE_FACTORY_DATE" type="date" placeholder="Select date"></DatePicker>
           </FormItem>
-          
+
        </Form>
       </Panel>
       <Panel name="2">客户基本信息
@@ -52,7 +53,7 @@
                <Input type="text" v-model="listSearch.MOBILE_PHONE" placeholder="" style="min-width: 250px;" >
               </Input>
           </FormItem>
-          
+
           <FormItem label="联系地址:">
                <Input type="text" v-model="listSearch.ADDRESS" placeholder="" style="min-width: 250px;" >
               </Input>
@@ -70,7 +71,7 @@
           </FormItem>
        </Form>
       </Panel>
-      
+
     </Collapse>
     <div slot="footer" style="text-align: center; font-size: 18px;">
         <Button @click="saveData" size="large" type="primary"  style="margin-right: 10px; padding: 0 10px;"><Icon type="md-checkmark" size="24"/>保存</Button>
@@ -80,17 +81,18 @@
     <common-modal6 :description="tooltipObj.description"
       :title="tooltipObj.title" :modal6="tooltipObj.mshow" :fun="tooltipObj.funName" @del="del"></common-modal6>
 
-    
+
         <Modal
             v-model="showVehicleModel"
-            title=""
+            title="选择车型"
             width="90"
-            :scrollable="true"
+            :scrollable="false"
             :transfer= "false"
             :footer-hide="false"
             :transition-names="['', '']"
+            class="table-modal-detail"
         >
-            <vehicle-model @onRowClick="onRowClick"></vehicle-model>
+            <vehicle-model @onRowClick="onRowClick" :show="showVehicleModel"></vehicle-model>
         </Modal>
   </Modal>
 </template>
@@ -116,7 +118,7 @@
                 },
                 showType:false,
                 showOnoff:false,
-                collapse:"1",
+                collapse:["1",'2'],
                 initColorArr:[],
                 listSearch:{
                     "VEHICLE_ID":"",
@@ -163,12 +165,12 @@
                 for(let i in this.listSearch){
                     this.listSearch[i]=this.initList[i];
                 }
-                
+
             }
         },
         mounted() {
             this.initColorArr=getDictGroup(this.$store.state.app.dict, '1013');
-            
+
         },
         methods:{
             saveData(){
@@ -188,7 +190,7 @@
             del(){
                 this.listSearch["LEAVE_FACTORY_DATE"]=formatDate(this.listSearch["LEAVE_FACTORY_DATE"]);
                 this.listSearch["BIRTHDAY"]=formatDate(this.listSearch["BIRTHDAY"]);
-                
+
                 this.axios.request({
                     url: '/tenant/basedata/ttvehiclefile/save_vehicle_customer',
                     method: 'post',
@@ -206,6 +208,9 @@
             },
             onRowClick(val){
                 console.log(val);
+                this.showVehicleModel=false
+                this.listSearch.VEHICLE_MODEL= val.MODEL_NAME
+                this.listSearch.TID= val.TID
             }
 
         }
