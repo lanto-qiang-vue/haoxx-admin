@@ -27,10 +27,10 @@
   >
       <div class="operate">
       <Button type="primary" @click="showModal = false">返回</Button>
-      <Button type="primary" @click="save" style="margin-left:10px;">保存</Button>
+      <Button type="primary" @click="save('formData')" style="margin-left:10px;">保存</Button>
     </div>
     <div style="height:30px;"></div>
-        <Form ref="formData" :model="formData" :label-width="120" inline>
+        <Form ref="formData" :model="formData" :label-width="120" :rules="ruleValidate" inline>
         <FormItem label="充值卡产品名称" style="width:30%;" prop="CARD_NAME">
               <Input type="text" v-model="formData.CARD_NAME"  style="min-width: 100%;"> </Input>
           </FormItem>
@@ -50,6 +50,7 @@
             <InputNumber
             style="width:100%;"
             :min="0"
+            :disabled="true"
             v-model="formData.SUM_MONEY"></InputNumber>
           </FormItem>
           <FormItem label="有效期(开始):" style="width:30%;" prop="START_DATE">
@@ -63,7 +64,7 @@
                </Col>
           </FormItem>
         </Form>
-           <Form ref="formInline" :label-width="80">
+           <Form ref="formInline" :label-width="120">
           <FormItem label="备注:">
               <Input type="textarea" v-model="formData.REMARK"  placeholder="请输入备注信息"> </Input>
           </FormItem>
@@ -74,6 +75,7 @@
 </template>
 <script>
 	import commonTable from '@/hxx-components/common-table.vue'
+  import { formatDate } from '@/libs/tools.js'
 	export default{
 		name:'card-product',
 		components:{commonTable},
@@ -85,6 +87,8 @@
 				limit:25,
 				total:0,
 				tableData:[],
+        list:[],//存选择对象
+        ids:[],//存选中卡id
         formData:{
           name:'充值了'
         },
@@ -92,10 +96,11 @@
 					keyword:''
 				},
         formData:{
+            CARD_ID:'',
             CARD_NAME:'',
-            SALES_MONEY:'',
-            DERATE_MONEY:'',
-            SUM_MONEY:'',
+            SALES_MONEY:0,
+            DERATE_MONEY:0,
+            SUM_MONEY:0,
             START_DATE:'',
             END_DATE:'',
             REMARK:''
@@ -113,17 +118,64 @@
           {title: '有效期开始', key: 'START_DATE', sortable: true, minWidth: 150
           },
           {title: '有效期结束', key: 'END_DATE', sortable: true, minWidth: 150},
-        ]
+        ],
+        ruleValidate:{
+           CARD_NAME:[{required: true, message: '储值卡名称必填', trigger: 'blur' }],
+           SALES_MONEY:[{required: true, message: '售价必填'}],
+           DERATE_MONEY:[{required: true, message: '赠送价值必填'}],
+           SUM_MONEY:[{required: true, message: '总价值必填'}],
+           START_DATE:[{required: true, message: '有效期开始必填'}],
+           END_DATE:[{required: true, message: '有效期结束必填'}],
+        }
 			}
 		},
 		methods:{
-			add(){this.showModal=true;},
-			edit(){},
-			remove(){},
+			add(){this.rest();this.showModal=true;},
+			edit(){
+      if(this.list.length < 1){
+        this.$Message.info('未选取数据');
+        return;
+      }
+      if(this.list.length > 1){
+        this.$Message.info('只能选择一条数据');
+        return;
+      }
+      this.formData = this.list[0];
+      this.showModal = true;
+      },
+			remove(){
+        if(this.list.length < 1){
+          this.$Message.info('未选取数据');
+          return;
+        }
+        this.$Modal.confirm({
+          'title':'系统提示',
+          'content':'确认要作废吗',
+          'onOk':this.del
+        });
+      },
+      del(){
+          this.axios.request({
+          url: 'tenant/basedata/tt_member_card/cancel',
+          method: 'post',
+          data: {access_token: this.$store.state.user.token,
+                 ids:this.ids.join(',')
+                }
+        }).then(res => {
+          if (res.success === true) {
+           this.getList();
+           this.$Message.info('成功作废');
+           this.list = [];
+          }
+        })
+      },
 			clear(){},
 			changePage(page){this.page = page;this.getList();},
 			changePageSize(size){this.limit = size;this.page=1;this.getList();},
-			dbclick(){},
+			dbclick(row){
+      this.formData = row;
+      this.showModal = true;
+      },
 			getList(){
 		  this.axios.request({
           url: 'tenant/basedata/tt_member_card/list',
@@ -140,14 +192,77 @@
           }
         })
 			},
-			changeSelect(row){},
+			changeSelect(row){
+      this.list = [];
+      this.ids = [];
+      for(var i in row){
+      this.list.push(row[i]);
+      this.ids.push(row[i].CARD_ID);
+      }
+      },
       clear(){
         this.search.keyword = '';
       },
-      save(){
-
+      save(name){
+              this.$refs[name].validate((valid) => {
+                    if (valid) {
+                    this.$Modal.confirm({
+                      title:'系统提示',
+                      content:'确认保存吗?',
+                      onOk:this.productAdd,
+                    });
+                    } else {
+                    this.$Message.error("请校对红框信息");
+                    }
+                })
       },
+     productAdd(){
+      this.formData.START_DATE = formatDate(this.formData.START_DATE);
+      this.formData.END_DATE = formatDate(this.formData.END_DATE);
+            this.axios.request({
+          url: 'tenant/basedata/tt_member_card/save',
+          method: 'post',
+          data: {access_token: this.$store.state.user.token,
+                 data:JSON.stringify(this.formData)
+                }
+        }).then(res => {
+          if (res.success === true) {
+          if(this.formData.CARD_ID > 0){
+                      this.$Message.info('修改成功');
+          }else{
+                      this.$Message.info('新增成功');
+          }
+          this.showModal = false;
+          this.getList();
+          }
+        })
+     },
+     rest(){
+      var data = {
+            CARD_ID:'',
+            CARD_NAME:'',
+            SALES_MONEY:0,
+            DERATE_MONEY:0,
+            SUM_MONEY:0,
+            START_DATE:'',
+            END_DATE:'',
+            REMARK:''
+        };
+      this.formData = data;
+     },
 		},
+    watch:{
+      'formData.DERATE_MONEY'(val){
+       var num1 = val ? parseFloat(val) : 0;
+       var num2 = this.formData.SALES_MONEY ? parseFloat(this.formData.SALES_MONEY) : 0;
+       this.formData.SUM_MONEY = num1 + num2;
+       },
+       'formData.SALES_MONEY'(val){
+       var num1 = val ? parseFloat(val) : 0;
+       var num2 = this.formData.DERATE_MONEY ? parseFloat(this.formData.DERATE_MONEY) : 0;
+       this.formData.SUM_MONEY = num1 + num2;
+       }
+    },
 		mounted(){
 			this.showTable = true;
 			this.getList();
