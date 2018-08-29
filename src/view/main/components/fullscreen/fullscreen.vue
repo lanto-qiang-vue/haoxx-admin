@@ -74,11 +74,16 @@ export default {
 </script>
 
 <style lang="less">
-.full-screen-btn-con .ivu-tooltip-rel{
-  height: 64px;
-  line-height: 56px;
-  i{
-    cursor: pointer;
+.full-screen-btn-con {
+  display: inline-block;
+  vertical-align: top;
+  .ivu-tooltip-rel{
+    height: 64px;
+    line-height: 56px;
+    vertical-align: top;
+    i{
+      cursor: pointer;
+    }
   }
 }
 </style>

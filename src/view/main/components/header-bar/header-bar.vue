@@ -2,8 +2,9 @@
   <div class="header-bar">
     <sider-trigger :collapsed="collapsed" icon="md-menu" @on-change="handleCollpasedChange"></sider-trigger>
     <!--<custom-bread-crumb show-icon style="margin-left: 30px;" :list="breadCrumbList"></custom-bread-crumb>-->
+    <slot></slot>
     <div class="custom-content-con">
-      <slot></slot>
+      <slot name="right"></slot>
     </div>
   </div>
 </template>

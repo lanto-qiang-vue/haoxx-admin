@@ -12,6 +12,8 @@ import importDirective from '@/directive'
 // import './index.less'
 import '@/assets/icons/iconfont.css'
 import '@/assets/common.less'
+import '@/assets/icons/font-awesome/css/font-awesome.min.css'
+
 // import '@/mock'
 // 实际打包时应该不引入mock
 import env from '../config/env'
