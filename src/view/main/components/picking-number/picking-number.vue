@@ -36,7 +36,7 @@
   line-height: 64px;
   border-left: 1px solid #F0F0F0;
   border-right: 1px solid #F0F0F0;
-
+  font-size: 14px;
   vertical-align: top;
   cursor: pointer;
   .text{

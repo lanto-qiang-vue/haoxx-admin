@@ -14,7 +14,8 @@
     <Layout>
       <Header class="header-con">
         <header-bar :collapsed="collapsed" @on-coll-change="handleCollapsedChange">
-          <fullscreen v-model="isFullscreen" style="margin-right: 10px;"/>
+          <fullscreen v-model="isFullscreen"/>
+          <change-password></change-password>
           <picking-number></picking-number>
           <user slot="right" :user-avator="userAvator"/>
           <!--<language @on-lang-change="setLocal" style="margin-right: 10px;" :lang="local"/>-->
@@ -43,6 +44,7 @@ import User from './components/user'
 import Fullscreen from './components/fullscreen'
 import Language from './components/language'
 import PickingNumber from './components/picking-number/picking-number.vue'
+import ChangePassword from './components/change-password/change-password.vue'
 import { mapMutations, mapActions } from 'vuex'
 import { getNewTagList, getNextName } from '@/libs/util'
 import minLogo from '@/assets/images/logo-min.jpg'
@@ -57,7 +59,8 @@ export default {
     TagsNav,
     Fullscreen,
     User,
-    PickingNumber
+    PickingNumber,
+    ChangePassword
   },
   data () {
     return {

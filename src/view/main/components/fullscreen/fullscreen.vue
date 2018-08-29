@@ -75,6 +75,8 @@ export default {
 
 <style lang="less" scoped>
 .full-screen-btn-con {
+  width: 40px;
+  text-align: center;
   display: inline-block;
   vertical-align: top;
   .ivu-tooltip-rel{
