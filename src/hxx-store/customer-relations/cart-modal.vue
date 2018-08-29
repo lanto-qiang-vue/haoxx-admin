@@ -5,6 +5,7 @@
     width="90"
     :scrollable="true"
     :transfer= "false"
+    :mask-closable="false"
     :footer-hide="true"
   >
 	<!-- @on-click="qh" v-model="indexName" -->
@@ -16,8 +17,8 @@
              <FormItem style="margin-left:-80px;width:100%;">
               <div class="operate">
                             <Button @click="showModal = false">返回</Button>
-            <Button type="primary" style="margin-left: 8px" @click="submit('formData')">保存</Button>
-               </div>
+            <Button v-if="hidetype === 1" type="primary" style="margin-left: 8px" @click="submit('formData')">保存</Button>
+              </div>
           </FormItem>
     	    <FormItem label="车牌号:" style="width:30%;"  prop="PLATE_NUM">
               <Input type="text" v-model="formData.PLATE_NUM"  style="min-width: 100%;"> </Input>
@@ -32,7 +33,7 @@
               <Input type="text" v-model="formData.VIN_NO" style="min-width: 100%;"> </Input>
           </FormItem>
             <FormItem label="车型:" style="width:60%;" prop="VEHICLE_MODEL">
-              <Input type="text"  style="min-width: 100%;" v-model="formData.VEHICLE_MODEL" :disabled="true" @on-click="vehicleChange" icon="ios-search"> </Input>
+              <Input type="text"  style="min-width: 100%;" v-model="formData.VEHICLE_MODEL" @on-focus="selectVehicle"   :readonly="true" @on-click="selectVehicle" icon="ios-search"> </Input>
           </FormItem>
       <!-- 调整字段个数和位置 -->
           <!-- 1 -->
@@ -171,15 +172,26 @@
         <!-- 保养规则 -->
     </Tabs>
 <select-customer @select="select" :showoff="showoff"></select-customer>
+<Modal
+    :transition-names="['', '']"
+    v-model="vehicleShow"
+    width="90"
+    :scrollable="true"
+    :transfer= "false"
+    :footer-hide="true"
+>
+<vehicle-model :show="vehicleShow" @onRowClick="onRowClick"></vehicle-model>
+</Modal>
 </Modal>
 </template>
 <script>
     import { getName, getDictGroup, getCreate } from '@/libs/util.js'
     import selectCustomer from '@/hxx-components/select-customer.vue'
     import commonTable from '@/hxx-components/common-table.vue'
+    import vehicleModel from '@/hxx-components/vehicle-model.vue'
 	export default{
 		name:'cart-modal',
-		components:{selectCustomer,commonTable},
+		components:{selectCustomer,commonTable,vehicleModel},
 		data(){
 			     const validatePass = (rule, value, callback) => {
 			     	var p1 = /\d?[A-Z]+\d?/
@@ -193,6 +205,7 @@
 				obj:[],//单选内容存储
 				store:[],
 				tableData:[],
+        vehicleShow:false,//选车型
 				indexName:'m1',
 				total:0,
 				limit:25,
@@ -211,7 +224,7 @@
 				REGULAR_REPAIR:0,
 				PLATE_NUM:'',
 				VIN_NO:'',
-				VEHICLE_MODEL:'法拉利360 Spider 敞篷版 2004款 3.6L Spider AMT',
+				VEHICLE_MODEL:'',
 				BUY_DATE:'',
 				ENGINE_NO:'',
 				LEAVE_FACTORY_DATE:'',
@@ -236,7 +249,7 @@
 					 	{ validator: validatePass, trigger: 'change' },
 					 	{ validator: validatePass, trigger: 'blur' }
 					 ],
-					 VEHICLE_MODEL:[{required: true, message: '请点击搜索图标选取车型', trigger: 'blur'}],
+					 VEHICLE_MODEL:[{required: true, message: '请点击选取车型', trigger: 'blur'}],
            CUSTOMER_CODE:[{required: true, message: '请点击搜索图标选取客户', trigger: 'blur'}],
            CUSTOMER_NAME:[{required: true, message: '客户名称必选', trigger: 'blur'}],
 				},
@@ -266,9 +279,10 @@
         ],
 			}
 		},
-		props:['show','row','info'],
+		props:['show','row','info','hidetype'],
 		watch:{
            show(){
+            this.$refs['formData'].resetFields();
            	this.showModal=true;
            	//切换到第一个标签
            	this.indexName = 'm1';
@@ -288,15 +302,15 @@
            //修改初始赋值
             var obj = this.info;
             this.formData = obj;
+            this.formData.VEHICLE_COLOR = parseInt(obj.VEHICLE_COLOR) == 0 ? 0 : obj.VEHICLE_COLOR;
            	this.formData.COME_MILEAGE = obj.COME_MILEAGE ? parseFloat(obj.COME_MILEAGE): 0;
-		    this.formData.REPAIR_MILEAGE = obj.REPAIR_MILEAGE ? parseFloat(obj.REPAIR_MILEAGE) : 0;
-			this.formData.LAST_REPAIR_MILEAGE = obj.LAST_REPAIR_MILEAGE ? parseFloat(obj.LAST_REPAIR_MILEAGE) : 0;
-			this.formData.NEXT_REPAIR_MILEAGE = obj.NEXT_REPAIR_MILEAGE ? parseFloat(obj.NEXT_REPAIR_MILEAGE) : 0;
-			this.formData.REGULAR_REPAIR = obj.REGULAR_REPAIR ? parseFloat(obj.REGULAR_REPAIR) : 0;
+		        this.formData.REPAIR_MILEAGE = obj.REPAIR_MILEAGE ? parseFloat(obj.REPAIR_MILEAGE) : 0;
+			      this.formData.LAST_REPAIR_MILEAGE = obj.LAST_REPAIR_MILEAGE ? parseFloat(obj.LAST_REPAIR_MILEAGE) : 0;
+			      this.formData.NEXT_REPAIR_MILEAGE = obj.NEXT_REPAIR_MILEAGE ? parseFloat(obj.NEXT_REPAIR_MILEAGE) : 0;
+			      this.formData.REGULAR_REPAIR = obj.REGULAR_REPAIR ? parseFloat(obj.REGULAR_REPAIR) : 0;
            },
 		},
 		methods:{
-			vehicleChange(){alert(1)},
 			getInsure(){
 			//获取保险下拉列表。交强商业居然是一样的
 		  this.axios.request({
@@ -358,6 +372,11 @@
           }
         })
 			},
+      onRowClick(row){
+      this.formData.VEHICLE_MODEL = row.MODEL_NAME;
+      this.formData.TID = row.TID;
+      this.vehicleShow = false;
+      },
 			vehicleLook(){
 				//查看数据使用
 			if(this.obj.length === 0){
@@ -396,7 +415,12 @@
       	this.formData.CUSTOMER_ID = row.CUSTOMER_ID;
         this.formData.CUSTOMER_CODE = row.CODE;
         this.formData.CUSTOMER_NAME = row.NAME;
-      },resotre(){
+      },
+      selectVehicle(){
+      this.vehicleShow = true;
+      }
+      ,
+      resotre(){
       	//数据重置
       	var data = {
 				MUST_SAFE_CORP:0,
@@ -410,7 +434,7 @@
 				REGULAR_REPAIR:0,
 				PLATE_NUM:'',
 				VIN_NO:'',
-				VEHICLE_MODEL:'法拉利360 Spider 敞篷版 2004款 3.6L Spider AMT',
+				VEHICLE_MODEL:'',
 				BUY_DATE:'',
 				ENGINE_NO:'',
 				LEAVE_FACTORY_DATE:'',
@@ -421,7 +445,7 @@
 				MUST_SAFE_VALIDITY:'',
 				BUSINESS_SAFE_VALIDITY:'',
 				REMARK:'',
-				TID:24715,
+				TID:'',
 				CUSTOMER_ID:'',
                 CUSTOMER_CODE:'',
                 CUSTOMER_NAME:'',

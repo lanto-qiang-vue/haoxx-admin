@@ -2,7 +2,7 @@
 <template>
   <Modal
     v-model="showModal"
-    title="维修服务预约"
+    title="维修开单"
     width="90"
     @on-visible-change="visibleChange"
     :scrollable="true"
@@ -156,35 +156,41 @@
          + 维修配件费用：
          <span>{{listSearch.REPAIR_PART_MONEY}}元</span>
           + 维修项目优惠金额：
-          <InputNumber @on-change="computedMoney" :disabled="listDisabled" v-model="listSearch.REPAIR_ITEM_DERATE_MONEY" :min="0">
+          <InputNumber @on-change="computedMoney" :disabled="!isOrderSuccess" v-model="listSearch.REPAIR_ITEM_DERATE_MONEY" :min="0">
           </InputNumber> - 配件优惠金额：
-          <InputNumber @on-change="computedMoney1" :disabled="listDisabled" v-model="listSearch.REPAIR_PART_DERATE_MONEY" :min="0">
+          <InputNumber @on-change="computedMoney1" :disabled="!isOrderSuccess" v-model="listSearch.REPAIR_PART_DERATE_MONEY" :min="0">
           </InputNumber>= 合计应收金额：
           <span class="r-list-money-reset">{{listSearch.SUM_MONEY}}元</span>
       </p>
     </div>
-
-    <div slot="footer" style="text-align: center; font-size: 18px;">
-        <Button v-if="isButton" @click="handleSubmit('listSearch')" size="large" type="primary"  style="margin-right: 10px; padding: 0 10px;"><Icon type="md-checkmark" size="24"/>保存</Button>
-        <Button v-if="isButton" @click="handleCommit" size="large" type="primary"  style="margin-right: 10px; padding: 0 10px;"><Icon type="md-add" size="24"/>提交</Button>
-        <Button v-if="isCar"  size="large" type="primary"  style=" padding: 0 10px;"><Icon type="ios-car" size="24"/>维修接车</Button>
-    </div>
-    <common-modal6 :description="tooltipObj.description"
-      :title="tooltipObj.title" :modal6="tooltipObj.mshow" :fun="tooltipObj.funName" @saveData="saveData" @commitdata="commitdata"></common-modal6>
-
+      <!--底部按钮组-->
+      <div slot="footer" style="text-align: center; font-size: 18px;">
+          <Button :disabled="buttonStateArr.save" @click="handleSubmit('listSearch')" size="large" type="primary"  style="margin-right: 10px; padding: 0 10px;"><Icon type="md-checkmark" size="24"/>保存</Button>
+          <Button :disabled="buttonStateArr.dopay" @click="handleCommit" type="primary"  style="margin-right: 10px; padding: 0 10px;">派工</Button>
+          <Button :disabled="buttonStateArr.finish" @click="handleFinish" type="primary"  style="margin-right: 10px; padding: 0 10px;">完工</Button>
+          <Button :disabled="buttonStateArr.doaccount" type="primary"  style="margin-right: 10px; padding: 0 10px;">结算</Button>
+          <Button :disabled="buttonStateArr.shoukuan" type="primary"  style="margin-right: 10px; padding: 0 10px;">收款</Button>
+          <Button :disabled="buttonStateArr.printWts" type="primary"  style="margin-right: 10px; padding: 0 10px;">打印委托书</Button>
+          <Button :disabled="buttonStateArr.printPgd" type="primary"  style="margin-right: 10px; padding: 0 10px;">打印派工单</Button>
+          <Button :disabled="buttonStateArr.printAccount" type="primary"  style="margin-right: 10px; padding: 0 10px;">打印结算单</Button>
+      </div>
+      <!--提示框-->
+      <common-modal6 :description="tooltipObj.description" :title="tooltipObj.title" :modal6="tooltipObj.mshow" :fun="tooltipObj.funName" @saveData="saveData" @commitdata="commitdata">
+      </common-modal6>
+      <!--选择车型-->
       <select-vehicle :showoff="showoff" @selectCar="selectCar">
       </select-vehicle>
+      <!--选择项目-->
       <select-items :showTenanceItems="showTenanceItems" @sTenanceItem="sTenanceItem" :initGetItem="initGetItem">
       </select-items>
-
+      <!--选择配件-->
       <select-parts :showSelectParts="showSelectParts" @selectPartsItem="selectPartsItem" :initParts="initParts">
-
       </select-parts>
+      <!--选择配件组-->
       <select-partsGroup :showSelectPartsGroup="showSelectPartsGroup" @selectPartsGroup="selectPartsGroup" :initPartsGroup="initPartsGroup">
-
       </select-partsGroup>
+      <!--选择项目组-->
       <select-itemPackage :showSelectItemGroup="showSelectItemGroup" @selectItemGroup="selectItemGroup" :initItemGroup="initItemGroup">
-
       </select-itemPackage>
   </Modal>
 
@@ -826,12 +832,9 @@
                 { required: true, type: 'number', message: '请选择里程', trigger: 'change' ,min: 1,}
             ]
         },
-        titleMsg:'新建',
-        isCar:false,
-        isButton:true,
-        listDisabled:false,
+        titleMsg:'新建未派工',
         orderDate:"",
-        isOrderSuccess:true,//判断是否是预约状态---
+        isOrderSuccess:true,//判断是否是派工状态状态---
 
         commitItemGroup:[],//提交项目组
         commitItem:[],//提交选择项目
@@ -876,6 +879,17 @@
             { code: '货车-载质量≥8吨-U', type: '10521003' }
         ],//未筛选
         vehicleTeamArr:[],//机车班组数组-------
+        buttonStateArr:{
+          save:false,//保存
+          dopay:false,//派工
+          finish:true,//完工
+          doaccount:true,//结算
+          shoukuan:true,//收款
+          printWts:true,//打印委托书
+          printPgd:true,//打印派工单
+          printAccount:true,//打印结算单
+        },//按钮状态组数据
+
       }
     },
     props:['showDetail', 'detailData'],
@@ -884,8 +898,6 @@
         console.log('进来的参数：',this.detailData,);
         this.showModal=true
         //--------------------
-        
-
         
         //清空公共数据值------
         this.getItem=[];
@@ -898,12 +910,15 @@
         this.testSingle=false;
         //判断进来的参数是否存在---------------------
         if(this.detailData){
+          //初始化车辆数据----------------
+          this.selectCarInitFun(this.detailData.VEHICLE_TYPE,this.VEHICLE_TYPE_CODE);
+
           for(let key in this.listSearch){
             if(this.detailData[key]){
               this.listSearch[key]= this.detailData[key]
             }
           }
-
+          //获取项目组数据---------------
           this.getItemFun(this.listSearch["REPAIR_ID"]);
           this.getItemGroupFun(this.listSearch["REPAIR_ID"]);
           this.getPartsFun(this.listSearch["REPAIR_ID"]);
@@ -918,37 +933,86 @@
             this.testSingle=false;
           }
 
-          if(this.detailData['STATUS']=='10421001'){
-              this.titleMsg="新建";
-              this.isCar=false;
-              this.isButton=true;
-              this.listDisabled=false;
+          if(this.detailData['STATUS']=='10201001'){
+              this.titleMsg="新建未派工";
+
               this.orderDate="";
               this.isOrderSuccess=true;
 
-          }else if(this.detailData['STATUS']=='10421002'){
-              this.titleMsg="已预约";
-              this.isCar=true;
-              this.isButton=false;
-              this.listDisabled=true;
+              for(let i in this.buttonStateArr){
+                switch(i){
+                  case 'save':
+                  case 'dopay': this.buttonStateArr[i]= false; break
+                  default : this.buttonStateArr[i]= true;
+                }
+              }
+
+          }else if(this.detailData['STATUS']=='10201002'){
+              this.titleMsg="已派工维修中";
+
               this.orderDate="";
               this.isOrderSuccess=false;
 
-          }else if(this.detailData['STATUS']=='10421003'){
-              this.titleMsg="已接车";
-              this.isCar=false;
-              this.isButton=false;
-              this.listDisabled=true;
+              for(let i in this.buttonStateArr){
+                switch(i){
+                  case 'finish':
+                  case 'printWts':
+                  case 'printPgd': this.buttonStateArr[i]= false; break
+                  default : this.buttonStateArr[i]= true;
+                }
+              }
+
+          }else if(this.detailData['STATUS']=='10201003'){
+              this.titleMsg="已完工待结算";
+
               this.orderDate="";
-          }else{
-            console.log("不满足条件");
+              for(let i in this.buttonStateArr){
+                switch(i){
+                  case 'doaccount':
+                  case 'printWts':
+                  case 'printPgd': this.buttonStateArr[i]= false; break
+                  default : this.buttonStateArr[i]= true;
+                }
+              }
+          }else if(this.detailData['STATUS']=='10201004'){
+              this.titleMsg="已结算待收款";
+
+              this.orderDate="";
+              for(let i in this.buttonStateArr){
+                switch(i){
+                  case 'shoukuan':
+                  case 'printAccount':
+                  case 'printWts':
+                  case 'printPgd': this.buttonStateArr[i]= false; break
+                  default : this.buttonStateArr[i]= true;
+                }
+              }
+          }else if(this.detailData['STATUS']=='10201005'){
+              this.titleMsg="已结清";
+
+              this.orderDate="";
+              for(let i in this.buttonStateArr){
+                switch(i){
+                  case 'printAccount':
+                  case 'printWts':
+                  case 'printPgd': this.buttonStateArr[i]= false; break
+                  default : this.buttonStateArr[i]= true;
+                }
+              }
           }
 
         }else{
           for(let key in this.listSearchInit){
             this.listSearch[key]=this.listSearchInit[key];
           }
-
+          //初始化按钮状态-----------
+          for(let i in this.buttonStateArr){
+            switch(i){
+              case 'save':
+              case 'dopay': this.buttonStateArr[i]= false; break
+              default : this.buttonStateArr[i]= true;
+            }
+          }
           this.vehicleNumberArr=[
             { code: '轿车-排量<1.6升-A', type: '10521001' },
             { code: '轿车-1.6升≤排量≤1.8升-B', type: '10521001' },
@@ -958,10 +1022,8 @@
           ];
           
           //新建功能表------
-          this.titleMsg="新建";
-          this.isCar=false;
-          this.isButton=true;
-          this.listDisabled=false;
+          this.titleMsg="新建未派工";
+
           this.orderDate="";
           this.isOrderSuccess=true;
           console.log(this.listSearch);
@@ -1025,8 +1087,8 @@
             })
         },
         //选择车辆类型初始化
-        selectCarInitFun(val){
-            this.listSearch.VEHICLE_TYPE_CODE="";
+        selectCarInitFun(val,key){
+            this.listSearch.VEHICLE_TYPE_CODE=key||"";
             this.vehicleNumberArr=[];
             // this.listSearch.VEHICLE_TYPE_CODE="";
             for(let i in this.vehicleNumberArr1){
@@ -1043,12 +1105,13 @@
           this.handleReset("listSearch");
         }
       },
+      //保存按钮-----------
       handleSubmit (name) {
           this.$refs[name].validate((valid) => {
               if (valid) {
                     this.$Modal.confirm({
                         title:"系统提示!",
-                        content:"确定要提交吗？",
+                        content:"确定要保存吗？",
                         onOk:this.saveData,
                         
                     })
@@ -1057,22 +1120,6 @@
               }
           });
       },
-      handleCommit(){
-          this.tooltipObj.title = '系统提示!';
-          this.tooltipObj.description = '确定要提交吗？';
-          this.tooltipObj.mshow = Math.random();
-          this.tooltipObj.funName='commitdata';
-
-
-      },
-      getNewDate(val,currentVal){
-          console.log("val",val,currentVal);
-          this.listSearch.ORDER_DATE=val;
-      },
-      getOnlyNumber(val){
-        this.listSearch.TELPHONE=this.listSearch.TELPHONE.replace(/[^\d]/g,'');
-      },
-      //保存数据----------------
       saveData(){
           //提交维修项目套餐
           this.axios.request({
@@ -1094,32 +1141,96 @@
             }
           })
       },
+      //派工按钮----------------
+      handleCommit(){
+          this.$Modal.confirm({
+              title:"系统提示!",
+              content:"确定要派工吗？",
+              onOk:this.commitdata,
+              
+          })
+
+      },
       commitdata(){
-        console.log("提交");
-          this.listSearch["ORDER_DATE"]=formatDate(this.listSearch["ORDER_DATE"]);
-          this.listSearch["STATUS"]="10421002";
+          console.log("开始派工-------------");
+          this.listSearch["STATUS"]="10201002";
+         //提交维修项目套餐
           this.axios.request({
-            url: '/tenant/repair/ttrepairorder/saveOrSubmit',
+            url: '/tenant/repair/ttrepairworkorder/saveOrSubmit',
             method: 'post',
             data: {
               data: JSON.stringify(this.listSearch),
               items:JSON.stringify(this.commitItem),
               itemGroups: JSON.stringify(this.commitItemGroup),
               parts: JSON.stringify(this.commitParts),
+              otherItems: JSON.stringify(this.commitOtherItem),
               access_token: this.$store.state.user.token
             }
           }).then(res => {
-            console.log(11111)
-            console.log(res)
             if (res.success === true) {
-              this.$Message.info('successful')
-              this.isCar=true;
-              this.isButton=false;
-              this.titleMsg="已预约";
-              this.listDisabled=true;
+              this.$Message.info('successful');
+              this.titleMsg="已派工维修中";
+
+              this.orderDate="";
+              this.isOrderSuccess=false;
+
+              for(let i in this.buttonStateArr){
+                switch(i){
+                  case 'finish':
+                  case 'printWts':
+                  case 'printPgd': this.buttonStateArr[i]= false; break
+                  default : this.buttonStateArr[i]= true;
+                }
+              }
             }
           })
       },
+      //完工按钮-------------------
+      handleFinish(){
+        this.$Modal.confirm({
+            title:"系统提示!",
+            content:"确定要完工吗？",
+            onOk:this.saveFinish,
+            
+        })
+      },
+      saveFinish(){
+        //提交维修项目套餐
+          this.axios.request({
+            url: '/tenant/repair/ttrepairworkorder/saveFinish',
+            method: 'post',
+            data: {
+              repairId: this.listSearch.REPAIR_ID,
+              access_token: this.$store.state.user.token
+            }
+          }).then(res => {
+            if (res.success === true) {
+              this.$Message.info('successful');
+              this.titleMsg="已完工待结算";
+
+              this.orderDate="";
+              for(let i in this.buttonStateArr){
+                switch(i){
+                  case 'doaccount':
+                  case 'printWts':
+                  case 'printPgd': this.buttonStateArr[i]= false; break
+                  default : this.buttonStateArr[i]= true;
+                }
+              }
+            }
+          })
+      },
+
+      getNewDate(val,currentVal){
+          console.log("val",val,currentVal);
+          this.listSearch.ORDER_DATE=val;
+      },
+      getOnlyNumber(val){
+        this.listSearch.TELPHONE=this.listSearch.TELPHONE.replace(/[^\d]/g,'');
+      },
+      //保存数据----------------
+      
+      
       handleReset (name) {
           this.$refs[name].resetFields();
       },
