@@ -30,36 +30,38 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="primary" v-if="accessBtn('add')" @click="detailData=null,showDetail=Math.random()">维修开单</Button>
-      <Button type="info"  @click="showDetail=Math.random()" :disabled="!detailData">快速开单</Button>
-      <Button type="error" v-if="accessBtn('edit')"  @click="deleteDetailData" :disabled="isOrderSuccess">编辑/查看</Button>
-      <Button type="primary"  @click="detailData=null,showDetail=Math.random()">反派工</Button>
-      <Button type="info"    @click="showDetail=Math.random()" :disabled="!detailData">反完工</Button>
-      <Button type="error"  @click="deleteDetailData" :disabled="isOrderSuccess">反结算</Button>
-      <Button type="error" v-if="accessBtn('ban')"  @click="deleteDetailData" :disabled="isOrderSuccess">作废</Button>
+      <Button type="primary" v-if="accessBtn('add')" :disabled="buttonStateArr.add" @click="detailData=null,showDetail=Math.random()">维修开单</Button>
+      <Button type="primary"  @click="detailData=null,showQuickDetail=Math.random()" :disabled="buttonStateArr.quickAdd" class="button-distance">快速开单</Button>
+      <Button type="info" v-if="accessBtn('edit')"  @click="showDetail=Math.random()" :disabled="buttonStateArr.edit" class="button-distance">编辑/查看</Button>
+      <Button type="warning"  @click="" :disabled="buttonStateArr.rePg" class="button-distance">反派工</Button>
+      <Button type="warning"    @click="" :disabled="buttonStateArr.reFinish" class="button-distance">反完工</Button>
+      <Button type="warning"  @click="" :disabled="buttonStateArr.reAccount" class="button-distance">反结算</Button>
+      <Button type="error" v-if="accessBtn('ban')"  @click="deleteDetailData" :disabled="buttonStateArr.ban" class="button-distance">作废</Button>
     </div>
-
     <repairOrder-list-detail class="table-modal-detail" :showDetail="showDetail"
                              :detailData="detailData" @closeDetail="closeDetail"
       ></repairOrder-list-detail>
-      <!--弹出层组建-->
-      <common-modal6 :description="tooltipObj.description"
-      :title="tooltipObj.title" :modal6="tooltipObj.mshow" :fun="tooltipObj.funName" @del="del"></common-modal6>
+
+      <repairOrder-list-quickDetail class="table-modal-detail" :showQuickDetail="showQuickDetail"
+                             :detailData="detailData" @closeDetail="closeDetail"
+      ></repairOrder-list-quickDetail>
+
   </common-table>
 </template>
 <script>
   import commonTable from '@/hxx-components/common-table.vue'
   import repairOrderListDetail from './repairOrder-list-detail.vue'
+  import repairOrderListQuickDetail from './repairOrder-list-quickDetail.vue'
   import { getName, getDictGroup } from '@/libs/util.js'
-  import commonModal6 from '@/hxx-components/common-modal6.vue'
   import mixin from '@/hxx-components/mixin'
   import { formatDate } from '@/libs/tools.js'
 	export default {
 	name: "repairOrder-list",
-    components: {commonTable, repairOrderListDetail,commonModal6},
+    components: {commonTable, repairOrderListDetail,repairOrderListQuickDetail},
     mixins: [mixin],
     data(){
 		  return{
+        showQuickDetail:null,//快速开单框
         tooltipObj:{
             mshow:null,
             funName:'del',
@@ -117,6 +119,17 @@
         detailData: null,
         clearTableSelect: null,
         isOrderSuccess:false,//判断是不是预约成功
+        buttonStateArr:{
+          add:false,//维修开单
+          quickAdd:false,//快速开单
+          edit:false,//编辑
+          rePg:false,//反派工
+          reFinish:false,//反完工
+          reAccount:false,//反结算
+          ban:false,//作废
+        },//按钮状态组数据
+
+
         
 
       }
@@ -151,112 +164,180 @@
             
     },
     methods:{
-            
-
 		  getList(){
-            if(this.search.orderDateGte){
-                this.search.orderDateGte=formatDate(this.search.orderDateGte);
-            }
+        if(this.search.orderDateGte){
+            this.search.orderDateGte=formatDate(this.search.orderDateGte);
+        }
 
-            if(this.search.orderDateIte){
-                this.search.orderDateIte=formatDate(this.search.orderDateIte);
-            }
-            console.log(this.search);
-            this.axios.request({
-                url: '/tenant/repair/ttrepairworkorder/list',
-                method: 'post',
-                data: {
-                    KEYWORD: this.search.input,
-                    GD_TYPE_eq: this.search.select,
-                    STATUS: this.search.select1,
-                    ACCOUNT_TIME_gte: this.search.orderDateGte,
-                    ACCOUNT_TIME_lte: this.search.orderDateIte,
-                    page: this.page,
-                    limit: this.limit,
-                    access_token: this.$store.state.user.token
-                }
-                }).then(res => {
-                if (res.success === true) {
-                    this.tableData= res.data
-                    this.total= res.total
-                }
-            })
-          },
-        clear(){
-                for(var i in this.search){
-                    this.search[i]= ''
-                }
-                this.page=1;
-                this.getList()
-        },
-        changePage(page){
-                this.page= page
-            this.getList()
-        },
-        changePageSize(size){
-                this.limit= size
-            this.getList()
-        },
-
-        onRowClick( row, index){
-            console.log('row：',row);
-            if(row.STATUS=="10421003"){
-                this.isOrderSuccess=true;
-            }else{
-                this.isOrderSuccess=false;
-            }
-
-            this.detailData=row
-        },
-        onRowDblclick( row, index){
-            this.detailData=row
-            console.log('row：',row);
-            this.showDetail=Math.random()
-        },
-        closeDetail(){
-            this.detailData= null
-            this.clearTableSelect= Math.random()
-            this.getList()
-        },
-        //作废按钮---------
-        deleteDetailData(){
-            if(this.detailData == null){
-                this.$Message.info("未选择到数据!");
-            }else{
-                console.log("进入作废系统");
-                this.tooltipObj.title = '系统提示!';
-                this.tooltipObj.description = '确定要作废吗？';
-                this.tooltipObj.mshow = Math.random();
-                console.log(this.tooltipObj);
-            }
-        },
-        del(){
-            this.axios.request({
-                url: '/tenant/repair/ttrepairorder/delete',
-                method: 'post',
-                data: {
-                ids: this.detailData.ORDER_ID,
+        if(this.search.orderDateIte){
+            this.search.orderDateIte=formatDate(this.search.orderDateIte);
+        }
+        console.log(this.search);
+        this.axios.request({
+            url: '/tenant/repair/ttrepairworkorder/list',
+            method: 'post',
+            data: {
+                KEYWORD: this.search.input,
+                GD_TYPE_eq: this.search.select,
+                STATUS: this.search.select1,
+                ACCOUNT_TIME_gte: this.search.orderDateGte,
+                ACCOUNT_TIME_lte: this.search.orderDateIte,
+                page: this.page,
+                limit: this.limit,
                 access_token: this.$store.state.user.token
-                }
+            }
             }).then(res => {
-                if (res.success === true) {
-                this.$Message.info("数据作废成功!");
-                this.detailData=null;
-                this.getList();
-                }
-            })
-        },
-        // changeModal6(type){
-        //   this.tooltipObj.mshow = type;
-        // },
-        //获取搜索框开始时间
-        getOrderDateGte(val){
-            this.search.orderDateGte=val;
-        },
-        //获取搜索框结束时间
-        getOrderDateIte(val){
-            this.search.orderDateIte=val;
-        },
+              if (res.success === true) {
+                  this.tableData= res.data
+                  this.total= res.total
+                  
+                  
+              }
+          })
+          //重置按钮状态------------
+          for(let i in this.buttonStateArr){
+              this.buttonStateArr[i]= false;
+          }
+          this.detailData = null;
+      },
+          clear(){
+                  for(var i in this.search){
+                      this.search[i]= ''
+                  }
+                  this.page=1;
+                  this.getList()
+          },
+          changePage(page){
+                  this.page= page
+              this.getList()
+          },
+          changePageSize(size){
+                  this.limit= size
+              this.getList()
+          },
+
+          onRowClick( row, index){
+              console.log('row：',row);
+              if(row.GD_TYPE=="10181002"){
+                this.detailData=row
+              }else{
+                this.detailData=row
+              }
+
+              if(row.STATUS=="10201001"){
+                  for(let i in this.buttonStateArr){
+                    switch(i){
+                      case 'rePg':
+                      case 'reFinish':
+                      case 'reAccount': this.buttonStateArr[i]= true; break
+                      default : this.buttonStateArr[i]= false;
+                    }
+                  }
+              }else if(row.STATUS=="10201002"){
+                  for(let i in this.buttonStateArr){
+                    switch(i){
+                      case 'ban':
+                      case 'reFinish':
+                      case 'reAccount': this.buttonStateArr[i]= true; break
+                      default : this.buttonStateArr[i]= false;
+                    }
+                  }
+              }else if(row.STATUS=="10201003"){
+                  for(let i in this.buttonStateArr){
+                    switch(i){
+                      case 'ban':
+                      case 'rePg':
+                      case 'reAccount': this.buttonStateArr[i]= true; break
+                      default : this.buttonStateArr[i]= false;
+                    }
+                  }
+              }else if(row.STATUS=="10201004"){
+                  for(let i in this.buttonStateArr){
+                    switch(i){
+                      case 'ban':
+                      case 'rePg':
+                      case 'reFinish': this.buttonStateArr[i]= true; break
+                      default : this.buttonStateArr[i]= false;
+                    }
+                  }
+              }else if(row.STATUS=="10201005"){
+                  for(let i in this.buttonStateArr){
+                    switch(i){
+                      case 'ban':
+                      case 'rePg':
+                      case 'reFinish': this.buttonStateArr[i]= true; break
+                      default : this.buttonStateArr[i]= false;
+                    }
+                  }
+              }else if(row.STATUS=="10201006"){
+                  for(let i in this.buttonStateArr){
+                    switch(i){
+                      case 'ban':
+                      case 'rePg':
+                      case 'reFinish': this.buttonStateArr[i]= true; break
+                      default : this.buttonStateArr[i]= false;
+                    }
+                  }
+              }else{
+                  for(let i in this.buttonStateArr){
+                      this.buttonStateArr[i]= false;
+                  }
+              }
+              
+          },
+          onRowDblclick( row, index){
+              if(row.GD_TYPE=="10181002"){
+                this.detailData=row;
+                this.showQuickDetail=Math.random();
+              }else{
+                this.detailData=row;
+                this.showDetail=Math.random();
+              }
+              
+          },
+          closeDetail(){
+              this.detailData= null;
+              this.clearTableSelect= Math.random();
+              this.getList();
+          },
+          //作废按钮---------
+          deleteDetailData(){
+              if(this.detailData == null){
+                  this.$Message.info("未选择到数据!");
+              }else{
+                  this.$Modal.confirm({
+                      title:"系统提示!",
+                      content:"确定要作废吗？",
+                      onOk:this.del,
+                      
+                  })
+              }
+          },
+          del(){
+              this.axios.request({
+                  url: '/tenant/repair/ttrepairworkorder/delete',
+                  method: 'post',
+                  data: {
+                  ids: this.detailData.REPAIR_ID,
+                  access_token: this.$store.state.user.token
+                  }
+              }).then(res => {
+                  if (res.success === true) {
+                    this.$Message.info("数据作废成功!");
+                    this.detailData=null;
+                    this.getList();
+                  }
+              })
+          },
+        
+          //获取搜索框开始时间
+          getOrderDateGte(val){
+              this.search.orderDateGte=val;
+          },
+          //获取搜索框结束时间
+          getOrderDateIte(val){
+              this.search.orderDateIte=val;
+          },
 
         }
 	}
@@ -267,5 +348,8 @@
   display: inline-block;
   width: 200px;
   margin-right: 10px;
+}
+.button-distance{
+  margin-left: 10px;
 }
 </style>
