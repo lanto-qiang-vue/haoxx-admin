@@ -22,7 +22,9 @@
         <p :class="{on: this.$store.getters.loginType=='1001'}">{{loginUserName}}</p>
         <span>{{storeName}}</span>
       </div>
-      <Avatar :src="userAvator" icon="ios-person" size="large" class="avatar"/>
+      <div class="head">
+        <Avatar :src="userAvator" icon="ios-person" size="large" class="avatar"/>
+      </div>
       <!--<Icon :size="18" type="md-arrow-dropdown"></Icon>-->
       <DropdownMenu slot="list">
         <DropdownItem name="logout" style="width: 250px">退出登录</DropdownItem>
@@ -96,7 +98,8 @@ export default {
   },
   methods: {
     ...mapActions([
-      'handleLogOut'
+      'handleLogOut',
+      'getPickingNumber'
     ]),
     handleClick (name) {
       switch (name) {
@@ -142,6 +145,7 @@ export default {
       }).then(res => {
         if (res.success === true) {
           this.$store.commit('setToken', res.data)
+          this.getPickingNumber()
           let getInfo = Promise.all([ new Promise((resolve, reject) => {
             this.axios.request({
               url: '/tenant/common/getLoginUser',
@@ -177,8 +181,15 @@ export default {
             })
           ])
           getInfo.then(() => {
-            this.$store.commit('setTagNavList', [])
+            let route=[]
             this.$router.push({name: 'home'})
+            route.push({
+              name: this.$route.name,
+              path: this.$route.path,
+              meta: this.$route.meta,
+            })
+            // console.log(route)
+            this.$store.commit('setTagNavList', route)
             this.$Spin.hide()
           })
         }
@@ -201,6 +212,7 @@ export default {
   cursor: pointer;
   display: inline-block;
   vertical-align: middle;
+  font-size: 0;
   .switch-store{
     display: inline-block;
     width: 60px;
@@ -226,8 +238,8 @@ export default {
     display: inline-block;
     height: 64px;
     text-align: right;
-    margin-right: 5px;
     vertical-align: middle;
+    padding-left: 5px;
     padding-right: 5px;
     border-right: 1px solid #F0F0F0;
     p{
@@ -245,9 +257,18 @@ export default {
       color: #2D8cF0;
     }
   }
-  .avatar{
-    background-color: #2D8cF0;
-    vertical-align: middle;
+  .head{
+    padding: 0 10px;
+    height: 64px;
+    display: inline-block;
+    vertical-align: top;
+    .avatar{
+      background-color: #2D8cF0;
+      vertical-align: middle;
+    }
+  }
+  .switch-store:hover, .login-user:hover, .head:hover{
+    background-color: #F0F0F0;
   }
 }
 </style>

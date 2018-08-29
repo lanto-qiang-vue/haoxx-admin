@@ -1,5 +1,6 @@
 import { getBreadCrumbList, setTagNavListInLocalstorage, getMenuByRouter, getTagNavListFromLocalstorage, getHomeRoute, setDict, getDict,getTenant,setTenant} from '@/libs/util'
 import routers from '@/router/routers'
+import axios from '@/libs/api.request'
 export default {
   state: {
     breadCrumbList: [],
@@ -9,6 +10,7 @@ export default {
 
     dict: getDict() || '',
     tenant: getTenant() || '',
+    pickingNumber: 0
   },
   getters: {
     // menuList: (state, getters, rootState) => getMenuByRouter(routers, rootState.user.access)
@@ -52,6 +54,26 @@ export default {
     setTenant(state,info){
        state.tenant = info
        setTenant(info)
+    },
+    setPickingNumber(state,num){
+      state.pickingNumber = num
+    }
+  },
+  actions: {
+    getPickingNumber ({ state, commit, rootState }) {
+      return new Promise((resolve, reject) => {
+        axios.request({
+          url: '/tenant/repair/part_count/repair_part?access_token='+ rootState.user.token,
+          method: 'get',
+        }).then(res => {
+          if (res.success === true) {
+            commit('setPickingNumber', res.data[0].num)
+            resolve(res)
+          }else reject(res)
+        }).then(res => {
+          reject(res)
+        })
+      })
     }
   }
 }
