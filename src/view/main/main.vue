@@ -4,10 +4,10 @@
       <side-menu v-show="showMenu" accordion ref="sideMenu" :active-name="$route.name" :collapsed="collapsed" @on-select="turnToPage" :menu-list="menuList">
         <!-- 需要放在菜单上面的内容，如Logo，写在side-menu标签内部，如下 -->
         <div class="logo-con">
-          <img v-show="!collapsed" :src="maxLogo" key="max-logo" />
-          <img v-show="collapsed" :src="minLogo" key="min-logo" />
-          <!-- <p v-show="!collapsed" key="max-logo">好修修门店管理系统</p> -->
-          <!-- <p v-show="collapsed"  key="min-logo">好修修</p> -->
+          <!--<img v-show="!collapsed" :src="maxLogo" key="max-logo" />-->
+          <!--<img v-show="collapsed" :src="minLogo" key="min-logo" />-->
+           <p v-show="!collapsed" style="font-size: 24px">好修修门店管理系统</p>
+           <p v-show="collapsed" >好修修</p>
         </div>
       </side-menu>
     </Sider>
@@ -15,6 +15,7 @@
       <Header class="header-con">
         <header-bar :collapsed="collapsed" @on-coll-change="handleCollapsedChange">
           <fullscreen v-model="isFullscreen" style="margin-right: 10px;"/>
+          <picking-number></picking-number>
           <user slot="right" :user-avator="userAvator"/>
           <!--<language @on-lang-change="setLocal" style="margin-right: 10px;" :lang="local"/>-->
         </header-bar>
@@ -41,6 +42,7 @@ import TagsNav from './components/tags-nav'
 import User from './components/user'
 import Fullscreen from './components/fullscreen'
 import Language from './components/language'
+import PickingNumber from './components/picking-number/picking-number.vue'
 import { mapMutations, mapActions } from 'vuex'
 import { getNewTagList, getNextName } from '@/libs/util'
 import minLogo from '@/assets/images/logo-min.jpg'
@@ -54,7 +56,8 @@ export default {
     Language,
     TagsNav,
     Fullscreen,
-    User
+    User,
+    PickingNumber
   },
   data () {
     return {

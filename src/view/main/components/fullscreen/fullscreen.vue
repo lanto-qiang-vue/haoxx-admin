@@ -1,7 +1,7 @@
 <template>
   <div v-if="showFullScreenBtn" class="full-screen-btn-con">
-    <Tooltip :content="value ? '退出全屏' : '全屏'" placement="bottom">
-      <Icon @click.native="handleChange" :type="value ? 'md-contract' : 'md-expand'" :size="23"></Icon>
+    <Tooltip :content="value ? '退出全屏' : '全屏'" placement="bottom" style="line-height: normal">
+      <Icon @click.native="handleChange" :type="value ? 'md-contract' : 'md-expand'" :size="24"></Icon>
     </Tooltip>
   </div>
 </template>
@@ -73,7 +73,7 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .full-screen-btn-con {
   display: inline-block;
   vertical-align: top;
@@ -83,6 +83,9 @@ export default {
     vertical-align: top;
     i{
       cursor: pointer;
+    }
+    .ivu-icon:hover{
+      color: #2D8cF0;
     }
   }
 }
