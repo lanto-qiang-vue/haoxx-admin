@@ -6,10 +6,10 @@
     title="车辆新增"
     :mask-closable="false"
     :scrollable="true"
-    :transfer= "true"
+    :transfer= "false"
     :footer-hide="false">	
     <!-- 车辆车辆档案新增调用 -->
-    <!-- <div style="height:50px;"></div> -->
+    <div style="height:50px;"></div>
     <Form :label-width="120" :model="formData" ref="formData" :rules="ruleValidate" inline>
           <FormItem label="车牌号:" style="width:45%;"  prop="PLATE_NUM">
               <Input type="text" v-model="formData.PLATE_NUM"  style="min-width: 100%;"> </Input>
@@ -18,7 +18,7 @@
               <Input type="text" v-model="formData.VIN_NO" style="min-width: 100%;"> </Input>
           </FormItem>
                     <FormItem label="车型:" style="width:91%;" prop="VEHICLE_MODEL">
-              <Input type="text"  style="min-width: 100%;" v-model="formData.VEHICLE_MODEL" :disabled="true" @on-click="vehicleChange" icon="ios-search"> </Input>
+              <Input type="text"  style="min-width: 100%;" v-model="formData.VEHICLE_MODEL" :readonly="true" @on-focus="vehicleChange" @on-click="vehicleChange" icon="ios-search"> </Input>
           </FormItem>
       <!-- 调整字段个数和位置 -->
           <!-- 1 -->
@@ -139,12 +139,24 @@
           <div slot="footer" style="text-align:center;">
            <Button size="large" type="primary" @click="submit('formData')">保存</Button><Button size="large" type="primary" @click="showModal=false">关闭</Button>
         </div>
+        <Modal
+    :transition-names="['', '']"
+    v-model="vehicleShow"
+    width="90"
+    :scrollable="true"
+    :transfer= "false"
+    :footer-hide="true"
+>
+<vehicle-model :show="vehicleShow" @onRowClick="onRowClick"></vehicle-model>
+</Modal>
 	</Modal>
 </template>
 <script>
 	    import { getName, getDictGroup, getCreate } from '@/libs/util.js'
+      import vehicleModel from '@/hxx-components/vehicle-model.vue'
 	export default{
 		name:'vehicle-add',
+    components:{vehicleModel},
 		data(){
 			     const validatePass = (rule, value, callback) => {
 			     	var p1 = /\d?[A-Z]+\d?/
@@ -154,7 +166,10 @@
                 	  callback();
                 }
             };
-			return{showModal:false,
+			return{
+        hidetype:1,
+        vehicleShow:false,
+        showModal:false,
 				formData:{
 				MUST_SAFE_CORP:0,
 				BUSINESS_SAFE_CORP:0,
@@ -191,7 +206,7 @@
 					 	{ validator: validatePass, trigger: 'change' },
 					 	{ validator: validatePass, trigger: 'blur' }
 					 ],
-					 VEHICLE_MODEL:[{required: true, message: '请点击搜索图标选取车型', trigger: 'blur'}],
+					 VEHICLE_MODEL:[{required: true, message: '请点击选取车型', trigger: 'blur'}],
            CUSTOMER_CODE:[{required: true, message: '请点击搜索图标选取客户', trigger: 'blur'}],
            CUSTOMER_NAME:[{required: true, message: '客户名称必选', trigger: 'blur'}],
 				},
@@ -246,7 +261,9 @@
            }
 		},
 		methods:{
-			vehicleChange(){alert(1)},
+			vehicleChange(){
+        this.vehicleShow = true;
+      },
 			getInsure(){
 		  this.axios.request({
           url: 'tenant/repair/tt_guarantee_slip/get_insurer_list',
@@ -261,6 +278,11 @@
           }
         })
 			},
+      onRowClick(row){
+      this.formData.VEHICLE_MODEL = row.MODEL_NAME;
+      this.formData.TID = row.TID;
+      this.vehicleShow = false;
+      },
 			submit(name){
 				            this.$refs[name].validate((valid) => {
                     if (valid) {

@@ -1,5 +1,6 @@
 <template>
     <Modal
+      :transition-names="['', '']"
         v-model="showOnoff"
         title="选择客户"
         width="90"

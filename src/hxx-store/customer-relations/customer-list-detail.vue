@@ -16,7 +16,7 @@
 
         <!-- 基本信息 -->
         <TabPane label="基本信息" name="m1" icon="logo-apple">
-    <Form ref="formData" :model="formData" :label-width="80" :rules="ruleValidate" inline>
+    <Form ref="formData" :model="formData" :label-width="120" :rules="ruleValidate" inline>
           <FormItem style="margin-left:-80px;width:100%;">
               <div class="operate">
                             <Button @click="showModal = false">返回</Button>
@@ -118,7 +118,7 @@
         <!-- 会员结束 -->
     </Tabs>
     <!-- 到时候改成vehicleShow -->
-        <cart-modal class="table-modal-detail" :info="row"   :show="showLook"></cart-modal>
+        <cart-modal class="table-modal-detail" :info="row" :hidetype="hidetype"   :show="showLook"></cart-modal>
         <vehicle-add @refresh="refresh()" :CUSTOMER_ID="tabshow" :row="row" :show="vehicleShow"></vehicle-add>
   </Modal>
   <!-- 车辆档案新增组件 -->
@@ -135,6 +135,7 @@
     components: {commonTable,vehicleAdd,cartModal},
     data(){
       return {
+        hidetype:1,
         showModal:false,
         showLook:false,
         indexName:'m1',
@@ -178,9 +179,9 @@
           funname:'',
         },
         ruleValidate: {
-          name:[{required: true, message: '客户名称必填', trigger: 'blur' }],
-          phone:[{required: true, message: '移动电话必填', trigger: 'blur' },
-          { type:'string',pattern:/^[1][3,4,5,7,8][0-9]{9}$/, message:'请输入有效手机号码', trigger:'blur'}
+          name:[{required: true, message: '客户名称必填', trigger: 'change' }],
+          phone:[{required: true, message: '移动电话必填', trigger: 'change' },
+          // { type:'string',pattern:/^[1][3,4,5,7,8][0-9]{9}$/, message:'请输入有效手机号码', trigger:'blur'}
           ],
           idcard:[{ type:'string',pattern:/(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/, message:'请输入正确的身份证号码', trigger:'blur'}]
         },
@@ -210,6 +211,7 @@
     props:['show','detail','sign'],
     watch:{
       show(){
+        this.$refs['formData'].resetFields();
         this.showModal = true;
         this.indexName = "m1";
       },
@@ -244,11 +246,11 @@
        this.store = that;
        // console.log(row.FOLLOW_PERSON);
       },
-      sign(type){
-      //1新增 2 双击新增 3 单选新增
-      if(type === 1) this.clear();
-      if(type === 3) this.formData = this.store;
-      }
+      // sign(type){
+      // //1新增 2 双击新增 3 单选新增
+      // if(type === 1) this.clear();
+      // if(type === 3) this.formData = this.store;
+      // }
     },
     mounted(){
       // 下拉数据处理开始
@@ -333,6 +335,7 @@
           return;
         }
         this.row = this.objlist[0];
+        this.hidetype = 2;
         this.showLook = Math.random();
       },
       dpost(){
@@ -417,7 +420,7 @@
         REGULAR_REPAIR:0,
         PLATE_NUM:'',
         VIN_NO:'',
-        VEHICLE_MODEL:'法拉利360 Spider 敞篷版 2004款 3.6L Spider AMT',
+        VEHICLE_MODEL:'',
         BUY_DATE:'',
         ENGINE_NO:'',
         LEAVE_FACTORY_DATE:'',
@@ -428,7 +431,7 @@
         MUST_SAFE_VALIDITY:'',
         BUSINESS_SAFE_VALIDITY:'',
         REMARK:'',
-        TID:24715,
+        TID:'',
         CUSTOMER_ID:'',
         CUSTOMER_CODE:'',
         CUSTOMER_NAME:'',

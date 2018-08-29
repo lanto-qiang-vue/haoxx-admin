@@ -368,7 +368,7 @@ export default [
         },
         component: () => import('@/hxx-store/customer-relations/cart-list.vue')
       },
-        {path: '/card-product',
+       {path: '/card-product',
         name: 'card-product',
         meta: {
           icon: 'md-funnel',
@@ -378,6 +378,16 @@ export default [
         },
         component: () => import('@/hxx-store/customer-relations/card-product.vue')
       },
+       {path: '/card-recharge',
+        name: 'card-recharge',
+        meta: {
+          icon: 'md-funnel',
+          title: '储值卡充值',
+          lgType: "1002",
+          access: '100302',
+        },
+        component: () => import('@/hxx-store/customer-relations/card-recharge.vue')
+      }
       // {
       //   path: 'test',
       //   name: 'test',

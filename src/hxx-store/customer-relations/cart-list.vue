@@ -20,7 +20,7 @@
       <Button type="info" @click="edit()">编辑/查看</Button>
       <Button type="error" @click="remove()">作废</Button>
     </div>
-      <cart-modal class="table-modal-detail" :info="info"  @refresh="refresh" :show="show"></cart-modal>
+      <cart-modal class="table-modal-detail" :info="info" :hidetype="hidetype" @refresh="refresh" :show="show"></cart-modal>
   </common-table>
 </template>
 <script>
@@ -33,6 +33,7 @@
 		data(){
 			return {
         color:[],
+        hidetype:1,
         page:1,
         limit:25,
         total:0,
@@ -72,36 +73,6 @@
 		},
     methods:{
       mshow(){
-      var data =  {
-        MUST_SAFE_CORP:0,
-        BUSINESS_SAFE_CORP:0,
-        VEHICLE_COLOR:0,
-        COME_MILEAGE:0,
-        REPAIR_MILEAGE:0,
-        LAST_REPAIR_MILEAGE:0,
-        NEXT_REPAIR_MILEAGE:0,
-        VEHICLE_ID:0,
-        REGULAR_REPAIR:0,
-        PLATE_NUM:'',
-        VIN_NO:'',
-        VEHICLE_MODEL:'法拉利360 Spider 敞篷版 2004款 3.6L Spider AMT',
-        BUY_DATE:'',
-        ENGINE_NO:'',
-        LEAVE_FACTORY_DATE:'',
-        COME_DATE:'',
-        LAST_REPAIR_DATE:'',
-        NEXT_REPAIR_DATE:'',
-        YEAR_CHECK_DATE:'',
-        MUST_SAFE_VALIDITY:'',
-        BUSINESS_SAFE_VALIDITY:'',
-        REMARK:'',
-        TID:24715,
-        CUSTOMER_ID:'',
-                CUSTOMER_CODE:'',
-                CUSTOMER_NAME:'',
-                VEHICLE_ID:'',
-        }
-        this.info = data;
         this.show = Math.random();
       },
       getList(){
