@@ -77,7 +77,7 @@
       class="main-table"
       ref="tablesMain"
       :columns="columns"
-      :data="commitItem"
+      :data="combo"
       stripe
       border
     ></Table>
@@ -194,7 +194,7 @@
         testSingle:false,//判断是否启用维修项目套餐
         //维修项目
         columns: [
-          {title: '序号',  minWidth: 60,type:"index",
+          {title: '序号',  minWidth: 100,type:"index",
           },
           {title: '维修项目名称', key: 'NAME', sortable: true, minWidth: 200,
             // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.ORDER_TYPE))
@@ -202,81 +202,15 @@
           {title: '标准工时', key: 'REPAIR_TIME', sortable: true, minWidth: 150},
           {title: '标准金额', key: 'REPAIR_MONEY', sortable: true, minWidth: 150},
           {title: '油漆面数', key: 'PAINT_NUM', sortable: true, minWidth: 150},
-          {title: '小计金额', key: 'ITEM_MONEY', sortable: true, minWidth: 150,
-            render: (h, params) => h('span', (params.row.REPAIR_TIME*getUserInfo(this.$store.state.user.userInfo.params, 'P1001')+params.row.PAINT_NUM*getUserInfo(this.$store.state.user.userInfo.params, 'P1002')))
-          },
-          {title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 150,
-            render: (h, params) =>  h(ColumnInput, {
-                props: {
-                  params: params,
-                  type: 'number',
-                  min: 0
-                },
-                on: {
-                  'change': val => {
-                    // this.getItem[params.index][params.column.key]= val
-                    this.commitItem[params.index]['ITEM_DERATE_MONEY']=val;
-                    this.commitItem[params.index]['ITEM_LAST_MONEY']=params.row.REPAIR_TIME*getUserInfo(this.$store.state.user.userInfo.params, 'P1001')+params.row.PAINT_NUM*getUserInfo(this.$store.state.user.userInfo.params, 'P1002')-val;
-                    this.computItemMoney();
-                  },
-                }
-              })
-
-          },
-          {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 150,
-            render: (h, params) => h('span', (params.row.REPAIR_TIME*100+params.row.PAINT_NUM*1200-params.row.ITEM_DERATE_MONEY))
-          },
-          {title: '备注', key: 'REMARK', sortable: true, minWidth: 150,
-            render: (h, params) => {
-                return h('div', [
-                    h('Input', {
-                        props: {
-                            type: 'text',
-                            value: params.row.REMARK,
-                        },
-                        on: {
-                            "on-blur":(e)=>{
-                              this.commitItem[params.index]["REMARK"]=e.target.value;
-                            }
-                        }
-                    },
-                    )
-                ]);
-            }
-          },
-          {title: '操作', key: '', sortable: true, minWidth: 150, fixed: 'right',
-            render: (h, params) => {
-                if(this.titleMsg=='新建'){
-                  return h('div', [
-                      h('Button', {
-                          props: {
-                              type: 'error',
-                              size: 'small'
-                          },
-                          on: {
-                              click: () => {
-                                  this.deleteTenanceItem(params.index);
-                              }
-                          }
-                      }, 'Delete')
-                  ]);
-                }else if(this.titleMsg=='已预约'){
-                  return h('div', [
-                      h('span', '已预约')
-                  ]);
-                }else if(this.titleMsg=='已接车'){
-                  return h('div', [
-                      h('span', '已接车')
-                  ]);
-                }
-                
-            }
-          },
+          {title: '小计金额', key: 'ITEM_MONEY', sortable: true, minWidth: 150},
+          {title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 150},
+          {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 150},
+          {title: '备注', key: 'REMARK', sortable: true, minWidth: 150}
         ],
         getItem:[],
         //维修配件
         columns1: [
-          {title: '序号',  minWidth: 60,type:'index',},
+          {title: '序号',  minWidth: 100,type:'index',},
           {title: '配件编号', key: 'PART_NO', sortable: true, minWidth: 200,},
           {title: '配件名称', key: 'NAME', sortable: true, minWidth: 150},
           {title: '数量', key: 'PART_NUM', sortable: true, minWidth: 150},
@@ -299,75 +233,10 @@
           {title: '序号',  minWidth: 80,type:'index',},
           {title: '项目套餐名称', key: 'GROUP_NAME', sortable: true, minWidth: 200,},
           {title: '套餐价格', key: 'SALES_PRICE', sortable: true, minWidth: 150},
-          {title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 150,
-              render: (h, params) =>  h(ColumnInput, {
-                    props: {
-                      params: params,
-                      type: 'number',
-                      min: 0
-                    },
-                    on: {
-                      'change': val => {
-                        this.commitItemGroup[params.index]['ITEM_DERATE_MONEY']=val;
-                        this.commitItemGroup[params.index]['ITEM_LAST_MONEY']=params.row.SALES_PRICE-val;
-                        this.computItemMoney();
-                      },
-                    }
-              })
-            
-            
-          },
-          {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 150,
-            render: (h, params) => h('span', params.row.SALES_PRICE-params.row.ITEM_DERATE_MONEY)
-          },
-          {title: '备注', key: 'REMARK', sortable: true, minWidth: 150,
-            render: (h, params) => {
-                return h('div', [
-                    h('Input', {
-                        props: {
-                            type: 'text',
-                            value: params.row.REMARK,
-                        },
-                        
-                        on: {
-                            "on-blur":(e)=>{
-                              this.commitItemGroup[params.index]["REMARK"]=e.target.value;
-                              
-                            }
-                        }
-                    },
-                    )
-                ]);
-            }
-          },
-          {title: '操作', key: '', sortable: true, minWidth: 150,fixed: 'right',
-            render: (h, params) => {
-                
-                if(this.titleMsg=='新建'){
-                  return h('div', [
-                      h('Button', {
-                          props: {
-                              type: 'error',
-                              size: 'small'
-                          },
-                          on: {
-                              click: () => {
-                                  this.deleteItemGroup(params.index);
-                              }
-                          }
-                      }, 'Delete')
-                  ]);
-                }else if(this.titleMsg=='已预约'){
-                  return h('div', [
-                      h('span', '已预约')
-                  ]);
-                }else if(this.titleMsg=='已接车'){
-                  return h('div', [
-                      h('span', '已接车')
-                  ]);
-                }
-            }
-          },
+          {title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 150},
+          {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 150},
+          {title: '备注', key: 'REMARK', sortable: true, minWidth: 150},
+          {title: '操作', key: '', sortable: true, minWidth: 150}
         ],
         getItemGroup:[],
         collapse: '1',
@@ -596,8 +465,20 @@
         }).then(res => {
           if (res.success === true) {
               this.combo = res.data;
+              console.log(this.combo);
           }
         })
+   //获取班组
+        //    this.axios.request({
+        //   url: '/tenant/repair/ttrepairworkorder/getShopClassList',
+        //   method: 'post',
+        //   data: {access_token: this.$store.state.user.token}
+        // }).then(res => {
+        //   if (res.success === true) {
+        //       this.combo = res.data;
+        //       console.log(this.combo);
+        //   }
+        // })
 
     },
     methods:{
