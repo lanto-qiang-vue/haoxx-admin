@@ -1,5 +1,5 @@
 <template>
-  <component :is="iconType" :type="iconName" :color="iconColor" :size="iconSize"/>
+  <component :is="iconType" :type="iconName" :color="iconColor" :size="iconSize" :custom="iconCustom"/>
 </template>
 
 <script>
@@ -13,7 +13,8 @@ export default {
       required: true
     },
     color: String,
-    size: Number
+    size: Number,
+    custom: String
   },
   computed: {
     iconType () {
@@ -27,6 +28,10 @@ export default {
     },
     iconColor () {
       return this.color || ''
+    },
+    iconCustom () {
+      // console.log('iconCustom', this.custom)
+      return this.custom || ''
     }
   },
   methods: {
