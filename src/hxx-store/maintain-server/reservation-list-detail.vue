@@ -10,9 +10,9 @@
     :footer-hide="false"
     :transition-names="['', '']"
   >
-    <div style="font-size: 18px;text-align: right;color: red;padding-right: 30px;">{{titleMsg}}</div>
+    <div class="titleMsg">{{titleMsg}}</div>
     <Collapse v-model="collapse">
-      <Panel name="1">查询
+      <Panel name="1">基本信息
        <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="80" inline class="detail-form">
           <FormItem label="车牌号码:">
               <Input @on-focus="showoff=Math.random();"	type="text" v-model="listSearch.PLATE_NUM" placeholder="请输入车牌号" style="min-width: 250px;" >
@@ -275,7 +275,7 @@
                       h('span', '已接车')
                   ]);
                 }
-                
+
             }
           },
         ],
@@ -334,7 +334,7 @@
                         },
                         on: {
                             "on-blur":(e)=>{
-                            
+
                               this.commitParts[params.index]['REMARK']=e.target.value;
                             }
                         }
@@ -345,7 +345,7 @@
           },
           {title: '操作', key: '', sortable: true, minWidth: 150,fixed: 'right',
             render: (h, params) => {
-                
+
                 if(this.titleMsg=='新建'){
                   return h('div', [
                       h('Button', {
@@ -370,7 +370,7 @@
                   ]);
                 }
             }
-            
+
           },
         ],
         getParts:[],
@@ -395,8 +395,8 @@
                       },
                     }
               })
-            
-            
+
+
           },
           {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 150,
             render: (h, params) => h('span', params.row.SALES_PRICE-params.row.ITEM_DERATE_MONEY)
@@ -409,11 +409,11 @@
                             type: 'text',
                             value: params.row.REMARK,
                         },
-                        
+
                         on: {
                             "on-blur":(e)=>{
                               this.commitItemGroup[params.index]["REMARK"]=e.target.value;
-                              
+
                             }
                         }
                     },
@@ -423,7 +423,7 @@
           },
           {title: '操作', key: '', sortable: true, minWidth: 150,fixed: 'right',
             render: (h, params) => {
-                
+
                 if(this.titleMsg=='新建'){
                   return h('div', [
                       h('Button', {
@@ -476,7 +476,7 @@
           "REPAIR_PART_MONEY":0,
           "SUM_MONEY":0
         },
-        
+
         searchSelectOption:[],
         searchSelectOption1:[],
         timeGruop:[
@@ -537,7 +537,7 @@
         commitItem:[],//提交选择项目
         commitParts:[],//提交配件
 
-        
+
 
       }
     },
@@ -646,7 +646,7 @@
           // this.$refs[name].validate((valid) => {
           //     if (valid) {
 
-                  console.log("保存数据----");
+                  console.log("保存数据----",this.listSearch);
                   this.orderdate=this.listSearch["ORDER_DATE"];
                   this.listSearch["ORDER_DATE"]=formatDate(this.listSearch["ORDER_DATE"]);
                   this.tooltipObj.title = '系统提示!';
@@ -779,11 +779,11 @@
               for(let i in res.data){
                 this.listSearch["REPAIR_PART_MONEY"]+=res.data[i]['PART_MONEY'];
               }
-              
+
             }
           })
       },
-      
+
       //监听选择车辆----
       selectCar(val){
         console.log(val);
@@ -850,12 +850,12 @@
               if(this.getItem[j][i]){
                 listItemsModel[i]=this.getItem[j][i];
               }else if(i=="ITEM_MONEY"){
-                
+
                 listItemsModel[i]=this.getItem[j]["REPAIR_TIME"]*getUserInfo(this.$store.state.user.userInfo.params, 'P1001')+this.getItem[j]["PAINT_NUM"]*getUserInfo(this.$store.state.user.userInfo.params, 'P1002');
               }else if(i=="ITEM_LAST_MONEY"){
                 listItemsModel[i]=parseInt(this.getItem[j]["REPAIR_TIME"]*getUserInfo(this.$store.state.user.userInfo.params, 'P1001'))+parseInt(this.getItem[j]["PAINT_NUM"]*getUserInfo(this.$store.state.user.userInfo.params, 'P1002'));
               }
-              
+
             }
             this.commitItem.push(listItemsModel);
           }
@@ -921,7 +921,7 @@
               }
               this.commitParts.push(commitParts);
           }
-          
+
         }
         for(let j in this.getParts1){
           if(this.getParts1[j]["STOCK_ID"]){
@@ -1031,7 +1031,7 @@
               }
               this.commitParts.push(commitParts);
           }
-          
+
         }
         for(let j in this.getParts1){
           if(this.getParts1[j]["STOCK_ID"]){
@@ -1173,7 +1173,7 @@
 
           //计算金额
           this.computItemMoney();
-        
+
       },
       //计算维修项目类的金额-----------
       computItemMoney(){
@@ -1222,7 +1222,7 @@
         this.listSearch["REPAIR_PART_DERATE_MONEY"]=val;
         this.listSearch["SUM_MONEY"]=this.listSearch["REPAIR_ITEM_MONEY"]+this.listSearch["REPAIR_PART_MONEY"]-this.listSearch["REPAIR_ITEM_DERATE_MONEY"]-val;
       },
-      
+
       //删除维修项目组数据
       deleteItemGroup(index){
         this.commitItemGroup.splice(index,1);
@@ -1235,7 +1235,7 @@
         }else{
           this.listSearch['IS_ITEM_GROUP']="10041002";
         }
-        
+
       },
 
     }
@@ -1243,6 +1243,13 @@
 </script>
 
 <style scoped lang="less">
+  .titleMsg{
+    font-size: 18px;
+    color: red;
+    position: absolute;
+    right: 30px;
+    top: 66px;
+  }
   .search-block{
     display: inline-block;
     width: 200px;
@@ -1263,7 +1270,8 @@
     width: 100%;
     font-size: 18px;
     text-align: center;
-
+    margin:20px 0;
+    margin-bottom: 50px;
     span{
       color:red;
 

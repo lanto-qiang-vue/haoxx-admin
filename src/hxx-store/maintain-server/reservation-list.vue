@@ -14,8 +14,9 @@
         </Select>
       </div>
       <div class="search-block"style="width:250px;">
-        <DatePicker @on-change="getOrderDateGte" type="date" placeholder="开始时间" style="width: 120px;"></DatePicker>
-        <DatePicker @on-change="getOrderDateIte" type="date" placeholder="结束时间" style="width: 120px;margin-left: 5px;"></DatePicker>
+        <!--@on-change="getOrderDateGte" @on-change="getOrderDateIte"-->
+        <DatePicker v-model="search.orderDateGte" format="yyyy-MM-dd" type="date" placeholder="开始时间" style="width: 120px;"></DatePicker>
+        <DatePicker v-model="search.orderDateIte" format="yyyy-MM-dd" type="date" placeholder="结束时间" style="width: 120px;margin-left: 5px;"></DatePicker>
       </div>
 
       <ButtonGroup size="small">
@@ -99,7 +100,7 @@
         detailData: null,
         clearTableSelect: null,
         isOrderSuccess:false,//判断是不是预约成功
-
+        
       }
     },
     mounted () {
@@ -118,6 +119,7 @@
     },
     methods:{
 		  getList(){
+        console.log(this.search);
         this.axios.request({
           url: '/tenant/repair/ttrepairorder/list',
           method: 'post',

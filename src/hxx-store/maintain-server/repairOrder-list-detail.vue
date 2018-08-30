@@ -168,7 +168,7 @@
           <Button :disabled="buttonStateArr.save" @click="handleSubmit('listSearch')" size="large" type="primary"  style="margin-right: 10px; padding: 0 10px;"><Icon type="md-checkmark" size="24"/>保存</Button>
           <Button :disabled="buttonStateArr.dopay" @click="handleCommit" type="primary"  style="margin-right: 10px; padding: 0 10px;">派工</Button>
           <Button :disabled="buttonStateArr.finish" @click="handleFinish" type="primary"  style="margin-right: 10px; padding: 0 10px;">完工</Button>
-          <Button :disabled="buttonStateArr.doaccount" type="primary"  style="margin-right: 10px; padding: 0 10px;">结算</Button>
+          <Button :disabled="buttonStateArr.doaccount" @click="testtt" type="primary"  style="margin-right: 10px; padding: 0 10px;">结算</Button>
           <Button :disabled="buttonStateArr.shoukuan" type="primary"  style="margin-right: 10px; padding: 0 10px;">收款</Button>
           <Button :disabled="buttonStateArr.printWts" type="primary"  style="margin-right: 10px; padding: 0 10px;">打印委托书</Button>
           <Button :disabled="buttonStateArr.printPgd" type="primary"  style="margin-right: 10px; padding: 0 10px;">打印派工单</Button>
@@ -192,6 +192,9 @@
       <!--选择项目组-->
       <select-itemPackage :showSelectItemGroup="showSelectItemGroup" @selectItemGroup="selectItemGroup" :initItemGroup="initItemGroup">
       </select-itemPackage>
+      <!--选择工单结算单-->
+      <select-accountOrder :showSelectAccount="showSelectAccount" :showAccountData="listSearch" :showAccountItem="commitItem" :showAccountParts="commitParts" :showAccountOther="commitOtherItem">
+      </select-accountOrder>
   </Modal>
 
 </template>
@@ -206,15 +209,17 @@
   import selectPartsGroup from '@/hxx-components/select-partsGroup.vue'
 
   import selectItemPackage from '@/hxx-components/select-itemPackage.vue'
+  import selectAccountOrder from '@/hxx-components/select-accountOrder.vue'
 
   import ColumnInput from '@/hxx-components/column-input.vue'
 
 
 	export default {
 	name: "repairOrder-list-detail",
-    components: {commonModal6,selectVehicle,selectItems,selectParts,selectPartsGroup,selectItemPackage},
+    components: {commonModal6,selectVehicle,selectItems,selectParts,selectPartsGroup,selectItemPackage,selectAccountOrder},
     data(){
       return{
+        showSelectAccount:null,//选择工单结算单
         showoff:null,//选择车辆
         showTenanceItems:null,//选择项目
         initGetItem:[],//初始化选择项目数据
@@ -761,10 +766,10 @@
             "TELPHONE":"",
             "REPAIR_TYPE":"10191001",
             "MILEAGE":0,
-            "REPAIR_PERSON":"管理员",
+            "REPAIR_PERSON":"",
             "VEHICLE_TYPE":"10521001",
             "VEHICLE_TYPE_CODE":"轿车-排量<1.6升-A",
-            "FOLLOW_PERSON":"管理员",
+            "FOLLOW_PERSON":"",
             "COME_DATE":new Date(),
             "PLAN_END_DATE":new Date(),
             "FAULT_DESC":"",
@@ -889,6 +894,7 @@
           printPgd:true,//打印派工单
           printAccount:true,//打印结算单
         },//按钮状态组数据
+        // returnData:null,//返回数据结果---公共的---
 
       }
     },
@@ -1030,7 +1036,7 @@
         }
 
         this.getShopClassList();
-        this.getEmployeeList();
+        this.getEmployeeList(this.detailData);
       }
     },
     mounted () {
@@ -1062,7 +1068,7 @@
             })
         },
         //得到主修人数据
-        getEmployeeList(){
+        getEmployeeList(val){
             this.repairPersonArr=[];
             this.serverPersonArr=[];
             this.axios.request({
@@ -1082,6 +1088,11 @@
                         this.repairPersonArr.push(obj);
                         this.serverPersonArr.push(obj);
                     }
+                    //初始化主修人数据
+                    if(!val){
+                      this.listSearch.FOLLOW_PERSON=this.repairPersonArr[0].code;
+                      this.listSearch.REPAIR_PERSON=this.serverPersonArr[0].code;
+                    }
                     console.log("this.vehicleTeamArr",this.serverPersonArr,this.repairPersonArr);
                 }
             })
@@ -1099,127 +1110,128 @@
 
         },
         
-      visibleChange(status){
-        if(status === false){
-          this.$emit('closeDetail');
-          this.handleReset("listSearch");
-        }
-      },
-      //保存按钮-----------
-      handleSubmit (name) {
-          this.$refs[name].validate((valid) => {
-              if (valid) {
-                    this.$Modal.confirm({
-                        title:"系统提示!",
-                        content:"确定要保存吗？",
-                        onOk:this.saveData,
-                        
-                    })
-              } else {
+        visibleChange(status){
+          if(status === false){
+            this.$emit('closeDetail');
+            this.handleReset("listSearch");
+          }
+        },
+        //保存按钮-----------
+        handleSubmit (name) {
+            this.$refs[name].validate((valid) => {
+                if (valid) {
+                      this.$Modal.confirm({
+                          title:"系统提示!",
+                          content:"确定要保存吗？",
+                          onOk:this.saveData,
+                          
+                      })
+                } else {
+
+                }
+            });
+        },
+        saveData(){
+            //提交维修项目套餐
+            this.axios.request({
+              url: '/tenant/repair/ttrepairworkorder/saveOrSubmit',
+              
+              method: 'post',
+              data: {
+                data: JSON.stringify(this.listSearch),
+                items:JSON.stringify(this.commitItem),
+                itemGroups: JSON.stringify(this.commitItemGroup),
+                parts: JSON.stringify(this.commitParts),
+                otherItems: JSON.stringify(this.commitOtherItem),
+                access_token: this.$store.state.user.token
+              }
+            }).then(res => {
+              if (res.success === true) {
+                this.$Message.info('successful');
+                this.listSearch["REPAIR_ID"]=res.data.REPAIR_ID;
+                this.listSearch["REPAIR_NO"]=res.data.REPAIR_NO;
 
               }
-          });
-      },
-      saveData(){
+            })
+        },
+        //派工按钮----------------
+        handleCommit(){
+            this.$Modal.confirm({
+                title:"系统提示!",
+                content:"确定要派工吗？",
+                onOk:this.commitdata,
+                
+            })
+
+        },
+        commitdata(){
+            this.listSearch["STATUS"]="10201002";
           //提交维修项目套餐
-          this.axios.request({
-            url: '/tenant/repair/ttrepairworkorder/saveOrSubmit',
-            
-            method: 'post',
-            data: {
-              data: JSON.stringify(this.listSearch),
-              items:JSON.stringify(this.commitItem),
-              itemGroups: JSON.stringify(this.commitItemGroup),
-              parts: JSON.stringify(this.commitParts),
-              otherItems: JSON.stringify(this.commitOtherItem),
-              access_token: this.$store.state.user.token
-            }
-          }).then(res => {
-            if (res.success === true) {
-              
-              this.$Message.info('successful')
-            }
-          })
-      },
-      //派工按钮----------------
-      handleCommit(){
+            this.axios.request({
+              url: '/tenant/repair/ttrepairworkorder/saveOrSubmit',
+              method: 'post',
+              data: {
+                data: JSON.stringify(this.listSearch),
+                items:JSON.stringify(this.commitItem),
+                itemGroups: JSON.stringify(this.commitItemGroup),
+                parts: JSON.stringify(this.commitParts),
+                otherItems: JSON.stringify(this.commitOtherItem),
+                access_token: this.$store.state.user.token
+              }
+            }).then(res => {
+              if (res.success === true) {
+                this.$Message.info('successful');
+                this.titleMsg="已派工维修中";
+
+                this.orderDate="";
+                this.isOrderSuccess=false;
+
+                for(let i in this.buttonStateArr){
+                  switch(i){
+                    case 'finish':
+                    case 'printWts':
+                    case 'printPgd': this.buttonStateArr[i]= false; break
+                    default : this.buttonStateArr[i]= true;
+                  }
+                }
+              }
+            })
+        },
+        //完工按钮-------------------
+        handleFinish(){
           this.$Modal.confirm({
               title:"系统提示!",
-              content:"确定要派工吗？",
-              onOk:this.commitdata,
+              content:"确定要完工吗？",
+              onOk:this.saveFinish,
               
           })
+        },
+        saveFinish(){
+          //提交维修项目套餐
+            this.axios.request({
+              url: '/tenant/repair/ttrepairworkorder/saveFinish',
+              method: 'post',
+              data: {
+                repairId: this.listSearch.REPAIR_ID,
+                access_token: this.$store.state.user.token
+              }
+            }).then(res => {
+              if (res.success === true) {
+                this.$Message.info('successful');
+                this.titleMsg="已完工待结算";
 
-      },
-      commitdata(){
-          console.log("开始派工-------------");
-          this.listSearch["STATUS"]="10201002";
-         //提交维修项目套餐
-          this.axios.request({
-            url: '/tenant/repair/ttrepairworkorder/saveOrSubmit',
-            method: 'post',
-            data: {
-              data: JSON.stringify(this.listSearch),
-              items:JSON.stringify(this.commitItem),
-              itemGroups: JSON.stringify(this.commitItemGroup),
-              parts: JSON.stringify(this.commitParts),
-              otherItems: JSON.stringify(this.commitOtherItem),
-              access_token: this.$store.state.user.token
-            }
-          }).then(res => {
-            if (res.success === true) {
-              this.$Message.info('successful');
-              this.titleMsg="已派工维修中";
-
-              this.orderDate="";
-              this.isOrderSuccess=false;
-
-              for(let i in this.buttonStateArr){
-                switch(i){
-                  case 'finish':
-                  case 'printWts':
-                  case 'printPgd': this.buttonStateArr[i]= false; break
-                  default : this.buttonStateArr[i]= true;
+                this.orderDate="";
+                for(let i in this.buttonStateArr){
+                  switch(i){
+                    case 'doaccount':
+                    case 'printWts':
+                    case 'printPgd': this.buttonStateArr[i]= false; break
+                    default : this.buttonStateArr[i]= true;
+                  }
                 }
               }
-            }
-          })
-      },
-      //完工按钮-------------------
-      handleFinish(){
-        this.$Modal.confirm({
-            title:"系统提示!",
-            content:"确定要完工吗？",
-            onOk:this.saveFinish,
-            
-        })
-      },
-      saveFinish(){
-        //提交维修项目套餐
-          this.axios.request({
-            url: '/tenant/repair/ttrepairworkorder/saveFinish',
-            method: 'post',
-            data: {
-              repairId: this.listSearch.REPAIR_ID,
-              access_token: this.$store.state.user.token
-            }
-          }).then(res => {
-            if (res.success === true) {
-              this.$Message.info('successful');
-              this.titleMsg="已完工待结算";
-
-              this.orderDate="";
-              for(let i in this.buttonStateArr){
-                switch(i){
-                  case 'doaccount':
-                  case 'printWts':
-                  case 'printPgd': this.buttonStateArr[i]= false; break
-                  default : this.buttonStateArr[i]= true;
-                }
-              }
-            }
-          })
-      },
+            })
+        },
 
       getNewDate(val,currentVal){
           console.log("val",val,currentVal);
@@ -1738,7 +1750,10 @@
         }
         
       },
-
+      testtt(){
+        this.showSelectAccount=Math.random();
+        console.log('结算之前',this.listSearch);
+      }
     }
 	}
 </script>
