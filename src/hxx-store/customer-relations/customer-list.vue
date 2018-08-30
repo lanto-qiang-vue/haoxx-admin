@@ -85,7 +85,7 @@
     mounted () {
       this.getList()
       this.baseUrl=env
-      console.log(env)
+      // console.log(env)
       this.showTable= true
     },
     methods:{

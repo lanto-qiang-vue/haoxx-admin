@@ -234,7 +234,7 @@
     for(var i in group){
       this.person.push(group[i]);
     }
-    }  
+    }
 		this.showModal = true;
 		},
 		edit(){},
@@ -269,7 +269,7 @@
 		this.search.PLATE_NUM = '';
 		this.search.KEYWORD = '';
 		this.type = 0;
-		this.page = 1;	
+		this.page = 1;
 		},
 		getList(){
 		  this.axios.request({
@@ -326,10 +326,5 @@
 }
 .ftext{
   text-align:left;
-}
-</style>
-<style lang="less">
-.table-modal-detail .ivu-modal-wrap .ivu-modal .ivu-modal-content .ivu-modal-body{
-  padding-top:10px;
 }
 </style>

@@ -477,8 +477,3 @@
     width:100%;
   }
 </style>
-<style lang="less">
-.table-modal-detail .ivu-modal-wrap .ivu-modal .ivu-modal-content .ivu-modal-body{
-  padding-top:10px;
-}
-</style>
