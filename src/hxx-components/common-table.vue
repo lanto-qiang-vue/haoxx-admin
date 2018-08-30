@@ -35,9 +35,8 @@
     @on-row-dblclick="onRowDblclick"
   ></Table>
   <div class="table-bottom">
-    <Page :current="page" :page-size="25" show-sizer show-elevator show-total :page-size-opts="[25, 50, 100, 150]"
-    placement="top"
-      :total="total" @on-change="changePage" @on-page-size-change="changePageSize"/>
+    <Page :current="page" :page-size="25" show-sizer show-elevator :page-size-opts="[25, 50, 100, 150]"
+    placement="top" :total="total" @on-change="changePage" @on-page-size-change="changePageSize"/>
   </div>
   <slot></slot>
 </div>
@@ -234,9 +233,12 @@
   }
   .operate{
     margin-bottom: 10px;
-    padding: 15px;
+    padding: 15px 15px 10px 15px;
     border: 1px solid #dcdee2;
     border-radius: 3px;
+  }
+  .operate button{
+    margin: 0 5px 5px 0;
   }
   .main-table{
 
@@ -250,6 +252,19 @@
     bottom: 0;
     background-color: white;
     z-index: 4;
+  }
+}
+</style>
+<style lang="less">
+.common-table{
+  .table-bottom{
+    .ivu-page{
+      display: inline-block;
+      .ivu-page-item-jump-prev, .ivu-page-item-jump-next{
+        display: none;
+      }
+    }
+
   }
 }
 </style>
