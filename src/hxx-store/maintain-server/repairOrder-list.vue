@@ -32,7 +32,7 @@
     <div slot="operate">
       <Button type="primary" v-if="accessBtn('add')" :disabled="buttonStateArr.add" @click="detailData=null,showDetail=Math.random()">维修开单</Button>
       <Button type="primary"  @click="detailData=null,showQuickDetail=Math.random()" :disabled="buttonStateArr.quickAdd" class="button-distance">快速开单</Button>
-      <Button type="info" v-if="accessBtn('edit')"  @click="showDetail=Math.random()" :disabled="buttonStateArr.edit" class="button-distance">编辑/查看</Button>
+      <Button type="info" v-if="accessBtn('edit')"  @click="showEditFun" :disabled="buttonStateArr.edit" class="button-distance">编辑/查看</Button>
       <Button type="warning"  @click="" :disabled="buttonStateArr.rePg" class="button-distance">反派工</Button>
       <Button type="warning"    @click="" :disabled="buttonStateArr.reFinish" class="button-distance">反完工</Button>
       <Button type="warning"  @click="" :disabled="buttonStateArr.reAccount" class="button-distance">反结算</Button>
@@ -196,150 +196,160 @@
           })
           //重置按钮状态------------
           for(let i in this.buttonStateArr){
-              this.buttonStateArr[i]= false;
+              switch(i){
+                case 'add':
+                case 'quickAdd': this.buttonStateArr[i]= false; break
+                default : this.buttonStateArr[i]= true;
+              }
           }
           this.detailData = null;
       },
-          clear(){
-                  for(var i in this.search){
-                      this.search[i]= ''
-                  }
-                  this.page=1;
-                  this.getList()
-          },
-          changePage(page){
-                  this.page= page
+      clear(){
+              for(var i in this.search){
+                  this.search[i]= ''
+              }
+              this.page=1;
               this.getList()
-          },
-          changePageSize(size){
-                  this.limit= size
-              this.getList()
-          },
+      },
+      changePage(page){
+              this.page= page
+          this.getList()
+      },
+      changePageSize(size){
+              this.limit= size
+          this.getList()
+      },
 
-          onRowClick( row, index){
-              console.log('row：',row);
-              if(row.GD_TYPE=="10181002"){
-                this.detailData=row
-              }else{
-                this.detailData=row
-              }
+      onRowClick( row, index){
+          if(row.GD_TYPE=="10181002"){
+            this.detailData=row
+          }else{
+            this.detailData=row
+          }
 
-              if(row.STATUS=="10201001"){
-                  for(let i in this.buttonStateArr){
-                    switch(i){
-                      case 'rePg':
-                      case 'reFinish':
-                      case 'reAccount': this.buttonStateArr[i]= true; break
-                      default : this.buttonStateArr[i]= false;
-                    }
-                  }
-              }else if(row.STATUS=="10201002"){
-                  for(let i in this.buttonStateArr){
-                    switch(i){
-                      case 'ban':
-                      case 'reFinish':
-                      case 'reAccount': this.buttonStateArr[i]= true; break
-                      default : this.buttonStateArr[i]= false;
-                    }
-                  }
-              }else if(row.STATUS=="10201003"){
-                  for(let i in this.buttonStateArr){
-                    switch(i){
-                      case 'ban':
-                      case 'rePg':
-                      case 'reAccount': this.buttonStateArr[i]= true; break
-                      default : this.buttonStateArr[i]= false;
-                    }
-                  }
-              }else if(row.STATUS=="10201004"){
-                  for(let i in this.buttonStateArr){
-                    switch(i){
-                      case 'ban':
-                      case 'rePg':
-                      case 'reFinish': this.buttonStateArr[i]= true; break
-                      default : this.buttonStateArr[i]= false;
-                    }
-                  }
-              }else if(row.STATUS=="10201005"){
-                  for(let i in this.buttonStateArr){
-                    switch(i){
-                      case 'ban':
-                      case 'rePg':
-                      case 'reFinish': this.buttonStateArr[i]= true; break
-                      default : this.buttonStateArr[i]= false;
-                    }
-                  }
-              }else if(row.STATUS=="10201006"){
-                  for(let i in this.buttonStateArr){
-                    switch(i){
-                      case 'ban':
-                      case 'rePg':
-                      case 'reFinish': this.buttonStateArr[i]= true; break
-                      default : this.buttonStateArr[i]= false;
-                    }
-                  }
-              }else{
-                  for(let i in this.buttonStateArr){
-                      this.buttonStateArr[i]= false;
-                  }
+          if(row.STATUS=="10201001"){
+              for(let i in this.buttonStateArr){
+                switch(i){
+                  case 'rePg':
+                  case 'reFinish':
+                  case 'reAccount': this.buttonStateArr[i]= true; break
+                  default : this.buttonStateArr[i]= false;
+                }
               }
-              
-          },
-          onRowDblclick( row, index){
-              if(row.GD_TYPE=="10181002"){
-                this.detailData=row;
-                this.showQuickDetail=Math.random();
-              }else{
-                this.detailData=row;
-                this.showDetail=Math.random();
+          }else if(row.STATUS=="10201002"){
+              for(let i in this.buttonStateArr){
+                switch(i){
+                  case 'ban':
+                  case 'reFinish':
+                  case 'reAccount': this.buttonStateArr[i]= true; break
+                  default : this.buttonStateArr[i]= false;
+                }
               }
-              
-          },
-          closeDetail(){
-              this.detailData= null;
-              this.clearTableSelect= Math.random();
-              this.getList();
-          },
-          //作废按钮---------
-          deleteDetailData(){
-              if(this.detailData == null){
-                  this.$Message.info("未选择到数据!");
-              }else{
-                  this.$Modal.confirm({
-                      title:"系统提示!",
-                      content:"确定要作废吗？",
-                      onOk:this.del,
-                      
-                  })
+          }else if(row.STATUS=="10201003"){
+              for(let i in this.buttonStateArr){
+                switch(i){
+                  case 'ban':
+                  case 'rePg':
+                  case 'reAccount': this.buttonStateArr[i]= true; break
+                  default : this.buttonStateArr[i]= false;
+                }
               }
-          },
-          del(){
-              this.axios.request({
-                  url: '/tenant/repair/ttrepairworkorder/delete',
-                  method: 'post',
-                  data: {
-                  ids: this.detailData.REPAIR_ID,
-                  access_token: this.$store.state.user.token
-                  }
-              }).then(res => {
-                  if (res.success === true) {
-                    this.$Message.info("数据作废成功!");
-                    this.detailData=null;
-                    this.getList();
-                  }
+          }else if(row.STATUS=="10201004"){
+              for(let i in this.buttonStateArr){
+                switch(i){
+                  case 'ban':
+                  case 'rePg':
+                  case 'reFinish': this.buttonStateArr[i]= true; break
+                  default : this.buttonStateArr[i]= false;
+                }
+              }
+          }else if(row.STATUS=="10201005"){
+              for(let i in this.buttonStateArr){
+                switch(i){
+                  case 'ban':
+                  case 'rePg':
+                  case 'reFinish': this.buttonStateArr[i]= true; break
+                  default : this.buttonStateArr[i]= false;
+                }
+              }
+          }else if(row.STATUS=="10201006"){
+              for(let i in this.buttonStateArr){
+                switch(i){
+                  case 'ban':
+                  case 'rePg':
+                  case 'reFinish': this.buttonStateArr[i]= true; break
+                  default : this.buttonStateArr[i]= false;
+                }
+              }
+          }else{
+              for(let i in this.buttonStateArr){
+                  this.buttonStateArr[i]= false;
+              }
+          }
+          
+      },
+      onRowDblclick( row, index){
+          if(row.GD_TYPE=="10181002"){
+            this.detailData=row;
+            this.showQuickDetail=Math.random();
+          }else{
+            this.detailData=row;
+            this.showDetail=Math.random();
+          }
+          
+      },
+      closeDetail(){
+          this.detailData= null;
+          this.clearTableSelect= Math.random();
+          this.getList();
+      },
+      //作废按钮---------
+      deleteDetailData(){
+          if(this.detailData == null){
+              this.$Message.info("未选择到数据!");
+          }else{
+              this.$Modal.confirm({
+                  title:"系统提示!",
+                  content:"确定要作废吗？",
+                  onOk:this.del,
+                  
               })
-          },
-        
-          //获取搜索框开始时间
-          getOrderDateGte(val){
-              this.search.orderDateGte=val;
-          },
-          //获取搜索框结束时间
-          getOrderDateIte(val){
-              this.search.orderDateIte=val;
-          },
-
-        }
+          }
+      },
+      del(){
+          this.axios.request({
+              url: '/tenant/repair/ttrepairworkorder/delete',
+              method: 'post',
+              data: {
+              ids: this.detailData.REPAIR_ID,
+              access_token: this.$store.state.user.token
+              }
+          }).then(res => {
+              if (res.success === true) {
+                this.$Message.info("数据作废成功!");
+                this.detailData=null;
+                this.getList();
+              }
+          })
+      },
+    
+      //获取搜索框开始时间
+      getOrderDateGte(val){
+          this.search.orderDateGte=val;
+      },
+      //获取搜索框结束时间
+      getOrderDateIte(val){
+          this.search.orderDateIte=val;
+      },
+      //编辑按钮数据-----------
+      showEditFun(){
+          if(this.detailData.GD_TYPE=="10181002"){
+            this.showQuickDetail=Math.random();
+          }else{
+            this.showDetail=Math.random();
+          }
+      },
+    }
 	}
 </script>
 

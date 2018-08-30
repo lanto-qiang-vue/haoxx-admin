@@ -148,7 +148,7 @@
                 <Panel name="1">客户信息
                     <Form slot="content" :label-width="120" inline class="detail-form">
                         <FormItem label="客户姓名:">
-                            <span>{{shoukuanData.CUSTOMER_NAME}}</span>
+                            <span>{{shoukuanSearch.CUSTOMER_NAME}}</span>
                         </FormItem>
                         <FormItem label="储值卡号:">
                             <span>{{shoukuanData.MEMBER_CARD_NO}}</span>
@@ -158,7 +158,7 @@
                             <Button type="primary">更换</Button>
                         </FormItem>
                         <FormItem label="余额:">
-                            <span>{{shoukuanData.SURPLUS_MONEY}}元</span>
+                            <span>{{shoukuanSearch.SURPLUS_MONEY}}元</span>
                         </FormItem>
                         <FormItem label="储值卡状态:">
                             <span>{{shoukuanData.MEMBER_CARD_STATUS}}</span>
@@ -168,19 +168,19 @@
                 <Panel name="2">结算信息
                     <Form slot="content" :label-width="120" inline class="detail-form">
                         <FormItem label="项目合计费用:">
-                            <span>{{listSearch.REPAIR_ITEM_MONEY}}元</span>
+                            <span>{{shoukuanSearch.REPAIR_ITEM_MONEY}}元</span>
                         </FormItem>
                         <FormItem label="优惠金额:">
-                            <span>{{listSearch.SUM_MONEY}}元</span>
+                            <span>{{shoukuanSearch.REPAIR_ITEM_DERATE_MONEY}}元</span>
                             
                         </FormItem>
                         <FormItem label="合计应收金额:">
-                            <span>{{listSearch.SUM_MONEY}}元</span>
+                            <span>{{shoukuanSearch.SUM_MONEY}}元</span>
                         </FormItem>
                         <FormItem label="收款人:">
-                            <Select v-model="listSearch.GIVE_REPAIR_PERSON" placeholder="" style="min-width: 250px;">
+                            <Select v-model="shoukuanSearch.FOLLOW_PERSON" placeholder="" style="min-width: 250px;">
                                 <Option v-for="(item, index) in repairPersonArr"
-                                :key="index" :value="item.code">{{item.name}}</Option>
+                                :key="index" :value="item.code">{{item.code}}</Option>
                             </Select>
                         </FormItem>
                     </Form>
@@ -206,6 +206,11 @@
                     </Form>
                 </Panel>
                 <Panel name="4">是否开据发票
+                    <Form slot="content" :label-width="120" class="detail-form">
+                        <FormItem label="">
+                            <Checkbox v-model="single" @on-change="isGiveInvoiceFun">是否开据发票</Checkbox>
+                        </FormItem>
+                    </Form>
                     <Form slot="content" :label-width="120" inline class="detail-form">
                         <FormItem label="发票编号:">
                             <Input type="text"  v-model="shoukuanSearch.INVOICE_NO" placeholder="" style="min-width: 250px;"> </Input>
@@ -223,8 +228,8 @@
                 </Panel>
             </Collapse>
             <div slot="footer" style="text-align: center; font-size: 18px;">
-                <Button type="primary" @click="commitdata" style="margin-right: 10px; padding: 0 10px;">收款</Button>
-                <Button type="error" @click="showAccount=false;" style="margin-right: 10px; padding: 0 10px;">取消</Button>
+                <Button type="primary" @click="savePay" style="margin-right: 10px; padding: 0 10px;">收款</Button>
+                <Button type="error" @click="showShouKuan=false;" style="margin-right: 10px; padding: 0 10px;">取消</Button>
             </div>
         </Modal>
     <!--结算框弹出-->
@@ -272,15 +277,15 @@ export default {
     components: {selectVehicle,},
     data(){
       return{
+        single:false,//是否选择开发票
         singleItem:false,//是否选择项目
         showoff:null,//选择车辆
         showModal: false,//本界面是否显示判断
         showAccount:false,//结算界面弹出
         showShouKuan:false,//收款界面弹出
-        shoukuanData:[],
         cardStateArr:[],//储存卡状态值
         payModeData:[],//支付方式数组
-        getItem:[],
+        getItem:[],//获取项目数组
         collapse: '1',
         collapse1:'1',
         collapse2:'1',
@@ -322,8 +327,6 @@ export default {
             "REPAIR_PART_MONEY":0,
             "SUM_MONEY":0,
             "GD_TYPE":"10181002"
-
-    
         },
         listSearchInit:{
             "TENANT_ID":"1",
@@ -364,14 +367,18 @@ export default {
             "SUM_MONEY":0,
             "GD_TYPE":"10181002"
         },
-        
+        shoukuanData:{
+            MEMBER_CARD_STATUS:'',
+            MEMBER_CARD_NO:'',
+        },//提交收款工单数据-----------
         shoukuanSearch:{
             "CUSTOMER_ID":"",
             "REPAIR_ITEM_MONEY":0,
             "SUM_MONEY":0,
-            "FOLLOW_PERSON":"",
+            'REPAIR_ITEM_DERATE_MONEY':0,
+            "FOLLOW_PERSON":"管理员",
             "PAYMENT1":"10101001",
-            "IS_GIVE_INVOICE":"",
+            "IS_GIVE_INVOICE":"10041002",
             "CORP_NAME":"",
             "INVOICE_NO":"",
             "TAX_NO":"",
@@ -436,37 +443,39 @@ export default {
             "REPAIR_ITEM_DERATE_MONEY":'',
             "SUM_MONEY":'',
             "REPAIR_ID":'',
-        }
+        },//结算提交数据----------
 
-
+        returnData:null,//记录返回数据的引用
       }
     },
     props:['showQuickDetail', 'detailData'],
     watch:{
       showQuickDetail(){
-        console.log('进来的参数：',this.detailData,);
+        console.log('进来的参数：',this.detailData,this.returnData);
         this.showModal=true
         //获取项目组数据---------------
         this.getItemFun();
         //清空公共数据值------
         this.getItem=[];
         this.commitItem=[];
-
+        this.getShopClassList();
+        this.getEmployeeList();
+        this.returnData=this.detailData;//赋值返回数据
         //判断进来的参数是否存在---------------------
         if(this.detailData){
           //初始化车辆数据----------------
           this.selectCarInitFun(this.detailData.VEHICLE_TYPE,this.detailData.VEHICLE_TYPE_CODE);
-
+          this.singleItem=true;//选择项目按钮----------
           for(let key in this.listSearch){
-            if(this.detailData[key]){
-              this.listSearch[key]= this.detailData[key]
+            if(this.detailData.hasOwnProperty(key)){
+              this.listSearch[key]= this.detailData[key];
             }
           }
-          
+          console.log("listSearch进来的",this.listSearch);
           if(this.detailData['STATUS']=='10201001'){
               this.titleMsg="新建未派工";
-              this.singleItem=true;
               this.isOrderSuccess=true;
+
               for(let i in this.buttonStateArr){
                 switch(i){
                   case 'save':
@@ -474,11 +483,17 @@ export default {
                   default : this.buttonStateArr[i]= true;
                 }
               }
+              //重置结算按钮提交的数据-------------------
+              for(let i in this.newDatacommit){
+                if(this.detailData.hasOwnProperty(i)){
+                    this.newDatacommit[i]=this.detailData[i];
+                }
+              }
           }else if(this.detailData['STATUS']=='10201004'){
               this.titleMsg="已结算待收款";
-              this.singleItem=true;
               this.isOrderSuccess=false;
               this.getAccountData(this.detailData["REPAIR_ID"]);
+
               for(let i in this.buttonStateArr){
                 switch(i){
                   case 'shoukuan':
@@ -486,10 +501,11 @@ export default {
                   default : this.buttonStateArr[i]= true;
                 }
               }
+              
           }else if(this.detailData['STATUS']=='10201005'){
               this.titleMsg="已结清";
-              this.singleItem=true;
               this.isOrderSuccess=false;
+              this.getAccountData(this.detailData["REPAIR_ID"]);
               for(let i in this.buttonStateArr){
                 switch(i){
                   case 'printAccount': this.buttonStateArr[i]= false; break
@@ -499,31 +515,34 @@ export default {
           }
 
         }else{
-          for(let key in this.listSearchInit){
-            this.listSearch[key]=this.listSearchInit[key];
-          }
-          //初始化按钮状态-----------
-          for(let i in this.buttonStateArr){
-            switch(i){
-              case 'save': this.buttonStateArr[i]= false; break
-              default : this.buttonStateArr[i]= true;
+            //搜索框初始化
+            for(let key in this.listSearchInit){
+                this.listSearch[key]=this.listSearchInit[key];
             }
-          }
-          this.vehicleNumberArr=[
-            { code: '轿车-排量<1.6升-A', type: '10521001' },
-            { code: '轿车-1.6升≤排量≤1.8升-B', type: '10521001' },
-            { code: '轿车-1.8升<排量≤2.3升-C', type: '10521001' },
-            { code: '轿车-2.3升<排量≤3升-D', type: '10521001' },
-            { code: '轿车-3升<排量≤4升-E', type: '10521001' },
-          ];
-          //新建功能表------
-          this.titleMsg="新建未派工";
-          this.singleItem=false;
-          this.isOrderSuccess=true;
+            //初始化按钮状态-----------
+            for(let i in this.buttonStateArr){
+                switch(i){
+                case 'save': this.buttonStateArr[i]= false; break
+                default : this.buttonStateArr[i]= true;
+                }
+            }
+            //选择车辆类型初始化
+            this.vehicleNumberArr=[
+                { code: '轿车-排量<1.6升-A', type: '10521001' },
+                { code: '轿车-1.6升≤排量≤1.8升-B', type: '10521001' },
+                { code: '轿车-1.8升<排量≤2.3升-C', type: '10521001' },
+                { code: '轿车-2.3升<排量≤3升-D', type: '10521001' },
+                { code: '轿车-3升<排量≤4升-E', type: '10521001' },
+            ];
+            //新建功能表------
+            this.titleMsg="新建未派工";
+            this.singleItem=false;
+            this.single=false;//是否选择开发票
+            this.isOrderSuccess=true;
+            this.returnData=null;
         }
 
-        this.getShopClassList();
-        this.getEmployeeList();
+        
       }
     },
     mounted () {
@@ -602,18 +621,23 @@ export default {
         },
         //保存按钮-----------
         handleSubmit (name) {
-            this.$refs[name].validate((valid) => {
-                if (valid) {
-                        this.$Modal.confirm({
-                            title:"系统提示!",
-                            content:"确定要保存吗？",
-                            onOk:this.saveData,
-                            
-                        })
-                } else {
+            if(this.singleItem){
+                this.$refs[name].validate((valid) => {
+                    if (valid) {
+                            this.$Modal.confirm({
+                                title:"系统提示!",
+                                content:"确定要保存吗？",
+                                onOk:this.saveData,
+                                
+                            })
+                    } else {
 
-                }
-            });
+                    }
+                });
+            }else{
+                this.$Message.info('至少选择一个服务项目')
+            }
+            
         },
         saveData(){
             //提交维修项目套餐
@@ -636,11 +660,10 @@ export default {
                         default : this.buttonStateArr[i]= true;
                         }
                     }
-
-                    this.newDatacommit["REPAIR_ITEM_MONEY"]=res.data["REPAIR_ITEM_MONEY"];
-                    this.newDatacommit["REPAIR_ITEM_DERATE_MONEY"]=res.data["REPAIR_ITEM_DERATE_MONEY"];
-                    this.newDatacommit["SUM_MONEY"]=res.data["SUM_MONEY"];
-                    this.newDatacommit["REPAIR_ID"]=res.data["REPAIR_ID"];
+                    for(let i in res.data){
+                        this.newDatacommit[i]=res.data[i];
+                    }
+                    this.returnData=res.data;
                 }
             })
         },
@@ -650,7 +673,6 @@ export default {
         },
         commitdata(){
             this.showAccount=false;
-            // this.listSearch['STATUS']=='10201004'
             this.axios.request({
                 url: '/tenant/repair/ttrepairworkorder/saveAccount',
                 method: 'post',
@@ -671,12 +693,11 @@ export default {
                         default : this.buttonStateArr[i]= true;
                         }
                     }
-                    this.getAccountData(this.listSearch["REPAIR_ID"]);
+                    this.getAccountData(this.returnData["REPAIR_ID"]);
                 }
             })
         },
         getAccountData(val){
-
             this.axios.request({
                 url: '/tenant/repair/ttrepairworkorder/getAccounts',
                 method: 'post',
@@ -694,9 +715,13 @@ export default {
                 }
             })
         },
-        //完工按钮-------------------
+        //收款按钮-------------------
         shoukuanFun(){
-            this.showShouKuan=true;
+           this.showShouKuan=true;
+           this.shoukuanSearch['REPAIR_ITEM_MONEY']=this.returnData['REPAIR_ITEM_MONEY']||0;
+           this.shoukuanSearch['REPAIR_ITEM_DERATE_MONEY']=this.returnData['REPAIR_ITEM_DERATE_MONEY']||0;
+           this.shoukuanSearch['SUM_MONEY']=this.returnData['SUM_MONEY']||0;
+           this.shoukuanSearch['REPAIR_ID']=this.returnData['REPAIR_ID'];
            this.axios.request({
                 url: '/tenant/repair/ttrepairworkorder/getCustomerInfo',
                 method: 'post',
@@ -707,36 +732,42 @@ export default {
             }).then(res => {
                 if (res.success === true) {
                     this.$Message.info('successful');
-                    this.shoukuanData=res.data;
-                    this.shoukuanData['MEMBER_CARD_STATUS']=getName(this.cardStateArr,this.shoukuanData['MEMBER_CARD_STATUS']);
+                    for(let i in res.data){
+                        if(this.shoukuanSearch.hasOwnProperty(i)){
+                            this.shoukuanSearch[i]=res.data[i];
+                        }
+                    }
+                    this.shoukuanData['MEMBER_CARD_STATUS']=getName(this.cardStateArr,res.data['MEMBER_CARD_STATUS']);
+                    this.shoukuanData['MEMBER_CARD_NO']=res.data['MEMBER_CARD_NO']||'无';
+                    
+                    console.log(this.shoukuanSearch);
                 }
             })
         },
-        saveFinish(){
-            //提交维修项目套餐
+        savePay(){
             this.axios.request({
-                url: '/tenant/repair/ttrepairworkorder/saveFinish',
+                url: '/tenant/repair/ttrepairworkorder/savePay',
                 method: 'post',
                 data: {
-                repairId: this.listSearch.REPAIR_ID,
-                access_token: this.$store.state.user.token
+                    data: JSON.stringify(this.shoukuanSearch),
+                    access_token: this.$store.state.user.token
                 }
             }).then(res => {
                 if (res.success === true) {
-                this.$Message.info('successful');
-                this.titleMsg="已完工待结算";
-
-                for(let i in this.buttonStateArr){
-                    switch(i){
-                    case 'doaccount':
-                    case 'printWts':
-                    case 'printPgd': this.buttonStateArr[i]= false; break
-                    default : this.buttonStateArr[i]= true;
+                    this.$Message.info('successful');
+                    this.titleMsg="已结清";
+                    this.showShouKuan=false;//收款界面弹出
+                    for(let i in this.buttonStateArr){
+                        switch(i){
+                        case 'printAccount': this.buttonStateArr[i]= false; break
+                        default : this.buttonStateArr[i]= true;
+                        }
                     }
-                }
+                    this.getAccountData(this.shoukuanSearch["REPAIR_ID"]);
                 }
             })
         },
+        
 
         getNewDate(val,currentVal){
             console.log("val",val,currentVal);
@@ -764,14 +795,13 @@ export default {
             }).then(res => {
                 if (res.success === true) {
                     this.getItem=res.data;
-
+                    this.commitItem=res.data;
                 }
             })
         },
 
         //监听选择车辆----
         selectCar(val){
-            console.log(val);
             this.listSearch["VEHICLE_MODEL"]=val["VEHICLE_MODEL"];
             this.listSearch["PLATE_NUM"]=val["PLATE_NUM"];
             this.listSearch["ORDER_PERSON"]=val["CUSTOMER_NAME"];
@@ -780,11 +810,12 @@ export default {
             this.listSearch["TELPHONE"]=val["MOBILE_PHONE"];
             this.listSearch["VIN_NO"]=val["VIN_NO"];
             this.listSearch["VEHICLE_ID"]=val["VEHICLE_ID"];
+            console.log("selectCar",val,this.listSearch);
         },
         //获取维修项目数据-------
         sTenanceItem(val){
             if(val){
-                this.commitItem=[];
+                    this.commitItem=[];
                     for(let j in this.getItem){
                         var listItemsModel={
                             "DETAIL_ID":"",
@@ -900,6 +931,15 @@ export default {
         accountChange(val){
             this.listSearch.SUM_MONEY=this.listSearch.REPAIR_ITEM_MONEY-val;
         },
+        //是否开发票-------
+        isGiveInvoiceFun(val){
+            console.log(val);
+            if(val){
+                this.shoukuanSearch['IS_GIVE_INVOICE']="10041001";
+            }else{
+                this.shoukuanSearch['IS_GIVE_INVOICE']="10041002";
+            }
+        }
       
 
     }
