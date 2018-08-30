@@ -55,16 +55,17 @@ const matchMenu = (access, menu) => {
   let flag = false
   for (let i in menu) {
     if (menu[i].id == access) {
-      flag = true
+      flag = menu[i]
       break
     } else if (menu[i].children) {
       flag = matchMenu(access, menu[i].children)
-      if (flag == true) break
+      if (flag) break
     }
   }
   return flag
 }
 
+//判断权限菜单可见
 export const showThisMenuEle = (item, access) => {
   // if (item.meta && item.meta.access && item.meta.access.length) {
   //   if (hasOneOf(item.meta.access, access)) return true
@@ -79,6 +80,18 @@ export const showThisMenuEle = (item, access) => {
   } else return true
 }
 
+//获取图标
+export const getIcon = (item, access) => {
+  let lgType = access.userInfo.user.lgType, menuItem , icon=''
+  if (item.meta && item.meta.lgType && item.meta.access) {
+    menuItem = matchMenu(item.meta.access, access.accessMenu)
+    if (item.meta.lgType == lgType && menuItem) {
+      if(menuItem.iconFont) icon= 'fa '+ menuItem.iconFont
+    }
+    else if(item.children) icon= getIcon(item.children, access)
+  }
+  return icon
+}
 /**
  * @param {Array} list 通过路由列表得到菜单列表
  * @returns {Array}
@@ -92,11 +105,16 @@ export const getMenuByRouter = (list, access) => {
         name: item.name,
         meta: item.meta
       }
-      if ((hasChild(item) || (item.meta && item.meta.showAlways)) && showThisMenuEle(item, access)) {
+      let accessShow= showThisMenuEle(item, access)
+      if ((hasChild(item) || (item.meta && item.meta.showAlways)) && accessShow) {
         obj.children = getMenuByRouter(item.children, access)
       }
       if (item.meta && item.meta.href) obj.href = item.meta.href
-      if (showThisMenuEle(item, access)) res.push(obj)
+      if (accessShow) {
+        obj.custom= getIcon(item, access)
+        // console.log('custom',obj.custom)
+        res.push(obj)
+      }
     }
   })
   return res

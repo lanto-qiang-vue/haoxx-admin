@@ -1,5 +1,5 @@
 <template>
-  <common-table v-model="tableData" :columns="columns" @changePageSize="changePageSize" @changePage="changePage" :total="total"  :show="showTable" @changeSelect="changeSelect" @onRowDblclick="dbclick">
+  <common-table v-model="tableData" :columns="columns" @changePageSize="changePageSize" @changePage="changePage" :total="total"  :show="showTable" @changeSelect="changeSelect" @onRowClick="onRowClick" @onRowDblclick="dbclick">
     <div slot="search"  >
       <div class="search-block">
         <Input v-model="search.KEYWORD"  placeholder="会员卡号/客户名称/联系电话..."></Input>
@@ -84,11 +84,14 @@
     	showModal:false,
       showoff:false,
     	tableData:[],
+      list:[],//存选取对象
+      ids:[],//存选取对象id
     	type:0,
       person:[],
       cardGroup:[],
       MEMBER_CARD_NO:'',
     	formData:{
+        RECHARGE_ID:'',
     		CUSTOMER_NAME:'',
         CUSTOMER_ID:'',
     		REMARK:'',
@@ -104,7 +107,7 @@
            FOLLOW_PERSON:[{required: true, message: '请选取办理人'}]
         },
     	columns: [
-          {type: 'selection', width: 50, fixed: 'left'},
+          // {type: 'selection', width: 50, fixed: 'left'},
           {title: '序号',  minWidth: 80,
             render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
           },
@@ -134,26 +137,73 @@
 	},
 	methods:{
     select(row){
-    this.MEMBER_CARD_NO = row.MEMBER_CARD_NO;
+    this.MEMBER_CARD_NO = row.MEMBER_CARD_NO ? row.MEMBER_CARD_NO : '';
+    // alert(this.MEMBER_CARD_NO);
     this.formData.MEMBER_CARD_NO = row.MEMBER_CARD_NO;
     this.formData.CUSTOMER_NAME = row.NAME;
-    console.log(this.$refs['formData']);
+    this.formData.CUSTOMER_ID = row.CUSTOMER_ID;
+    },
+    onSelect(){
+      alert(1);
     },
     save(name){
               this.$refs[name].validate((valid) => {
                     if (valid) {
-                     console.log(this.formData);
                     this.$Modal.confirm({
                       title:'系统提示',
                       content:'确认保存吗?',
-                      onOk:this.vehicleAdd,
+                      onOk:this.rechangePost,
                     });
                     } else {
                         this.$Message.error("请校对红框信息");
                     }
                 })
     },
-		changeSelect(){},
+    rechangePost(){
+      //充值卡数据提交tenant/customer/tt_member_recharge_record/save
+      if(this.formData.CARD_ID == ''){
+              this.axios.request({
+          url: 'tenant/customer/tt_member_recharge_record/save',
+          method: 'post',
+          data: {access_token: this.$store.state.user.token,
+                 data:JSON.stringify(this.formData),
+                 member_CARD_NO
+                }
+        }).then(res => {
+          if (res.success === true) {
+             this.$Message.info('充值成功');
+             this.getList();
+             this.showModal = false;
+          }
+        })
+      return;
+      }
+      this.axios.request({
+          url: 'tenant/customer/tt_member_recharge_record/save',
+          method: 'post',
+          data: {access_token: this.$store.state.user.token,
+                 data:JSON.stringify(this.formData)
+                }
+        }).then(res => {
+          if (res.success === true) {
+             this.$Message.info('充值成功');
+             this.getList();
+             this.showModal = false;
+          }
+        })
+    },
+    onRowClick(row){
+    this.list = row;
+    this.ids = [];
+    this.ids.push(row.RECHARGE_ID);
+    },
+		changeSelect(row){
+     // this.list = row;
+     // this.ids = [];
+     // for(var i in row){
+     //  this.ids.push(row[i].RECHARGE_ID);
+     // }
+    },
 		changePage(){},
 		changePageSize(){},
 		dbclick(){},
@@ -161,6 +211,7 @@
     this.showoff = Math.random();
     },
 		add(){
+      this.$refs['formData'].resetFields();
       this.cardGroup.push({CARD_NAME:'==请选择==',CARD_ID:0});
         this.axios.request({
           url: 'tenant/basedata/tt_member_card/get_all_list',
@@ -183,16 +234,42 @@
     for(var i in group){
       this.person.push(group[i]);
     }
-    }  
+    }
 		this.showModal = true;
 		},
 		edit(){},
-		remove(){},
+		remove(){
+    if(this.ids.length === 0){
+      this.$Message.info('未选取数据');
+      return;
+    }
+    this.$Modal.confirm({
+      title:'系统提示',
+      content:'确认要作废吗?',
+      onOk:this.del,
+    });
+    },
+    del(){
+    //删除数据tenant/customer/tt_member_recharge_record/cancel
+    this.axios.request({
+          url: 'tenant/customer/tt_member_recharge_record/cancel',
+          method: 'post',
+          data: {access_token: this.$store.state.user.token,
+                 ids:this.ids.join(',')
+                }
+        }).then(res => {
+          if (res.success === true) {
+            this.ids = [];
+            this.getList();
+            this.$Message.success('作废成功');
+          }
+        })
+    },
 		clear(){
 		this.search.PLATE_NUM = '';
 		this.search.KEYWORD = '';
 		this.type = 0;
-		this.page = 1;	
+		this.page = 1;
 		},
 		getList(){
 		  this.axios.request({
@@ -249,10 +326,5 @@
 }
 .ftext{
   text-align:left;
-}
-</style>
-<style lang="less">
-.table-modal-detail .ivu-modal-wrap .ivu-modal .ivu-modal-content .ivu-modal-body{
-  padding-top:10px;
 }
 </style>

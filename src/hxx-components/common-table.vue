@@ -149,7 +149,8 @@
 		    data:[],
         collapse: ['1','2'],
         tableHeight: 500,
-        timer: null
+        timer: null,
+        windowInnerHeight: window.innerHeight
       }
     },
     watch:{
@@ -170,7 +171,8 @@
 		  let self= this
       // self.resize(1000)
       window.onresize = function(){
-        self.resize(200)
+		    if(window.innerHeight!= self.windowInnerHeight)
+          self.resize(200)
       }
     },
     methods:{
@@ -181,7 +183,7 @@
         if(commonTable.offsetHeight) {
           clearTimeout(this.timer);
           this.timer = setTimeout(function () {
-
+            self.windowInnerHeight= window.innerHeight
             self.tableHeight = commonTable.offsetHeight - 20 -
               commonTable.querySelector(".table-search").offsetHeight -
               commonTable.querySelector(".operate").offsetHeight - 10 -

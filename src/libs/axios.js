@@ -42,7 +42,7 @@ class httpRequest {
           // Spin.hide()
         }, 500)
       }
-      if (data.success !== true) {
+      if (!data.success || data.success !== true) {
         // 后端服务在个别情况下回报201，待确认
         // if (data.code === 401) {
         //   Cookies.remove(TOKEN_KEY)

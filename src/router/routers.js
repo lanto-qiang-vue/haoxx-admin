@@ -401,6 +401,30 @@ export default [
       // },
     ]
 },
+{
+    path: '/finance-manage',
+    name: 'finance-manage',
+    meta: {
+      icon: 'logo-buffer',
+      title: '财务管理',
+      lgType: "1002",
+      access: '1004',
+    },
+    component: Main,
+    children:[
+      {
+        path: '/expend-income',
+        name: 'expend-income',
+        meta: {
+          icon: 'md-funnel',
+          title: '财务收支查询',
+          lgType: "1002",
+          access: '100402',
+        },
+        component: () => import('@/hxx-store/finance-manage/expend-income.vue')
+      },
+    ]
+},
   {
     path: '/401',
     name: 'error_401',
