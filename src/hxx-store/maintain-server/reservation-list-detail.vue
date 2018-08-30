@@ -646,7 +646,7 @@
           // this.$refs[name].validate((valid) => {
           //     if (valid) {
 
-                  console.log("保存数据----");
+                  console.log("保存数据----",this.listSearch);
                   this.orderdate=this.listSearch["ORDER_DATE"];
                   this.listSearch["ORDER_DATE"]=formatDate(this.listSearch["ORDER_DATE"]);
                   this.tooltipObj.title = '系统提示!';
@@ -1263,7 +1263,8 @@
     width: 100%;
     font-size: 18px;
     text-align: center;
-
+    margin:20px 0;
+    margin-bottom: 50px;
     span{
       color:red;
 

@@ -2,7 +2,6 @@
 <div class="common-table" ref="commonTable">
   <Collapse v-model="collapse" v-show="showSearch"  class="table-search" @on-change="changeCollapse">
     <Panel name="1">查询
-
       <div slot="content" >
         <slot name="search"></slot>
       </div>
