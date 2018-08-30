@@ -35,7 +35,7 @@
     @on-row-dblclick="onRowDblclick"
   ></Table>
   <div class="table-bottom">
-    <Page :page-size="25" show-sizer show-elevator show-total :page-size-opts="[25, 50, 100, 150]"
+    <Page :current="page" :page-size="25" show-sizer show-elevator show-total :page-size-opts="[25, 50, 100, 150]"
     placement="top"
       :total="total" @on-change="changePage" @on-page-size-change="changePageSize"/>
   </div>
@@ -139,10 +139,14 @@
         type:Boolean,
         default:true
       },
-
+      page:{
+        type: Number,
+        default: 1
+      }
     },
     data(){
 		  return{
+        // current: 1,
 		    data:[],
         collapse: ['1','2'],
         tableHeight: 500,
@@ -158,6 +162,9 @@
       },
       value(data){
         this.data= data
+      },
+      $route(){
+        this.resize(500)
       }
     },
     mounted() {
@@ -171,19 +178,23 @@
       resize(time){
         let self= this
         let commonTable=this.$refs.commonTable
-        clearTimeout(this.timer);
-        this.timer = setTimeout(function(){
-          self.tableHeight= commonTable.offsetHeight - 20 -
-            commonTable.querySelector(".table-search").offsetHeight -
-            commonTable.querySelector(".operate").offsetHeight - 10 -
-            commonTable.querySelector(".table-bottom").offsetHeight;
-          commonTable.style.opacity= 1
+        console.log("origin.common-table", commonTable.offsetHeight)
+        if(commonTable.offsetHeight) {
+          clearTimeout(this.timer);
+          this.timer = setTimeout(function () {
 
-          console.log(".common-table", commonTable.offsetHeight)
-          console.log(".table-search", commonTable.querySelector(".table-search").offsetHeight)
-          console.log(".operate", commonTable.querySelector(".operate").offsetHeight)
-          console.log(".table-bottom", commonTable.querySelector(".table-bottom").offsetHeight)
-        }, time);
+            self.tableHeight = commonTable.offsetHeight - 20 -
+              commonTable.querySelector(".table-search").offsetHeight -
+              commonTable.querySelector(".operate").offsetHeight - 10 -
+              commonTable.querySelector(".table-bottom").offsetHeight;
+            commonTable.style.opacity = 1
+
+            console.log(".common-table", commonTable.offsetHeight)
+            console.log(".table-search", commonTable.querySelector(".table-search").offsetHeight)
+            console.log(".operate", commonTable.querySelector(".operate").offsetHeight)
+            console.log(".table-bottom", commonTable.querySelector(".table-bottom").offsetHeight)
+          }, time);
+        }
       },
       changeCollapse(){
         this.resize(500)
