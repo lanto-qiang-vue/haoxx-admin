@@ -4,14 +4,14 @@
         title="选择车辆"
         width="90"
         :scrollable="true"
-        :transfer= "true"
+        :transfer= "false"
         :footer-hide="false"
         class="table-modal-detail"
         :transition-names="['', '']"
     >
     
         <div style="padding:20px;" class="print_style">
-            <table border=0 width="700" cellspacing="0" cellpadding="0" bordercolor="#000000">
+            <table border=0 width="100%" cellspacing="0" cellpadding="0" bordercolor="#000000">
             <thead>
                 <tr class="noBorder">
                     <td colspan="10" style="text-align:center;"><b style="line-height:30px;font-size:18px;">机动车维修费用结算清单</b></td>
@@ -88,7 +88,7 @@
                     <td colspan="8" style="border-bottom:2px #000 solid;">{{showAccountData.FAULT_DESC}}</td>
                 </tr>
                 <tr class="text-center">
-                    <td rowspan="{[values.items.length + 1]}">工时<br/>费用</td>
+                    <td rowspan="">工时<br/>费用</td>
                     <td class="w30">序号</td>
                     <td colspan="2">维修项目</td>
                     <td colspan="2">结算工时</td>
@@ -96,20 +96,21 @@
                     <td colspan="2">工时费用(元)</td>
                 </tr>
 
-                    <tr class="text-center">
-                        <td>{[xindex]}</td>
-                        <td colspan="2">{itemName}</td>
-                        <td colspan="2" tclass="a">{times:number("0.00")}</td>
-                        <td colspan="2" tclass="a">{timePrice:number("0.00")}</td>
-                        <td colspan="2" tclass="a">{itemMoney:number("0.00")}</td>
+                    <tr class="text-center" v-for="(item,index) in showAccountItem ">
+                        <td>{{item.REPAIR_TIME}}</td>
+                        <td colspan="2">{{index+1}}</td>
+                        <td colspan="2" tclass="a">{{item.NAME}}</td>
+                        <td colspan="2" tclass="a">{{item.REPAIR_TIME}}</td>
+                        <td colspan="2" tclass="a">100</td>
+                        <td colspan="2" tclass="a">{{item.ITEM_MONEY}}</td>
                     </tr>
 
                 <tr class="text-center">
                     <td colspan="8" style="border-bottom:2px #000 solid;text-align:right;">小计(元)：</td>
-                    <td colspan="2" tdata="Sum" tindex="9" tclass="a" format="0.00" style="border-bottom:2px #000 solid;">{itemTotalMoney:number("0.00")}</td>
+                    <td colspan="2" tdata="Sum" tindex="9" tclass="a" format="0.00" style="border-bottom:2px #000 solid;">{{showAccountData.REPAIR_ITEM_MONEY}}</td>
                 </tr>
                 <tr class="text-center">
-                    <td rowspan="{[values.parts.length + 1]}">材料<br/>费用</td>
+                    <td rowspan="">材料<br/>费用</td>
                     <td class="w30">序号</td>
                     <td>材料名称</td>
                     <td>配件<br/>编码</td>
@@ -121,43 +122,43 @@
                     <td>是否为托修<br/>方自备配件</td>
                 </tr>
 
-                    <tr class="text-center">
-                        <td>{[xindex]}</td>
-                        <td>{partName}</td>
-                        <td>{partCode}</td>
-                        <td>{BRAND:this.formatDict}</td>
-                        <td tclass="b">{partNum}</td>
-                        <td tclass="b">{salesPrice:number("0.00")}</td>
-                        <td tclass="b">{partMoney:number("0.00")}</td>
-                        <td>{partSource:this.formatDict}</td>
-                        <td>{isSelf}</td>
+                    <tr class="text-center" v-for="(item,index) in showAccountParts">
+                        <td>{{item.SALES_PRICE}}</td>
+                        <td>{{index+1}}</td>
+                        <td>{{item.NAME}}</td>
+                        <td>{{item.PART_NO}}</td>
+                        <td tclass="b">{{item.BRAND}}</td>
+                        <td tclass="b">{{item.PART_NUM}}</td>
+                        <td tclass="b">{{item.SALES_PRICE}}</td>
+                        <td>{{item.PART_MONEY}}</td>
+                        <td>{{item.TYPE_NAME}}</td>
                     </tr>
 
                 <tr class="text-center">
                     <td colspan="7" style="border-bottom:2px #000 solid;text-align:right;">小计(元)：</td>
-                    <td tdata="Sum" tindex="8" tclass="b" format="0.00" style="border-bottom:2px #000 solid;">{partTotalMoney:number("0.00")}</td>
+                    <td tdata="Sum" tindex="8" tclass="b" format="0.00" style="border-bottom:2px #000 solid;">{{showAccountData.REPAIR_PART_MONEY}}</td>
                     <td colspan="2" style="border-bottom:2px #000 solid;"></td>
                 </tr>
                 <tr class="text-center">
-                    <td rowspan="{[values.others.length + 1]}">其它<br/>费用</td>
+                    <td rowspan="">其它<br/>费用</td>
                     <td class="w30">序号</td>
                     <td colspan="6">项目</td>
                     <td colspan="2">金额(元)</td>
                 </tr>
 
-                    <tr class="text-center">
-                        <td>{[xindex]}</td>
-                        <td colspan="6">{repairItem1}</td>
-                        <td colspan="2">{repairMoney1:number("0.00")}</td>
+                    <tr class="text-center" v-for="(item,index) in showAccountOther">
+                        <td></td>
+                        <td colspan="6">{{item.REPAIR_ITEM1}}</td>
+                        <td colspan="2">{{item.REPAIR_MONEY1}}</td>
                     </tr>
 
                 <tr class="text-center">
                     <td colspan="8" style="border-bottom:2px #000 solid;text-align:right;">小计(元)：</td>
-                    <td colspan="2" style="border-bottom:2px #000 solid;">{otherTotalMoney:number("0.00")}</td>
+                    <td colspan="2" style="border-bottom:2px #000 solid;">{{showAccountOther.REPAIR_MONEY1}}</td>
                 </tr>
                 <tr class="text-center">
                     <td colspan="3">总费用：</td>
-                    <td colspan="7" style="text-align:left;">{account.SUM_MONEY:number("0.00")}元 {yhRemark}</td>
+                    <td colspan="7" style="text-align:left;">{{showAccountData.SUM_MONEY}}</td>
                 </tr>
                 <tr class="text-center">
                     <td colspan="3" style="border-bottom:2px #000 solid;">旧件处理结果：</td>
@@ -173,7 +174,7 @@
                     <td colspan="10" class="text-left" style="padding:0px 10px">3. 承修方不承担托修方自备配件质量保证责任。</td>
                 </tr>
                 <tr class="noBorder">
-                    <td colspan="10" class="text-left" style="padding:0px 10px">4. 企业承诺本次维修质量保证期为车辆行驶<span style="border-bottom:#000 1px solid;display:inline-block;padding:0 10px;">{{showAccountData.milNum}}</span>公里或者<span style="border-bottom:#000 1px solid;display:inline-block;padding:0 10px;">{{showAccountData.dateNum}}</span>日，里程和时间以先到者为准。</td>
+                    <td colspan="10" class="text-left" style="padding:0px 10px">4. 企业承诺本次维修质量保证期为车辆行驶<span style="border-bottom:#000 1px solid;display:inline-block;padding:0 10px;">2000</span>公里或者<span style="border-bottom:#000 1px solid;display:inline-block;padding:0 10px;">10</span>日，里程和时间以先到者为准。</td>
                 </tr>
                 <tr class="noBorder">
                     <td colspan="10" class="text-left" style="padding:0px 10px">5. 企业承诺本次维修的新能源汽车专用部件<span style="border-bottom:#000 1px solid;display:inline-block;padding:0 10px;min-width:30px;">{{showAccountData.ZY_PART}}</span>维修质量保证期为<span style="border-bottom:#000 1px solid;display:inline-block;padding:0 10px;min-width:30px;">{{showAccountData.ZY_PART_BZQ}}</span>。</td>
@@ -208,7 +209,7 @@
 import { getName, getDictGroup } from '@/libs/util.js'
 	export default {
 		name: "select-accountOrder",
-        props:['showSelectAccount','showAccountData'],
+        props:['showSelectAccount','showAccountData','showAccountItem','showAccountParts','showAccountOther'],
         components: {},
         data(){
             return{

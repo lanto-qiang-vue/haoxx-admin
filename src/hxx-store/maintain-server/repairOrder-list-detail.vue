@@ -193,7 +193,7 @@
       <select-itemPackage :showSelectItemGroup="showSelectItemGroup" @selectItemGroup="selectItemGroup" :initItemGroup="initItemGroup">
       </select-itemPackage>
       <!--选择工单结算单-->
-      <select-accountOrder :showSelectAccount="showSelectAccount" :showAccountData="listSearch">
+      <select-accountOrder :showSelectAccount="showSelectAccount" :showAccountData="listSearch" :showAccountItem="commitItem" :showAccountParts="commitParts" :showAccountOther="commitOtherItem">
       </select-accountOrder>
   </Modal>
 
