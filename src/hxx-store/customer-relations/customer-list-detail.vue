@@ -1,15 +1,14 @@
 <!--预约单管理详情-->
 <template>
   <Modal
+    title="客户档案详情"
     :transition-names="['', '']"
     v-model="showModal"
     width="90"
     @on-visible-change="visibleChange"
     :mask-closable="false"
-    :closable="false"
-    :scrollable="true"
+    :scrollable="false"
     :transfer= "false"
-    :footer-hide="true"
   >
 
        <Tabs @on-click="qh" v-model="indexName" class="modal-tabs">
@@ -18,10 +17,10 @@
         <TabPane label="基本信息" name="m1" icon="logo-apple">
     <Form ref="formData" :model="formData" :label-width="120" :rules="ruleValidate" inline>
           <FormItem style="margin-left:-80px;width:100%;">
-              <div class="operate">
-                            <Button @click="showModal = false">返回</Button>
-            <Button type="primary" style="margin-left: 8px" @click="hsubmit('formData')">保存</Button>
-               </div>
+              <!--<div class="operate">-->
+                            <!--<Button @click="showModal = false">返回</Button>-->
+            <!--<Button type="primary" style="margin-left: 8px" @click="hsubmit('formData')">保存</Button>-->
+               <!--</div>-->
           </FormItem>
           <div></div>
           <FormItem label="客户名称" style="width:30%;" prop="name">
@@ -99,13 +98,13 @@
         <TabPane label="车辆档案" name="m2" :disabled="tabshow < 1" icon="logo-windows">
         <!-- 车辆档案列表 -->
 
-        <common-table :columns="columns" @changePageSize="changePageSize" @changePage="changePage" :total="total" :headerShow="false" :showSearch="false" @onRowClick="rowClick" :row="row"  v-model="tableData" :show="show">
-            <div slot="operate">
-            <Button @click="showModal = false">返回</Button>
-            <Button type="primary" style="margin-left: 8px" @click="vehicleAdd">新增</Button>
-            <Button type="primary" style="margin-left: 8px" @click="vehicleEdit">修改</Button>
-            <Button type="primary" style="margin-left: 8px" @click="vehicleLook">查看</Button>
-            </div>
+        <common-table :columns="columns" @changePageSize="changePageSize" @changePage="changePage" :total="total" :headerShow="false" :showSearch="false" :showOperate="false" @onRowClick="rowClick" :row="row"  v-model="tableData" :show="show">
+            <!--<div slot="operate">-->
+            <!--<Button @click="showModal = false">返回</Button>-->
+            <!--<Button type="primary" style="margin-left: 8px" @click="vehicleAdd">新增</Button>-->
+            <!--<Button type="primary" style="margin-left: 8px" @click="vehicleEdit">修改</Button>-->
+            <!--<Button type="primary" style="margin-left: 8px" @click="vehicleLook">查看</Button>-->
+            <!--</div>-->
         </common-table>
 
         </TabPane>
@@ -120,6 +119,14 @@
     <!-- 到时候改成vehicleShow -->
         <cart-modal class="table-modal-detail" :info="row" :hidetype="hidetype"   :show="showLook"></cart-modal>
         <vehicle-add @refresh="refresh()" :CUSTOMER_ID="tabshow" :row="row" :show="vehicleShow"></vehicle-add>
+
+    <div slot="footer">
+      <Button @click="showModal=false">取消</Button>
+      <Button type="primary" v-show="indexName=='m1'" @click="hsubmit('formData')">保存</Button>
+      <Button type="success" v-show="indexName=='m2'" @click="vehicleAdd">新增</Button>
+      <Button type="primary" v-show="indexName=='m2'" @click="vehicleEdit">修改</Button>
+      <Button type="info" v-show="indexName=='m2'" @click="vehicleLook">查看</Button>
+    </div>
   </Modal>
   <!-- 车辆档案新增组件 -->
 <!-- 车辆答案组件结束 -->
@@ -532,9 +539,4 @@
             background-color: white;
             z-index: 4;
         }
-</style>
-<style lang="less">
-.table-modal-detail .ivu-modal-wrap .ivu-modal .ivu-modal-content .ivu-modal-body{
-  padding-top:10px;
-}
 </style>
