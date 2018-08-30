@@ -85,7 +85,7 @@ export default {
   },
   computed: {
     loginUserName(){
-      return this.$store.state.user.userInfo.user.userName
+      return this.$store.state.user.userInfo?this.$store.state.user.userInfo.user.userName:''
     },
     storeName(){
       return this.$store.getters.loginType=='1002'?

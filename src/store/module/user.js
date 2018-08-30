@@ -13,6 +13,12 @@ export default {
     userInfo: getUser() || '',
     accessMenu: getMenu() || ''
   },
+  getters:{
+    loginType: (state, getters, rootState) => {
+      // console.log(rootState)
+      return rootState.user.userInfo? rootState.user.userInfo.user.lgType: false
+    },
+  },
   mutations: {
     // setAvator (state, avatorPath) {
     //   state.avatorImgPath = avatorPath
