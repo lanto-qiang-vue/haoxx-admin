@@ -33,10 +33,13 @@
 
           </FormItem>
           <FormItem label="预约时间:" prop="ORDER_TIME">
-              <!--<TimePicker v-model="listSearch.ORDER_TIME" type="time" placeholder="请选择..." style="min-width: 250px;"></TimePicker>-->
+              
               <Select v-model="listSearch.ORDER_TIME" placeholder="" style="min-width: 250px;">
-                <Option v-for="(item, index) in timeGruop"
-                  :key="index" :value="item.value">{{item.label}}</Option>
+                <!--<Option v-for="(item, index) in timeGruop"
+                  :key="item.value" :value="item.value">{{item.label}}</Option>-->
+                  <Option value="5:30">5:30</Option>
+                <Option value="6:30">6:30</Option>
+                <Option value="7:30">7:30</Option>
               </Select>
           </FormItem>
           <FormItem label="预约类型:">
@@ -522,8 +525,11 @@
           {value:"23:30",label:"23:30"},
         ],
         ruleValidate: {
+          ORDER_DATE:[
+            { required: true, message: '请选择时间', }
+          ],
             ORDER_TIME: [
-                { required: true, type: 'string', message: '请选择时间', trigger: 'change' }
+                { required: true,  message: '请选择时间',trigger:'change'}
             ]
         },
         titleMsg:'新建',
@@ -643,20 +649,22 @@
         }
       },
       handleSubmit (name) {
-          // this.$refs[name].validate((valid) => {
-          //     if (valid) {
+        console.log(this.listSearch);
+          this.$refs[name].validate((valid) => {
+              if (valid) {
 
                   console.log("保存数据----",this.listSearch);
                   this.orderdate=this.listSearch["ORDER_DATE"];
+                  console.log(this.listSearch["ORDER_DATE"], formatDate(this.listSearch["ORDER_DATE"]))
                   this.listSearch["ORDER_DATE"]=formatDate(this.listSearch["ORDER_DATE"]);
                   this.tooltipObj.title = '系统提示!';
                   this.tooltipObj.description = '确定要保存吗？';
                   this.tooltipObj.mshow = Math.random();
                   this.tooltipObj.funName='saveData';
-          //     } else {
+              } else {
 
-          //     }
-          // });
+              }
+          });
 
       },
       handleCommit(){
