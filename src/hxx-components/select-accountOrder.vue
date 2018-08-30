@@ -270,7 +270,7 @@ import { getName, getDictGroup } from '@/libs/util.js'
             z-index: 4;
         }
     }
-.print_style table{border:2px #000 solid;border-collapse: collapse;} 
+.print_style table{border:2px #000 solid;border-collapse: collapse; display: block;} 
 .print_style th,.print_style td{border: 1px solid #000;} 
 .print_style .noBorder th,.print_style .noBorder td{border:none;} 
 .print_style .noRTLBorder th,.print_style .noRTLBorder td{border-right:none;border-top:none;border-left:none;} 

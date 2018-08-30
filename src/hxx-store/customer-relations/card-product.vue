@@ -175,6 +175,7 @@
 			dbclick(row){
       this.formData = row;
       this.showModal = true;
+      console.log(row);
       },
 			getList(){
 		  this.axios.request({
