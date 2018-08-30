@@ -25,14 +25,14 @@ export const login = req => {
   }
 }
 
-export const getUserInfo = req => {
-  const params = getParams(req.url)
-  return {
-    code: 200,
-    data: USER_MAP[params.token],
-    msg: ''
-  }
-}
+// export const getUserInfo = req => {
+//   const params = getParams(req.url)
+//   return {
+//     code: 200,
+//     data: USER_MAP[params.token],
+//     msg: ''
+//   }
+// }
 
 export const logout = req => {
   return {

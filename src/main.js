@@ -18,7 +18,7 @@ import '@/assets/icons/font-awesome/css/font-awesome.min.css'
 // 实际打包时应该不引入mock
 import env from '../config/env'
 /* eslint-disable */
-env === 'development' ? require('@/mock') : ''
+// env === 'development' ? require('@/mock') : ''
 
 import axios from '@/libs/api.request'
 
