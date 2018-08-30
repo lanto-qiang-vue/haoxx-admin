@@ -15,54 +15,57 @@
       <Panel name="1">详情
        <Form ref="listSearch"   slot="content" :label-width="120" inline class="detail-form">
                 <FormItem label="车牌号码:" style="width:30%;">
-                <Input type="text"  style="min-width: 100%;" :readonly="true"> </Input>
+                <Input type="text" v-model="base.PLATE_NUM" style="min-width: 100%;" :readonly="true"> </Input>
                 </FormItem>
                 <FormItem label="车型:" style="width:30%;">
-                <Input type="text"  style="min-width: 100%;" :readonly="true"> </Input>
+                <Input type="text" v-model="base.VEHICLE_MODEL"  style="min-width: 100%;" :readonly="true"> </Input>
                 </FormItem>
                                 <FormItem label="车架号:" style="width:30%;">
-                <Input type="text"  style="min-width: 100%;" :readonly="true"> </Input>
+                <Input type="text" v-model="base.VIN_NO"  style="min-width: 100%;" :readonly="true"> </Input>
                 </FormItem>
                                 <FormItem label="车主名称:" style="width:30%;">
-                <Input type="text"  style="min-width: 100%;" :readonly="true"> </Input>
+                <Input type="text" v-model="base.CUSTOMER_NAME"  style="min-width: 100%;" :readonly="true"> </Input>
                 </FormItem>
                                 <FormItem label="送修人:" style="width:30%;">
-                <Input type="text"  style="min-width: 100%;" :readonly="true"> </Input>
+                <Input type="text" v-model="base.GIVE_REPAIR_PERSON"  style="min-width: 100%;" :readonly="true"> </Input>
                 </FormItem>
                                 <FormItem label="联系电话:" style="width:30%;">
-                <Input type="text"  style="min-width: 100%;" :readonly="true"> </Input>
+                <Input type="text"  v-model="base.TELPHONE" style="min-width: 100%;" :readonly="true"> </Input>
                 </FormItem>
                                 <FormItem label="维修类型:" style="width:30%;">
-                <Input type="text"  style="min-width: 100%;" :readonly="true"> </Input>
+                <Input type="text" v-model="base.REPAIR_TYPE"  style="min-width: 100%;" :readonly="true"> </Input>
                 </FormItem>
                                 <FormItem label="送修里程:" style="width:30%;">
-                <Input type="text"  style="min-width: 100%;" :readonly="true"> </Input>
+                <Input type="text" v-model="base.MILEAGE"  style="min-width: 100%;" :readonly="true"> </Input>
                 </FormItem>
                                 <FormItem label="主修人:" style="width:30%;">
-                <Input type="text"  style="min-width: 100%;" :readonly="true"> </Input>
+                <Input type="text" v-model="base.REPAIR_PERSON"  style="min-width: 100%;" :readonly="true"> </Input>
                 </FormItem>
                                 <FormItem label="车辆类型:" style="width:30%;">
-                <Input type="text"  style="min-width: 100%;" :readonly="true"> </Input>
+                <Input type="text" v-model="base.VEHICLE_TYPE"   style="min-width: 100%;" :readonly="true"> </Input>
                 </FormItem>
                                 <FormItem label="车辆分类代码:" style="width:30%;">
-                <Input type="text"  style="min-width: 100%;" :readonly="true"> </Input>
+                <Input type="text"  v-model="base.VEHICLE_TYPE_CODE" style="min-width: 100%;" :readonly="true"> </Input>
                 </FormItem>
                                 <FormItem label="服务顾问:" style="width:30%;">
-                <Input type="text"  style="min-width: 100%;" :readonly="true"> </Input>
+                <Input type="text" v-model="base.FOLLOW_PERSON"  style="min-width: 100%;" :readonly="true"> </Input>
                 </FormItem>
                                 <FormItem label="进场日期:" style="width:30%;">
-                <Input type="text"  style="min-width: 100%;" :readonly="true"> </Input>
+                <Input type="text" v-model="base.COME_DATE"  style="min-width: 100%;" :readonly="true"> </Input>
                 </FormItem>
                                 <FormItem label="计划完工日期:" style="width:30%;">
-                <Input type="text"  style="min-width: 100%;" :readonly="true"> </Input>
+                <Input type="text" v-model="base.PLAN_END_DATE"  style="min-width: 100%;" :readonly="true"> </Input>
                 </FormItem>
        </Form>
        <Form ref="formInline"  slot="content" :label-width="120">
-          <FormItem label="故障描述:">
-              <Input type="textarea"  placeholder="请输入故障描述"> </Input>
+          <FormItem v-if="base.FAULT_DESC != ''" label="故障描述:">
+              <Input type="textarea" v-model="base.FAULT_DESC"  placeholder="请输入故障描述"> </Input>
           </FormItem>
-          <FormItem label="客诉内容:">
-              <Input type="textarea"  placeholder="请输入客诉内容"> </Input>
+          <FormItem v-if="base.CUSTOMER_INFO != ''" label="客诉内容:">
+              <Input type="textarea" v-model="base.CUSTOMER_INFO"  placeholder="请输入客诉内容"> </Input>
+          </FormItem>
+              <FormItem v-if="base.REPAIR_INFO !=''" label="客诉内容:">
+              <Input type="textarea" v-model="base.REPAIR_INFO"  placeholder="请输入客诉内容"> </Input>
           </FormItem>
        </Form>
       </Panel>
@@ -523,7 +526,7 @@
                 { required: true, type: 'string', message: '请选择时间', trigger: 'change' }
             ]
         },
-        titleMsg:'新建',
+        titleMsg:'',
         isCar:false,
         isButton:true,
         listDisabled:false,
@@ -636,14 +639,17 @@
           method: 'post',
           data: {access_token: this.$store.state.user.token,
                  detail_id:101337
-                 // data:JSON.stringify(postData)
                 }
         }).then(res => {
-          alert(2);
           if (res.success === true) {
-  
+          this.base = res.data;
+              this.base.REPAIR_TYPE = getName(this.$store.state.app.dict,this.base.REPAIR_TYPE);
+              this.base.VEHICLE_TYPE = getName(this.$store.state.app.dict,this.base.VEHICLE_TYPE);
+              this.titleMsg = getName(this.$store.state.app.dict,this.base.STATUS);
           }
         })
+    // this.base.REPAIR_TYPE = getName(this.$store.state.app.dict,this.base.REPAIR_TYPE);
+
     },
     methods:{
       visibleChange(status){

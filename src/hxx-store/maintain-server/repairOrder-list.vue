@@ -2,8 +2,8 @@
 <template>
   <common-table v-model="tableData" :columns="columns" :total="total" :clearSelect="clearTableSelect"
                 @changePage="changePage" @changePageSize="changePageSize" @onRowClick="onRowClick"
-                @onRowDblclick="onRowDblclick" :show="showTable">
-    <div  slot="search"  >
+                @onRowDblclick="onRowDblclick" :show="showTable" :page="page">
+    <div  slot="search">
       <div class="search-block">
         <Input v-model="search.input" placeholder="预约单号/预约人/联系电话..."></Input>
       </div>
