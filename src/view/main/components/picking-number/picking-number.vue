@@ -1,5 +1,5 @@
 <template>
-<Tooltip class="picking-number" content="维修领料" v-if="this.$store.getters.loginType=='1002'" >
+<Tooltip class="picking-number" content="维修领料" v-if="showThis" >
 <div class="text" @click="goTo">
   <span>维修领料(</span><span class="red">{{num}}</span><span>)</span>
 </div>
@@ -13,10 +13,13 @@
     computed:{
 		  num(){
 		    return this.$store.state.app.pickingNumber
+      },
+      showThis(){
+        return this.$store.getters.loginType=='1002'
       }
     },
     mounted(){
-      this.getPickingNumber()
+      if(this.showThis) this.getPickingNumber()
     },
     methods: {
       ...mapActions([
