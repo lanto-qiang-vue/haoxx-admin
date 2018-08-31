@@ -34,8 +34,9 @@
     @on-row-dblclick="onRowDblclick"
   ></Table>
   <div class="table-bottom">
-    <Page :current="page" :page-size="25" show-sizer show-elevator :page-size-opts="[25, 50, 100, 150]"
+    <Page :current="page" :page-size="25" show-sizer show-elevator show-total :page-size-opts="[25, 50, 100, 150]"
     placement="top" :total="total" @on-change="changePage" @on-page-size-change="changePageSize"/>
+    <Button class="refresh" @click="changePage(page)"><Icon type="md-refresh" size="20"/></Button>
   </div>
   <slot></slot>
 </div>
@@ -239,9 +240,6 @@
   .operate button{
     margin: 0 5px 5px 0;
   }
-  .main-table{
-
-  }
   .table-bottom{
     position: absolute;
     height: 52px;
@@ -256,14 +254,26 @@
 </style>
 <style lang="less">
 .common-table{
+  .main-table{
+    .ivu-table-row{
+      cursor: default;
+    }
+  }
   .table-bottom{
     .ivu-page{
       display: inline-block;
+      vertical-align: middle;
       .ivu-page-item-jump-prev, .ivu-page-item-jump-next{
         display: none;
       }
+      .ivu-page-options{
+        margin-left: 5px;
+      }
     }
-
+    .refresh{
+      vertical-align: middle;
+      margin-left: 10px;
+    }
   }
 }
 </style>

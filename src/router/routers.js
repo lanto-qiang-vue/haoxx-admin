@@ -464,6 +464,30 @@ export default [
     ]
 },
   {
+    path: '/manage-store',
+    name: 'manage-store',
+    meta: {
+      icon: 'logo-buffer',
+      title: '门店管理',
+      lgType: "1001",
+      access: '1001',
+    },
+    component: Main,
+    children:[
+      {
+        path: '/manage-store-info',
+        name: 'manage-store-info',
+        meta: {
+          icon: 'md-funnel',
+          title: '门店信息',
+          lgType: "1001",
+          access: '100101',
+        },
+        component: () => import('@/hxx-admin/store-manager/store-info-list.vue')
+      },
+    ]
+  },
+  {
     path: '/401',
     name: 'error_401',
     meta: {
