@@ -334,8 +334,46 @@ export default [
         },
         component: () => import('@/hxx-store/maintain-server/repairOrder-list.vue')
       },
+      {
+        path: '/maintain-pick',
+        name: 'maintain-pick',
+        meta: {
+          icon: 'md-funnel',
+          title: '维修领料',
+          lgType: "1002",
+          access: '100103',
+        },
+        component: () => import('@/hxx-store/maintain-server/maintain-pick.vue')
+      },
+      
     ]
 },
+
+{
+    path: '/parts-manage',
+    name: 'parts-manage',
+    meta: {
+      icon: 'logo-buffer',
+      title: '配件管理',
+      lgType: "1002",
+      access: '1002',
+    },
+    component: Main,
+    children:[
+      {
+        path: '/query-Inventory',
+        name: 'query-Inventory',
+        meta: {
+          icon: 'md-funnel',
+          title: '库存查询',
+          lgType: "1002",
+          access: '100204',
+        },
+        component: () => import('@/hxx-store/parts-manage/query-Inventory.vue')
+      },
+    ]
+},
+
 {
     path: '/customer-relations',
     name: 'customer-relations',
@@ -384,7 +422,7 @@ export default [
           icon: 'md-funnel',
           title: '储值卡充值',
           lgType: "1002",
-          access: '100504',
+          access: '100302',
         },
         component: () => import('@/hxx-store/customer-relations/card-recharge.vue')
       }

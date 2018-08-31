@@ -2,24 +2,20 @@
 	  <Modal
     :transition-names="['', '']"
     v-model="showModal"
+    title="车辆档案详情"
     width="90"
     :scrollable="true"
     :transfer= "false"
     :mask-closable="false"
-    :footer-hide="true"
+    :footer-hide="false"
   >
 	<!-- @on-click="qh" v-model="indexName" -->
-	    <Tabs style="height:auto;" @on-click="qh" v-model="indexName" class="modal-tabs">
+	    <Tabs  @on-click="qh" v-model="indexName" class="modal-tabs">
         <!-- 基本信息 -->
         <TabPane label="基本信息" name="m1" icon="logo-apple">
   		    <Form :label-width="120" :model="formData" ref="formData" :rules="ruleValidate" inline>
       <!-- 调整字段个数和位置 -->
-             <FormItem style="margin-left:-80px;width:100%;">
-              <div class="operate">
-                            <Button @click="showModal = false">返回</Button>
-            <Button v-if="hidetype === 1" type="primary" style="margin-left: 8px" @click="submit('formData')">保存</Button>
-              </div>
-          </FormItem>
+          <div style="height:10px;"></div>
     	    <FormItem label="车牌号:" style="width:30%;"  prop="PLATE_NUM">
               <Input type="text" v-model="formData.PLATE_NUM"  style="min-width: 100%;"> </Input>
           </FormItem>
@@ -150,27 +146,24 @@
               <Input type="textarea" v-model="formData.REMARK"  placeholder="请输入备注信息"> </Input>
           </FormItem>
        </Form>
-       <!-- <div style="height:50px;"></div> -->
         </TabPane>
                 <!-- 维修记录 -->
         <TabPane label="维修记录" name="m2"  :disabled="formData.VEHICLE_ID < 1"  icon="logo-windows">
-        <common-table :columns="columns" @changePageSize="changePageSize" @changePage="changePage" :total="total" :headerShow="false" @onRowClick="getobj" :showSearch="false" v-model="tableData" :show="show">
-            <div slot="operate">
-            <Button @click="showModal = false">返回</Button>
-            <Button type="primary" style="margin-left: 8px" @click="vehicleLook">查看</Button>
-            </div>
+        <common-table :columns="columns" @changePageSize="changePageSize" @changePage="changePage" :total="total" :showOperate="false" @onRowClick="getobj" :showSearch="false" v-model="tableData" :page="page" :show="show">
         </common-table>
         </TabPane>
         <!-- 维修记录 -->
         <!-- 保养规则 -->
 
         <TabPane label="保养规则" name="m3" :disabled="formData.VEHICLE_ID < 1"   icon="logo-tux">
-            <div class="operate">
-            <Button @click="showModal = false">返回</Button>
-            </div>
         </TabPane>
         <!-- 保养规则 -->
     </Tabs>
+  <div slot="footer">
+    <Button @click="showModal = false">取消</Button>
+    <Button v-if="hidetype === 1" v-show="indexName == 'm1'" type="primary" style="margin-left: 8px" @click="submit('formData')">保存</Button>
+    <Button type="info" v-show="indexName == 'm2'" style="margin-left: 8px" @click="vehicleLook">查看</Button>
+  </div>
 <select-customer @select="select" :showoff="showoff"></select-customer>
 <Modal
     :transition-names="['', '']"
@@ -181,6 +174,7 @@
     :footer-hide="true"
 >
 <vehicle-model :show="vehicleShow" @onRowClick="onRowClick"></vehicle-model>
+<service-record :showDetail="serviceShow" :detailData="detailData"></service-record>
 </Modal>
 </Modal>
 </template>
@@ -189,9 +183,10 @@
     import selectCustomer from '@/hxx-components/select-customer.vue'
     import commonTable from '@/hxx-components/common-table.vue'
     import vehicleModel from '@/hxx-components/vehicle-model.vue'
-	export default{
+    import serviceRecord from '@/hxx-components/service-record.vue'
+	  export default{
 		name:'cart-modal',
-		components:{selectCustomer,commonTable,vehicleModel},
+		components:{selectCustomer,commonTable,vehicleModel,serviceRecord},
 		data(){
 			     const validatePass = (rule, value, callback) => {
 			     	var p1 = /\d?[A-Z]+\d?/
@@ -203,6 +198,8 @@
             };
 			return{
 				obj:[],//单选内容存储
+        serviceShow:false,
+        detailData:[],
 				store:[],
 				tableData:[],
         vehicleShow:false,//选车型
@@ -383,7 +380,9 @@
 			 this.$Message.info('请选取数据');
 			 return;
 			}
-			alert('坐等查看');
+			console.log(this.obj[0]);
+      this.detailData = this.obj[0];
+      this.serviceShow = Math.random();
 			},
 			getobj(row){
 				//存单选数据
@@ -469,11 +468,3 @@
 		}
 	}
 </script>
-<style scoped lang="less">
-	  .operate{
-    padding: 10px;
-    border: 1px solid #dcdee2;
-    border-radius: 3px;
-    width:100%;
-  }
-</style>
