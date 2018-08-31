@@ -98,13 +98,7 @@
         <TabPane label="车辆档案" name="m2" :disabled="tabshow < 1" icon="logo-windows">
         <!-- 车辆档案列表 -->
 
-        <common-table :columns="columns" @changePageSize="changePageSize" @changePage="changePage" :total="total" :headerShow="false" :showSearch="false" :showOperate="false" @onRowClick="rowClick" :row="row"  v-model="tableData" :show="show">
-            <!--<div slot="operate">-->
-            <!--<Button @click="showModal = false">返回</Button>-->
-            <!--<Button type="primary" style="margin-left: 8px" @click="vehicleAdd">新增</Button>-->
-            <!--<Button type="primary" style="margin-left: 8px" @click="vehicleEdit">修改</Button>-->
-            <!--<Button type="primary" style="margin-left: 8px" @click="vehicleLook">查看</Button>-->
-            <!--</div>-->
+        <common-table :columns="columns" @changePageSize="changePageSize" @changePage="changePage" :total="total" :headerShow="false" :showSearch="false" :showOperate="false" @onRowClick="rowClick" :row="row" :page="page"  v-model="tableData" :show="show">
         </common-table>
 
         </TabPane>
@@ -415,35 +409,6 @@
       },
       vehicleAdd(){
         this.vehicleShow = Math.random();
-        var data = {
-        MUST_SAFE_CORP:0,
-        BUSINESS_SAFE_CORP:0,
-        VEHICLE_COLOR:0,
-        COME_MILEAGE:0,
-        REPAIR_MILEAGE:0,
-        LAST_REPAIR_MILEAGE:0,
-        NEXT_REPAIR_MILEAGE:0,
-        VEHICLE_ID:0,
-        REGULAR_REPAIR:0,
-        PLATE_NUM:'',
-        VIN_NO:'',
-        VEHICLE_MODEL:'',
-        BUY_DATE:'',
-        ENGINE_NO:'',
-        LEAVE_FACTORY_DATE:'',
-        COME_DATE:'',
-        LAST_REPAIR_DATE:'',
-        NEXT_REPAIR_DATE:'',
-        YEAR_CHECK_DATE:'',
-        MUST_SAFE_VALIDITY:'',
-        BUSINESS_SAFE_VALIDITY:'',
-        REMARK:'',
-        TID:'',
-        CUSTOMER_ID:'',
-        CUSTOMER_CODE:'',
-        CUSTOMER_NAME:'',
-        }
-        this.row = data;
       },
       getList(){
                 this.axios.request({

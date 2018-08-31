@@ -384,7 +384,7 @@ export default [
           icon: 'md-funnel',
           title: '储值卡充值',
           lgType: "1002",
-          access: '100504',
+          access: '100302',
         },
         component: () => import('@/hxx-store/customer-relations/card-recharge.vue')
       }

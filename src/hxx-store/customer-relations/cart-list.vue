@@ -26,7 +26,7 @@
 <script>
 	  import commonTable from '@/hxx-components/common-table.vue'
     import cartModal from '@/hxx-store/customer-relations/cart-modal.vue'
-        import { getName, getDictGroup, getCreate } from '@/libs/util.js'
+    import { getName, getDictGroup, getCreate } from '@/libs/util.js'
 	export default{
 		name:'cart-list',
 		components:{commonTable,cartModal},

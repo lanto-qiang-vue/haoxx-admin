@@ -9,7 +9,6 @@
     :transfer= "false"
     :footer-hide="false">	
     <!-- 车辆车辆档案新增调用 -->
-    <div style="height:50px;"></div>
     <Form :label-width="120" :model="formData" ref="formData" :rules="ruleValidate" inline>
           <FormItem label="车牌号:" style="width:45%;"  prop="PLATE_NUM">
               <Input type="text" v-model="formData.PLATE_NUM"  style="min-width: 100%;"> </Input>
@@ -182,7 +181,7 @@
 				REGULAR_REPAIR:0,
 				PLATE_NUM:'',
 				VIN_NO:'',
-				VEHICLE_MODEL:'法拉利360 Spider 敞篷版 2004款 3.6L Spider AMT',
+				VEHICLE_MODEL:'',
 				BUY_DATE:'',
 				ENGINE_NO:'',
 				LEAVE_FACTORY_DATE:'',
@@ -219,6 +218,7 @@
 		props:['show','CUSTOMER_ID','row','sign'],
 		watch:{
            show(){
+             this.$refs['formData'].resetFields();
            	this.showModal=true;
            	// alert(1);
            	if(this.must.length === 0) this.getInsure();
