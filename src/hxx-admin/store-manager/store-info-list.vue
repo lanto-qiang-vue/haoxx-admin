@@ -1,6 +1,7 @@
 <!--门店信息-->
 <template>
 <common-table v-model="tableData" :columns="columns" :total="total" :show="showTable" :page="query.page"
+              :loading="loading"
               @changePage="changePage" @changePageSize="changePageSize" @onRowClick="onRowClick"
               @onRowDblclick="onRowDblclick" >
   <div slot="search">
@@ -27,9 +28,33 @@
   <div slot="operate">
     <Button type="primary" :disabled="!detailData" @click="">查看/编辑</Button>
     <Button type="success" :disabled="!detailData" @click="">添加电子健康档案账号</Button>
-    <Button type="error" v-show="!detailData || detailData.CHECK_STATUS!='10351004'" :disabled="!detailData" @click="">门店停用</Button>
-    <Button type="success" v-show="detailData && detailData.CHECK_STATUS=='10351004'" :disabled="!detailData" @click="">门店恢复</Button>
+    <Button type="error" v-show="!detailData || detailData.CHECK_STATUS!='10351004'" :disabled="!detailData" @click="updateCheckStatus">门店停用</Button>
+    <Button type="success" v-show="detailData && detailData.CHECK_STATUS=='10351004'" :disabled="!detailData" @click="updateCheckStatus">门店恢复</Button>
   </div>
+
+  <!--<Modal v-model="showModal" title="添加电子健康档案账号" :width="400">-->
+    <!--<Form ref="form" :model="form" :rules="rule" :label-width="80" class="change-password-form">-->
+      <!--<FormItem prop="oldPassword" label="旧密码">-->
+        <!--<Input type="password" v-model="form.oldPassword" @on-change="validateField(['rePassword','newPassword'])">-->
+        <!--<Icon type="ios-lock-outline" slot="prepend"></Icon>-->
+        <!--</Input>-->
+      <!--</FormItem>-->
+      <!--<FormItem prop="newPassword" label="新密码">-->
+        <!--<Input type="password" v-model="form.newPassword" @on-change="validateField(['rePassword'])">-->
+        <!--<Icon type="ios-lock-outline" slot="prepend"></Icon>-->
+        <!--</Input>-->
+      <!--</FormItem>-->
+      <!--<FormItem prop="rePassword" label="确认密码">-->
+        <!--<Input type="password" v-model="form.rePassword" @on-change="validateField(['newPassword'])">-->
+        <!--<Icon type="ios-lock-outline" slot="prepend"></Icon>-->
+        <!--</Input>-->
+      <!--</FormItem>-->
+    <!--</Form>-->
+    <!--<div slot="footer">-->
+      <!--<button type="button" class="ivu-btn ivu-btn-text ivu-btn-large" @click="showModal=false">取消</button>-->
+      <!--<button type="button" class="ivu-btn ivu-btn-primary ivu-btn-large" @click="ok()">确定</button>-->
+    <!--</div>-->
+  <!--</Modal>-->
 </common-table>
 </template>
 
@@ -52,6 +77,7 @@
         },
         showTable:false,
         total: 0,
+        loading: true,
 
         tableData: [],
         columns: [
@@ -76,7 +102,11 @@
             render: (h, params) => h('span', params.row.AUDIT_TIME? params.row.AUDIT_TIME.substr(0, 10): '')
           },
         ],
-        detailData: null
+        detailData: null,
+
+        recordInfo:{
+
+        }
       }
     },
     computed:{
@@ -92,6 +122,8 @@
     },
     methods:{
       getList(){
+        this.detailData= null
+        this.loading= true
         for(let key in this.query){
           (this.query[key]=== undefined || this.query[key]=== null) ? this.query[key]='': ''
         }
@@ -104,6 +136,30 @@
             this.tableData= res.data
             this.total= res.total
             this.showTable= true
+          }
+          this.loading= false
+        })
+      },
+      updateCheckStatus(){
+        console.log(this.detailData)
+        let showText= this.detailData.CHECK_STATUS== '10351004'? '恢复': '停用'
+        this.$Modal.confirm({
+          title: '确定要'+ showText+ '该门店吗？',
+          onOk: ()=> {
+            this.axios.request({
+              url: '/manage/info/tenantinfo/updateCheckStatus',
+              method: 'post',
+              data: {
+                tenantId: this.detailData.TENANT_ID,
+                checkStatus: this.detailData.CHECK_STATUS,
+                access_token: this.query.access_token
+              }
+            }).then(res => {
+              if (res.success === true) {
+                this.$Message.success('门店'+showText+'成功')
+                this.getList()
+              }
+            })
           }
         })
       },

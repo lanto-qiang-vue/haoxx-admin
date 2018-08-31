@@ -32,6 +32,7 @@
     :no-filtered-data-text="noFilteredDataText"
     @on-row-click="onRowClick"
     @on-row-dblclick="onRowDblclick"
+    @on-current-change="onCurrentChange"
   ></Table>
   <div class="table-bottom">
     <Page :current="page" :page-size="25" show-sizer show-elevator show-total :page-size-opts="[25, 50, 100, 150]"
@@ -215,6 +216,9 @@
       onRowDblclick( row, index){
         this.$emit('onRowDblclick',row, index);
       },
+      onCurrentChange(currentRow, oldCurrentRow){
+        this.$emit('onCurrentChange',currentRow, oldCurrentRow);
+      }
     }
 	}
 </script>
