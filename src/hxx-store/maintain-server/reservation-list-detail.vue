@@ -35,11 +35,9 @@
           <FormItem label="预约时间:" prop="ORDER_TIME">
               
               <Select v-model="listSearch.ORDER_TIME" placeholder="" style="min-width: 250px;">
-                <!--<Option v-for="(item, index) in timeGruop"
-                  :key="item.value" :value="item.value">{{item.label}}</Option>-->
-                  <Option value="5:30">5:30</Option>
-                <Option value="6:30">6:30</Option>
-                <Option value="7:30">7:30</Option>
+                <Option v-for="(item, index) in timeGruop"
+                  :key="item.value" :value="item.value">{{item.label}}</Option>
+                  
               </Select>
           </FormItem>
           <FormItem label="预约类型:">
@@ -141,22 +139,21 @@
         <Button v-if="isButton" @click="handleCommit" size="large" type="primary"  style="margin-right: 10px; padding: 0 10px;"><Icon type="md-add" size="24"/>提交</Button>
         <Button v-if="isCar"  size="large" type="primary"  style=" padding: 0 10px;"><Icon type="ios-car" size="24"/>维修接车</Button>
     </div>
-    <common-modal6 :description="tooltipObj.description"
-      :title="tooltipObj.title" :modal6="tooltipObj.mshow" :fun="tooltipObj.funName" @saveData="saveData" @commitdata="commitdata"></common-modal6>
 
+      <!--选择车型-->
       <select-vehicle :showoff="showoff" @selectCar="selectCar">
       </select-vehicle>
+      <!--选择项目-->
       <select-items :showTenanceItems="showTenanceItems" @sTenanceItem="sTenanceItem" :initGetItem="initGetItem">
       </select-items>
-
+      <!--选择配件-->
       <select-parts :showSelectParts="showSelectParts" @selectPartsItem="selectPartsItem" :initParts="initParts">
-
       </select-parts>
+      <!--选择配件组-->
       <select-partsGroup :showSelectPartsGroup="showSelectPartsGroup" @selectPartsGroup="selectPartsGroup" :initPartsGroup="initPartsGroup">
-
       </select-partsGroup>
+      <!--选择项目组-->
       <select-itemPackage :showSelectItemGroup="showSelectItemGroup" @selectItemGroup="selectItemGroup" :initItemGroup="initItemGroup">
-
       </select-itemPackage>
   </Modal>
 
@@ -165,7 +162,7 @@
 <script>
   import { getName, getDictGroup ,getUserInfo} from '@/libs/util.js'
   import { formatDate } from '@/libs/tools.js'
-  import commonModal6 from '@/hxx-components/common-modal6.vue'
+
   import selectVehicle from '@/hxx-components/select-vehicle.vue'
   import selectItems from '@/hxx-components/select-items.vue'
   import selectParts from '@/hxx-components/select-parts.vue'
@@ -178,7 +175,7 @@
 
 	export default {
 		name: "reservation-list-detail",
-    components: {commonModal6,selectVehicle,selectItems,selectParts,selectPartsGroup,selectItemPackage},
+    components: {selectVehicle,selectItems,selectParts,selectPartsGroup,selectItemPackage},
     data(){
       return{
         showoff:null,//选择车辆
@@ -193,12 +190,7 @@
         showSelectItemGroup:null,//选择项目套餐--
         initItemGroup:[],
 
-        tooltipObj:{
-            mshow:false,
-            funName:'saveData',
-            description:'',
-            title:'',
-        },//弹出层数据
+
         showModal: false,//本界面是否显示判断
         testSingle:false,//判断是否启用维修项目套餐
         //维修项目
@@ -528,10 +520,11 @@
           ORDER_DATE:[
             { required: true, message: '请选择时间', }
           ],
-            ORDER_TIME: [
-                { required: true,  message: '请选择时间',trigger:'change'}
-            ]
-        },
+          ORDER_TIME: [
+              { required: true,  message: '请选择时间',trigger:'change'}
+          ]
+        },//规则验证
+
         titleMsg:'新建',
         isCar:false,
         isButton:true,
@@ -652,15 +645,15 @@
         console.log(this.listSearch);
           this.$refs[name].validate((valid) => {
               if (valid) {
-
-                  console.log("保存数据----",this.listSearch);
                   this.orderdate=this.listSearch["ORDER_DATE"];
-                  console.log(this.listSearch["ORDER_DATE"], formatDate(this.listSearch["ORDER_DATE"]))
                   this.listSearch["ORDER_DATE"]=formatDate(this.listSearch["ORDER_DATE"]);
-                  this.tooltipObj.title = '系统提示!';
-                  this.tooltipObj.description = '确定要保存吗？';
-                  this.tooltipObj.mshow = Math.random();
-                  this.tooltipObj.funName='saveData';
+
+                  this.$Modal.confirm({
+                      title:"系统提示!",
+                      content:"确定要保存吗？",
+                      onOk:this.saveData,
+                      
+                  })
               } else {
 
               }
@@ -668,11 +661,12 @@
 
       },
       handleCommit(){
-          this.tooltipObj.title = '系统提示!';
-          this.tooltipObj.description = '确定要提交吗？';
-          this.tooltipObj.mshow = Math.random();
-          this.tooltipObj.funName='commitdata';
-
+          this.$Modal.confirm({
+              title:"系统提示!",
+              content:"确定要提交吗？",
+              onOk:this.commitdata,
+              
+          })
 
       },
       getNewDate(val,currentVal){
@@ -696,14 +690,8 @@
               access_token: this.$store.state.user.token
             }
           }).then(res => {
-            console.log(11111)
-            console.log(res)
             if (res.success === true) {
-              // for(let key in this.listSearch){
-              //   if(res.data[key]){
-              //     this.listSearch[key]= res.data[key];
-              //   }
-              // }
+              this.listSearch['ORDER_ID']= res.data['ORDER_ID'];
               this.$Message.info('successful')
             }
           })

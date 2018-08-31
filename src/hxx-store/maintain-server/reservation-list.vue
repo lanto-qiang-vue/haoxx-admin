@@ -14,9 +14,8 @@
         </Select>
       </div>
       <div class="search-block"style="width:250px;">
-        <!--@on-change="getOrderDateGte" @on-change="getOrderDateIte"-->
-        <DatePicker v-model="search.orderDateGte" format="yyyy-MM-dd" type="date" placeholder="开始时间" style="width: 120px;"></DatePicker>
-        <DatePicker v-model="search.orderDateIte" format="yyyy-MM-dd" type="date" placeholder="结束时间" style="width: 120px;margin-left: 5px;"></DatePicker>
+        <DatePicker @on-change="getOrderDateGte" format="yyyy-MM-dd" type="date" placeholder="开始时间" style="width: 120px;"></DatePicker>
+        <DatePicker @on-change="getOrderDateIte" format="yyyy-MM-dd" type="date" placeholder="结束时间" style="width: 120px;margin-left: 5px;"></DatePicker>
       </div>
 
       <ButtonGroup size="small">
@@ -29,24 +28,21 @@
       <Button type="info" v-if="accessBtn('edit')" @click="showDetail=Math.random()" :disabled="!detailData">编辑/查看</Button>
       <Button type="error" v-if="accessBtn('ban')"  @click="deleteDetailData" :disabled="isOrderSuccess">作废</Button>
     </div>
-
+    <!--预约详情单-->
     <reservation-list-detail class="table-modal-detail" :showDetail="showDetail"
                              :detailData="detailData" @closeDetail="closeDetail"
       ></reservation-list-detail>
-      <!--弹出层组建-->
-      <common-modal6 :description="tooltipObj.description"
-      :title="tooltipObj.title" :modal6="tooltipObj.mshow" :fun="tooltipObj.funName" @del="del"></common-modal6>
+      
   </common-table>
 </template>
 <script>
   import commonTable from '@/hxx-components/common-table.vue'
   import reservationListDetail from './reservation-list-detail.vue'
   import { getName, getDictGroup } from '@/libs/util.js'
-  import commonModal6 from '@/hxx-components/common-modal6.vue'
   import mixin from '@/hxx-components/mixin'
 	export default {
 		name: "reservation-list",
-    components: {commonTable, reservationListDetail,commonModal6},
+    components: {commonTable, reservationListDetail,},
     mixins: [mixin],
     data(){
 		  return{
@@ -119,7 +115,7 @@
     },
     methods:{
 		  getList(){
-        console.log(this.search);
+        
         this.axios.request({
           url: '/tenant/repair/ttrepairorder/list',
           method: 'post',
@@ -180,11 +176,12 @@
           if(this.detailData == null){
             this.$Message.info("未选择到数据!");
           }else{
-            console.log("进入作废系统");
-            this.tooltipObj.title = '系统提示!';
-            this.tooltipObj.description = '确定要作废吗？';
-            this.tooltipObj.mshow = Math.random();
-            console.log(this.tooltipObj);
+              this.$Modal.confirm({
+                  title:"系统提示!",
+                  content:"确定要作废吗？",
+                  onOk:this.del,
+                  
+              })
           }
       },
       del(){
@@ -203,9 +200,6 @@
             }
           })
       },
-      // changeModal6(type){
-      //   this.tooltipObj.mshow = type;
-      // },
       //获取搜索框开始时间
       getOrderDateGte(val){
         this.search.orderDateGte=val;
