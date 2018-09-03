@@ -1,12 +1,11 @@
 <template>
-  <vehicle-model></vehicle-model>
+  <store-info-detail></store-info-detail>
 </template>
 
 <script>
-  import VehiclModel from '@/hxx-components/vehicle-model.vue'
-  import VehicleModel from "../hxx-components/vehicle-model";
+  import StoreInfoDetail from '@/hxx-components/store-info-detail.vue'
   export default {
-    components: {VehicleModel},
+    components: {StoreInfoDetail},
     name: "test"
   }
 </script>

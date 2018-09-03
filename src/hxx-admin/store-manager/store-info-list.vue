@@ -27,34 +27,29 @@
   </div>
   <div slot="operate">
     <Button type="primary" :disabled="!detailData" @click="">查看/编辑</Button>
-    <Button type="success" :disabled="!detailData" @click="">添加电子健康档案账号</Button>
+    <Button type="success" :disabled="!detailData" @click="showRecordInfo">添加电子健康档案账号</Button>
     <Button type="error" v-show="!detailData || detailData.CHECK_STATUS!='10351004'" :disabled="!detailData" @click="updateCheckStatus">门店停用</Button>
     <Button type="success" v-show="detailData && detailData.CHECK_STATUS=='10351004'" :disabled="!detailData" @click="updateCheckStatus">门店恢复</Button>
   </div>
 
-  <!--<Modal v-model="showModal" title="添加电子健康档案账号" :width="400">-->
-    <!--<Form ref="form" :model="form" :rules="rule" :label-width="80" class="change-password-form">-->
-      <!--<FormItem prop="oldPassword" label="旧密码">-->
-        <!--<Input type="password" v-model="form.oldPassword" @on-change="validateField(['rePassword','newPassword'])">-->
-        <!--<Icon type="ios-lock-outline" slot="prepend"></Icon>-->
-        <!--</Input>-->
-      <!--</FormItem>-->
-      <!--<FormItem prop="newPassword" label="新密码">-->
-        <!--<Input type="password" v-model="form.newPassword" @on-change="validateField(['rePassword'])">-->
-        <!--<Icon type="ios-lock-outline" slot="prepend"></Icon>-->
-        <!--</Input>-->
-      <!--</FormItem>-->
-      <!--<FormItem prop="rePassword" label="确认密码">-->
-        <!--<Input type="password" v-model="form.rePassword" @on-change="validateField(['newPassword'])">-->
-        <!--<Icon type="ios-lock-outline" slot="prepend"></Icon>-->
-        <!--</Input>-->
-      <!--</FormItem>-->
-    <!--</Form>-->
-    <!--<div slot="footer">-->
-      <!--<button type="button" class="ivu-btn ivu-btn-text ivu-btn-large" @click="showModal=false">取消</button>-->
-      <!--<button type="button" class="ivu-btn ivu-btn-primary ivu-btn-large" @click="ok()">确定</button>-->
-    <!--</div>-->
-  <!--</Modal>-->
+  <Modal v-model="showAddModal" title="添加电子健康档案账号" :width="400">
+    <Form ref="form" :rules="ruleValidate" :model="recordInfo" :label-width="80" >
+      <FormItem  label="门店名称">
+        <span>{{detailData? detailData.TENANT_NAME: ''}}</span>
+      </FormItem>
+      <FormItem prop="COMPANYCODE" label="企业编码">
+        <Input v-model="recordInfo.COMPANYCODE"></Input>
+      </FormItem>
+      <FormItem prop="COMPANYPASSWORD" label="登录密码">
+        <Input v-model="recordInfo.COMPANYPASSWORD"></Input>
+      </FormItem>
+    </Form>
+    <div slot="footer">
+      <Button @click="showAddModal=false">取消</Button>
+      <Button type="primary" @click="saveRecord()">保存</Button>
+    </div>
+  </Modal>
+
 </common-table>
 </template>
 
@@ -104,8 +99,15 @@
         ],
         detailData: null,
 
+        showAddModal: false,
         recordInfo:{
-
+          COMPANYCODE: '',
+          COMPANYPASSWORD: '',
+          TENANT_ID: ''
+        },
+        ruleValidate:{
+          COMPANYCODE: [{ required: true, message:'必填项不能为空'}],
+          COMPANYPASSWORD: [{ required: true, message:'必填项不能为空'}],
         }
       }
     },
@@ -118,6 +120,7 @@
       },
     },
     mounted(){
+      console.log('mounted')
       this.getList()
     },
     methods:{
@@ -186,6 +189,38 @@
         this.detailData=row
         this.showDetail=Math.random()
       },
+      showRecordInfo(){
+        this.recordInfo.COMPANYCODE= this.detailData.COMPANYCODE
+        this.recordInfo.COMPANYPASSWORD= this.detailData.COMPANYPASSWORD
+        this.recordInfo.TENANT_ID= this.detailData.TENANT_ID
+        this.showAddModal= true
+      },
+      saveRecord(){
+        this.$refs.form.validate((valid) => {
+          if (valid) {
+            this.$Modal.confirm({
+              title: '确定保存吗？',
+              onOk: () =>{
+                this.axios.request({
+                  url: '/manage/info/tenantinfo/saveAccount',
+                  method: 'post',
+                  data: {
+                    data: JSON.stringify(this.recordInfo),
+                    access_token: this.query.access_token
+                  }
+                }).then(res => {
+                  if (res.success === true) {
+                    this.showAddModal= false
+                    this.$Message.success('保存成功');
+                  }
+                })
+              }
+            })
+          } else {
+            // this.$Message.error('Fail!');
+          }
+        })
+      }
     }
 	}
 </script>
