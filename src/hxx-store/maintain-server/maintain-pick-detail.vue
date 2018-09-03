@@ -415,6 +415,7 @@
         },
         //获取所有仓库---
         getAllStore(){
+            this.allStore=[];
             this.axios.request({
                 url: '/tenant/basedata/ttstorehouse/get_all_list',
                 method: 'post',

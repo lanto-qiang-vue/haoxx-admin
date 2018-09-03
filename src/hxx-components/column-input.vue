@@ -1,9 +1,9 @@
 <template>
 <div class="column-input" @click="click">
-  <span v-show="show=='span'">{{val}}</span>
+  <span v-show="show=='span'">{{val|| placeholder}}</span>
   <Input ref="input" v-model="val" v-show="show=='input'" :type="inputType"
-         @on-blur="show='span'" @on-change="change"/>
-  <InputNumber ref="number" :min="min" :max="max" v-model="val" v-show="show=='number'"
+         @on-blur="show='span'" @on-change="change" :placeholder="placeholder"/>
+  <InputNumber v-if="type=='number'" ref="number" :min="min" :max="max" v-model="val" v-show="show=='number'"
                @on-blur="show='span'" @on-change="change" ></InputNumber>
 </div>
 </template>
@@ -11,7 +11,7 @@
 <script>
 	export default {
 		name: "column-input",
-    props: ['params', 'type', 'max', 'min'],
+    props: ['params', 'type', 'max', 'min', 'placeholder'],
     data(){
 		  return{
 		    val: null,

@@ -1,6 +1,7 @@
 <!--门店信息-->
 <template>
 <common-table v-model="tableData" :columns="columns" :total="total" :show="showTable" :page="query.page"
+              :loading="loading"
               @changePage="changePage" @changePageSize="changePageSize" @onRowClick="onRowClick"
               @onRowDblclick="onRowDblclick" >
   <div slot="search">
@@ -26,10 +27,29 @@
   </div>
   <div slot="operate">
     <Button type="primary" :disabled="!detailData" @click="">查看/编辑</Button>
-    <Button type="success" :disabled="!detailData" @click="">添加电子健康档案账号</Button>
-    <Button type="error" v-show="!detailData || detailData.CHECK_STATUS!='10351004'" :disabled="!detailData" @click="">门店停用</Button>
-    <Button type="success" v-show="detailData && detailData.CHECK_STATUS=='10351004'" :disabled="!detailData" @click="">门店恢复</Button>
+    <Button type="success" :disabled="!detailData" @click="showRecordInfo">添加电子健康档案账号</Button>
+    <Button type="error" v-show="!detailData || detailData.CHECK_STATUS!='10351004'" :disabled="!detailData" @click="updateCheckStatus">门店停用</Button>
+    <Button type="success" v-show="detailData && detailData.CHECK_STATUS=='10351004'" :disabled="!detailData" @click="updateCheckStatus">门店恢复</Button>
   </div>
+
+  <Modal v-model="showAddModal" title="添加电子健康档案账号" :width="400">
+    <Form ref="form" :rules="ruleValidate" :model="recordInfo" :label-width="80" >
+      <FormItem  label="门店名称">
+        <span>{{detailData? detailData.TENANT_NAME: ''}}</span>
+      </FormItem>
+      <FormItem prop="COMPANYCODE" label="企业编码">
+        <Input v-model="recordInfo.COMPANYCODE"></Input>
+      </FormItem>
+      <FormItem prop="COMPANYPASSWORD" label="登录密码">
+        <Input v-model="recordInfo.COMPANYPASSWORD"></Input>
+      </FormItem>
+    </Form>
+    <div slot="footer">
+      <Button @click="showAddModal=false">取消</Button>
+      <Button type="primary" @click="saveRecord()">保存</Button>
+    </div>
+  </Modal>
+
 </common-table>
 </template>
 
@@ -52,6 +72,7 @@
         },
         showTable:false,
         total: 0,
+        loading: true,
 
         tableData: [],
         columns: [
@@ -76,7 +97,18 @@
             render: (h, params) => h('span', params.row.AUDIT_TIME? params.row.AUDIT_TIME.substr(0, 10): '')
           },
         ],
-        detailData: null
+        detailData: null,
+
+        showAddModal: false,
+        recordInfo:{
+          COMPANYCODE: '',
+          COMPANYPASSWORD: '',
+          TENANT_ID: ''
+        },
+        ruleValidate:{
+          COMPANYCODE: [{ required: true, message:'必填项不能为空'}],
+          COMPANYPASSWORD: [{ required: true, message:'必填项不能为空'}],
+        }
       }
     },
     computed:{
@@ -88,10 +120,13 @@
       },
     },
     mounted(){
+      console.log('mounted')
       this.getList()
     },
     methods:{
       getList(){
+        this.detailData= null
+        this.loading= true
         for(let key in this.query){
           (this.query[key]=== undefined || this.query[key]=== null) ? this.query[key]='': ''
         }
@@ -104,6 +139,30 @@
             this.tableData= res.data
             this.total= res.total
             this.showTable= true
+          }
+          this.loading= false
+        })
+      },
+      updateCheckStatus(){
+        console.log(this.detailData)
+        let showText= this.detailData.CHECK_STATUS== '10351004'? '恢复': '停用'
+        this.$Modal.confirm({
+          title: '确定要'+ showText+ '该门店吗？',
+          onOk: ()=> {
+            this.axios.request({
+              url: '/manage/info/tenantinfo/updateCheckStatus',
+              method: 'post',
+              data: {
+                tenantId: this.detailData.TENANT_ID,
+                checkStatus: this.detailData.CHECK_STATUS,
+                access_token: this.query.access_token
+              }
+            }).then(res => {
+              if (res.success === true) {
+                this.$Message.success('门店'+showText+'成功')
+                this.getList()
+              }
+            })
           }
         })
       },
@@ -130,6 +189,38 @@
         this.detailData=row
         this.showDetail=Math.random()
       },
+      showRecordInfo(){
+        this.recordInfo.COMPANYCODE= this.detailData.COMPANYCODE
+        this.recordInfo.COMPANYPASSWORD= this.detailData.COMPANYPASSWORD
+        this.recordInfo.TENANT_ID= this.detailData.TENANT_ID
+        this.showAddModal= true
+      },
+      saveRecord(){
+        this.$refs.form.validate((valid) => {
+          if (valid) {
+            this.$Modal.confirm({
+              title: '确定保存吗？',
+              onOk: () =>{
+                this.axios.request({
+                  url: '/manage/info/tenantinfo/saveAccount',
+                  method: 'post',
+                  data: {
+                    data: JSON.stringify(this.recordInfo),
+                    access_token: this.query.access_token
+                  }
+                }).then(res => {
+                  if (res.success === true) {
+                    this.showAddModal= false
+                    this.$Message.success('保存成功');
+                  }
+                })
+              }
+            })
+          } else {
+            // this.$Message.error('Fail!');
+          }
+        })
+      }
     }
 	}
 </script>
