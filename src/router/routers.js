@@ -371,6 +371,17 @@ export default [
         },
         component: () => import('@/hxx-store/parts-manage/query-Inventory.vue')
       },
+      {
+        path: '/warehouse-check',
+        name: 'warehouse-check',
+        meta: {
+          icon: 'md-funnel',
+          title: '仓库盘点',
+          lgType: "1002",
+          access: '100203',
+        },
+        component: () => import('@/hxx-store/parts-manage/warehouse-check.vue')
+      },
     ]
 },
 

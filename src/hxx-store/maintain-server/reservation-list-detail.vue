@@ -16,7 +16,7 @@
        <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="80" inline class="detail-form">
           <FormItem label="车牌号码:">
               <Input @on-focus="showoff=Math.random();"	type="text" v-model="listSearch.PLATE_NUM" placeholder="请输入车牌号" style="min-width: 250px;" >
-                  <Icon type="ios-search" slot="suffix"/>
+                  <Icon type="ios-search" slot="suffix" @click="showoff=Math.random();" style="cursor:pointer;"/>
               </Input>
           </FormItem>
           <FormItem label="车型:">
