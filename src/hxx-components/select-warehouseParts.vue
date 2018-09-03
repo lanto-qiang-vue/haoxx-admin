@@ -1,12 +1,12 @@
 
-<!--选择项目组件 2018-08-23 -->
+<!--选择配件组件 2018-08-23 -->
 <template>
     <Modal
         v-model="showOnoff"
         title="选择配件"
         width="90"
         :scrollable="true"
-        :transfer= "false"
+        :transfer= "true"
         :footer-hide="false"
         :transition-names="['', '']"
     >
@@ -17,11 +17,6 @@
                 <FormItem label="配件分类:">
                     <Select v-model="test1" style="min-width: 200px;">
                         <Option v-for="(item, index) in getSellItem" :key="index" :value="item.TYPE_ID">{{item.TYPE_NAME}}</Option>
-                    </Select>
-                </FormItem>
-                <FormItem label="仓库:">
-                    <Select v-model="test2" style="min-width: 200px;">
-                        <Option v-for="(item, index) in getAllItem" :key="index" :value="item.STORE_ID">{{item.NAME}}</Option>
                     </Select>
                 </FormItem>
                 <FormItem :label-width="10">
@@ -43,8 +38,8 @@
 import commonTable from '@/hxx-components/common-table.vue'
   import { getName, getDictGroup } from '@/libs/util.js'
 	export default {
-		name: "select-parts",
-        props:['showSelectParts','initParts','initData'],
+		name: "select-warehouseParts",
+        props:['showSelectParts','initParts'],
         components: {commonTable},
         data(){
             return{
@@ -174,13 +169,9 @@ import commonTable from '@/hxx-components/common-table.vue'
                 console.log("点击选择配件了");
                 this.showOnoff=true;
                 this.selectData=this.initParts;
-                
-                this.test2=this.initData;
-
                 this.getList();
                 this.getTypeSellList();
                 this.getAllList();
-                
                 
             }
         },
@@ -207,11 +198,10 @@ import commonTable from '@/hxx-components/common-table.vue'
                 }
                 if(flag) this.selectData.push(item);
                 this.$emit('selectPartsItem', this.selectData);
-                
+                console.log('this.selectData',this.selectData)
             },
             //获取表格数据
             getList(){
-                console.log(this.test2,'this.test2');
                 this.axios.request({
                     url: '/tenant/repair/ttpartstock/list',
                     method: 'post',
@@ -225,7 +215,7 @@ import commonTable from '@/hxx-components/common-table.vue'
                     }
                 }).then(res => {
                     if (res.success === true) {
-                        
+                        console.log("得到列表数据",res);
                         this.tableData= res.data
                         this.total= res.total
 
@@ -244,7 +234,6 @@ import commonTable from '@/hxx-components/common-table.vue'
                     }
                 }).then(res => {
                     if (res.success === true) {
-                        
                         this.getSellItem=res.data;
                     }
               })

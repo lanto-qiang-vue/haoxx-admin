@@ -65,12 +65,11 @@
     },
     methods:{
       dbclick(row){
-      if(row.RECORD_TYPE == '10271001' || row.RECORD_TYPE == '10271004' || row.RECORD_TYPE == '10271002'){
+      if(row.RECORD_TYPE == '10271001' || row.RECORD_TYPE == '10271004' || row.RECORD_TYPE == '10271002' || row.RECORD_TYPE == '10371001' || row.RECORD_TYPE == '10371002'){
       this.detailData = row;
       this.serviceShow = Math.random();
-      return;
       }
-      alert(row.RECORD_TYPE);
+      return;
       },
       onRowClick(row){
         this.list = [];
@@ -106,8 +105,12 @@
           this.$Message.info('未选取数据');
           return;
         }
-       this.serviceShow = Math.random();
-       this.detailData = this.list[0];
+      var row = this.list[0];
+      if(row.RECORD_TYPE == '10271001' || row.RECORD_TYPE == '10271004' || row.RECORD_TYPE == '10271002' || row.RECORD_TYPE == '10371001' || row.RECORD_TYPE == '10371002'){
+      this.detailData = row;
+      this.serviceShow = Math.random();
+      }
+      return;
       },
     },
     mounted(){

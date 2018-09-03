@@ -335,6 +335,17 @@ export default [
         component: () => import('@/hxx-store/maintain-server/repairOrder-list.vue')
       },
       {
+        path: '/repair-items',
+        name: 'repair-items',
+        meta: {
+          icon: 'md-funnel',
+          title: '维修项目',
+          lgType: "1002",
+          access: '100509',
+        },
+        component: () => import('@/hxx-store/maintain-server/repair-items.vue')
+      },
+      {
         path: '/maintain-pick',
         name: 'maintain-pick',
         meta: {
@@ -370,6 +381,17 @@ export default [
           access: '100204',
         },
         component: () => import('@/hxx-store/parts-manage/query-Inventory.vue')
+      },
+      {
+        path: '/warehouse-check',
+        name: 'warehouse-check',
+        meta: {
+          icon: 'md-funnel',
+          title: '仓库盘点',
+          lgType: "1002",
+          access: '100203',
+        },
+        component: () => import('@/hxx-store/parts-manage/warehouse-check.vue')
       },
     ]
 },
