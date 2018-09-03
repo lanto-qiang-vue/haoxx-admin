@@ -164,9 +164,6 @@
       value(data){
         this.data= data
       },
-      $route(){
-        this.resize(500)
-      }
     },
     mounted() {
 		  let self= this
@@ -219,6 +216,9 @@
       onCurrentChange(currentRow, oldCurrentRow){
         this.$emit('onCurrentChange',currentRow, oldCurrentRow);
       }
+    },
+    activated(){
+      this.resize(500)
     }
 	}
 </script>
