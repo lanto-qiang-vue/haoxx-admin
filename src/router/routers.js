@@ -389,7 +389,7 @@ export default [
           icon: 'md-funnel',
           title: '仓库盘点',
           lgType: "1002",
-          access: '100203',
+          access: '100205',
         },
         component: () => import('@/hxx-store/parts-manage/warehouse-check.vue')
       },
