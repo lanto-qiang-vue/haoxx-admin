@@ -1,34 +1,433 @@
 <template>
-<div>
-<Tree :data="data2" show-checkbox></Tree>
-</div>
+    <Split v-model="split" :min="0.1" :max="0.5" class="split">
+    <div slot="left" class="split-pane">
+    <Tree :data="data2" @on-select-change="getnode"></Tree>
+    </div>
+    <div slot="right" class="split-pane">
+    <common-table :columns="columns" :total="total" :page="page" v-model="tableData" :show="show" @changePageSize="changePageSize" @changePage="changePage">
+          <div slot="search">
+          <Input  placeholder="项目编号/名称..." v-model="KEYWORD" style="width: 300px"></Input>
+          <label>&nbsp;&nbsp;&nbsp;项目类别:&nbsp;&nbsp;&nbsp;</label>
+          <Input :disabled="true" v-model="TYPE" style="width:250px;"></Input>
+      <ButtonGroup size="small">
+        <Button type="primary" @click="page=1;getList()"><Icon type="ios-search" size="24"/></Button>
+        <Button type="primary" @click="clear()"><Icon type="ios-undo" size="24"/></Button>
+      </ButtonGroup>
+          </div>
+              <div slot="operate">
+      <Button type="primary" @click="impor()">导入标准库</Button>
+      <Button type="primary" :disabled="isdisabled" @click="add()">新增</Button>
+      <Button type="info" :disabled="isdisabled" @click="edit()">修改</Button>
+    </div>
+    </common-table>
+    <!-- 导入标准库使用 -->
+        <Modal  
+    v-model="showModal"
+    class="table-modal-detail"
+    title="未导入的维修项目"
+    width="90"
+    :mask-closable="false"
+    :scrollable="true"
+    :transfer= "false"
+    :footer-hide="false"
+    :transition-names="['', '']">
+    <div><Tree :data="changeTree" show-checkbox></Tree></div>
+        <Spin size="large" fix v-if="spinShow" ></Spin>
+      <div slot="footer">
+      <Button @click="cancle()">取消</Button>
+      <Button type="info" @click="toimport()">导入</Button>
+      </div>
+    </Modal>
+    <!-- 导入标准库使用结束 -->
+    <!-- 自定义配件新增开始 -->
+    <Modal  
+    v-model="customModal"
+    class="table-modal-detail"
+    title="自定义新增"
+    width="90"
+    :mask-closable="false"
+    :scrollable="true"
+    :transfer= "false"
+    :footer-hide="false"
+    :transition-names="['', '']">
+        <Collapse v-model="value1">
+        <Panel name="1">
+               项目基本信息
+                <Form slot="content" :model="formData"  ref="list" :label-width="120" :rules="ruleValidate" class="common-form">
+                <FormItem label="项目名称:" style="width:30%;" prop="NAME" >
+                <Input type="text" v-model="formData.NAME"> </Input>
+                </FormItem>
+                <FormItem label="项目分类:" style="width:30%;" prop="TYPE_ID"  >
+                <Select  placeholder="" v-model="formData.TYPE_ID" style="min-width: 100%;">
+                <Option v-for="(item, index) in caritems"
+                  :key="index" :value="item.TYPE_ID">{{item.TYPE_NAME}}</Option>
+                </Select>
+                </FormItem>
+                <FormItem label="项目编号:" style="width:30%;" prop="ITEM_NO">
+                <Input type="text" v-model="formData.ITEM_NO"> </Input>
+                </FormItem>
+                <!-- 手动 -->
+                <div style="height:20px;"></div>
+                <!-- 手动 -->
+                <FormItem label="发动机类型:" style="width:45%;" prop="ENGINE_TYPE" >
+                <Select  v-model="formData.ENGINE_TYPE" style="min-width: 100%;">
+                <Option v-for="(item, index) in engine"
+                  :key="index" :value="item.ENGINE_TYPE">{{item.ENGINE_TYPE_NAME}}</Option>
+                </Select>
+                </FormItem>
+                 <FormItem label="汽车参数:" style="width:45%;" prop="CLASS_TYPE" >
+                <Select  v-model="formData.CLASS_TYPE" style="min-width: 100%;">
+                <Option v-for="(item, index) in parameter"
+                  :key="index" :value="item.CLASS_TYPE">{{item.CLASS_NAME}}</Option>
+                </Select>
+                </FormItem>
+                <!-- 手动 -->
+                <div style="height:20px;"></div>
+                <!-- 手动 -->
+                <FormItem label="计费标准:" style="width:100%;">
+                <RadioGroup v-model="formData.CHARGE_TYPE">
+                <Radio v-for="(item,index) in group" :key="index" :label="item.code">{{item.name}}</Radio>
+                </RadioGroup>
+                </FormItem>
+                   <!-- 手动 -->
+                <div style="height:10px;"></div>
+                <!-- 手动 -->
+                <FormItem :label="description" style="width:30%;">
+                <InputNumber
+                 style="width:100%;height:33px;"
+                 :min="0"
+                 v-model="number"
+                 :formatter="value => `${value}`+des"
+                 :parser="value => value.replace(des, '')"></InputNumber>
+                </FormItem>
+                </FormItem>
+                    <FormItem label="别名1:" style="width:30%;" >
+                <Input type="text" v-model="ALIAS1"> </Input>
+                </FormItem>
+                    <FormItem label="别名2:" style="width:30%;" >
+                <Input type="text" v-model="ALIAS2"> </Input>
+                </FormItem>
+                <!-- 手动 -->
+                <div style="height:20px;"></div>
+                <!-- 手动 -->
+                    <FormItem label="别名3:" style="width:30%;" >
+                <Input type="text" v-model="ALIAS3"> </Input>
+                </FormItem>
+                <FormItem label="别名4:" style="width:30%;" >
+                <Input type="text" v-model="ALIAS4"> </Input>
+                </FormItem>
+                <FormItem label="别名5:" style="width:30%;" >
+                <Input type="text" v-model="ALIAS5" > </Input>
+                </FormItem>
+                <!-- 手动 -->
+                <div style="height:10px;"></div>
+                <!-- 手动 -->
+      </Form>
+              </Panel>
+              </Collapse>
+                      <Collapse v-model="value2">
+        <Panel name="2">
+                备注描述
+                <Form slot="content"  ref="lists" class="common-form">
+                <Input type="textarea" placeholder="请输入故障描述"> </Input>
+                </Form>
+              </Panel>
+              </Collapse>
+      <div slot="footer">
+      <Button @click="addcancle()">取消</Button>
+      <Button type="primary" @click="addpost('list')">保存</Button>
+      </div>
+    </Modal>
+    <!-- 自定义配件新增结束 -->
+    </div>
+  </Split>
 </template>
 <script>
+import { getName, getDictGroup, getCreate } from '@/libs/util.js'
+import commonTable from '@/hxx-components/common-table.vue'
 export default{
 	name:'repair-items',
+  components:{commonTable},
           data () {
             return {
-                data2: [
-                    {
-                        title: 'parent 1',
-                        expand: true,
-                        children: [
-                            {
-                                title: 'parent 1-1',
-                                expand: true,
-                                children: [
-                                    {
-                                        title: 'leaf 1-1-1'
-                                    },
-                                    {
-                                        title: 'leaf 1-1-2'
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ]
+              value1:'1',
+              des:'元',
+              value2:'2',
+              description:'标准金额',
+              number:0,
+              customModal:false,
+              data2:[],
+              spinShow:false,
+              changeTree:[],
+              split:0.2,
+              caritems:[],//项目分类
+              engine:[],
+              parameter:[],
+              group:[],
+              formData:{
+                ITEM_ID:'',
+                TYPE_ID:'',
+                ENGINE_TYPE:'',//发动机类型
+                CLASS_TYPE:'',
+                CHARGE_TYPE:'',
+                ITEM_NO:'',
+                NAME:'',
+                ALIAS1:'',
+                ALIAS2:'',
+                ALIAS3:'',
+                ALIAS4:'',
+                ALIAS5:'',
+                REMARK:'',
+              },
+              columns:[
+              {title: '序号',  minWidth: 80,
+               render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
+              },
+                {title: '项目编号', key: 'ITEM_NO', sortable: true, minWidth: 150},
+              {title: '维修项目名称', key: 'NAME', sortable: true, minWidth: 150},
+              {title: '项目分类', key: 'TYPE_NAME', sortable: true, minWidth: 150},
+              {title: '计费标准', key: 'CHARGE_TYPE', sortable: true, minWidth: 150,
+              render:(h,params) => h('span',getName(this.chargetype,params.row.CHARGE_TYPE))
+              },
+              {title: '标准金额(元)', key: 'REPAIR_MONEY', sortable: true, minWidth: 150},
+              {title: '标准工时(小时)', key: 'REPAIR_TIME', sortable: true, minWidth: 150},
+              {title: '油漆面数(面)', key: 'PAINT_NUM', sortable: true, minWidth: 150},
+              ],
+              page:1,
+              limit:25,
+              total:0,
+              KEYWORD:'',
+              TYPE:'全部',
+              show:false,
+              tableData:[],
+              TYPE_ID:'',
+              showModal:false,
+          ruleValidate:{
+              TYPE_ID:[{required: true}],
+              ENGINE_TYPE:[{required: true}],//发动机类型
+              CLASS_TYPE:[{required: true}],
+              ITEM_NO:[{required: true, message: '项目编号必填', trigger: 'blur' }],
+              NAME:[{required: true, message: '项目名称必填', trigger: 'blur' }],
+              },
             }
+        },
+        mounted(){
+          //获取树
+          this.show = Math.random();
+          this.axios.request({
+          url: '/tenant/basedata/repairproject/get_infoitem_tree',
+          method: 'post',
+          data: {access_token: this.$store.state.user.token},
+        }).then(res => {
+          if (res.success === true) {
+             this.data2.push(this.machine(res.data));
+          }
+        })
+         this.getList();
+        },
+        computed:{
+        chargetype(){
+          return getDictGroup(this.$store.state.app.dict,'1014');
+        },
+        isdisabled(){
+          return false;
+          // if(this.TYPE == '自定义'){
+          // return false;
+          // }else{
+          // return true;
+          // }
         }
+        },
+        watch:{
+          'formData.CHARGE_TYPE'(val){
+           switch(val){
+            case '10141001':
+            this.description = "标准金额:";
+            this.des = "元";
+            break;
+            case '10141002':
+            this.description = "标准工时:";
+            this.des = "时";
+            break;
+            case '10141003':
+            this.description = "油漆面数:";
+            this.des = "面";
+            break;
+           }
+          }
+        },
+        methods:{
+          addcancle(){
+            this.customModal = false;
+          },
+          addpost(name){
+                this.$refs[name].validate((valid) => {
+                    if (valid) {
+                     console.log(this.formData);
+                    this.$Modal.confirm({
+                      title:'系统提示',
+                      content:'确认保存吗?',
+                      // onOk:this.vehicleAdd,
+                    });
+                    } else {
+                        this.$Message.error("请校对红框信息");
+                    }
+                })
+          },
+          getnode(num){
+            if(num.length > 0){
+            this.TYPE = num[0].title == '全部车型' ? '全部' : num[0].title;
+            var type_id = num[0].nodeId ? num[0].nodeId : num[0].title;
+            this.TYPE_ID = type_id == '全部车型' ? '': type_id;
+            this.page = 1;
+            this.getList();
+            }
+          },
+          machine(data){
+           data['title'] = data.nodeName;
+           var flag = data.children ? true : false;
+           if(flag){
+           for(var i = 0;i<data.children.length;i++){
+            this.machine(data.children[i]);
+           }
+           }else{
+
+           }
+           return data; 
+          },
+          getList(){
+         this.axios.request({
+          url: '/tenant/basedata/repairproject/get_list',
+          method: 'post',
+          data: {access_token: this.$store.state.user.token,
+                 limit:this.limit,
+                 page:this.page,
+                 KEYWORD:this.KEYWORD,
+                 TYPE_ID:this.TYPE_ID
+                },
+        }).then(res => {
+          if (res.success === true) {
+            this.tableData = res.data;
+            this.total = res.total;
+          }
+        })
+          },
+          impor(){
+          ///tenant/basedata/repairproject/get_checkitem_tree
+          this.spinShow = true;
+         this.axios.request({
+          url: '/tenant/basedata/repairproject/get_checkitem_tree',
+          method: 'post',
+          data: {access_token: this.$store.state.user.token}
+        }).then(res => {
+          this.changeTree = [];
+          if (res.success === true) {
+            this.changeTree.push(this.machine(res.data));
+           this.spinShow = false;
+          }
+        })
+          this.showModal = true;
+          },
+          add(){
+          this.$refs['list'].resetFields();
+          this.$refs['lists'].resetFields();
+          this.customModal = true;
+          //获取汽车项目
+          // /tenant/basedata/repairiteminfo/getTypeSelList1
+        this.axios.request({
+          url: '/tenant/basedata/repairiteminfo/getTypeSelList1',
+          method: 'post',
+          data: {access_token: this.$store.state.user.token,page:1,limit:25}
+        }).then(res => {
+          this.caritems = res.data;
+          this.formData.TYPE_ID = this.caritems[0].TYPE_ID;
+        })
+        //获取发动机类型 /tenant/basedata/repairiteminfo/getBanJinList
+        this.axios.request({
+          url: '/tenant/basedata/repairiteminfo/getBanJinList',
+          method: 'post',
+          data: {access_token: this.$store.state.user.token,page:1,limit:25}
+        }).then(res => {
+          this.engine = res.data;
+          this.formData.ENGINE_TYPE = this.engine[0].ENGINE_TYPE;
+        })
+        //获取汽车参数/tenant/basedata/repairiteminfo/getCarList
+        this.axios.request({
+          url: '/tenant/basedata/repairiteminfo/getCarList',
+          method: 'post',
+          data: {access_token: this.$store.state.user.token,page:1,limit:25}
+        }).then(res => {
+          this.parameter = res.data;
+          this.formData.CLASS_TYPE = this.parameter[0].CLASS_TYPE;
+        })
+        //获取单选框分钟
+        this.group = getDictGroup(this.$store.state.app.dict,'1014');
+        this.formData.CHARGE_TYPE = this.group[0]['code'];
+          },
+          edit(){},
+          clear(){
+            this.KEYWORD = '';
+            this.TYPE = "全部";
+            this.TYPE_ID = '';
+          },
+          changePage(page){
+            this.page = page;
+          },
+          changePageSize(size){
+            this.limit = size;
+          },
+        },
     }
 </script>
+<style scoped lang="less">
+.split{
+  border: 1px solid #dcdee2;
+  background-color: white;
+  .split-pane{
+    padding: 10px;
+    height: 100%;
+    overflow: auto;
+    position: relative;
+    .tree-search{
+      padding: 15px;
+      border-radius: 3px;
+    }
+    .tree-input{
+      z-index: 1;
+    }
+    .vehicle-tree{
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      left: 0;
+      top: 0;
+      padding: 50px 0 10px 10px;
+      overflow: hidden;
+    }
+  }
+}
+</style>
+<style lang="less">
+  .vehicle-tree{
+    >.ivu-tree-children{
+      height: 100%;
+      overflow: auto;
+    }
+    .highlight{
+      color: red;
+    }
+  }
+      .demo-spin-icon-load{
+        animation: ani-demo-spin 1s linear infinite;
+    }
+    @keyframes ani-demo-spin {
+        from { transform: rotate(0deg);}
+        50%  { transform: rotate(180deg);}
+        to   { transform: rotate(360deg);}
+    }
+    .demo-spin-col{
+        height: 100px;
+        position: relative;
+        border: 1px solid #eee;
+    }
+</style>
