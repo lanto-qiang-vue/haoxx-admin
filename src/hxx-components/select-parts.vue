@@ -9,7 +9,7 @@
         :transfer= "transferFlag"
         :footer-hide="false"
         :transition-names="['', '']"
-        class="table-modal-detai"
+        class="table-modal-detail"
     >
     <common-table v-model="tableData" :columns="columns" :show="showSelectParts" :total="total" @changePage="changePage" 
         @changePageSize="changePageSize" @onRowClick="onRowClick" :showOperate="showOperate">

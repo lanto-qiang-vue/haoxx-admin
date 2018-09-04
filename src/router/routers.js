@@ -345,17 +345,7 @@ export default [
         },
         component: () => import('@/hxx-store/maintain-server/repair-items.vue')
       },
-      {
-        path: '/maintain-pick',
-        name: 'maintain-pick',
-        meta: {
-          icon: 'md-funnel',
-          title: '维修领料',
-          lgType: "1002",
-          access: '100103',
-        },
-        component: () => import('@/hxx-store/maintain-server/maintain-pick.vue')
-      },
+      
       
     ]
 },
@@ -371,6 +361,17 @@ export default [
     },
     component: Main,
     children:[
+      {
+        path: '/maintain-pick',
+        name: 'maintain-pick',
+        meta: {
+          icon: 'md-funnel',
+          title: '维修领料',
+          lgType: "1002",
+          access: '100201',
+        },
+        component: () => import('@/hxx-store/parts-manage/maintain-pick.vue')
+      },
       {
         path: '/query-Inventory',
         name: 'query-Inventory',
@@ -395,6 +396,7 @@ export default [
       },
     ]
 },
+
 
 {
     path: '/customer-relations',
@@ -509,6 +511,101 @@ export default [
       },
     ]
   },
+  {
+    path: '/statistical-reports',
+    name: 'statistical-reports',
+    meta: {
+      icon: 'logo-buffer',
+      title: '统计报表',
+      lgType: "1002",
+      access: '1006',
+    },
+    component: Main,
+    children:[
+      {
+        path: '/maintenan-statistical',
+        name: 'maintenan-statistical',
+        meta: {
+          icon: 'md-funnel',
+          title: '维修班组业绩统计',
+          lgType: "1002",
+          access: '100605',
+        },
+        component: () => import('@/hxx-store/statistical-reports/maintenan-statistical.vue')
+      },
+      {
+        path: '/server-statistical',
+        name: 'server-statistical',
+        meta: {
+          icon: 'md-funnel',
+          title: '服务顾问业绩统计',
+          lgType: "1002",
+          access: '100604',
+        },
+        component: () => import('@/hxx-store/statistical-reports/server-statistical.vue')
+      },
+      
+    ]
+  },
+  {
+    path: '/resource-application',
+    name: 'resource-application',
+    meta: {
+      icon: 'logo-buffer',
+      title: '资源申请',
+      lgType: "1002",
+      access: '1009',
+    },
+    component: Main,
+    children:[
+      {
+        path: '/recruitment-list',
+        name: 'recruitment-list',
+        meta: {
+          icon: 'md-funnel',
+          title: '人员招聘',
+          lgType: "1002",
+          access: '1009102',
+        },
+        component: () => import('@/hxx-store/resource-application/recruitment-list.vue')
+      },
+      {
+        path: '/person-training',
+        name: 'person-training',
+        meta: {
+          icon: 'md-funnel',
+          title: '人员培训',
+          lgType: "1002",
+          access: '1009103',
+        },
+        component: () => import('@/hxx-store/resource-application/person-training.vue')
+      },
+    ]
+  },
+  {
+    path: '/system-manage',
+    name: 'system-manage',
+    meta: {
+      icon: 'logo-buffer',
+      title: '系统管理',
+      lgType: "1002",
+      access: '1007',
+    },
+    component: Main,
+    children:[
+      {
+        path: '/technical-support',
+        name: 'technical-support',
+        meta: {
+          icon: 'md-funnel',
+          title: '技术支持',
+          lgType: "1002",
+          access: '1009101',
+        },
+        component: () => import('@/hxx-store/system-manage/technical-support.vue')
+      },
+    ]
+},
   {
     path: '/401',
     name: 'error_401',
