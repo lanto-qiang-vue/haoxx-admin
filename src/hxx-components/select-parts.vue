@@ -6,20 +6,21 @@
         title="选择配件"
         width="90"
         :scrollable="true"
-        :transfer= "false"
+        :transfer= "transferFlag"
         :footer-hide="false"
         :transition-names="['', '']"
+        class="table-modal-detail"
     >
     <common-table v-model="tableData" :columns="columns" :show="showSelectParts" :total="total" @changePage="changePage" 
-        @changePageSize="changePageSize" @onRowClick="onRowClick">
+        @changePageSize="changePageSize" @onRowClick="onRowClick" :showOperate="showOperate">
         <div slot="search">
-            <Form inline :label-width="70">
+            <Form inline :label-width="80">
                 <FormItem label="配件分类:">
                     <Select v-model="test1" style="min-width: 200px;">
                         <Option v-for="(item, index) in getSellItem" :key="index" :value="item.TYPE_ID">{{item.TYPE_NAME}}</Option>
                     </Select>
                 </FormItem>
-                <FormItem label="仓库:">
+                <FormItem label="仓库:" v-show='stockFlag'>
                     <Select v-model="test2" style="min-width: 200px;">
                         <Option v-for="(item, index) in getAllItem" :key="index" :value="item.STORE_ID">{{item.NAME}}</Option>
                     </Select>
@@ -44,13 +45,14 @@ import commonTable from '@/hxx-components/common-table.vue'
   import { getName, getDictGroup } from '@/libs/util.js'
 	export default {
 		name: "select-parts",
-        props:['showSelectParts','initParts','initData'],
+        props:['showSelectParts','initParts','initData','stockFlag','transferFlag'],
         components: {commonTable},
         data(){
             return{
                 test1:'',
                 test2:'',
                 test3:'',
+                showOperate:false,//
                 getCarTypeData:[],//汽车类型集合
                 getBanJinListData:[],//发动机类型集合
                 getCarListData:[],//汽车参数集合
@@ -174,7 +176,7 @@ import commonTable from '@/hxx-components/common-table.vue'
                 console.log("点击选择配件了");
                 this.showOnoff=true;
                 this.selectData=this.initParts;
-                
+
                 this.test2=this.initData;
 
                 this.getList();

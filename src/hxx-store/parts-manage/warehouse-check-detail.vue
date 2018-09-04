@@ -69,7 +69,7 @@
     </div>
     <!--//选择配件-->
     <!--<select-warehouseParts :showSelectParts="showSelectParts" :initParts="initParts"></select-warehouseParts>-->
-    <select-parts :showSelectParts="showSelectParts" @selectPartsItem="selectPartsItem" :initParts="initParts" :initData="initData"></select-parts>
+    <select-parts :showSelectParts="showSelectParts" @selectPartsItem="selectPartsItem" :initParts="initParts" :initData="initData" :stockFlag='stockFlag' :transferFlag="transferFlag"></select-parts>
 
   </Modal>
 
@@ -93,19 +93,21 @@ export default {
             initParts:[],//初始化配件数组
             initData:'',//传入的基础数据值
             timer:null,//监听定时操作
+            stockFlag:false,//判断仓库是否出现
+            transferFlag:true,//判断界面是否出现在body
             //维修配件
             columns: [
                 {title: '序号',  minWidth: 60,type:'index',},
                 {title: '配件名称', key: 'NAME', sortable: true, minWidth: 150},
                 {title: '原厂编号', key: 'FACTORY_NO', sortable: true, minWidth: 150,
                 },
-                {title: '单位', key: 'UNIT', sortable: true, minWidth: 150,
+                {title: '单位', key: 'UNIT', sortable: true, minWidth: 100,
                     render: (h, params) => h('span', getName(this.getUnit, params.row.UNIT))
                 },
-                {title: '品牌', key: 'BRAND', sortable: true, minWidth: 150,
+                {title: '品牌', key: 'BRAND', sortable: true, minWidth: 100,
                     render: (h, params) => h('span', getName(this.getBrand, params.row.UNIT))
                 },
-                {title: '实盘数量', key: 'DIFFERENCE_NUM', sortable: true, minWidth: 150,
+                {title: '实盘数量', key: 'DIFFERENCE_NUM', sortable: true, minWidth: 120,
                     render: (h, params) => {
                         return h('div', [
                             h('InputNumber', {
@@ -130,9 +132,9 @@ export default {
                         ]);
                     }
                 },
-                {title: '现库数量', key: 'STOCK_NUM', sortable: true, minWidth: 150,
+                {title: '现库数量', key: 'STOCK_NUM', sortable: true, minWidth: 120,
                 },
-                {title: '差异数量', key: 'CHECK_NUM', sortable: true, minWidth: 150,
+                {title: '差异数量', key: 'CHECK_NUM', sortable: true, minWidth: 120,
                     render: (h, params) => h('span', (params.row.DIFFERENCE_NUM-params.row.STOCK_NUM))
                 },
                 {title: '备注', key: 'REMARK', sortable: true, minWidth: 150,
@@ -260,6 +262,7 @@ export default {
               this.saveFlag=true;
               this.noSaveFlag=false;
               this.initData='';
+              this.commitParts=[];
 
           }
       }

@@ -10,7 +10,7 @@
       <div class="search-block">
         <Select v-model="search.select1" placeholder="选择状态...">
           <Option v-for="(item, index) in allCheckStatus"
-                  :key="index" :value="item.code">{{item.name}}</Option>
+                  :key="item.code" :value="item.code">{{item.name}}</Option>
         </Select>
       </div>
       
@@ -21,8 +21,8 @@
     </div>
     <div slot="operate">
       <Button type="primary" v-if="" :disabled="buttonStateArr.add"  @click="selectPick">新增</Button>
-      <Button type="primary" v-if="" :disabled="buttonStateArr.edit" @click="">修改|查看</Button>
-      <Button type="primary" v-if="" :disabled="buttonStateArr.ban" @click="">作废</Button>
+      <Button type="primary" v-if="" :disabled="buttonStateArr.edit" @click="editButton">修改|查看</Button>
+      <Button type="primary" v-if="" :disabled="buttonStateArr.ban" @click="doBantitle">作废</Button>
     </div>
     <!--维修领料详情-->
     <warehouse-check-detail class="table-modal-detail" :showDetail="showDetail" :detailData="detailData" @closeDetail="closeDetail"></warehouse-check-detail>
@@ -54,10 +54,10 @@ export default {
                 {title: '盘点人', key: 'CHECK_PERSON', sortable: true, minWidth: 100,
                     
                 },
-                {title: '状态', key: 'STATUS', sortable: true, minWidth: 200,
+                {title: '状态', key: 'STATUS', sortable: true, minWidth: 150,
                     render: (h, params) => h('span', getName(this.allCheckStatus, params.row.STATUS))
                 },
-                {title: '创建人', key: 'CREATER', sortable: true, minWidth: 150,
+                {title: '创建人', key: 'CREATER', sortable: true, minWidth: 100,
                     render: (h, params) => h('span', getCreate(this.$store.state.app.tenant, params.row.CREATER))
                 },
                 {title: '备注', key: 'REMARK', sortable: true, minWidth: 100,
@@ -85,8 +85,7 @@ export default {
                 edit:false,//编辑
                 ban:true,//作废
             },//按钮状态组数据
-            
-            allCheckStatus:[],//
+            allCheckStatus:[],//选择状态数据
       }
     },
     computed:{
@@ -97,11 +96,8 @@ export default {
         
     },
     mounted () {
-
       this.getList();
       this.showTable= Math.random();
-      
-
       this.allCheckStatus=getDictGroup(this.$store.state.app.dict, '1044');
     },
     methods:{
@@ -112,7 +108,7 @@ export default {
                 method: 'post',
                 data: {
                     KEYWORD: this.search.input,
-                    STATUS_eq: this.search.select1,
+                    STATUS_eq: this.search.select1 || '',
                     page: this.page,
                     limit: this.limit,
                     access_token: this.$store.state.user.token
@@ -129,6 +125,7 @@ export default {
                 for(var i in this.search){
                     this.search[i]= ''
                 }
+                console.log(this.search);
                 this.page=1;
                 this.getList()
         },
@@ -142,6 +139,7 @@ export default {
         },
 
         onRowClick(row, index){
+            console.log(row);
             if(row.STATUS=='10441003'||row.STATUS=='10441004'){
                 for(let i in this.buttonStateArr){
                     switch(i){
@@ -165,13 +163,56 @@ export default {
         closeDetail(){
             this.detailData= null;
             this.clearTableSelect= Math.random();
-            this.getList();
+            this.reset();
         },
-        //维修领料
+        //新增按钮
         selectPick(){
+            this.detailData=null;
             this.showDetail=Math.random();
-        }
-      
+        },
+        //编辑按钮
+        editButton(){
+            if(this.detailData){
+                this.showDetail=Math.random();
+            }else{
+                this.$Message.info('请选择一条数据');
+            }
+        },
+        //作废按钮
+        doBantitle(){
+            this.$Modal.confirm({
+                title:"系统提示!",
+                content:"确定要作废吗？",
+                onOk:this.doBan,
+                
+            })
+        },
+        doBan(){
+            this.axios.request({
+                url: '/tenant/part/ttpartcheck/doBan',
+                method: 'post',
+                data: {
+                    ids: this.detailData.CHECK_ID,
+                    access_token: this.$store.state.user.token
+                }
+                }).then(res => {
+                    if (res.success === true) {
+                        this.$Message.info('数据作废成功');
+                        this.reset();
+                    }
+                });
+        },
+        //重置数据-----
+        reset(){
+            this.getList();
+            for(let i in this.buttonStateArr){
+                switch(i){
+                    case 'ban': this.buttonStateArr[i]= true; break
+                    default : this.buttonStateArr[i]= false;
+                }
+            }
+        },
+
     }
 }
 </script>

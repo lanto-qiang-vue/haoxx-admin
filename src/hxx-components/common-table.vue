@@ -35,6 +35,7 @@
     @on-current-change="onCurrentChange"
   ></Table>
   <div class="table-bottom">
+    <div><slot name="footer"></slot></div>
     <Page :current="page" :page-size="25" show-sizer show-elevator show-total :page-size-opts="[25, 50, 100, 150]"
     placement="top" :total="total" @on-change="changePage" @on-page-size-change="changePageSize"/>
     <Button class="refresh" @click="changePage(page)"><Icon type="md-refresh" size="20"/></Button>
@@ -246,7 +247,7 @@
   }
   .table-bottom{
     position: absolute;
-    height: 52px;
+    /*height: 52px;*/
     padding: 10px;
     width: 100%;
     left: 0;
