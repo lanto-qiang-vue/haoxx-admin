@@ -1,4 +1,4 @@
-<!--预约单管理-->
+<!--预约单管理 2018 09 05-->
 <template>
   <common-table v-model="tableData" :columns="columns" :total="total" :clearSelect="clearTableSelect"
                 @changePage="changePage" @changePageSize="changePageSize" @onRowClick="onRowClick"
@@ -53,31 +53,30 @@
             title:'',
         },
         columns: [
-          // {type: 'selection', width: 50, fixed: 'left'},
-          {title: '序号',  minWidth: 60,
+          {title: '序号',  minWidth: 80,
             render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
           },
-          {title: '预约类别', key: 'ORDER_TYPE', sortable: true, minWidth: 150,
+          {title: '预约类别', key: 'ORDER_TYPE', sortable: true, minWidth: 120,
             render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.ORDER_TYPE))
           },
-          {title: '预约人', key: 'ORDER_PERSON', sortable: true, minWidth: 150},
-          {title: '联系电话', key: 'TELPHONE', sortable: true, minWidth: 150},
-          {title: '车牌号', key: 'PLATE_NUM', sortable: true, minWidth: 100},
+          {title: '预约人', key: 'ORDER_PERSON', sortable: true, minWidth: 120},
+          {title: '联系电话', key: 'TELPHONE', sortable: true, minWidth: 135},
+          {title: '车牌号', key: 'PLATE_NUM', sortable: true, minWidth: 120},
           {title: '车型', key: 'VEHICLE_MODEL', sortable: true, minWidth: 200},
-          {title: '预约日期', key: 'ORDER_DATE', sortable: true, minWidth: 150,
+          {title: '预约日期', key: 'ORDER_DATE', sortable: true, minWidth: 130,
             render: (h, params) => h('span', params.row.ORDER_DATE.substr(0, 10))
           },
-          {title: '预约时间', key: 'ORDER_TIME', sortable: true, minWidth: 100},
-          {title: '维修类型', key: 'REPAIR_TYPE', sortable: true, minWidth: 150,
+          {title: '预约时间', key: 'ORDER_TIME', sortable: true, minWidth: 120},
+          {title: '维修类型', key: 'REPAIR_TYPE', sortable: true, minWidth: 120,
             render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.REPAIR_TYPE))
           },
-          {title: '应收金额', key: 'SUM_MONEY', sortable: true, minWidth: 150,
+          {title: '应收金额', key: 'SUM_MONEY', sortable: true, minWidth: 120,
             render: (h, params) => h('span', params.row.SUM_MONEY|| '0.00')
           },
-          {title: '状态', key: 'STATUS', sortable: true, minWidth: 150,
+          {title: '状态', key: 'STATUS', sortable: true, minWidth: 110,
             render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.STATUS))
           },
-          {title: '预约单号', key: 'ORDER_NO', sortable: true, minWidth: 150},
+          {title: '预约单号', key: 'ORDER_NO', sortable: true, minWidth: 170},
         ],
         tableData: [],
         searchSelectOption:[],
@@ -121,7 +120,7 @@
           method: 'post',
           data: {
             KEYWORD: this.search.input,
-            STATUS_eq: this.search.select,
+            STATUS_eq: this.search.select||'',
             ORDER_DATE_gte:this.search.orderDateGte,
             ORDER_DATE_lte: this.search.orderDateIte,
             page: this.page,

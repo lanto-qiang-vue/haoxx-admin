@@ -20,9 +20,9 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="primary" v-if="" :disabled="buttonStateArr.add"  @click="selectPick">新增</Button>
-      <Button type="primary" v-if="" :disabled="buttonStateArr.edit" @click="editButton">修改|查看</Button>
-      <Button type="primary" v-if="" :disabled="buttonStateArr.ban" @click="doBantitle">作废</Button>
+      <Button type="primary" v-if="accessBtn('add')" :disabled="buttonStateArr.add"  @click="selectPick">新增</Button>
+      <Button type="primary" v-if="accessBtn('edit')" :disabled="buttonStateArr.edit" @click="editButton">修改|查看</Button>
+      <Button type="primary" v-if="accessBtn('ban')" :disabled="buttonStateArr.ban" @click="doBantitle">作废</Button>
     </div>
     <!--维修领料详情-->
     <warehouse-check-detail class="table-modal-detail" :showDetail="showDetail" :detailData="detailData" @closeDetail="closeDetail"></warehouse-check-detail>
@@ -42,7 +42,7 @@ export default {
     data(){
 		return{
             columns: [
-                {title: '序号',  minWidth: 60,
+                {title: '序号',  minWidth: 80,
                     render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
                 },
                 {title: '仓库名称', key: 'STORE_NAME', sortable: true, minWidth: 150,

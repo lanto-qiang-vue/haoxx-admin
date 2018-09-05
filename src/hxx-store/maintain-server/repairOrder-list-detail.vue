@@ -181,8 +181,8 @@
       <select-vehicle :showoff="showoff" @selectCar="selectCar">
       </select-vehicle>
       <!--选择项目-->
-      <select-items :showTenanceItems="showTenanceItems" @sTenanceItem="sTenanceItem" :initGetItem="initGetItem">
-      </select-items>
+      <select-itemsType :showTenanceItems="showTenanceItems" @sTenanceItem="sTenanceItem" :initGetItem="initGetItem">
+      </select-itemsType>
       <!--选择配件-->
       <select-parts :showSelectParts="showSelectParts" @selectPartsItem="selectPartsItem" :initParts="initParts">
       </select-parts>
@@ -204,7 +204,7 @@
   import { formatDate } from '@/libs/tools.js'
   import commonModal6 from '@/hxx-components/common-modal6.vue'
   import selectVehicle from '@/hxx-components/select-vehicle.vue'
-  import selectItems from '@/hxx-components/select-items.vue'
+  import selectItemsType from '@/hxx-components/select-itemsType.vue'
   import selectParts from '@/hxx-components/select-parts.vue'
   import selectPartsGroup from '@/hxx-components/select-partsGroup.vue'
 
@@ -216,7 +216,7 @@
 
 	export default {
 	name: "repairOrder-list-detail",
-    components: {commonModal6,selectVehicle,selectItems,selectParts,selectPartsGroup,selectItemPackage,selectAccountOrder},
+    components: {commonModal6,selectVehicle,selectItemsType,selectParts,selectPartsGroup,selectItemPackage,selectAccountOrder},
     data(){
       return{
         showSelectAccount:null,//选择工单结算单
