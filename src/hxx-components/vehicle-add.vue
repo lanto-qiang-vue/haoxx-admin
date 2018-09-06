@@ -2,6 +2,7 @@
 	<Modal
   :transition-names="['', '']"
 	v-model="showModal"
+  @on-visible-change="visibleChange"
     width="90"
     title="车辆新增"
     :mask-closable="false"
@@ -9,7 +10,7 @@
     :transfer= "false"
     :footer-hide="false">	
     <!-- 车辆车辆档案新增调用 -->
-    <Form :label-width="120" :model="formData" ref="formData" :rules="ruleValidate" inline>
+    <Form :label-width="120" :model="formData" ref="formData" class="common-form" :rules="ruleValidate" inline>
           <FormItem label="车牌号:" style="width:45%;"  prop="PLATE_NUM">
               <Input type="text" v-model="formData.PLATE_NUM"  style="min-width: 100%;"> </Input>
           </FormItem>
@@ -56,7 +57,7 @@
           </FormItem>
           <div style="clear:both;"></div>
           <!-- 3 -->
-                        <FormItem label="定保里程:" style="width:30%;" >
+          <FormItem label="定保里程:" style="width:30%;" >
                     <InputNumber
             style="width:100%;line-height:34px;"
             :min="0"
@@ -218,7 +219,7 @@
 		props:['show','CUSTOMER_ID','row','sign'],
 		watch:{
            show(){
-             this.$refs['formData'].resetFields();
+            this.$refs['formData'].resetFields();
            	this.showModal=true;
            	// alert(1);
            	if(this.must.length === 0) this.getInsure();
@@ -234,8 +235,8 @@
            },
            row(obj){
       this.formData.REMARK = obj.REMARK;
-      this.formData.MUST_SAFE_CORP = obj.MUST_SAFE_CORP;
-			this.formData.BUSINESS_SAFE_CORP = obj.BUSINESS_SAFE_CORP;
+      this.formData.MUST_SAFE_CORP = obj.MUST_SAFE_CORP ? obj.MUST_SAFE_CORP : 0;
+			this.formData.BUSINESS_SAFE_CORP = obj.BUSINESS_SAFE_CORP ? obj.BUSINESS_SAFE_CORP : 0;
 		  this.formData.VEHICLE_COLOR = obj.VEHICLE_COLOR;
 			this.formData.COME_MILEAGE = obj.COME_MILEAGE ? parseFloat(obj.COME_MILEAGE) : 0;
 		  this.formData.REPAIR_MILEAGE = obj.REPAIR_MILEAGE ? parseFloat(obj.REPAIR_MILEAGE) : 0;
@@ -282,6 +283,9 @@
       this.formData.VEHICLE_MODEL = row.MODEL_NAME;
       this.formData.TID = row.TID;
       this.vehicleShow = false;
+      },
+      visibleChange(){
+        this.$emit('clearsection');
       },
 			submit(name){
 				            this.$refs[name].validate((valid) => {

@@ -66,7 +66,7 @@
       <Button type="primary" @click="addpost('list')">保存</Button>
       </div> -->
     </Modal>
-    <select-item :itemShow="changeModal" @addpush="addpush"></select-item>
+    <select-item :itemShow="changeModal" :delrow="delrow" @addpush="addpush"></select-item>
   </common-table>
 </template>
 <script>
@@ -83,6 +83,7 @@
 		showModal:false,
 		formData:{},
     selectData:[],
+    delrow:{},
 		tableData:[],
 		changeModal:false,
            columns: [
@@ -107,16 +108,45 @@
             render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
           },
           {title: '项目套餐编号', key: 'ITEM_NO', sortable: true, minWidth: 150},
-          {title: '项目套餐名称', key: 'ITEM_NAME', sortable: true, minWidth: 150},
+          {title: '项目套餐名称', key: 'NAME', sortable: true, minWidth: 150},
           {title: '项目分类', key: 'TYPE_NAME', sortable: true, minWidth: 150},
           {title: '计费标准', key: 'CHARGE_TYPE', sortable: true, minWidth: 150,
            render: (h,params)=> h('span',getName(this.counttype,params.row.CHARGE_TYPE))
           },
-          {title: '标准金额(元)', key: 'STATUS', sortable: true, minWidth: 150},
-          {title: '标准工时(小时)', key: 'CREATER', sortable: true, minWidth: 150},
-          {title: '油漆面数(面)', key: 'CREATE_TIME', sortable: true, minWidth: 150},
-          {title: '是否预设项目', key: 'CREATE_TIME', sortable: true, minWidth: 150},
-          {title: '状态', key: 'CREATE_TIME', sortable: true, minWidth: 150}
+          {title: '标准金额(元)', key: 'REPAIR_MONEY', sortable: true, minWidth: 150},
+          {title: '标准工时(小时)', key: 'REPAIR_TIME', sortable: true, minWidth: 150},
+          {title: '油漆面数(面)', key: 'PAINT_NUM', sortable: true, minWidth: 150},
+          {title: '是否预设项目', key: 'IS_PREINSTALL', sortable: true, minWidth: 150,
+          render: (h,params)=>h('span',getName(this.isorno,params.row.IS_PREINSTALL))
+          },
+          {title: '状态', key: 'STATUS', sortable: true, minWidth: 150,
+          render: (h,params)=>h('span',getName(this.statuslist,params.row.STATUS))
+          },{title: '操作', key: 'operation', sortable: true, minWidth: 80,fixed: 'right',
+                        render: (h, params) => {
+                            let buttonContent= '删除';
+                            let buttonStatus = 'error';
+                            return h('div', [
+                                h('Button', {
+                                    props: {
+                                        type: buttonStatus,
+                                        size: 'small',
+                                    },
+                                    style: {
+                                        width:"60px",
+                                        textAlign: "center",
+                                        marginRight: '10px',
+                                    },
+                                    on: {
+                                        click: (index) => {
+                                          // this.(this.tableData[params.index]);
+                                          this.delrow = this.selectData[params.index];
+                                         // console.log(this.itemList);
+                                        }
+                                    }
+                                }, buttonContent),
+                            ]);
+                        }
+                    }
         ],
 			showTable:false,
 			total:0,
@@ -128,6 +158,17 @@
 			},
 		}
 		},
+    watch:{
+    delrow(row){
+          var data = [];
+          this.selectData.filter(function(item){
+            if(row.ITEM_ID != item.ITEM_ID){
+              data.push(item);
+            }
+          });
+          this.selectData = data;
+    }
+    },
 		methods:{
       changeadd(){
         this.changeModal = Math.random();

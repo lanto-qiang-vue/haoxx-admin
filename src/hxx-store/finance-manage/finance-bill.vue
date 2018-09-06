@@ -2,6 +2,7 @@
   <Modal
     v-model="showModal"
     :title="title"
+    @on-visible-change="visibleChange"
     width="80"
     :scrollable="true"
     :transfer= "false"
@@ -548,6 +549,9 @@
       }
     },
     methods:{
+      visibleChange(){
+        this.$emit('clearsection');
+      },
       getName(a,b){
         return getName(a,b);
       },

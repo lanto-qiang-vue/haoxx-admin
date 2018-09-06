@@ -1,7 +1,7 @@
 <template>
   <common-table v-model="tableData" :columns="columns" :total="total" :show="showTable"
-    @changePage="changePage" ref="selection" @changePageSize="changePageSize" @changeSelect="changeSelect" @onRowDblclick="double">
-    <div slot="search"  >
+    @changePage="changePage" :clearSelect="cleartype" :page="page" ref="selection" @changePageSize="changePageSize" @onRowClick="onRowClick" @onRowDblclick="double">
+    <div slot="search">
       <div class="search-block">
         <Input v-model="search.input" placeholder="客户编号/名称/手机号码..."></Input>
       </div>
@@ -14,22 +14,22 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="primary" @click="showDetail=Math.random(),sign=1">新增</Button>
-      <Button type="info" @click="edit()">编辑/查看</Button>
-      <Button type="error" @click="remove()">作废</Button>
+      <Button type="primary" @click="add()">新增</Button>
+      <Button type="info" :disabled="cando" @click="edit()">编辑/查看</Button>
+      <Button type="error" :disabled="cando" @click="remove()">作废</Button>
       <Button type="success" @click="lead()">导入</Button>
       <Button type="primary" @click="expor()">导出</Button>
     </div>
     <!-- 添加查询修改-->
     <!-- class="table-modal-detail" -->
-    <customer-list-detail :show="showDetail" @refresh="getList()" :sign="sign" :detail="detail" class="table-modal-detail"></customer-list-detail>
+    <customer-list-detail  :show="showDetail" @refresh="getList()" :detail="detail" class="table-modal-detail" @clearsection="clearsection"></customer-list-detail>
     <!-- Excel上传 -->
     <upload-excel  :type="etype" :success="'esuccess'" @esuccess="esuccess"></upload-excel>
   </common-table>
 </template>
 <script>
     import commonTable from '@/hxx-components/common-table.vue'
-    import { getName, getDictGroup } from '@/libs/util.js'
+    import { getName, getDictGroup,getCreate } from '@/libs/util.js'
     import uploadExcel from '@/hxx-components/upload-excel.vue'
     import customerListDetail from '@/hxx-store/customer-relations/customer-list-detail.vue'
     import env from '_conf/url'
@@ -39,24 +39,23 @@
     data(){
       return{
         columns: [
-          {type: 'selection', width: 50, fixed: 'left'},
           {title: '序号',  minWidth: 80,
-            render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
+            render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1)
           },
-           {title: '客户编号', key: 'CODE', sortable: true, minWidth: 150},
-          {title: '客户名称', key: 'NAME', sortable: true, minWidth: 150},
-          {title: '移动电话', key: 'MOBILE_PHONE', sortable: true, minWidth: 150},
-          {title: '客户类型', key: 'CUSTOMER_TYPE', sortable: true, minWidth: 150,
+           {title: '客户编号', key: 'CODE', sortable: true, minWidth: 120},
+          {title: '客户名称', key: 'NAME', sortable: true, minWidth: 120},
+          {title: '移动电话', key: 'MOBILE_PHONE', sortable: true, minWidth: 130},
+          {title: '客户类型', key: 'CUSTOMER_TYPE', sortable: true, minWidth: 120,
             render: (h, params) => h('span',getName(this.$store.state.app.dict, params.row.CUSTOMER_TYPE))
           },
-          {title: '客户等级', key: 'CUSTOMER_LEVEL', sortable: true, minWidth: 150,
+          {title: '客户等级', key: 'CUSTOMER_LEVEL', sortable: true, minWidth: 120,
             render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.CUSTOMER_LEVEL))
           },
-          {title: '客户专员', key: 'FOLLOW_PERSON', sortable: true, minWidth: 150},
-          {title: '创建人', key: 'CREATER', sortable: true, minWidth: 150
-            // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.CREATER))
+          {title: '客户专员', key: 'FOLLOW_PERSON', sortable: true, minWidth: 120},
+          {title: '创建人', key: 'CREATER', sortable: true, minWidth: 100,
+            render: (h, params) => h('span', getCreate(this.$store.state.app.tenant, params.row.CREATER))
           },
-          {title: '创建时间', key: 'CREATE_TIME', sortable: true, minWidth: 150
+          {title: '创建时间', key: 'CREATE_TIME', sortable: true, minWidth: 120
           },
           {title: '备注', key: 'REMARK', sortable: true, minWidth: 150},
         ],
@@ -66,6 +65,7 @@
           input: '',
           number: ''
         },
+        cleartype:false,//清除选中效果
         page: 1,
         limit: 25,
         detail:{},
@@ -77,8 +77,7 @@
         title:'',//modal6标题
         etype:false,//excel上传显示
         showDetail:true,//detail查询修改
-        sign:1,//1新增,2修改
-        selection:{},//存储选择的对象
+        selection:'',//存储选择的对象
         showTable: false
       }
     },
@@ -89,6 +88,33 @@
       this.showTable= true
     },
     methods:{
+      add(){
+      this.showDetail=Math.random();
+      var formData = {
+          name:'',
+          phone:'',
+          address:'',
+          tel:'',
+          idcard:'',
+          CUSTOMER_ID:'',
+          birthday:'',
+          sex:'',
+          resource:'',
+          level:'',
+          type:'',
+          qq:'',
+          wx:'',
+          attach:'',
+          email:'',
+          snumber:'',
+          remark:'',
+        }
+      this.detail = formData;
+      },
+      clearsection(){
+        this.selection = '';
+        this.cleartype = Math.random();
+      },
       getList:function(){
              this.axios.request({
           url: 'tenant/basedata/ttcustomerfile/list',
@@ -105,6 +131,7 @@
             this.list = [];
             this.tableData= res.data
             this.total= res.total
+            this.clearsection();
           }
         })
       },
@@ -126,27 +153,19 @@
         this.getList()
       },
       changeSelect(selection){
-        this.selection = selection;
-        var that = this;
-        that.list = [];
-        selection.filter(function(item){
-          that.list.push(item.CUSTOMER_ID);
-        });
+        // this.selection = selection;
+        // var that = this;
+        // that.list = [];
+        // selection.filter(function(item){
+        //   that.list.push(item.CUSTOMER_ID);
+        // });
       },
       remove(){
-        //移除前提示
-        if(this.list.length == 0){
-          this.$Message.info("未选择到数据!");
-        }else{
-           // this.title = '系统提示!';
-           // this.description = '客户档案作废后，该客户下属车辆也将作废，确认要作废吗？';
-           // this.mshow = Math.random();
                     this.$Modal.confirm({
                       title:'系统提示!',
                       content:'客户档案作废后，该客户下属车辆也将作废，确认要作废吗？',
                       onOk:this.del,
                     });
-        }
       },
       del(){
         //调用接口删除list中数据
@@ -154,7 +173,7 @@
           url: 'tenant/basedata/ttcustomerfile/cancel',
           method: 'post',
           data: {
-            ids:this.list.join(','),
+            ids:this.selection.CUSTOMER_ID,
             access_token: this.$store.state.user.token
           }
         }).then(res => {
@@ -199,18 +218,23 @@
     },
     double(row,index){
      this.showDetail = Math.random();
-     this.sign = 2;
      this.detail = row;
     },
-    edit(){
-     if(this.list.length < 1) {this.$Message.info("未选择到数据!");return;}
-     if(this.list.length > 1) {this.$Message.info("至多选取一条!");return;}
-     this.showDetail = Math.random();
-     this.sign = 3;
-     this.detail = this.selection[0];
+    onRowClick(row){
+    this.selection = row;
     },
-    }
+    edit(){
+     this.detail = this.selection;
+     this.showDetail = Math.random();
+    },
+    },
+computed:{
+  cando(){
+    var flag = this.selection == '' ? true : false;
+    return flag;
   }
+  }
+}
 </script>
 <style lang="less" scoped>
 .search-block{

@@ -2,6 +2,7 @@
 <template>
   <Modal
     v-model="showModal"
+    @on-visible-change="visibleChange"
     title="维修记录"
     width="80"
     :scrollable="true"
@@ -213,6 +214,9 @@
       }else{
         return '否';
       }
+      },
+      visibleChange(){
+        this.$emit('clearsection');
       },
       getInfo(){
               // 获取详情头部

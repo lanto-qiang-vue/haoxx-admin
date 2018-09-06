@@ -2,6 +2,7 @@
 	  <Modal
     :transition-names="['', '']"
     v-model="showModal"
+    @on-visible-change="visibleChange"
     title="车辆档案详情"
     width="90"
     :scrollable="true"
@@ -149,7 +150,7 @@
         </TabPane>
                 <!-- 维修记录 -->
         <TabPane label="维修记录" name="m2"  :disabled="formData.VEHICLE_ID < 1"  icon="logo-windows">
-        <common-table :columns="columns" @changePageSize="changePageSize" @changePage="changePage" :total="total" :showOperate="false" @onRowClick="getobj" :showSearch="false" v-model="tableData" :page="page" :show="show">
+        <common-table :columns="columns" @changePageSize="changePageSize" @changePage="changePage" :total="total" :showOperate="false" @onRowClick="getobj" :showSearch="false" :clearSelect="cleartype"  @clearsection ="clearsection" v-model="tableData" :page="page" :show="show">
         </common-table>
         </TabPane>
         <!-- 维修记录 -->
@@ -162,7 +163,7 @@
   <div slot="footer">
     <Button @click="showModal = false">取消</Button>
     <Button v-if="hidetype === 1" v-show="indexName == 'm1'" type="primary" style="margin-left: 8px" @click="submit('formData')">保存</Button>
-    <Button type="info" v-show="indexName == 'm2'" style="margin-left: 8px" @click="vehicleLook">查看</Button>
+    <Button type="info" v-show="indexName == 'm2'" style="margin-left: 8px" :disabled="cando" @click="vehicleLook">查看</Button>
   </div>
 <select-customer @select="select" :showoff="showoff"></select-customer>
 <Modal
@@ -174,7 +175,7 @@
     :footer-hide="true"
 >
 <vehicle-model :show="vehicleShow" @onRowClick="onRowClick"></vehicle-model>
-<service-record :showDetail="serviceShow" :detailData="detailData"></service-record>
+<service-record :showDetail="serviceShow" @clearsection="clearsection" :detailData="detailData"></service-record>
 </Modal>
 </Modal>
 </template>
@@ -187,6 +188,12 @@
 	  export default{
 		name:'cart-modal',
 		components:{selectCustomer,commonTable,vehicleModel,serviceRecord},
+    computed:{
+      cando(){
+      var flag = this.obj == '' ? true : false;
+      return flag;
+      }
+    },
 		data(){
 			     const validatePass = (rule, value, callback) => {
 			     	var p1 = /\d?[A-Z]+\d?/
@@ -197,7 +204,8 @@
                 }
             };
 			return{
-				obj:[],//单选内容存储
+        cleartype:false,
+				obj:'',//单选内容存储
         serviceShow:false,
         detailData:[],
 				store:[],
@@ -240,7 +248,7 @@
 				},
 				ruleValidate:{
 					 PLATE_NUM:[{required: true, message: '车牌号必填', trigger: 'blur' },
-					 { type:'string',pattern:/^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-Z0-9]{4}[A-Z0-9挂学警港澳]{1}$/, message:'请输入正确的车牌号码', trigger:'change'}
+					 { type:'string',pattern:/^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-Z0-9]{4}[A-Z0-9挂学警港澳]{1,2}$/, message:'请输入正确的车牌号码', trigger:'change'}
 					 ],
 					 VIN_NO:[{required: true, message: '车架号必填', trigger: 'blur' },
 					 	{ validator: validatePass, trigger: 'change' },
@@ -259,19 +267,19 @@
           {title: '序号',  minWidth: 80,
             render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
           },
-           {title: '进厂日期', key: 'COME_DATE', sortable: true, minWidth: 150},
-          {title: '维修类型', key: 'REPAIR_TYPE', sortable: true, minWidth: 150,
+           {title: '进厂日期', key: 'COME_DATE', sortable: true, minWidth: 120},
+          {title: '维修类型', key: 'REPAIR_TYPE', sortable: true, minWidth: 120,
            render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.REPAIR_TYPE))
           },
-          {title: '故障描述', key: 'FAULT_DESC', sortable: true, minWidth: 150},
-          {title: '应收金额', key: 'SUM_MONEY', sortable: true, minWidth: 150
+          {title: '故障描述', key: 'FAULT_DESC', sortable: true, minWidth: 120},
+          {title: '应收金额', key: 'SUM_MONEY', sortable: true, minWidth: 120
           },
-          {title: '主修人', key: 'REPAIR_PERSON', sortable: true, minWidth: 150
+          {title: '主修人', key: 'REPAIR_PERSON', sortable: true, minWidth: 100
           },
-          {title: '状态', key: 'STATUS', sortable: true, minWidth: 150,
+          {title: '状态', key: 'STATUS', sortable: true, minWidth: 100,
            render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.STATUS))
           },
-          {title: '服务顾问', key: 'FOLLOW_PERSON', sortable: true, minWidth: 150
+          {title: '服务顾问', key: 'FOLLOW_PERSON', sortable: true, minWidth: 120
           },
         ],
 			}
@@ -308,6 +316,13 @@
            },
 		},
 		methods:{
+      visibleChange(){
+        this.$emit('clearsection');
+      },
+      clearsection(){
+        this.obj = '';
+        this.cleartype = Math.random();
+      },
 			getInsure(){
 			//获取保险下拉列表。交强商业居然是一样的
 		  this.axios.request({
@@ -376,18 +391,20 @@
       },
 			vehicleLook(){
 				//查看数据使用
-			if(this.obj.length === 0){
-			 this.$Message.info('请选取数据');
-			 return;
-			}
-			console.log(this.obj[0]);
-      this.detailData = this.obj[0];
+			// if(this.obj.length === 0){
+			//  this.$Message.info('请选取数据');
+			//  return;
+			// }
+			// console.log(this.obj[0]);
+   //    this.detailData = this.obj[0];
+      this.detailData = this.obj;
       this.serviceShow = Math.random();
 			},
 			getobj(row){
 				//存单选数据
-			this.obj = [];
-			this.obj.push(row);
+			// this.obj = [];
+			// this.obj.push(row);
+      this.obj = row;
 			},
 		  getList(){
 		  this.axios.request({
@@ -402,6 +419,7 @@
           if (res.success === true) {
              this.total = res.total;
              this.tableData = res.data;
+             this.selection();
           }
         })
 			},changePageSize(size){this.limit = size;this.getList();},

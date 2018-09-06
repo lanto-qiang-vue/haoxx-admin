@@ -1,5 +1,5 @@
 <template>
-  <common-table v-model="tableData" :columns="columns" @changePageSize="changePageSize" @changePage="changePage" :total="total"  :show="showTable" @changeSelect="changeSelect" @onRowDblclick="dbclick">
+  <common-table v-model="tableData" :columns="columns" @changePageSize="changePageSize" @changePage="changePage" :total="total"  :show="showTable" :clearSelect="cleartype" @onRowClick="rowclick" @changeSelect="changeSelect" @onRowDblclick="dbclick">
     <div slot="search"  >
       <div class="search-block">
         <Input v-model="search.keyword"  placeholder="客户名称/车牌号码/联系电话..."></Input>
@@ -16,11 +16,11 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="primary" @click="mshow()">新增</Button>
-      <Button type="info" @click="edit()">编辑/查看</Button>
-      <Button type="error" @click="remove()">作废</Button>
+      <Button type="primary" @click="add()">新增</Button>
+      <Button type="info" :disabled="cando" @click="edit()">编辑/查看</Button>
+      <Button type="error" :disabled="cando" @click="remove()">作废</Button>
     </div>
-      <cart-modal class="table-modal-detail" :info="info" :hidetype="hidetype" @refresh="refresh" :show="show"></cart-modal>
+  <cart-modal class="table-modal-detail" @clearsection="clearsection" :info="info" :hidetype="hidetype" @refresh="refresh" :show="show"></cart-modal>
   </common-table>
 </template>
 <script>
@@ -32,6 +32,7 @@
 		components:{commonTable,cartModal},
 		data(){
 			return {
+        cleartype:false,
         color:[],
         hidetype:1,
         page:1,
@@ -40,40 +41,75 @@
         show:false,
         sign:1,
 				tableData:[],
-        list:[],//存储选中对象
-        obj:[],//存储完整对象
+        obj:'',//存储完整对象
 				showTable:false,
         info:[],
 				search:{
           color:0,
           keyword:'',
 				},
-                       columns: [
-          {type: 'selection', width: 50, fixed: 'left'},
+          columns: [
           {title: '序号',  minWidth: 80,
             render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
           },
-           {title: '车牌号', key: 'PLATE_NUM', sortable: true, minWidth: 150},
-          {title: '车辆颜色', key: 'VEHICLE_COLOR', sortable: true, minWidth: 150,
+           {title: '车牌号', key: 'PLATE_NUM', sortable: true, minWidth: 120},
+          {title: '车辆颜色', key: 'VEHICLE_COLOR', sortable: true, minWidth: 120,
            render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.VEHICLE_COLOR))
           },
-          {title: '车型', key: 'VEHICLE_MODEL', sortable: true, minWidth: 150},
+          {title: '车型', key: 'VEHICLE_MODEL', sortable: true, minWidth: 170},
           {title: '车架号', key: 'VIN_NO', sortable: true, minWidth: 150
           },
-          {title: '发动机型号', key: 'ENGINE_NO', sortable: true, minWidth: 150
+          {title: '发动机型号', key: 'ENGINE_NO', sortable: true, minWidth: 130
           },
           {title: '最近来厂日期', key: 'COME_DATE', sortable: true, minWidth: 150},
-          {title: '创建人', key: 'CREATER', sortable: true, minWidth: 150,
+          {title: '创建人', key: 'CREATER', sortable: true, minWidth: 100,
            render: (h, params) => h('span', getCreate(this.$store.state.app.tenant, params.row.CREATER))
           },
-          {title: '创建时间', key: 'CREATE_TIME', sortable: true, minWidth: 150
+          {title: '创建时间', key: 'CREATE_TIME', sortable: true, minWidth: 120
           },
         ]
 			}
 		},
     methods:{
-      mshow(){
+      rowclick(row){
+      this.obj = row;
+      },
+      add(){
         this.show = Math.random();
+  var data = {
+        MUST_SAFE_CORP:0,
+        BUSINESS_SAFE_CORP:0,
+        VEHICLE_COLOR:0,
+        COME_MILEAGE:0,
+        REPAIR_MILEAGE:0,
+        LAST_REPAIR_MILEAGE:0,
+        NEXT_REPAIR_MILEAGE:0,
+        VEHICLE_ID:0,
+        REGULAR_REPAIR:0,
+        PLATE_NUM:'',
+        VIN_NO:'',
+        VEHICLE_MODEL:'',
+        BUY_DATE:'',
+        ENGINE_NO:'',
+        LEAVE_FACTORY_DATE:'',
+        COME_DATE:'',
+        LAST_REPAIR_DATE:'',
+        NEXT_REPAIR_DATE:'',
+        YEAR_CHECK_DATE:'',
+        MUST_SAFE_VALIDITY:'',
+        BUSINESS_SAFE_VALIDITY:'',
+        REMARK:'',
+        TID:'',
+        CUSTOMER_ID:'',
+        CUSTOMER_CODE:'',
+        CUSTOMER_NAME:'',
+        VEHICLE_ID:'',
+        }
+        this.info = data;
+      },
+      clearsection(){
+        this.obj = '';
+        this.cleartype = Math.random();
       },
       getList(){
         // alert(this.page);
@@ -90,6 +126,7 @@
           if (res.success === true) {
             this.tableData= res.data
             this.total= res.total
+            this.clearsection();
           }
         })
       },changePageSize(size){this.limit = size;this.getList();},
@@ -97,25 +134,25 @@
       clear(){this.search.color = 0;this.search.keyword = '';},
       refresh(){this.getList();},
       changeSelect(selection){
-        this.selection = selection;
-        var that = this;
-        that.list = [];
-        that.obj = [];
-        selection.filter(function(item){
-          that.list.push(item.VEHICLE_ID);
-          that.obj.push(item);
-        });
+        // this.selection = selection;
+        // var that = this;
+        // that.list = [];
+        // that.obj = [];
+        // selection.filter(function(item){
+        //   that.list.push(item.VEHICLE_ID);
+        //   that.obj.push(item);
+        // });
       },
       remove(){
-        if(this.list.length < 1){
-          this.$Message.info('未选取数据');
-        }else{
+        // if(this.list.length < 1){
+        //   this.$Message.info('未选取数据');
+        // }else{
           this.$Modal.confirm({
             'title':'系统提示',
             'content':'确认要删除吗?',
             'onOk':this.del
           });
-        }
+        // }
       },
       del(){
      // tenant/basedata/ttvehiclefile/delete
@@ -124,7 +161,7 @@
           method: 'post',
           data: {
                  access_token: this.$store.state.user.token,
-                 ids:this.list.join(',')
+                 ids:this.obj.VEHICLE_ID
                 }
         }).then(res => {
           if (res.success === true) {
@@ -134,15 +171,16 @@
         })
     },
     edit(){
-      if(this.list.length < 1){
-        this.$Message.info('未选取数据');
-        return;
-      }
-      if(this.list.length > 1){
-        this.$Message.info('只能选取一条数据');
-        return;
-      }
-      this.info = this.obj[0];
+      // if(this.list.length < 1){
+      //   this.$Message.info('未选取数据');
+      //   return;
+      // }
+      // if(this.list.length > 1){
+      //   this.$Message.info('只能选取一条数据');
+      //   return;
+      // }
+      // this.info = this.obj[0];
+      this.info = this.obj;
       this.show = Math.random();
     },
     dbclick(row){
@@ -159,6 +197,12 @@
       }
       this.getList();
       //查询数据;tenant/basedata/ttvehiclefile/list
+    },
+    computed:{
+      cando(){
+       var flag = this.obj == '' ? true : false;
+       return flag;
+      }
     }
 	}
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <common-table v-model="tableData" :columns="columns" @changePageSize="changePageSize" @changePage="changePage" :total="total"  :show="showTable" @onRowClick="onRowClick" @onRowDblclick="dbclick">
+  <common-table v-model="tableData" :columns="columns" @changePageSize="changePageSize" @changePage="changePage" :total="total"  :show="showTable" :clearSelect="cleartype" @onRowClick="onRowClick" @onRowDblclick="dbclick">
     <div slot="search"  >
       <div class="search-block">
         <Input v-model="search.keyword"  placeholder="业务单号,跟单人..."></Input>
@@ -16,9 +16,9 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="success" @click="look()">查看</Button>
+      <Button type="success" :disabled="cando" @click="look()">查看</Button>
     </div>
-    <finance-bill :showDetail="serviceShow" :detailData="detailData"></finance-bill>
+    <finance-bill :showDetail="serviceShow" @clearsection="clearsection" :detailData="detailData"></finance-bill>
   </common-table>
 </template>
 <script>
@@ -28,34 +28,41 @@
   export default{
     name:'expend-income',
     components:{commonTable,financeBill},
+    computed:{
+      cando(){
+        var flag = this.list == '' ? true : false;
+        return flag;
+      }
+    },
     data(){
       return {
         serviceShow:false,
         detailData:[],
         typeGroup:[],
         tableData:[],
+        cleartype:false,
         columns:[
           {title: '序号',  minWidth: 80,
             render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
           },
-           {title: '类别',  className: 'demo-table-info-column', key: 'TYPE', sortable: true, minWidth: 150,render: (h, params) => h('span',getName(this.$store.state.app.dict, params.row.TYPE))},
-          {title: '业务类别', key: 'RECORD_TYPE', sortable: true, minWidth: 150,
+           {title: '类别',  className: 'demo-table-info-column', key: 'TYPE', sortable: true, minWidth: 100,render: (h, params) => h('span',getName(this.$store.state.app.dict, params.row.TYPE))},
+          {title: '业务类别', key: 'RECORD_TYPE', sortable: true, minWidth: 120,
            render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.RECORD_TYPE))
           },
-          {title: '业务单号', key: 'RECORD_NO', sortable: true, minWidth: 150},
-          {title: '金额', key: 'MONEY', sortable: true, minWidth: 150
+          {title: '业务单号', key: 'RECORD_NO', sortable: true, minWidth: 120},
+          {title: '金额', key: 'MONEY', sortable: true, minWidth: 100
           },
-          {title: '结算方式', key: 'PAYMENT', sortable: true, minWidth: 150,
-          ender: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.PAYMENT))
+          {title: '结算方式', key: 'PAYMENT', sortable: true, minWidth: 120,
+          render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.PAYMENT))
           },
-          {title: '跟单人', key: 'FOLLOW_PERSON', sortable: true, minWidth: 150},
+          {title: '跟单人', key: 'FOLLOW_PERSON', sortable: true, minWidth: 100},
           {title: '创建日期', key: 'CREATE_TIME', sortable: true, minWidth: 150},
         ],
         showTable:false,
         page:1,
         limit:25,
         total:0,
-        list:[],
+        list:'',
         typeGroup:[],
         search:{
           keyword:'',
@@ -64,6 +71,10 @@
       }
     },
     methods:{
+      clearsection(){
+        this.list = '';
+        this.cleartype = Math.random();
+      },
       dbclick(row){
       if(row.RECORD_TYPE == '10271001' || row.RECORD_TYPE == '10271004' || row.RECORD_TYPE == '10271002' || row.RECORD_TYPE == '10371001' || row.RECORD_TYPE == '10371002'){
       this.detailData = row;
@@ -72,8 +83,7 @@
       return;
       },
       onRowClick(row){
-        this.list = [];
-        this.list.push(row);
+        this.list = row;
       },
       changePageSize(size){this.limit = size;this.getList();},
       changePage(page){this.page = page;this.getList();},
@@ -93,6 +103,7 @@
           if (res.success === true) {
             this.tableData= res.data
             this.total= res.total
+            this.clearsection();
           }
         })
       },
@@ -101,11 +112,7 @@
         this.search.type = 0;
       },
       look(){
-        if(this.list.length == 0){
-          this.$Message.info('未选取数据');
-          return;
-        }
-      var row = this.list[0];
+      var row = this.list;
       if(row.RECORD_TYPE == '10271001' || row.RECORD_TYPE == '10271004' || row.RECORD_TYPE == '10271002' || row.RECORD_TYPE == '10371001' || row.RECORD_TYPE == '10371002'){
       this.detailData = row;
       this.serviceShow = Math.random();

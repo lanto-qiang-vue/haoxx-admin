@@ -15,7 +15,7 @@
 
         <!-- 基本信息 -->
         <TabPane label="基本信息" name="m1" icon="logo-apple">
-    <Form ref="formData" :model="formData" :label-width="120" :rules="ruleValidate" inline>
+    <Form ref="formData" :model="formData" :label-width="120" class="common-form" :rules="ruleValidate" inline>
           <FormItem style="margin-left:-80px;width:100%;">
               <!--<div class="operate">-->
                             <!--<Button @click="showModal = false">返回</Button>-->
@@ -88,7 +88,7 @@
               <Input type="text" v-model="formData.snumber"  style="min-width: 100%;"> </Input>
           </FormItem>
     </Form>
-           <Form ref="formInline" :label-width="80">
+           <Form ref="formDatas" :label-width="80">
           <FormItem label="备注:">
               <Input type="textarea" v-model="formData.remark"  placeholder="请输入备注信息"> </Input>
           </FormItem>
@@ -98,7 +98,7 @@
         <TabPane label="车辆档案" name="m2" :disabled="tabshow < 1" icon="logo-windows">
         <!-- 车辆档案列表 -->
 
-        <common-table :columns="columns" @changePageSize="changePageSize" @changePage="changePage" :total="total" :headerShow="false" :showSearch="false" :showOperate="false" @onRowClick="rowClick" :row="row" :page="page"  v-model="tableData" :show="show">
+        <common-table :columns="columns" @changePageSize="changePageSize" @changePage="changePage" :total="total" :headerShow="false" :showSearch="false" :showOperate="false" @onRowClick="rowClick" :row="row" :page="page"  v-model="tableData" :clearSelect="cleartype" :show="show">
         </common-table>
 
         </TabPane>
@@ -111,15 +111,14 @@
         <!-- 会员结束 -->
     </Tabs>
     <!-- 到时候改成vehicleShow -->
-        <cart-modal class="table-modal-detail" :info="row" :hidetype="hidetype"   :show="showLook"></cart-modal>
-        <vehicle-add @refresh="refresh()" :CUSTOMER_ID="tabshow" :row="row" :show="vehicleShow"></vehicle-add>
-
+        <cart-modal class="table-modal-detail" @clearsection="clearsection" :info="rows" :hidetype="hidetype"   :show="showLook"></cart-modal>
+        <vehicle-add @refresh="refresh()" @clearsection="clearsection" :CUSTOMER_ID="tabshow" :row="row" :show="vehicleShow"></vehicle-add>
     <div slot="footer">
       <Button @click="showModal=false">取消</Button>
       <Button type="primary" v-show="indexName=='m1'" @click="hsubmit('formData')">保存</Button>
       <Button type="success" v-show="indexName=='m2'" @click="vehicleAdd">新增</Button>
-      <Button type="primary" v-show="indexName=='m2'" @click="vehicleEdit">修改</Button>
-      <Button type="info" v-show="indexName=='m2'" @click="vehicleLook">查看</Button>
+      <Button type="primary" :disabled="cando" v-show="indexName=='m2'" @click="vehicleEdit">修改</Button>
+      <Button type="info" :disabled="cando" v-show="indexName=='m2'" @click="vehicleLook">查看</Button>
     </div>
   </Modal>
   <!-- 车辆档案新增组件 -->
@@ -136,6 +135,7 @@
     components: {commonTable,vehicleAdd,cartModal},
     data(){
       return {
+        cleartype:false,
         hidetype:1,
         showModal:false,
         showLook:false,
@@ -153,8 +153,9 @@
         page:1,
         limit:25,
         vehicleShow:false,//车辆档案新增
-        row:[],//存储车辆档案单选数据
-        objlist:[],
+        row:'',//存储车辆档案单选数据
+        rows:'',
+        objlist:'',
         formData:{
           name:'',
           phone:'',
@@ -190,34 +191,41 @@
           {title: '序号',  minWidth: 80,
             render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
           },
-           {title: '车牌号', key: 'PLATE_NUM', sortable: true, minWidth: 150},
-          {title: '车辆颜色', key: 'VEHICLE_COLOR', sortable: true, minWidth: 150,
+           {title: '车牌号', key: 'PLATE_NUM', sortable: true, minWidth: 120},
+          {title: '车辆颜色', key: 'VEHICLE_COLOR', sortable: true, minWidth: 120,
            render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.VEHICLE_COLOR))
           },
           {title: '车型', key: 'VEHICLE_MODEL', sortable: true, minWidth: 150},
-          {title: '车架号', key: 'VIN_NO', sortable: true, minWidth: 150
+          {title: '车架号', key: 'VIN_NO', sortable: true, minWidth: 120
           },
           {title: '发动机型号', key: 'ENGINE_NO', sortable: true, minWidth: 150
           },
           {title: '最近来厂日期', key: 'COME_DATE', sortable: true, minWidth: 150},
-          {title: '创建人', key: 'CREATER', sortable: true, minWidth: 150,
+          {title: '创建人', key: 'CREATER', sortable: true, minWidth: 90,
            render: (h, params) => h('span', getCreate(this.$store.state.app.tenant, params.row.CREATER))
           },
-          {title: '创建时间', key: 'CREATE_TIME', sortable: true, minWidth: 150
+          {title: '创建时间', key: 'CREATE_TIME', sortable: true, minWidth: 120
           },
         ]
       }
 
     },
-    props:['show','detail','sign'],
+    props:['show','detail'],
+    computed:{
+    cando(){
+      var flag = this.objlist == '' ? true : false;
+      return flag;
+    }
+    },
     watch:{
       show(){
         this.$refs['formData'].resetFields();
+        this.objlist = '';
         this.showModal = true;
         this.indexName = "m1";
       },
       detail(row){
-       // console.log(row);
+       // console.log(row.NAME);
        var name = row.FOLLOW_PERSON;
        var attach = 0;
        for(var i=0;i<this.attachGroup.length;i++){
@@ -245,13 +253,7 @@
        that.snumber = row.TAX_NO;
        that.attach = attach;
        this.store = that;
-       // console.log(row.FOLLOW_PERSON);
       },
-      // sign(type){
-      // //1新增 2 双击新增 3 单选新增
-      // if(type === 1) this.clear();
-      // if(type === 3) this.formData = this.store;
-      // }
     },
     mounted(){
       // 下拉数据处理开始
@@ -304,7 +306,13 @@
 
     },
     methods:{
-      visibleChange(){},
+      visibleChange(){
+        this.$emit('clearsection');
+      },
+      clearsection(){
+        this.objlist = '';
+        this.cleartype = Math.random();
+      },
       hsubmit(name){
             this.$refs[name].validate((valid) => {
                     if (valid) {
@@ -323,19 +331,21 @@
       changePage(page){this.page=page;this.getList();},
       changePageSize(size){this.limit=size;this.getList();},
       vehicleEdit(){
-        if(this.objlist.length === 0){
-        this.$Message.info('未选取数据');
-        return;
-        }
-        this.row = this.objlist[0];
+        // if(this.objlist.length === 0){
+        // this.$Message.info('未选取数据');
+        // return;
+        // }
+        // this.row = this.objlist[0];
+        this.row = this.objlist;
         this.vehicleShow = Math.random();
       },
       vehicleLook(){
-        if(this.objlist.length === 0){
-          this.$Message.info('未选取数据');
-          return;
-        }
-        this.row = this.objlist[0];
+        // if(this.objlist.length === 0){
+        //   this.$Message.info('未选取数据');
+        //   return;
+        // }
+        // this.row = this.objlist[0];
+        this.rows = this.objlist;
         this.hidetype = 2;
         this.showLook = Math.random();
       },
@@ -409,6 +419,35 @@
       },
       vehicleAdd(){
         this.vehicleShow = Math.random();
+        var data = {
+        MUST_SAFE_CORP:0,
+        BUSINESS_SAFE_CORP:0,
+        VEHICLE_COLOR:0,
+        COME_MILEAGE:0,
+        REPAIR_MILEAGE:0,
+        LAST_REPAIR_MILEAGE:0,
+        NEXT_REPAIR_MILEAGE:0,
+        VEHICLE_ID:0,
+        REGULAR_REPAIR:0,
+        PLATE_NUM:'',
+        VIN_NO:'',
+        VEHICLE_MODEL:'',
+        BUY_DATE:'',
+        ENGINE_NO:'',
+        LEAVE_FACTORY_DATE:'',
+        COME_DATE:'',
+        LAST_REPAIR_DATE:'',
+        NEXT_REPAIR_DATE:'',
+        YEAR_CHECK_DATE:'',
+        MUST_SAFE_VALIDITY:'',
+        BUSINESS_SAFE_VALIDITY:'',
+        REMARK:'',
+        TID:'',
+        CUSTOMER_ID:'',
+        CUSTOMER_CODE:'',
+        CUSTOMER_NAME:'',
+        }
+        this.row = data;
       },
       getList(){
                 this.axios.request({
@@ -425,12 +464,12 @@
             this.list = [];
             this.tableData= res.data
             this.total= res.total
+            this.clearsection();
           }
         })
       },
       rowClick(row){
-       this.objlist = [];
-       this.objlist.push(row);
+      this.objlist = row;
       },
       refresh(){
       this.getList();

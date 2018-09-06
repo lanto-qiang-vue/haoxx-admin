@@ -106,8 +106,8 @@
 			}
 			return false;
 		},
-		changePage(page){this.page = page;},
-		changePageSize(size){this.limit = size;},
+		changePage(page){this.page = page;this.getList();},
+		changePageSize(size){this.limit = size;this.getList();},
 		clear(){this.keyword = '';},
 		getList(){
 			  this.axios.request({
@@ -127,13 +127,22 @@
               })
 		}
 		},
-		props:['itemShow'],
+		props:['itemShow','delrow'],
 		watch:{
 	       itemShow(){
 	       this.changeModal = true;
 	       this.showTable = Math.random();
 	       this.getList();
-	       }
+	       },
+         delrow(row){
+          var data = [];
+          this.itemList.filter(function(item){
+            if(row.ITEM_ID != item.ITEM_ID){
+              data.push(item);
+            }
+          });
+         this.itemList = data;
+         }
 		}
 	}
 </script>
