@@ -67,7 +67,7 @@
                 <Input type="text" v-model="formData.ITEM_NO"> </Input>
                 </FormItem>
                 <!-- 手动 -->
-                <div style="height:20px;"></div>
+                <!-- <div style="height:20px;"></div> -->
                 <!-- 手动 -->
                 <FormItem label="发动机类型:" style="width:45%;" prop="ENGINE_TYPE" >
                 <Select  v-model="formData.ENGINE_TYPE" style="min-width: 100%;">
@@ -81,16 +81,12 @@
                   :key="index" :value="item.CLASS_TYPE">{{item.CLASS_NAME}}</Option>
                 </Select>
                 </FormItem>
-                <!-- 手动 -->
-                <div style="height:20px;"></div>
-                <!-- 手动 -->
                 <FormItem label="计费标准:" style="width:100%;">
                 <RadioGroup v-model="formData.CHARGE_TYPE">
                 <Radio v-for="(item,index) in group" :key="index" :label="item.code">{{item.name}}</Radio>
                 </RadioGroup>
                 </FormItem>
                    <!-- 手动 -->
-                <div style="height:10px;"></div>
                 <!-- 手动 -->
                 <FormItem :label="description" style="width:30%;">
                 <InputNumber
@@ -102,25 +98,25 @@
                 </FormItem>
                 </FormItem>
                     <FormItem label="别名1:" style="width:30%;" >
-                <Input type="text" v-model="ALIAS1"> </Input>
+                <Input type="text" v-model="formData.ALIAS1"> </Input>
                 </FormItem>
                     <FormItem label="别名2:" style="width:30%;" >
-                <Input type="text" v-model="ALIAS2"> </Input>
+                <Input type="text" v-model="formData.ALIAS2"> </Input>
                 </FormItem>
                 <!-- 手动 -->
-                <div style="height:20px;"></div>
+            <!--     <div style="height:20px;"></div> -->
                 <!-- 手动 -->
                     <FormItem label="别名3:" style="width:30%;" >
-                <Input type="text" v-model="ALIAS3"> </Input>
+                <Input type="text" v-model="formData.ALIAS3"> </Input>
                 </FormItem>
                 <FormItem label="别名4:" style="width:30%;" >
-                <Input type="text" v-model="ALIAS4"> </Input>
+                <Input type="text" v-model="formData.ALIAS4"> </Input>
                 </FormItem>
                 <FormItem label="别名5:" style="width:30%;" >
-                <Input type="text" v-model="ALIAS5" > </Input>
+                <Input type="text" v-model="formData.ALIAS5" > </Input>
                 </FormItem>
                 <!-- 手动 -->
-                <div style="height:10px;"></div>
+                <!-- <div style="height:10px;"></div> -->
                 <!-- 手动 -->
       </Form>
               </Panel>
@@ -156,6 +152,7 @@ export default{
               description:'标准金额',
               number:0,
               customModal:false,
+              checkid:[],
               data2:[],
               spinShow:false,
               changeTree:[],
@@ -183,15 +180,15 @@ export default{
               {title: '序号',  minWidth: 80,
                render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
               },
-                {title: '项目编号', key: 'ITEM_NO', sortable: true, minWidth: 150},
-              {title: '维修项目名称', key: 'NAME', sortable: true, minWidth: 150},
-              {title: '项目分类', key: 'TYPE_NAME', sortable: true, minWidth: 150},
-              {title: '计费标准', key: 'CHARGE_TYPE', sortable: true, minWidth: 150,
+                {title: '项目编号', key: 'ITEM_NO', sortable: true, minWidth: 120},
+              {title: '维修项目名称', key: 'NAME', sortable: true, minWidth: 140},
+              {title: '项目分类', key: 'TYPE_NAME', sortable: true, minWidth: 120},
+              {title: '计费标准', key: 'CHARGE_TYPE', sortable: true, minWidth: 140,
               render:(h,params) => h('span',getName(this.chargetype,params.row.CHARGE_TYPE))
               },
-              {title: '标准金额(元)', key: 'REPAIR_MONEY', sortable: true, minWidth: 150},
+              {title: '标准金额(元)', key: 'REPAIR_MONEY', sortable: true, minWidth: 140},
               {title: '标准工时(小时)', key: 'REPAIR_TIME', sortable: true, minWidth: 150},
-              {title: '油漆面数(面)', key: 'PAINT_NUM', sortable: true, minWidth: 150},
+              {title: '油漆面数(面)', key: 'PAINT_NUM', sortable: true, minWidth: 140},
               ],
               page:1,
               limit:25,
@@ -230,12 +227,12 @@ export default{
           return getDictGroup(this.$store.state.app.dict,'1014');
         },
         isdisabled(){
-          return false;
-          // if(this.TYPE == '自定义'){
           // return false;
-          // }else{
-          // return true;
-          // }
+          if(this.TYPE == '自定义'){
+          return false;
+          }else{
+          return true;
+          }
         }
         },
         watch:{
@@ -257,17 +254,62 @@ export default{
           }
         },
         methods:{
+          cancle(){
+            this.showModal = false;
+          },
           addcancle(){
             this.customModal = false;
+          },
+          tosave(){
+                var obj = {
+
+                };
+                obj.ITEM_ID = this.formData.ITEM_ID;
+                obj.TYPE_ID = this.formData.TYPE_ID;
+                obj.ENGINE_TYPE = this.formData.ENGINE_TYPE;//发动机类型
+                obj.CLASS_TYPE = this.formData.CLASS_TYPE;
+                obj.CHARGE_TYPE = this.formData.CHARGE_TYPE;
+                obj.ITEM_NO = this.formData.ITEM_NO;
+                obj.NAME = this.formData.NAME;
+                obj.ALIAS1 = this.formData.ALIAS1;
+                obj.ALIAS2 = this.formData.ALIAS2;
+                obj.ALIAS3 = this.formData.ALIAS3;
+                obj.ALIAS4 = this.formData.ALIAS4;
+                obj.ALIAS5 = this.formData.ALIAS5;
+                obj.REMARK = this.formData.REMARK;
+          switch(this.formData.CHARGE_TYPE){
+            case '10141001':
+             obj.REPAIR_MONEY = this.number;
+            break;
+            case '10141002':
+             obj.REPAIR_TIME = this.number;
+            break;
+            case '10141003':
+             obj.PAINT_NUM = this.number;
+            break;
+          }
+          //开始保存数据...
+          this.axios.request({
+          url: '/tenant/basedata/repairiteminfo/saveitem',
+          method: 'post',
+          data: {access_token: this.$store.state.user.token,
+                 data:JSON.stringify(obj)
+                },
+        }).then(res => {
+          if (res.success === true) {
+          this.$Message.success('新增成功');
+          this.getList();
+          this.customModal = false;
+          }
+        })
           },
           addpost(name){
                 this.$refs[name].validate((valid) => {
                     if (valid) {
-                     console.log(this.formData);
                     this.$Modal.confirm({
                       title:'系统提示',
                       content:'确认保存吗?',
-                      // onOk:this.vehicleAdd,
+                       onOk:this.tosave,
                     });
                     } else {
                         this.$Message.error("请校对红框信息");

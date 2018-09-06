@@ -345,7 +345,17 @@ export default [
         },
         component: () => import('@/hxx-store/maintain-server/repair-items.vue')
       },
-      
+      {
+        path: '/service-combo',
+        name: 'service-combo',
+        meta: {
+          icon: 'md-funnel',
+          title: '维修项目套餐',
+          lgType: "1002",
+          access: '100513',
+        },
+        component: () => import('@/hxx-store/maintain-server/service-combo.vue')
+      },
       
     ]
 },
