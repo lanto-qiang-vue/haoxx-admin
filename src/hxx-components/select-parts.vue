@@ -1,5 +1,5 @@
 
-<!--选择项目组件 2018-08-23 -->
+<!--选择配件组件 2018-08-23 -->
 <template>
     <Modal
         v-model="showOnoff"
@@ -8,31 +8,32 @@
         :scrollable="true"
         :transfer= "transferFlag"
         :footer-hide="false"
+        :mask-closable="false"
         :transition-names="['', '']"
         class="table-modal-detail"
     >
     <common-table v-model="tableData" :columns="columns" :show="showSelectParts" :total="total" @changePage="changePage" 
         @changePageSize="changePageSize" @onRowClick="onRowClick" :showOperate="showOperate">
         <div slot="search">
-            <Form inline :label-width="80">
-                <FormItem label="配件分类:">
-                    <Select v-model="test1" style="min-width: 200px;">
+            <Form class="common-form">
+                <FormItem label="配件分类:" :label-width="80">
+                    <Select v-model="test1" >
                         <Option v-for="(item, index) in getSellItem" :key="index" :value="item.TYPE_ID">{{item.TYPE_NAME}}</Option>
                     </Select>
                 </FormItem>
                 <FormItem label="仓库:" v-show='stockFlag'>
-                    <Select v-model="test2" style="min-width: 200px;">
+                    <Select v-model="test2">
                         <Option v-for="(item, index) in getAllItem" :key="index" :value="item.STORE_ID">{{item.NAME}}</Option>
                     </Select>
                 </FormItem>
-                <FormItem :label-width="10">
-                    <Input  placeholder="预约单号/预约人/联系电话..." v-model="test3" class="search-block"></Input>
-                    <ButtonGroup size="small">
-                        <Button type="primary" title="查询" @click="searchVehicle"><Icon type="ios-search" size="24"/></Button>
-                        <Button type="primary" title="重置" @click="resetVehicle"><Icon type="ios-undo" size="24"/></Button>
-                    </ButtonGroup>
+                <FormItem>
+                    <Input  placeholder="预约单号/预约人/联系电话..." v-model="test3"></Input>
+                    
                 </FormItem>
-                
+                <ButtonGroup size="small">
+                    <Button type="primary" title="查询" @click="searchVehicle"><Icon type="ios-search" size="28"/></Button>
+                    <Button type="primary" title="重置" @click="resetVehicle"><Icon type="ios-undo" size="28"/></Button>
+                </ButtonGroup>
            </Form>
            
         </div>
@@ -113,28 +114,28 @@ import commonTable from '@/hxx-components/common-table.vue'
                 //表格内容数据----
                 columns: [
                     // {type: 'selection', width: 50, fixed: 'left'},
-                    {title: '序号',  minWidth: 60,
+                    {title: '序号',  minWidth: 80,
                         render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
                     },
-                    {title: '仓库', key: 'NAME', sortable: true, minWidth: 200,
+                    {title: '仓库', key: 'STORE_NAME', sortable: true, minWidth: 180,
                         //render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.ORDER_TYPE))
                     },
-                    {title: '原厂编号', key: 'FACTORY_NO', sortable: true, minWidth: 200,
+                    {title: '原厂编号', key: 'FACTORY_NO', sortable: true, minWidth: 140,
                         // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.VEHICLE_COLOR))
                     },
-                    {title: '配件名称', key: 'STORE_NAME', sortable: true, minWidth: 200},
-                    {title: '品牌', key: 'BRAND', sortable: true, minWidth: 200,
+                    {title: '配件名称', key: 'NAME', sortable: true, minWidth: 180},
+                    {title: '品牌', key: 'BRAND', sortable: true, minWidth: 150,
                         render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.BRAND))
                     },
-                    {title: '单位成本', key: 'UNIT_COST', sortable: true, minWidth: 200},
-                    {title: '销售建议价', key: 'SALES_PRICE', sortable: true, minWidth: 200,
+                    {title: '单位成本', key: 'UNIT_COST', sortable: true, minWidth: 130},
+                    {title: '销售建议价', key: 'SALES_PRICE', sortable: true, minWidth: 150,
                         // render: (h, params) => h('span', params.row.ORDER_DATE.substr(0, 10))
                     },
-                    {title: '库存量', key: 'STOCK_NUM', sortable: true, minWidth: 100},
-                    {title: '单位', key: 'UNIT', sortable: true, minWidth: 70,
+                    {title: '库存量', key: 'STOCK_NUM', sortable: true, minWidth: 120},
+                    {title: '单位', key: 'UNIT', sortable: true, minWidth: 100,
                         render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.UNIT))
                     },
-                    {title: '操作', key: 'operation', sortable: true, minWidth: 80,fixed: 'right',
+                    {title: '操作', key: 'operation', sortable: true, minWidth: 100,fixed: 'right',
                         render: (h, params) => {
                             let buttonContent= this.state(params.row)? '取消选择':'选择';
                             let buttonStatus= this.state(params.row)? 'warning':'primary';
@@ -218,8 +219,8 @@ import commonTable from '@/hxx-components/common-table.vue'
                     url: '/tenant/repair/ttpartstock/list',
                     method: 'post',
                     data: {
-                        TYPE_ID_eq: this.test1,
-                        STORE_ID_eq: this.test2,
+                        TYPE_ID_eq: this.test1||'',
+                        STORE_ID_eq: this.test2||'',
                         KEYWORD: this.test3,
                         page: this.page,
                         limit: this.limit,

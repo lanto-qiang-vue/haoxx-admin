@@ -18,7 +18,7 @@
               </Input>
           </FormItem>
           <FormItem label="人数:" style="width:45%;" prop="num">
-              <InputNumber :min="1" v-model="listSearch.num" :disabled='saveFlag'></InputNumber>
+              <InputNumber :min="0" v-model="listSearch.num" :disabled='saveFlag'></InputNumber>
           </FormItem>
           <FormItem label="岗位职责:" prop="PostName" style="width:100%;">
               <Input type="textarea" :disabled='saveFlag' v-model="listSearch.PostName" placeholder="请输入岗位职责..." style="min-width: 100%;"> </Input>

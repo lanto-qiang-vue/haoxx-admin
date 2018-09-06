@@ -97,7 +97,7 @@ export default {
             transferFlag:true,//判断界面是否出现在body
             //维修配件
             columns: [
-                {title: '序号',  minWidth: 60,type:'index',},
+                {title: '序号',  minWidth: 80,type:'index',},
                 {title: '配件名称', key: 'NAME', sortable: true, minWidth: 150},
                 {title: '原厂编号', key: 'FACTORY_NO', sortable: true, minWidth: 150,
                 },

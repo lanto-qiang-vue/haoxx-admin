@@ -62,7 +62,7 @@ export default {
       return{
             showModal:false,
             columns: [
-                {title: '序号',  minWidth: 60,
+                {title: '序号',  minWidth: 80,
                     render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
                 },
                 {title: '类型', key: 'TYPE', sortable: true, minWidth: 100,
@@ -112,7 +112,7 @@ export default {
                         }
                 },
                 
-                {title: '单位', key: 'UNIT', sortable: true, minWidth: 80,
+                {title: '单位', key: 'UNIT', sortable: true, minWidth: 100,
                     render: (h, params) => h('span', getName(this.getUnit, params.row.UNIT))
                 },
                 {title: '出入库金额', key: 'MONEY', sortable: true, minWidth: 150,
@@ -192,9 +192,9 @@ export default {
                 url: '/tenant/repair/ttpartstock/all_list',
                 method: 'post',
                 data: {
-                    TYPE_eq: this.search.select,
-                    STOCK_IN_TYPE: this.search.select1,
-                    STOCK_OUT_TYPE: this.search.select2,
+                    TYPE_eq: this.search.select||'',
+                    STOCK_IN_TYPE: this.search.select1||'',
+                    STOCK_OUT_TYPE: this.search.select2||'',
                     STOCK_DATE_gte: this.search.orderDateGte,
                     STOCK_DATE_lte: this.search.orderDateIte,
                     PART_ID_eq: this.goOnDetailData.PART_ID,

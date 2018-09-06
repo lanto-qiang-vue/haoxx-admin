@@ -19,9 +19,9 @@
     <div slot="footer">
       <table  width='100%' cellpadding='5' cellspacing='0'>
             <tr>
-                <td style="min-width:80px;height:30px;"></td>
-                <td style="min-width:120px; height:30px;">合计：</td>
-                <td style="min-width:120px; height:30px;" v-for="site in computedMoney">{{site.money}}{{site.unit}}</td>
+                <td style="min-width:120px;height:30px;"></td>
+                <td style="min-width:120px; height:30px;padding: 0 18px;">合计：</td>
+                <td style="min-width:120px; height:30px;padding: 0 18px;" v-for="site in computedMoney">{{site.money}}{{site.unit}}</td>
                 
             </tr>
         </table>
@@ -42,7 +42,7 @@ export default {
     data(){
 		return{
             columns: [
-                {title: '序号',  minWidth: 80,
+                {title: '序号',  minWidth: 120,
                     render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
                 },
                 {title: '维修技师', key: 'FOLLOW_PERSON', sortable: true, minWidth: 120,

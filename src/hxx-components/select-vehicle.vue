@@ -4,22 +4,24 @@
         title="选择车辆"
         width="90"
         :scrollable="true"
-        :transfer= "false"
+        :transfer= "showTransfer"
         :footer-hide="false"
+        :mask-closable="false"
         class="table-modal-detail"
         :transition-names="['', '']"
     >
     <common-table v-model="tableData" :columns="columns" :show="showoff" :total="total" @changePage="changePage"
-        @changePageSize="changePageSize" @onRowClick="onRowClick">
+        @changePageSize="changePageSize" @onRowClick="onRowClick" :showOperate=false>
         <div slot="search">
            <div class="search-block">
-                <Input  placeholder="预约单号/预约人/联系电话..." v-model="search.input"></Input>
-            </div>
-            <ButtonGroup size="small">
-                <Button type="primary" @click="searchVehicle"><Icon type="ios-search" size="24"/></Button>
-                <Button type="primary" @click="resetVehicle" style="margin-right:20px; margin-left: 1px;"><Icon type="ios-undo" size="24"/></Button>
-                <Button type="primary" @click="showAddVehicle=Math.random()"><Icon type="md-add" size="24" />添加客户车辆</Button>
-            </ButtonGroup>
+                <Input  placeholder="客户名称/车牌号码/联系电话..." v-model="search.input"></Input>
+           </div>
+            
+                <Button type="primary" @click="searchVehicle" size="small"><Icon type="ios-search" size="24"/></Button>
+                <Button type="primary" @click="resetVehicle" size="small"><Icon type="ios-undo" size="24"/></Button>
+                
+            
+                <Button type="primary" @click="showAddVehicle=Math.random()" size="small" style="margin-left: 20px;">添加客户车辆</Button>
         </div>
     </common-table>
 
@@ -33,7 +35,7 @@ import selectAddVehicle from '@/hxx-components/select-addVehicle.vue'
 import { getName, getDictGroup } from '@/libs/util.js'
 	export default {
 		name: "select-vehicle",
-        props:['showoff'],
+        props:['showoff',"showTransfer"],
         components: {commonTable,selectAddVehicle},
         data(){
             return{
@@ -45,17 +47,17 @@ import { getName, getDictGroup } from '@/libs/util.js'
                 tableData:[],
                 columns: [
                     // {type: 'selection', width: 50, fixed: 'left'},
-                    {title: '序号',  minWidth: 60,
+                    {title: '序号',  minWidth: 80,
                         render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
                     },
-                    {title: '车牌号', key: 'PLATE_NUM', sortable: true, minWidth: 100,
+                    {title: '车牌号', key: 'PLATE_NUM', sortable: true, minWidth: 120,
                         //render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.ORDER_TYPE))
                     },
-                    {title: '车辆颜色', key: 'VEHICLE_COLOR', sortable: true, minWidth: 100,
+                    {title: '车辆颜色', key: 'VEHICLE_COLOR', sortable: true, minWidth: 120,
                         render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.VEHICLE_COLOR))
                     },
-                    {title: '客户名称', key: 'CUSTOMER_NAME', sortable: true, minWidth: 100},
-                    {title: '联系电话', key: 'MOBILE_PHONE', sortable: true, minWidth: 150},
+                    {title: '客户名称', key: 'CUSTOMER_NAME', sortable: true, minWidth: 120},
+                    {title: '联系电话', key: 'MOBILE_PHONE', sortable: true, minWidth: 135},
                     {title: '车架号', key: 'VIN_NO', sortable: true, minWidth: 200},
                     {title: '发动机号', key: 'ENGINE_NO', sortable: true, minWidth: 200,
                         // render: (h, params) => h('span', params.row.ORDER_DATE.substr(0, 10))

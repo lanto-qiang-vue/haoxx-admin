@@ -20,7 +20,7 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="primary" v-if=""  @click="selectPick">出入库明细</Button>
+      <Button type="primary" v-if="accessBtn('outdetail')"  @click="selectPick">出入库明细</Button>
     </div>
     <!--维修领料详情-->
     <query-Inventory-detail class="table-modal-detail" :showDetail="showDetail" :detailData="detailData" @closeDetail="closeDetail"></query-Inventory-detail>
@@ -40,7 +40,7 @@ export default {
     data(){
 		return{
             columns: [
-                {title: '序号',  minWidth: 60,
+                {title: '序号',  minWidth: 80,
                     render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
                 },
                 {title: '仓库', key: 'STORE_NAME', sortable: true, minWidth: 150,
@@ -55,7 +55,7 @@ export default {
                 {title: '单位成本', key: 'UNIT_COST', sortable: true, minWidth: 150,
                     
                 },
-                {title: '采购指导价', key: 'PURCHASE_PRICE', sortable: true, minWidth: 100,
+                {title: '采购指导价', key: 'PURCHASE_PRICE', sortable: true, minWidth: 150,
                     
                 },
                 {title: '建议销售价', key: 'SALES_PRICE', sortable: true, minWidth: 150,
@@ -78,16 +78,6 @@ export default {
             showDetail: false,
             detailData: null,
             clearTableSelect: null,
-            isOrderSuccess:false,//判断是不是预约成功
-            buttonStateArr:{
-                add:false,//维修开单
-                quickAdd:false,//快速开单
-                edit:false,//编辑
-                rePg:false,//反派工
-                reFinish:false,//反完工
-                reAccount:false,//反结算
-                ban:false,//作废
-            },//按钮状态组数据
             allStore:[],//获取所有仓库------
       }
     },
@@ -139,7 +129,7 @@ export default {
                 method: 'post',
                 data: {
                     KEYWORD: this.search.input,
-                    STORE_ID_eq: this.search.select1,
+                    STORE_ID_eq: this.search.select1||'',
                     page: this.page,
                     limit: this.limit,
                     access_token: this.$store.state.user.token

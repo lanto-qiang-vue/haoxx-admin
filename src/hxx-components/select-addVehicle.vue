@@ -5,45 +5,47 @@
         v-model="showOnoff"
         title="新增客户及车辆"
         width="90"
+        @on-visible-change="visibleChange"
         :scrollable="true"
         :transfer= "false"
         :footer-hide="false"
+        :mask-closable="false"
         :transition-names="['', '']"
-        class="table-modal-detail"
+        
     >
     <Collapse v-model="collapse">
       <Panel name="1">车辆基本信息
-       <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="80" inline class="detail-form">
-          <FormItem label="车牌号:">
+       <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="100" inline class="detail-form">
+          <FormItem label="车牌号:" prop="PLATE_NUM">
               <Input type="text" v-model="listSearch.PLATE_NUM" placeholder="" style="min-width: 250px;" >
               </Input>
           </FormItem>
           <FormItem label="车辆颜色:">
-              <Select v-model="listSearch.VEHICLE_COLOR" placeholder="" style="min-width: 250px;" placeholder="选择包装单位">
+              <Select v-model="listSearch.VEHICLE_COLOR" placeholder="" style="min-width: 250px;" placeholder="请选择">
                 <Option v-for="(item, index) in initColorArr"
                   :key="index" :value="item.code">{{item.name}}</Option>
               </Select>
           </FormItem>
           <FormItem label="发动机号:">
-              <Input type="text" v-model="listSearch.ENGINE_NO" placeholder="选择分类" style="min-width: 250px;" >
+              <Input type="text" v-model="listSearch.ENGINE_NO" placeholder="" style="min-width: 250px;" >
               </Input>
           </FormItem>
-          <FormItem label="车架号:">
-               <Input type="text" v-model="listSearch.VIN_NO" placeholder="" style="min-width: 250px;" >
+          <FormItem label="车架号:" prop="VIN_NO">
+               <Input type="text" v-model="listSearch.VIN_NO" placeholder="" style="min-width: 250px;">
               </Input>
           </FormItem>
           <FormItem label="车型:">
-              <Input @on-focus="showVehicleModel=true;" type="text" v-model="listSearch.VEHICLE_MODEL" placeholder="选择分类" style="min-width: 250px;" search >
+              <Input @on-focus="showVehicleModel=true;" type="text" v-model="listSearch.VEHICLE_MODEL" placeholder="" style="min-width: 250px;" search >
               </Input>
           </FormItem>
           <FormItem label="出厂日期:" >
-              <DatePicker v-model="listSearch.LEAVE_FACTORY_DATE" type="date" placeholder="Select date"></DatePicker>
+              <DatePicker v-model="listSearch.LEAVE_FACTORY_DATE" type="date" placeholder=""></DatePicker>
           </FormItem>
 
        </Form>
       </Panel>
       <Panel name="2">客户基本信息
-       <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="80" inline class="detail-form">
+       <Form slot="content" :label-width="80" inline class="detail-form">
 
            <FormItem label="客户名称:" >
                <Input type="text" v-model="listSearch.NAME" placeholder="" style="min-width: 250px;" >
@@ -67,20 +69,16 @@
               </Input>
           </FormItem>
           <FormItem label="生日:" >
-              <DatePicker v-model="listSearch.BIRTHDAY" type="date" placeholder="Select date"></DatePicker>
+              <DatePicker v-model="listSearch.BIRTHDAY" type="date" placeholder=""></DatePicker>
           </FormItem>
        </Form>
       </Panel>
 
     </Collapse>
-    <div slot="footer" style="text-align: center; font-size: 18px;">
-        <Button @click="saveData" size="large" type="primary"  style="margin-right: 10px; padding: 0 10px;"><Icon type="md-checkmark" size="24"/>保存</Button>
-        <Button size="large" type="primary"  style="margin-right: 10px; padding: 0 10px;"><Icon type="md-add" size="24"/>取消</Button>
-
+    <div slot="footer">
+        <Button @click="showOnoff=false;" size="large" type="primary">取消</Button>
+        <Button @click="handleSave('listSearch')" size="large" type="primary">保存</Button>
     </div>
-    <common-modal6 :description="tooltipObj.description"
-      :title="tooltipObj.title" :modal6="tooltipObj.mshow" :fun="tooltipObj.funName" @del="del"></common-modal6>
-
 
         <Modal
             v-model="showVehicleModel"
@@ -89,8 +87,9 @@
             :scrollable="false"
             :transfer= "false"
             :footer-hide="false"
+            :mask-closable="false"
             :transition-names="['', '']"
-            class="table-modal-detail"
+            
         >
             <vehicle-model @onRowClick="onRowClick" :show="showVehicleModel"></vehicle-model>
         </Modal>
@@ -101,21 +100,32 @@
 
   import { getName, getDictGroup } from '@/libs/util.js'
   import { formatDate } from '@/libs/tools.js'
-  import commonModal6 from '@/hxx-components/common-modal6.vue'
   import vehicleModel from '@/hxx-components/vehicle-model.vue'
 	export default {
 		name: "select-addVehicle",
         props:['showAddVehicle'],
-        components: {commonModal6,vehicleModel},
+        components: {vehicleModel},
         data(){
+            const validatePass = (rule, value, callback) => {
+			     	var p1 = /\d?[A-Z]+\d?/
+                if (!p1.test(value) || value.length !== 17) {
+                    callback(new Error('大写字母和数字组成,长度不超过17位'));
+                }else{
+                        
+                	  callback();
+                }
+            };
+            const validatePass1 = (rule, value, callback) => {
+			     	var p1 = /\d?[A-Z]+\d?/
+                if (!p1.test(value) || value.length !== 17) {
+                    callback(new Error('大写字母和数字组成,长度不超过17位1'));
+                }else{
+                      this.getVehicleModel();
+                	  callback();
+                }
+            };
             return{
                 showVehicleModel:false,
-                tooltipObj:{
-                    mshow:null,
-                    funName:'del',
-                    description:'',
-                    title:'',
-                },
                 showType:false,
                 showOnoff:false,
                 collapse:["1",'2'],
@@ -154,13 +164,22 @@
                     "WEIXIN_NO":"",
                     "BIRTHDAY":""
                 },
-                ruleValidate: {
-                },
+                ruleValidate:{
+					 PLATE_NUM:[{required: true, message: '车牌号必填', trigger: 'blur' },
+					 { type:'string',pattern:/^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-Z0-9]{4}[A-Z0-9挂学警港澳]{2}$/, message:'请输入正确的车牌号码', trigger:'change'}
+					 ],
+					 VIN_NO:[{required: true, message: '车架号必填', trigger: 'blur' },
+					 	{ validator: validatePass, trigger: 'change' },
+					 	{ validator: validatePass1, trigger: 'blur' }
+					 ],
+
+				},
             }
         },
         watch:{
             showAddVehicle(){
                 console.log("进入选择增加车辆");
+                this.$refs['listSearch'].resetFields();
                 this.showOnoff=true;
                 for(let i in this.listSearch){
                     this.listSearch[i]=this.initList[i];
@@ -173,24 +192,27 @@
 
         },
         methods:{
+            //保存操作---------
+            handleSave(name){
+                console.log('11');
+                this.$refs[name].validate((valid) => {
+                    console.log('22')
+                    if (valid) {
+                        this.$Modal.confirm({
+                            title:"系统提示!",
+                            content:"确定要保存吗？",
+                            onOk:this.saveData,
+                            
+                        })
+                    } else {
+                        this.$Message.error('请填写必选项...');
+                    }
+                });
+ 
+            },
             saveData(){
-                this.tooltipObj.title = '系统提示!';
-                this.tooltipObj.description = '确定保存数据？';
-                this.tooltipObj.mshow = Math.random();
-            },
-            salesPriceFun(val){
-                this.listSearch.SALES_PRICE=val;
-                this.listSearch.TAX=(val*this.listSearch.RATE).toFixed(2);
-                this.listSearch.NOT_CONTAINS_TAX_SALE_PRICE=val-(val*this.listSearch.RATE).toFixed(2);
-            },
-            rateComputed(val){
-                this.listSearch.TAX=(val*this.listSearch.SALES_PRICE).toFixed(2);
-                this.listSearch.NOT_CONTAINS_TAX_SALE_PRICE=this.listSearch.SALES_PRICE-(val*this.listSearch.SALES_PRICE).toFixed(2);
-            },
-            del(){
                 this.listSearch["LEAVE_FACTORY_DATE"]=formatDate(this.listSearch["LEAVE_FACTORY_DATE"]);
                 this.listSearch["BIRTHDAY"]=formatDate(this.listSearch["BIRTHDAY"]);
-
                 this.axios.request({
                     url: '/tenant/basedata/ttvehiclefile/save_vehicle_customer',
                     method: 'post',
@@ -203,16 +225,44 @@
                         this.$Message.info('successful')
                         this.showOnoff=false;
                         this.$emit('selectAddVehicleFun');
+                        
+                    }else{
+                        this.$Message.info(res.title);
+                    }
+                })
+            },
+            //
+            getVehicleModel(){
+                this.axios.request({
+                    url: '/tenant/basedata/ttvehiclefile/get_vehicle_model',
+                    method: 'post',
+                    data: {
+                    vin: this.listSearch.VIN_NO,
+                    access_token: this.$store.state.user.token
+                    }
+                }).then(res => {
+                    if (res.success === true) {
+                        this.listSearch.VEHICLE_MODEL= res.data.MODEL_NAME;
+                        this.listSearch.TID= res.data.TID;
                     }
                 })
             },
             onRowClick(val){
-                console.log(val);
                 this.showVehicleModel=false
                 this.listSearch.VEHICLE_MODEL= val.MODEL_NAME
                 this.listSearch.TID= val.TID
-            }
-
+            },
+            //弹出层状态变化--------
+            visibleChange(status){
+                if(status === false){
+                    this.$emit('closeDetail');
+                    this.handleReset("listSearch");
+                }
+            },
+            //校验重置
+            handleReset (name) {
+                this.$refs[name].resetFields();
+            },
         }
 	}
 </script>

@@ -1,4 +1,4 @@
-<!--预约单管理详情-->
+<!--预约单管理详情 2018 09 05-->
 <template>
   <Modal
     v-model="showModal"
@@ -10,151 +10,156 @@
     :footer-hide="false"
     :transition-names="['', '']"
   >
-    <div class="titleMsg">{{titleMsg}}</div>
-    <Collapse v-model="collapse">
-      <Panel name="1">基本信息
-       <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="80" inline class="detail-form">
-          <FormItem label="车牌号码:">
-              <Input @on-focus="showoff=Math.random();"	type="text" v-model="listSearch.PLATE_NUM" placeholder="请输入车牌号" style="min-width: 250px;" >
-                  <Icon type="ios-search" slot="suffix" @click="showoff=Math.random();" style="cursor:pointer;"/>
-              </Input>
-          </FormItem>
-          <FormItem label="车型:">
-              <Input type="text" disabled v-model="listSearch.VEHICLE_MODEL" placeholder="请输入车型" style="min-width: 250px;"> </Input>
-          </FormItem>
-          <FormItem label="预约维修类型:" >
-              <Select v-model="listSearch.REPAIR_TYPE" placeholder="" style="min-width: 250px;">
-                <Option v-for="(item, index) in searchSelectOption"
-                  :key="index" :value="item.code">{{item.name}}</Option>
-              </Select>
-          </FormItem>
-          <FormItem label="预约日期:" prop="ORDER_DATE">
-              <DatePicker format="yyyy-MM-dd" v-model="listSearch.ORDER_DATE" type="date" placeholder="请选择..." style="min-width: 250px;"></DatePicker>
+    <div style="height: 100%;overflow: auto;">
+      <div class="titleMsg">{{titleMsg}}</div>
+      <Collapse v-model="collapse">
+        <Panel name="1">基本信息
+        <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="120" class="common-form">
+            <FormItem label="车牌号码:">
+                <Input @on-focus="showoff=Math.random();"	type="text" v-model="listSearch.PLATE_NUM" placeholder="请输入车牌号" >
+                    <Icon type="ios-search" slot="suffix" @click="showoff=Math.random();" style="cursor:pointer;"/>
+                </Input>
+            </FormItem>
+            <FormItem label="车型:">
+                <Input type="text" disabled v-model="listSearch.VEHICLE_MODEL" placeholder="请输入车型"> </Input>
+            </FormItem>
+            <FormItem label="预约维修类型:">
+                <Select v-model="listSearch.REPAIR_TYPE" placeholder="">
+                  <Option v-for="(item, index) in searchSelectOption"
+                    :key="index" :value="item.code">{{item.name}}</Option>
+                </Select>
+            </FormItem>
+            <FormItem label="预约日期:" prop="ORDER_DATE">
+                <DatePicker format="yyyy-MM-dd" v-model="listSearch.ORDER_DATE" type="date" placeholder="请选择..."></DatePicker>
 
-          </FormItem>
-          <FormItem label="预约时间:" prop="ORDER_TIME">
-              
-              <Select v-model="listSearch.ORDER_TIME" placeholder="" style="min-width: 250px;">
-                <Option v-for="(item, index) in timeGruop"
-                  :key="item.value" :value="item.value">{{item.label}}</Option>
-                  
-              </Select>
-          </FormItem>
-          <FormItem label="预约类型:">
-              <Select v-model="listSearch.ORDER_TYPE" placeholder="" style="min-width: 250px;">
-                <Option v-for="(item, index) in searchSelectOption1"
-                  :key="index" :value="item.code">{{item.name}}</Option>
-              </Select>
-          </FormItem>
-          <FormItem label="预约人:">
-              <Input type="text" v-model="listSearch.ORDER_PERSON" placeholder="" style="min-width: 250px;"> </Input>
-          </FormItem>
-          <FormItem label="联系电话:">
-              <Input type="text"  @on-keyup="getOnlyNumber" v-model="listSearch.TELPHONE" onkeypress="return event.keyCode>=48&&event.keyCode<=57" style="min-width: 250px;"> </Input>
-          </FormItem>
-          <FormItem label="当前里程:">
-              <InputNumber :min="1" v-model="listSearch.MILEAGE" style="min-width: 250px;" placeholder="最大不超过八位数"></InputNumber>
-          </FormItem>
-       </Form>
-       <Form ref="formInline"  slot="content" :label-width="80">
-          <FormItem label="故障描述:">
-              <Input type="textarea" v-model="listSearch.FAULT_DESC" placeholder="请输入故障描述"> </Input>
-          </FormItem>
-          <FormItem label="客诉内容:">
-              <Input type="textarea" v-model="listSearch.CUSTOMER_INFO" placeholder="请输入客诉内容"> </Input>
-          </FormItem>
-       </Form>
-      </Panel>
-    </Collapse>
-    <div class="r-list-chekbox">
-      <div>
-          <Checkbox v-model="testSingle" @on-change="isItemGroupFun">是否启用维修套餐</Checkbox>
+            </FormItem>
+            <FormItem label="预约时间:" prop="ORDER_TIME">
+                
+                <Select v-model="listSearch.ORDER_TIME" placeholder="">
+                  <Option v-for="(item, index) in timeGruop"
+                    :key="item.value" :value="item.value">{{item.label}}</Option>
+                    
+                </Select>
+            </FormItem>
+            <FormItem label="预约类型:">
+                <Select v-model="listSearch.ORDER_TYPE" placeholder="">
+                  <Option v-for="(item, index) in searchSelectOption1"
+                    :key="index" :value="item.code">{{item.name}}</Option>
+                </Select>
+            </FormItem>
+            <FormItem label="预约人:">
+                <Input type="text" v-model="listSearch.ORDER_PERSON" placeholder=""> </Input>
+            </FormItem>
+            <FormItem label="联系电话:">
+                <Input type="text"  @on-keyup="getOnlyNumber" v-model="listSearch.TELPHONE" onkeypress="return event.keyCode>=48&&event.keyCode<=57"> </Input>
+            </FormItem>
+            <FormItem label="当前里程:">
+                <InputNumber :min="1" v-model="listSearch.MILEAGE" placeholder="最大不超过八位数"></InputNumber>
+            </FormItem>
+        </Form>
+        <Form ref="formInline"  slot="content" :label-width="80">
+            <FormItem label="故障描述:">
+                <Input type="textarea" v-model="listSearch.FAULT_DESC" placeholder="请输入故障描述"> </Input>
+            </FormItem>
+            <FormItem label="客诉内容:">
+                <Input type="textarea" v-model="listSearch.CUSTOMER_INFO" placeholder="请输入客诉内容"> </Input>
+            </FormItem>
+        </Form>
+        </Panel>
+      </Collapse>
+      <div class="r-list-chekbox">
+        <div>
+            <Checkbox v-model="testSingle" @on-change="isItemGroupFun">是否启用维修套餐</Checkbox>
+        </div>
+      </div>
+      <div class="r-list-header">
+        <h1>维修项目</h1>
+      </div>
+      <Table
+        class="main-table"
+        ref="tablesMain"
+        :columns="columns"
+        :data="commitItem"
+        stripe
+        border
+      ></Table>
+      <div class="r-list-search" v-if="isOrderSuccess">
+            <Button @click="goOnTenanceItem" type="primary" shape="circle" style="margin-right: 10px;"><Icon type="md-checkmark" size="24"/>选择项目</Button>
+            <Button type="primary" shape="circle"><Icon type="md-add" size="24"/>进入维修项目</Button>
+      </div>
+      <div v-if="testSingle">
+          <div class="r-list-header">
+            <h1>维修项目套餐</h1>
+          </div>
+          <Table
+            class="main-table"
+            ref="tablesMain"
+            :columns="columns2"
+            :data="commitItemGroup"
+            stripe
+            border
+          ></Table>
+          <div class="r-list-search" v-if="isOrderSuccess">
+                <Button @click="goOnItemGroup" type="primary" shape="circle" style="margin-right: 10px;"><Icon type="md-checkmark" size="24"/>选择项目套餐</Button>
+                <Button type="primary" shape="circle"><Icon type="md-add" size="24"/>进入项目套餐</Button>
+          </div>
+      </div>
+      <div class="r-list-header">
+        <h1>维修配件</h1>
+      </div>
+      <Table
+        class="main-table"
+        ref="tablesMain"
+        :columns="columns1"
+        :data="commitParts"
+        stripe
+        border
+      ></Table>
+      <div class="r-list-choose-parts" v-if="isOrderSuccess" >
+            <Button @click="goOnSelectParts " type="primary" shape="circle" style="margin-right: 10px;"><Icon type="md-checkmark" size="24"/>从配件库存选择配件</Button>
+            <Button @click="goOnSelectPartsGroup" type="primary" shape="circle" ><Icon type="md-add" size="24"/>从配件档案选择配件</Button>
+      </div>
+
+      <div class="r-list-money">
+        <p>
+          维修项目费用：
+          <span>{{listSearch.REPAIR_ITEM_MONEY}}元</span>
+          + 维修配件费用：
+          <span>{{listSearch.REPAIR_PART_MONEY}}元</span>
+            + 维修项目优惠金额：
+            <InputNumber @on-change="computedMoney" :disabled="listDisabled" v-model="listSearch.REPAIR_ITEM_DERATE_MONEY" :min="0">
+            </InputNumber> - 配件优惠金额：
+            <InputNumber @on-change="computedMoney1" :disabled="listDisabled" v-model="listSearch.REPAIR_PART_DERATE_MONEY" :min="0">
+            </InputNumber>= 合计应收金额：
+            <span class="r-list-money-reset">{{listSearch.SUM_MONEY}}元</span>
+        </p>
       </div>
     </div>
-    <div class="r-list-header">
-      <h1>维修项目</h1>
-    </div>
-    <Table
-      class="main-table"
-      ref="tablesMain"
-      :columns="columns"
-      :data="commitItem"
-      stripe
-      border
-    ></Table>
-    <div class="r-list-search" v-if="isOrderSuccess">
-          <Button @click="goOnTenanceItem" type="primary" shape="circle" style="margin-right: 10px;"><Icon type="md-checkmark" size="24"/>选择项目</Button>
-          <Button type="primary" shape="circle"><Icon type="md-add" size="24"/>进入维修项目</Button>
-    </div>
-    <div v-if="testSingle">
-        <div class="r-list-header">
-          <h1>维修项目套餐</h1>
-        </div>
-        <Table
-          class="main-table"
-          ref="tablesMain"
-          :columns="columns2"
-          :data="commitItemGroup"
-          stripe
-          border
-        ></Table>
-        <div class="r-list-search" v-if="isOrderSuccess">
-              <Button @click="goOnItemGroup" type="primary" shape="circle" style="margin-right: 10px;"><Icon type="md-checkmark" size="24"/>选择项目套餐</Button>
-              <Button type="primary" shape="circle"><Icon type="md-add" size="24"/>进入项目套餐</Button>
-        </div>
-    </div>
-    <div class="r-list-header">
-      <h1>维修配件</h1>
-    </div>
-    <Table
-      class="main-table"
-      ref="tablesMain"
-      :columns="columns1"
-      :data="commitParts"
-      stripe
-      border
-    ></Table>
-    <div class="r-list-choose-parts" v-if="isOrderSuccess" >
-          <Button @click="goOnSelectParts " type="primary" shape="circle" style="margin-right: 10px;"><Icon type="md-checkmark" size="24"/>从配件库存选择配件</Button>
-          <Button @click="goOnSelectPartsGroup" type="primary" shape="circle" ><Icon type="md-add" size="24"/>从配件档案选择配件</Button>
-    </div>
+    
 
-    <div class="r-list-money">
-      <p>
-        维修项目费用：
-        <span>{{listSearch.REPAIR_ITEM_MONEY}}元</span>
-         + 维修配件费用：
-         <span>{{listSearch.REPAIR_PART_MONEY}}元</span>
-          + 维修项目优惠金额：
-          <InputNumber @on-change="computedMoney" :disabled="listDisabled" v-model="listSearch.REPAIR_ITEM_DERATE_MONEY" :min="0">
-          </InputNumber> - 配件优惠金额：
-          <InputNumber @on-change="computedMoney1" :disabled="listDisabled" v-model="listSearch.REPAIR_PART_DERATE_MONEY" :min="0">
-          </InputNumber>= 合计应收金额：
-          <span class="r-list-money-reset">{{listSearch.SUM_MONEY}}元</span>
-      </p>
-    </div>
-
-    <div slot="footer" style="text-align: center; font-size: 18px;">
-        <Button v-if="isButton" @click="handleSubmit('listSearch')" size="large" type="primary"  style="margin-right: 10px; padding: 0 10px;"><Icon type="md-checkmark" size="24"/>保存</Button>
-        <Button v-if="isButton" @click="handleCommit" size="large" type="primary"  style="margin-right: 10px; padding: 0 10px;"><Icon type="md-add" size="24"/>提交</Button>
-        <Button v-if="isCar"  size="large" type="primary"  style=" padding: 0 10px;"><Icon type="ios-car" size="24"/>维修接车</Button>
-    </div>
+    
 
       <!--选择车型-->
-      <select-vehicle :showoff="showoff" @selectCar="selectCar">
+      <select-vehicle :showoff="showoff" @selectCar="selectCar" :showTransfer='selectCarTransfer' class="table-modal-detail">
       </select-vehicle>
       <!--选择项目-->
-      <select-items :showTenanceItems="showTenanceItems" @sTenanceItem="sTenanceItem" :initGetItem="initGetItem">
-      </select-items>
+      <select-itemsType :showTenanceItems="showTenanceItems" @sTenanceItem="sTenanceItem" :initGetItem="initGetItem" class="table-modal-detail" :showTransfer='selectItemransfer'>
+      </select-itemsType>
       <!--选择配件-->
-      <select-parts :showSelectParts="showSelectParts" @selectPartsItem="selectPartsItem" :initParts="initParts">
+      <select-parts :showSelectParts="showSelectParts" @selectPartsItem="selectPartsItem" :initParts="initParts" class="table-modal-detail" :stockFlag=true :transferFlag=true>
       </select-parts>
       <!--选择配件组-->
-      <select-partsGroup :showSelectPartsGroup="showSelectPartsGroup" @selectPartsGroup="selectPartsGroup" :initPartsGroup="initPartsGroup">
+      <select-partsGroup :showSelectPartsGroup="showSelectPartsGroup" @selectPartsGroup="selectPartsGroup" :initPartsGroup="initPartsGroup" class="table-modal-detail" :transferFlag=true>
       </select-partsGroup>
       <!--选择项目组-->
-      <select-itemPackage :showSelectItemGroup="showSelectItemGroup" @selectItemGroup="selectItemGroup" :initItemGroup="initItemGroup">
+      <select-itemPackage :showSelectItemGroup="showSelectItemGroup" @selectItemGroup="selectItemGroup" :initItemGroup="initItemGroup" class="table-modal-detail" :showTransfer='selectItemransfer1'>
       </select-itemPackage>
+
+      <div slot="footer">
+        <Button v-if="isButton" @click="handleSubmit('listSearch')" size="large" type="primary"  style="margin-right: 10px;">保存</Button>
+        <Button v-if="isButton" @click="handleCommit" size="large" type="primary"  style="margin-right: 10px;">提交</Button>
+        <Button v-if="isCar"  size="large" type="primary" style="margin-right: 10px;" >维修接车</Button>
+      </div>
   </Modal>
 
 </template>
@@ -164,7 +169,7 @@
   import { formatDate } from '@/libs/tools.js'
 
   import selectVehicle from '@/hxx-components/select-vehicle.vue'
-  import selectItems from '@/hxx-components/select-items.vue'
+  import selectItemsType from '@/hxx-components/select-itemsType.vue'
   import selectParts from '@/hxx-components/select-parts.vue'
   import selectPartsGroup from '@/hxx-components/select-partsGroup.vue'
 
@@ -175,13 +180,16 @@
 
 	export default {
 		name: "reservation-list-detail",
-    components: {selectVehicle,selectItems,selectParts,selectPartsGroup,selectItemPackage},
+    components: {selectVehicle,selectItemsType,selectParts,selectPartsGroup,selectItemPackage},
     data(){
       return{
         showoff:null,//选择车辆
-        showTenanceItems:null,//选择项目
-        initGetItem:[],//初始化选择项目数据
+        selectCarTransfer:true,//选择车辆是否放在body
 
+        showTenanceItems:null,//选择项目
+        selectItemransfer:true,//选择项目是否放在body
+        initGetItem:[],//初始化选择项目数据
+        selectItemransfer1:true,//选择项目组是否放在body
         showSelectParts:null,//选择配件开关
         initParts:[],
         showSelectPartsGroup:null,
@@ -195,34 +203,42 @@
         testSingle:false,//判断是否启用维修项目套餐
         //维修项目
         columns: [
-          {title: '序号',  minWidth: 60,type:"index",
+          {title: '序号',  minWidth: 80,type:"index",
           },
-          {title: '维修项目名称', key: 'NAME', sortable: true, minWidth: 200,
+          {title: '维修项目名称', key: 'NAME', sortable: true, minWidth: 180,
             // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.ORDER_TYPE))
           },
-          {title: '标准工时', key: 'REPAIR_TIME', sortable: true, minWidth: 150},
-          {title: '标准金额', key: 'REPAIR_MONEY', sortable: true, minWidth: 150},
-          {title: '油漆面数', key: 'PAINT_NUM', sortable: true, minWidth: 150},
-          {title: '小计金额', key: 'ITEM_MONEY', sortable: true, minWidth: 150,
+          {title: '标准工时', key: 'REPAIR_TIME', sortable: true, minWidth: 120},
+          {title: '标准金额', key: 'REPAIR_MONEY', sortable: true, minWidth: 120},
+          {title: '油漆面数', key: 'PAINT_NUM', sortable: true, minWidth: 120},
+          {title: '小计金额', key: 'ITEM_MONEY', sortable: true, minWidth: 120,
             render: (h, params) => h('span', (params.row.REPAIR_TIME*getUserInfo(this.$store.state.user.userInfo.params, 'P1001')+params.row.PAINT_NUM*getUserInfo(this.$store.state.user.userInfo.params, 'P1002')))
           },
-          {title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 150,
-            render: (h, params) =>  h(ColumnInput, {
-                props: {
-                  params: params,
-                  type: 'number',
-                  min: 0
-                },
-                on: {
-                  'change': val => {
-                    // this.getItem[params.index][params.column.key]= val
-                    this.commitItem[params.index]['ITEM_DERATE_MONEY']=val;
-                    this.commitItem[params.index]['ITEM_LAST_MONEY']=params.row.REPAIR_TIME*getUserInfo(this.$store.state.user.userInfo.params, 'P1001')+params.row.PAINT_NUM*getUserInfo(this.$store.state.user.userInfo.params, 'P1002')-val;
-                    this.computItemMoney();
-                  },
-                }
-              })
-
+          {title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 120,
+              render: (h, params) => {
+                        return h('div', [
+                            h('InputNumber', {
+                                props: {
+                                    min:0,
+                                    value: params.row.ITEM_DERATE_MONEY,
+                                },
+                                on: {
+                                    "on-change":(val)=>{
+                                        
+                                        let self=this;
+                                        clearTimeout(this.timer);
+                                        this.timer = setTimeout(function(){
+                                            self.commitItem[params.index]['ITEM_DERATE_MONEY']=val;
+                                            self.commitItem[params.index]['ITEM_LAST_MONEY']=params.row.REPAIR_TIME*getUserInfo(self.$store.state.user.userInfo.params, 'P1001')+params.row.PAINT_NUM*getUserInfo(self.$store.state.user.userInfo.params, 'P1002')-val;
+                                            self.computItemMoney();
+                                        },1000)
+                                    },
+                                    
+                                }
+                            },
+                            )
+                        ]);
+                    }
           },
           {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 150,
             render: (h, params) => h('span', (params.row.REPAIR_TIME*100+params.row.PAINT_NUM*1200-params.row.ITEM_DERATE_MONEY))
@@ -245,7 +261,7 @@
                 ]);
             }
           },
-          {title: '操作', key: '', sortable: true, minWidth: 150, fixed: 'right',
+          {title: '操作', key: '', sortable: true, minWidth: 100, fixed: 'right',
             render: (h, params) => {
                 if(this.titleMsg=='新建'){
                   return h('div', [
@@ -277,46 +293,69 @@
         getItem:[],
         //维修配件
         columns1: [
-          {title: '序号',  minWidth: 60,type:'index',},
-          {title: '配件编号', key: 'PART_NO', sortable: true, minWidth: 200,},
+          {title: '序号',  minWidth: 80,type:'index',},
+          {title: '配件编号', key: 'PART_NO', sortable: true, minWidth: 140,},
           {title: '配件名称', key: 'NAME', sortable: true, minWidth: 150},
-          {title: '数量', key: 'PART_NUM', sortable: true, minWidth: 150,
-            render: (h, params) =>  h(ColumnInput, {
-                props: {
-                  params: params,
-                  type: 'number',
-                  min: 0
-                },
-                on: {
-                  'change': val => {
-                    this.commitParts[params.index]['PART_NUM']=val;
-                    this.commitParts[params.index]['PART_MONEY']=params.row.SALES_PRICE*val;
-                    this.commitParts[params.index]['PART_LAST_MONEY']=params.row.SALES_PRICE*val-params.row.PART_DERATE_MONEY;
-                    this.computItemMoney();
-                  },
-                }
-              })
+          {title: '数量', key: 'PART_NUM', sortable: true, minWidth: 100,
+            
+              render: (h, params) => {
+                        return h('div', [
+                            h('InputNumber', {
+                                props: {
+                                    min:0,
+                                    value: params.row.PART_NUM,
+                                },
+                                on: {
+                                    "on-change":(val)=>{
+                                        
+                                        let self=this;
+                                        clearTimeout(this.timer);
+                                        this.timer = setTimeout(function(){
+                                            self.commitParts[params.index]['PART_NUM']=val;
+                                            self.commitParts[params.index]['PART_MONEY']=params.row.SALES_PRICE*val;
+                                            self.commitParts[params.index]['PART_LAST_MONEY']=params.row.SALES_PRICE*val-params.row.PART_DERATE_MONEY;
+                                            self.computItemMoney();
+                                        },1000)
+                                    },
+                                    
+                                }
+                            },
+                            )
+                        ]);
+                    }
           },
-          {title: '单位', key: 'UNIT', sortable: true, minWidth: 150,
+          {title: '单位', key: 'UNIT', sortable: true, minWidth: 100,
             render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.UNIT))
           },
-          {title: '单价', key: 'SALES_PRICE', sortable: true, minWidth: 150},
-          {title: '小计金额', key: 'PART_MONEY', sortable: true, minWidth: 150,},
-          {title: '优惠金额', key: 'PART_DERATE_MONEY', sortable: true, minWidth: 150,
-            render: (h, params) =>  h(ColumnInput, {
-                props: {
-                  params: params,
-                  type: 'number',
-                  min: 0
-                },
-                on: {
-                  'change': val => {
-                    this.commitParts[params.index]['PART_DERATE_MONEY']=val;
-                    this.commitParts[params.index]['PART_LAST_MONEY']=params.row.SALES_PRICE*params.row.PART_NUM-val;
-                    this.computItemMoney();
-                  },
-                }
-              })
+          {title: '单价', key: 'SALES_PRICE', sortable: true, minWidth: 100},
+          {title: '小计金额', key: 'PART_MONEY', sortable: true, minWidth: 120,},
+          {title: '优惠金额', key: 'PART_DERATE_MONEY', sortable: true, minWidth: 120,
+            
+
+              render: (h, params) => {
+                        return h('div', [
+                            h('InputNumber', {
+                                props: {
+                                    min:0,
+                                    value: params.row.PART_DERATE_MONEY,
+                                },
+                                on: {
+                                    "on-change":(val)=>{
+                                        
+                                        let self=this;
+                                        clearTimeout(this.timer);
+                                        this.timer = setTimeout(function(){
+                                            self.commitParts[params.index]['PART_DERATE_MONEY']=val;
+                                            self.commitParts[params.index]['PART_LAST_MONEY']=params.row.SALES_PRICE*params.row.PART_NUM-val;
+                                            self.computItemMoney();
+                                        },1000)
+                                    },
+                                    
+                                }
+                            },
+                            )
+                        ]);
+                    }
           },
           {title: '优惠后金额', key: 'PART_LAST_MONEY', sortable: true, minWidth: 150,},
           {title: '备注', key: 'REMARK', sortable: true, minWidth: 150,
@@ -338,7 +377,7 @@
                 ]);
             }
           },
-          {title: '操作', key: '', sortable: true, minWidth: 150,fixed: 'right',
+          {title: '操作', key: '', sortable: true, minWidth: 100,fixed: 'right',
             render: (h, params) => {
 
                 if(this.titleMsg=='新建'){
@@ -372,25 +411,35 @@
         getParts1:[],
         //维修项目套餐
         columns2: [
-          {title: '序号',  minWidth: 60,type:'index',},
-          {title: '项目套餐名称', key: 'GROUP_NAME', sortable: true, minWidth: 200,},
-          {title: '套餐价格', key: 'SALES_PRICE', sortable: true, minWidth: 150},
-          {title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 150,
-              render: (h, params) =>  h(ColumnInput, {
-                    props: {
-                      params: params,
-                      type: 'number',
-                      min: 0
-                    },
-                    on: {
-                      'change': val => {
-                        this.commitItemGroup[params.index]['ITEM_DERATE_MONEY']=val;
-                        this.commitItemGroup[params.index]['ITEM_LAST_MONEY']=params.row.SALES_PRICE-val;
-                        this.computItemMoney();
-                      },
+          {title: '序号',  minWidth: 80,type:'index',},
+          {title: '项目套餐名称', key: 'GROUP_NAME', sortable: true, minWidth: 180,},
+          {title: '套餐价格', key: 'SALES_PRICE', sortable: true, minWidth: 120},
+          {title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 120,
+             
+              render: (h, params) => {
+                        return h('div', [
+                            h('InputNumber', {
+                                props: {
+                                    min:0,
+                                    value: params.row.ITEM_DERATE_MONEY,
+                                },
+                                on: {
+                                    "on-change":(val)=>{
+                                        
+                                        let self=this;
+                                        clearTimeout(this.timer);
+                                        this.timer = setTimeout(function(){
+                                            self.commitItemGroup[params.index]['ITEM_DERATE_MONEY']=val;
+                                            self.commitItemGroup[params.index]['ITEM_LAST_MONEY']=params.row.SALES_PRICE-val;
+                                            self.computItemMoney();
+                                        },1000)
+                                    },
+                                    
+                                }
+                            },
+                            )
+                        ]);
                     }
-              })
-
 
           },
           {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 150,
@@ -415,8 +464,9 @@
                     )
                 ]);
             }
+
           },
-          {title: '操作', key: '', sortable: true, minWidth: 150,fixed: 'right',
+          {title: '操作', key: '', sortable: true, minWidth: 100,fixed: 'right',
             render: (h, params) => {
 
                 if(this.titleMsg=='新建'){
@@ -518,10 +568,10 @@
         ],
         ruleValidate: {
           ORDER_DATE:[
-            { required: true, message: '请选择时间', }
+            { required: true, message: '请选择日期', }
           ],
           ORDER_TIME: [
-              { required: true,  message: '请选择时间',trigger:'change'}
+              { required: true,  message: '请选择时间',}
           ]
         },//规则验证
 
@@ -535,7 +585,7 @@
         commitItemGroup:[],
         commitItem:[],//提交选择项目
         commitParts:[],//提交配件
-
+        timer:null,
 
 
       }
@@ -655,7 +705,7 @@
                       
                   })
               } else {
-
+                this.$Message.info('请填写必选项')
               }
           });
 
@@ -1242,9 +1292,8 @@
   .titleMsg{
     font-size: 18px;
     color: red;
-    position: absolute;
-    right: 30px;
-    top: 66px;
+    text-align: right;
+    padding-right: 30px;
   }
   .search-block{
     display: inline-block;

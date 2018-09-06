@@ -20,7 +20,7 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="primary" v-if="accessBtn('add')"  @click="selectPick">领料/退料</Button>
+      <Button type="primary" v-if="accessBtn('getpart')"  @click="selectPick">领料/退料</Button>
     </div>
     <!--维修领料详情-->
     <maintain-pick-detail class="table-modal-detail" :showDetail="showDetail" :detailData="detailData" @closeDetail="closeDetail"></maintain-pick-detail>
@@ -40,7 +40,7 @@ export default {
     data(){
 		return{
             columns: [
-                {title: '序号',  minWidth: 60,
+                {title: '序号',  minWidth: 80,
                     render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
                 },
                 {title: '领料状态', key: 'Status2', sortable: true, minWidth: 150,
@@ -70,7 +70,7 @@ export default {
                 {title: '维修类型', key: 'REPAIR_TYPE', sortable: true, minWidth: 150,
                     render: (h, params) => h('span', getName(this.getREPAIRTYPE, params.row.REPAIR_TYPE))
                 },
-                {title: '工单类型', key: 'GD_TYPE', sortable: true, minWidth: 100,
+                {title: '工单类型', key: 'GD_TYPE', sortable: true, minWidth: 120,
                     render: (h, params) => h('span', getName(this.getGD_TYPE, params.row.GD_TYPE))
                 },
                 {title: '主修人', key: 'REPAIR_PERSON', sortable: true, minWidth: 150,
@@ -150,7 +150,7 @@ export default {
                 method: 'post',
                 data: {
                     KEYWORD: this.search.input,
-                    STATUS: this.search.select1,
+                    STATUS_eq: this.search.select1||'',
                     page: this.page,
                     limit: this.limit,
                     access_token: this.$store.state.user.token

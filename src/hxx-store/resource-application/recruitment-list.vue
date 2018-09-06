@@ -5,7 +5,7 @@
                 @onRowDblclick="onRowDblclick" :show="showTable" :page="page">
     <div slot="search">
       <Form ref="search" :rules="ruleValidate"  :model="search" :label-width="85" inline>
-          <FormItem label="结算日期:" style="width: 100%; margin-right: 10px;">
+          <FormItem label="创建时间:" style="width: 100%; margin-right: 10px;">
               <DatePicker v-model="search.ACCOUNT_TIME_gte" format="yyyy-MM-dd" type="date" placeholder="开始日期" style="width: 120px;"></DatePicker>
               <DatePicker v-model="search.ACCOUNT_TIME_lte" format="yyyy-MM-dd" type="date" placeholder="结束日期" style="width: 120px;margin-left: 5px;"></DatePicker>
               <ButtonGroup size="small" style="margin-left: 10px;">

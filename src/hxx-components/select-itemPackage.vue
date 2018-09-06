@@ -1,25 +1,30 @@
 
-<!--选择项目组件 2018-08-23 -->
+<!--选择维修项目套餐组件 2018-08-23 -->
 <template>
     <Modal
         v-model="showOnoff"
-        title="选择维修项目"
+        title="选择维修项目套餐"
         width="90"
         :scrollable="true"
-        :transfer= "false"
+        :transfer= "showTransfer"
+        :mask-closable="false"
+        :transition-names="['', '']"
         :footer-hide="false"
     >
     <common-table v-model="tableData" :columns="columns" :show="showSelectItemGroup" :total="total" @changePage="changePage" 
-        @changePageSize="changePageSize" @onRowClick="onRowClick">
+        @changePageSize="changePageSize" @onRowClick="onRowClick" :showOperate=false>
         <div slot="search">
-            <Form inline :label-width="70">
-                <FormItem :label-width="10">
-                    <Input  placeholder="项目套餐编号/名称..." v-model="test1" class="search-block"></Input>
-                    <ButtonGroup size="small">
-                        <Button type="primary" title="查询" @click="searchVehicle"><Icon type="ios-search" size="24"/></Button>
-                        <Button type="primary" title="重置" @click="resetVehicle"><Icon type="ios-undo" size="24"/></Button>
-                    </ButtonGroup>
+            <Form class="common-form">
+                <FormItem>
+                    <Input  placeholder="项目套餐编号/名称..." v-model="test1"></Input>
                 </FormItem>
+                
+                    
+                    <ButtonGroup size="small">
+                        <Button type="primary" title="查询" @click="searchVehicle"><Icon type="ios-search" size="28"/></Button>
+                        <Button type="primary" title="重置" @click="resetVehicle"><Icon type="ios-undo" size="28"/></Button>
+                    </ButtonGroup>
+                
            </Form>
            
         </div>
@@ -32,7 +37,7 @@ import commonTable from '@/hxx-components/common-table.vue'
   import { getName, getDictGroup } from '@/libs/util.js'
 	export default {
 		name: "select-itemPackage",
-        props:['showSelectItemGroup','initItemGroup'],
+        props:['showSelectItemGroup','initItemGroup',"showTransfer"],
         components: {commonTable},
         data(){
             return{
@@ -47,7 +52,7 @@ import commonTable from '@/hxx-components/common-table.vue'
 
                 columns: [
                     // {type: 'selection', width: 50, fixed: 'left'},
-                    {title: '序号',  minWidth: 60,
+                    {title: '序号',  minWidth: 80,
                         render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
                     },
                     {title: '项目套餐编号', key: 'GROUP_NO', sortable: true, minWidth: 160,
@@ -96,6 +101,7 @@ import commonTable from '@/hxx-components/common-table.vue'
                 console.log("点击选择项目套餐了",this.initItemGroup);
                 this.showOnoff=true;
                 this.getList();
+                this.resetVehicle();
                 this.selectData=this.initItemGroup;
             }
         },

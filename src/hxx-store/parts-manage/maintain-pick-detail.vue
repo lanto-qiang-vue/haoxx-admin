@@ -8,9 +8,11 @@
     :scrollable="true"
     :transfer= "false"
     :footer-hide="false"
+    class="table-modal-detail"
     :transition-names="['', '']"
-  >
-    <div style="font-size: 18px;text-align: right;color: red;padding-right: 30px;">工单号:{{listSearch.REPAIR_NO}}</div>
+  > 
+  <div style="overflow: auto;height: 100%;">
+      <div style="font-size: 18px;text-align: right;color: red;padding-right: 30px;">工单号:{{listSearch.REPAIR_NO}}</div>
     <Collapse v-model="collapse">
       <Panel name="1">查询
        <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="120" inline class="detail-form">
@@ -38,10 +40,10 @@
        </Form>
        <Form ref="formInline"  slot="content" :label-width="80">
           <FormItem label="客诉内容:">
-              <Input type="textarea" v-model="listSearch.CUSTOMER_INFO" placeholder="请输入客诉内容"> </Input>
+              <Input type="textarea" disabled v-model="listSearch.CUSTOMER_INFO" placeholder="请输入客诉内容"> </Input>
           </FormItem>
           <FormItem label="维修建议:">
-              <Input type="textarea" v-model="listSearch.REPAIR_INFO" placeholder="请输入建议内容"> </Input>
+              <Input type="textarea" disabled v-model="listSearch.REPAIR_INFO" placeholder="请输入建议内容"> </Input>
           </FormItem>
        </Form>
       </Panel>
@@ -96,11 +98,7 @@
       stripe
       border
     ></Table>
-    <!--底部按钮组-->
-    <div slot="footer">
-        <Button type="primary" @click="receiveFun" style="margin-right: 10px;">领料入库</Button>
-        <Button type="primary" @click="rejectedFun" style="margin-right: 10px;">退料入库</Button>
-    </div>
+    
     <!--退料弹框-->
     <Modal
         v-model="showRejected"
@@ -141,7 +139,13 @@
             <Button type="primary" @click="savePartOut('storeObj')" style="margin-right: 10px;">确定</Button>
         </div>
     </Modal>
-
+  </div>
+    
+  <!--底部按钮组-->
+    <div slot="footer">
+        <Button type="primary" @click="receiveFun" style="margin-right: 10px;">领料出库</Button>
+        <Button type="primary" @click="rejectedFun" style="margin-right: 10px;">退料入库</Button>
+    </div>
   </Modal>
 
 </template>
@@ -163,19 +167,19 @@
         testSingle:false,//判断是否启用维修项目套餐
         //维修项目
         columns: [
-          {title: '序号',  minWidth: 60,type:"index",
+          {title: '序号',  minWidth: 80,type:"index",
           },
           {title: '维修项目名称', key: 'NAME', sortable: true, minWidth: 200,
             // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.ORDER_TYPE))
           },
-          {title: '标准工时', key: 'REPAIR_TIME', sortable: true, minWidth: 100},
-          {title: '标准金额', key: 'REPAIR_MONEY', sortable: true, minWidth: 100},
-          {title: '油漆面数', key: 'PAINT_NUM', sortable: true, minWidth: 100},
-          {title: '小计金额', key: 'ITEM_MONEY', sortable: true, minWidth: 100,
+          {title: '标准工时', key: 'REPAIR_TIME', sortable: true, minWidth: 120},
+          {title: '标准金额', key: 'REPAIR_MONEY', sortable: true, minWidth: 120},
+          {title: '油漆面数', key: 'PAINT_NUM', sortable: true, minWidth: 120},
+          {title: '小计金额', key: 'ITEM_MONEY', sortable: true, minWidth: 120,
           },
-          {title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 100,
+          {title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 120,
           },
-          {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 100,
+          {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 150,
           },
           {title: '车间班组', key: 'WORK_CLASS_NAME', sortable: true, minWidth: 150,
             
@@ -189,7 +193,7 @@
         ],
         //维修配件
         columns1: [
-          {title: '序号',  minWidth: 60,type:'index',},
+          {title: '序号',  minWidth: 80,type:'index',},
           {title: '配件编号', key: 'PART_NO', sortable: true, minWidth: 120,},
           {title: '配件名称', key: 'NAME', sortable: true, minWidth: 120},
           {title: '数量', key: 'PART_NUM', sortable: true, minWidth: 100,
@@ -205,7 +209,7 @@
           },
           {title: '含销售价', key: 'SALES_PRICE', sortable: true, minWidth: 120,},
           {title: '销售税额', key: 'RATE', sortable: true, minWidth: 120,},
-          {title: '未含销售价', key: 'PART_MONEY', sortable: true, minWidth: 120,},
+          {title: '未含销售价', key: 'PART_MONEY', sortable: true, minWidth: 150,},
           {title: '领/退料人', key: 'GET_PART_PERSON', sortable: true, minWidth: 150,},
           {title: '领/退料时间', key: 'GET_PART_TIME', sortable: true, minWidth: 150,},
           {title: '领料仓库', key: 'STORE_NAME', sortable: true, minWidth: 150,},
@@ -233,7 +237,7 @@
         ],
         //维修项目套餐
         columns2: [
-          {title: '序号',  minWidth: 60,type:'index',},
+          {title: '序号',  minWidth: 80,type:'index',},
           {title: '项目套餐名称', key: 'GROUP_NAME', sortable: true, minWidth: 200,},
           {title: '套餐价格', key: 'SALES_PRICE', sortable: true, minWidth: 150},
           {title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 150,

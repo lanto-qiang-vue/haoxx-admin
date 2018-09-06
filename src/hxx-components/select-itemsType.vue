@@ -1,47 +1,52 @@
 
-<!--选择项目组件 2018-08-23 -->
+<!--选择维修项目组件 2018-08-23 -->
 <template>
     <Modal
         v-model="showOnoff"
         title="选择维修项目"
         width="90"
+        :mask-closable="false"
         :scrollable="true"
-        :transfer= "false"
+        :transfer= "showTransfer"
         :footer-hide="false"
+        :transition-names="['', '']"
     >
 
     <common-table v-model="tableData" :columns="columns" :show="showTenanceItems" :total="total" @changePage="changePage" 
-        @changePageSize="changePageSize" @onRowClick="onRowClick">
+        @changePageSize="changePageSize" @onRowClick="onRowClick" :showOperate=false>
         <div slot="search">
-            <Form inline>
-                <FormItem>
-                    <Select v-model="test1" style="min-width: 250px;" @on-change="changeCarType">
-                        <Option v-for="(item, index) in getCarTypeData" :key="index" :value="item.cartype">{{item.CARNAME}}</Option>
+            <Form  class="common-form">
+                <FormItem >
+                    <Select v-model="test1" @on-change="changeCarType" placeholder="选择车辆类型">
+                        <Option v-for="(item, index) in getCarTypeData" :key="item.cartype" :value="item.cartype">{{item.CARNAME}}</Option>
                     </Select>
                 </FormItem>
-                <FormItem>
-                    <Select :disabled="isdisabled" v-model="test2" style="min-width: 250px;">
-                        <Option v-for="(item, index) in carItemType" :key="index" :value="item.TYPE_ID">{{item.TYPE_NAME}}</Option>
+                <FormItem >
+                    <Select :disabled="isdisabled" v-model="test2" placeholder="选择项目分类">
+                        <Option v-for="(item, index) in carItemType" :key="item.TYPE_ID" :value="item.TYPE_ID">{{item.TYPE_NAME}}</Option>
                     </Select>
                 </FormItem>
-                <FormItem>
-                    <Select :disabled="isdisabled" v-model="test3" style="min-width: 250px;">
-                        <Option v-for="(item, index) in banJinListData" :key="index" :value="item.ENGINE_TYPE">{{item.ENGINE_TYPE_NAME}}</Option>
+                <FormItem >
+                    <Select :disabled="isdisabled" v-model="test3" placeholder="选择发动机类型">
+                        <Option v-for="(item, index) in banJinListData" :key="item.ENGINE_TYPE" :value="item.ENGINE_TYPE">{{item.ENGINE_TYPE_NAME}}</Option>
                     </Select>
                 </FormItem>
-                <FormItem>
-                    <Select :disabled="isdisabled" v-model="test4" style="min-width: 250px;" >
-                        <Option v-for="(item, index) in carListData" :key="index" :value="item.CLASS_TYPE">{{item.CLASS_NAME}}</Option>
+                <FormItem >
+                    <Select :disabled="isdisabled" v-model="test4" placeholder="选择汽车参数">
+                        <Option v-for="(item, index) in carListData" :key="item.CLASS_TYPE" :value="item.CLASS_TYPE">{{item.CLASS_NAME}}</Option>
                     </Select>
+                </FormItem>
+                <FormItem >
+                    <Input  placeholder="项目编号/名称..." v-model="test5"></Input>
+                </FormItem>
+                <FormItem >
+                    <ButtonGroup size="small">
+                        <Button type="primary" title="查询" @click="searchVehicle"><Icon type="ios-search" size="28"/></Button>
+                        <Button type="primary" title="重置" @click="resetVehicle" style="margin-right:20px;"><Icon type="ios-undo" size="28"/></Button>
+                    </ButtonGroup>
                 </FormItem>
            </Form>
-           <div class="search-block">
-                <Input  placeholder="预约单号/预约人/联系电话..." v-model="test5"></Input>
-            </div>
-            <ButtonGroup size="small">
-                <Button type="primary" title="查询" @click="searchVehicle"><Icon type="ios-search" size="24"/></Button>
-                <Button type="primary" title="重置" @click="resetVehicle" style="margin-right:20px; margin-left: 1px;"><Icon type="ios-undo" size="24"/></Button>
-            </ButtonGroup>
+           
         </div>
 
     </common-table>
@@ -52,8 +57,8 @@
 import commonTable from '@/hxx-components/common-table.vue'
   import { getName, getDictGroup } from '@/libs/util.js'
 	export default {
-		name: "select-items",
-        props:['showTenanceItems','initGetItem'],
+		name: "select-itemsType",
+        props:['showTenanceItems','initGetItem',"showTransfer"],
         components: {commonTable},
         data(){
             return{
@@ -122,27 +127,27 @@ import commonTable from '@/hxx-components/common-table.vue'
                 
                 columns: [
                     // {type: 'selection', width: 50, fixed: 'left'},
-                    {title: '序号',  minWidth: 60,
+                    {title: '序号',  minWidth: 80,
                         render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
                     },
-                    {title: '项目编号', key: 'ITEM_NO', sortable: true, minWidth: 200,
+                    {title: '项目编号', key: 'ITEM_NO', sortable: true, minWidth: 150,
                         //render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.ORDER_TYPE))
                     },
                     {title: '项目名称', key: 'NAME', sortable: true, minWidth: 200,
                         // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.VEHICLE_COLOR))
                     },
-                    {title: '项目分类', key: 'TYPE_NAME', sortable: true, minWidth: 200},
-                    {title: '计费标准', key: 'CHARGE_TYPE', sortable: true, minWidth: 200,
+                    {title: '项目分类', key: 'TYPE_NAME', sortable: true, minWidth: 170},
+                    {title: '计费标准', key: 'CHARGE_TYPE', sortable: true, minWidth: 150,
                         render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.CHARGE_TYPE))
                     },
-                    {title: '标准金额', key: 'REPAIR_MONEY', sortable: true, minWidth: 200},
-                    {title: '标准工时', key: 'REPAIR_TIME', sortable: true, minWidth: 200,
+                    {title: '标准金额', key: 'REPAIR_MONEY', sortable: true, minWidth: 120},
+                    {title: '标准工时', key: 'REPAIR_TIME', sortable: true, minWidth: 120,
                         // render: (h, params) => h('span', params.row.ORDER_DATE.substr(0, 10))
                     },
-                    {title: '油漆面数', key: 'PAINT_NUM', sortable: true, minWidth: 200},
-                    {title: '发动机类型', key: 'ENGINE_TYPE_NAME', sortable: true, minWidth: 200},
-                    {title: '汽车排量', key: 'CLASS_NAME', sortable: true, minWidth: 200},
-                    {title: '操作', key: 'operation', sortable: true, minWidth: 80,fixed: 'right',
+                    {title: '油漆面数', key: 'PAINT_NUM', sortable: true, minWidth: 120},
+                    {title: '发动机类型', key: 'ENGINE_TYPE_NAME', sortable: true, minWidth: 170},
+                    {title: '汽车排量', key: 'CLASS_NAME', sortable: true, minWidth: 250},
+                    {title: '操作', key: 'operation', sortable: true, minWidth: 100,fixed: 'right',
                         render: (h, params) => {
                             let buttonContent= this.state(params.row)? '取消选择':'选择';
                             let buttonStatus= this.state(params.row)? 'warning':'primary';
@@ -183,7 +188,7 @@ import commonTable from '@/hxx-components/common-table.vue'
             showTenanceItems(){
                 console.log("点击选择项目了");
                 this.showOnoff=true;
-                // this.resetVehicle();//首次进来数据重置
+                this.resetVehicle();//首次进来数据重置
                 this.selectData=this.initGetItem;
 
                 this.getList();
@@ -223,11 +228,11 @@ import commonTable from '@/hxx-components/common-table.vue'
                     url: '/tenant/basedata/repairiteminfo/infolist1',
                     method: 'post',
                     data: {
-                        cartype_eq: this.test1,
-                        TYPE_ID_eq: this.test2,
-                        ENGINE_TYPE_eq: this.test3,
-                        CLASS_TYPE_eq: this.test4,
-                        KEYWORD: this.test5,
+                        cartype_eq: this.test1||'',
+                        TYPE_ID_eq: this.test2||'',
+                        ENGINE_TYPE_eq: this.test3||'',
+                        CLASS_TYPE_eq: this.test4||'',
+                        KEYWORD: this.test5||'',
                         page: this.page,
                         limit: this.limit,
                         access_token: this.$store.state.user.token
@@ -335,10 +340,7 @@ import commonTable from '@/hxx-components/common-table.vue'
                         this.banJinListData=[];
                     }
                 }
-                console.log("this.test1",this.test1);
-                console.log("this.carItemType",this.carItemType)
-                console.log("this.carListData",this.carListData)
-                console.log("this.banJinListData",this.banJinListData)
+                
             },
 
             changePage(page){
