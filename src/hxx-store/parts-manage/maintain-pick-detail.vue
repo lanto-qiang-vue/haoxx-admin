@@ -368,6 +368,8 @@
         if(this.detailData){
             this.showModal=true
             this.listSearch=this.detailData;
+            this.listSearch.REPAIR_TYPE=getName(this.getType,this.listSearch.REPAIR_TYPE);
+            
             this.getEmployeeList();
             this.getAllStore();
             this.getItemFun(this.detailData.REPAIR_ID);
@@ -387,6 +389,9 @@
         //单位取值--------
         getUnit(){
             return getDictGroup(this.$store.state.app.dict, '1015');
+        },
+        getType(){
+            return getDictGroup(this.$store.state.app.dict, '1019');
         }
 
     },

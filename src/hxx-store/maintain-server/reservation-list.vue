@@ -94,7 +94,7 @@
         showDetail: false,
         detailData: null,
         clearTableSelect: null,
-        isOrderSuccess:false,//判断是不是预约成功
+        isOrderSuccess:true,//判断是不是预约成功
         
       }
     },
@@ -133,6 +133,9 @@
             this.total= res.total
           }
         })
+
+        this.detailData= null
+        this.isOrderSuccess=true;
       },
       clear(){
 		    for(let i in this.search){
@@ -167,6 +170,7 @@
       },
       closeDetail(){
         this.detailData= null
+        this.isOrderSuccess=true;
         this.clearTableSelect= Math.random()
         this.getList()
       },

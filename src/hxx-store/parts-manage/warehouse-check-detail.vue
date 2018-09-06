@@ -10,7 +10,8 @@
     :footer-hide="false"
     :transition-names="['', '']"
   >
-    <div style="font-size: 18px;text-align: right;color: red;padding-right: 30px;">{{this.titleMsg}}</div>
+    <div style="height: 100%;overflow: auto; padding-bottom: 30px;">
+        <div style="font-size: 18px;text-align: right;color: red;padding-right: 30px;">{{this.titleMsg}}</div>
     <Collapse v-model="collapse">
       <Panel name="1">查询
        <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="85" inline class="detail-form">
@@ -60,6 +61,12 @@
           <Button @click="selectPartsFun" type="primary" shape="circle" ><Icon type="md-add" size="24"/>选择配件</Button>
           <Button @click="loadAllPartByStore" type="primary" shape="circle" ><Icon type="md-add" size="24"/>载入本库全部配件</Button>
     </div>
+    
+    <!--//选择配件-->
+    <!--<select-warehouseParts :showSelectParts="showSelectParts" :initParts="initParts"></select-warehouseParts>-->
+    <select-parts :showSelectParts="showSelectParts" @selectPartsItem="selectPartsItem" :initParts="initParts" :initData="initData" :stockFlag='stockFlag' :transferFlag="transferFlag"></select-parts>
+    </div>
+    
     <div slot="footer">
         <Button type="primary" @click="handleSave('listSearch')" style="margin-right: 10px;" v-show="saveFlag">保存</Button>
         <Button type="primary" @click="handleCommit('listSearch')" style="margin-right: 10px;" v-show="saveFlag">提交</Button>
@@ -67,10 +74,6 @@
         <Button type="primary" @click="" style="margin-right: 10px;">打印盘点单</Button>
 
     </div>
-    <!--//选择配件-->
-    <!--<select-warehouseParts :showSelectParts="showSelectParts" :initParts="initParts"></select-warehouseParts>-->
-    <select-parts :showSelectParts="showSelectParts" @selectPartsItem="selectPartsItem" :initParts="initParts" :initData="initData" :stockFlag='stockFlag' :transferFlag="transferFlag"></select-parts>
-
   </Modal>
 
 </template>
