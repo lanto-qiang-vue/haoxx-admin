@@ -29,13 +29,13 @@
 <script>
   import commonTable from '@/hxx-components/common-table.vue'
   import { getName, getDictGroup ,getCreate} from '@/libs/util.js'
-  import mixin from '@/hxx-components/mixin'
+//   import mixin from '@/hxx-components/mixin'
   import { formatDate } from '@/libs/tools.js'
   import technicalSupportDetail from './technical-support-detail.vue'
 export default {
 	name: "technical-support",
     components: {commonTable,technicalSupportDetail},
-    mixins: [mixin],
+    // mixins: [mixin],
     data(){
 		return{
             columns: [

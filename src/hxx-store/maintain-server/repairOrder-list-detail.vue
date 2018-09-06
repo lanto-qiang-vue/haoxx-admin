@@ -1,4 +1,4 @@
-<!--预约单管理详情-->
+<!--维修开单 2018-09-06详情-->
 <template>
   <Modal
     v-model="showModal"
@@ -10,68 +10,69 @@
     :footer-hide="false"
     :transition-names="['', '']"
   >
-    <div style="font-size: 18px;text-align: right;color: red;padding-right: 30px;">{{titleMsg}}</div>
+    <div style="height: 100%;overflow: auto; padding-bottom: 30px;">
+      <div style="font-size: 18px;text-align: right;color: red;padding-right: 30px;">{{titleMsg}}</div>
     <Collapse v-model="collapse">
       <Panel name="1">查询
-       <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="80" inline class="detail-form">
+       <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="110"  class="common-form">
           <FormItem label="车牌号码:" prop="PLATE_NUM">
-              <Input @on-focus="showoff=Math.random();"	type="text" v-model="listSearch.PLATE_NUM" placeholder="请输入车牌号" style="min-width: 250px;" >
+              <Input @on-focus="showoff=Math.random();"	type="text" v-model="listSearch.PLATE_NUM" placeholder="请输入车牌号" >
                   <Icon type="ios-search" slot="suffix"/>
               </Input>
           </FormItem>
           <FormItem label="车型:">
-              <Input type="text" disabled v-model="listSearch.VEHICLE_MODEL" placeholder="请输入车型" style="min-width: 250px;"> </Input>
+              <Input type="text" disabled v-model="listSearch.VEHICLE_MODEL" placeholder="请输入车型"> </Input>
           </FormItem>
           <FormItem label="车架号:">
-              <Input type="text" disabled v-model="listSearch.VIN_NO" placeholder="" style="min-width: 250px;"> </Input>
+              <Input type="text" disabled v-model="listSearch.VIN_NO" placeholder=""> </Input>
           </FormItem>
           <FormItem label="车主名称:">
-              <Input type="text" disabled v-model="listSearch.CUSTOMER_NAME" placeholder="" style="min-width: 250px;"> </Input>
+              <Input type="text" disabled v-model="listSearch.CUSTOMER_NAME" placeholder=""> </Input>
           </FormItem>
           <FormItem label="送修人:">
-              <Input type="text" v-model="listSearch.GIVE_REPAIR_PERSON" placeholder="" style="min-width: 250px;"> </Input>
+              <Input type="text" v-model="listSearch.GIVE_REPAIR_PERSON" placeholder=""> </Input>
           </FormItem>
           <FormItem label="联系电话:">
-              <Input type="text" v-model="listSearch.TELPHONE" placeholder="" style="min-width: 250px;"> </Input>
+              <Input type="text" v-model="listSearch.TELPHONE" placeholder=""> </Input>
           </FormItem>
           <FormItem label="维修类型:" >
-              <Select v-model="listSearch.REPAIR_TYPE" placeholder="" style="min-width: 250px;">
+              <Select v-model="listSearch.REPAIR_TYPE" placeholder="">
                 <Option v-for="(item, index) in repairTypeArr"
                   :key="index" :value="item.code">{{item.name}}</Option>
               </Select>
           </FormItem>
           <FormItem label="送修里程:" prop="MILEAGE">
-              <InputNumber :min="1" v-model="listSearch.MILEAGE" style="min-width: 250px;" placeholder="最大不超过八位数"></InputNumber>
+              <InputNumber :min="1" v-model="listSearch.MILEAGE" placeholder="最大不超过八位数"></InputNumber>
           </FormItem>
           <FormItem label="主修人:" >
-              <Select v-model="listSearch.REPAIR_PERSON" placeholder="" style="min-width: 250px;">
+              <Select v-model="listSearch.REPAIR_PERSON" placeholder="">
                 <Option v-for="(item, index) in repairPersonArr"
                   :key="index" :value="item.code">{{item.code}}</Option>
               </Select>
           </FormItem>
           <FormItem label="车辆类型:" >
-              <Select v-model="listSearch.VEHICLE_TYPE" placeholder="" style="min-width: 250px;" @on-change="selectCarInitFun">
+              <Select v-model="listSearch.VEHICLE_TYPE" placeholder="" @on-change="selectCarInitFun">
                 <Option v-for="(item, index) in vehicleTypeArr"
                   :key="index" :value="item.code">{{item.name}}</Option>
               </Select>
           </FormItem>
           <FormItem label="车辆分类代号:" >
-              <Select v-model="listSearch.VEHICLE_TYPE_CODE" placeholder="" style="min-width: 250px;">
+              <Select v-model="listSearch.VEHICLE_TYPE_CODE" placeholder="">
                 <Option v-for="(item, index) in vehicleNumberArr"
                   :key="item.code" :value="item.code">{{item.code}}</Option>
               </Select>
           </FormItem>
           <FormItem label="服务顾问:" >
-              <Select v-model="listSearch.FOLLOW_PERSON" placeholder="" style="min-width: 250px;">
+              <Select v-model="listSearch.FOLLOW_PERSON" placeholder="">
                 <Option v-for="(item, index) in serverPersonArr"
                   :key="index" :value="item.code">{{item.code}}</Option>
               </Select>
           </FormItem>
           <FormItem label="进厂日期:">
-              <DatePicker v-model="listSearch.COME_DATE" type="datetime" placeholder="Select date and time" style="width: 200px"></DatePicker>
+              <DatePicker v-model="listSearch.COME_DATE" type="datetime" placeholder="Select date and time"></DatePicker>
           </FormItem>
           <FormItem label="计划完工日期:">
-              <DatePicker v-model="listSearch.PLAN_END_DATE" type="datetime" placeholder="Select date and time" style="width: 200px"></DatePicker>
+              <DatePicker v-model="listSearch.PLAN_END_DATE" type="datetime" placeholder="Select date and time"></DatePicker>
           </FormItem>
           
        </Form>
@@ -163,17 +164,7 @@
           <span class="r-list-money-reset">{{listSearch.SUM_MONEY}}元</span>
       </p>
     </div>
-      <!--底部按钮组-->
-      <div slot="footer" style="text-align: center; font-size: 18px;">
-          <Button :disabled="buttonStateArr.save" @click="handleSubmit('listSearch')" size="large" type="primary"  style="margin-right: 10px; padding: 0 10px;"><Icon type="md-checkmark" size="24"/>保存</Button>
-          <Button :disabled="buttonStateArr.dopay" @click="handleCommit" type="primary"  style="margin-right: 10px; padding: 0 10px;">派工</Button>
-          <Button :disabled="buttonStateArr.finish" @click="handleFinish" type="primary"  style="margin-right: 10px; padding: 0 10px;">完工</Button>
-          <Button :disabled="buttonStateArr.doaccount" @click="testtt" type="primary"  style="margin-right: 10px; padding: 0 10px;">结算</Button>
-          <Button :disabled="buttonStateArr.shoukuan" type="primary"  style="margin-right: 10px; padding: 0 10px;">收款</Button>
-          <Button :disabled="buttonStateArr.printWts" type="primary"  style="margin-right: 10px; padding: 0 10px;">打印委托书</Button>
-          <Button :disabled="buttonStateArr.printPgd" type="primary"  style="margin-right: 10px; padding: 0 10px;">打印派工单</Button>
-          <Button :disabled="buttonStateArr.printAccount" type="primary"  style="margin-right: 10px; padding: 0 10px;">打印结算单</Button>
-      </div>
+      
       <!--提示框-->
       <common-modal6 :description="tooltipObj.description" :title="tooltipObj.title" :modal6="tooltipObj.mshow" :fun="tooltipObj.funName" @saveData="saveData" @commitdata="commitdata">
       </common-modal6>
@@ -193,8 +184,26 @@
       <select-itemPackage :showSelectItemGroup="showSelectItemGroup" @selectItemGroup="selectItemGroup" :initItemGroup="initItemGroup">
       </select-itemPackage>
       <!--选择工单结算单-->
-      <select-accountOrder :showSelectAccount="showSelectAccount" :showAccountData="listSearch" :showAccountItem="commitItem" :showAccountParts="commitParts" :showAccountOther="commitOtherItem">
+      <select-accountOrder :showSelectAccount="showSelectAccount" :showAccountData="listSearch" :showAccountItem="commitItem" :showAccountParts="commitParts" :showAccountOther="commitOtherItem" 
+      :repairPersonArr="repairPersonArr" @emitAccount="emitAccount">
       </select-accountOrder>
+      <select-shoukuanOrder :showSelectAccount="showShouKuan" :listSearch="listSearch" :repairPersonArr="repairPersonArr" @closeGetList="closeGetList">
+
+      </select-shoukuanOrder>
+    </div>
+  
+      <!--底部按钮组-->
+      <div slot="footer" >
+          <Button v-if="accessBtn('save')" :disabled="buttonStateArr.save" @click="handleSubmit('listSearch')" size="large" type="primary">保存</Button>
+          <Button v-if="accessBtn('submit')" :disabled="buttonStateArr.dopay" @click="handleCommit" type="info"  >派工</Button>
+          <Button v-if="accessBtn('finish')" :disabled="buttonStateArr.finish" @click="handleFinish" type="warning"  >完工</Button>
+          <Button v-if="accessBtn('doaccount')" :disabled="buttonStateArr.doaccount" @click="testtt" type="warning"  >结算</Button>
+          <Button v-if="accessBtn('shoukuan')" :disabled="buttonStateArr.shoukuan" @click="showShouKuan=Math.random()" type="warning"  >收款</Button>
+          <Button v-if="accessBtn('printWts')" :disabled="buttonStateArr.printWts" type="success">打印委托书</Button>
+          <Button v-if="accessBtn('printPgd')" :disabled="buttonStateArr.printPgd" type="success">打印派工单</Button>
+          <Button v-if="accessBtn('printAccount')" :disabled="buttonStateArr.printAccount" type="success">打印结算单</Button>
+          <Button @click="showModal=false;">返回</Button>
+      </div>
   </Modal>
 
 </template>
@@ -207,23 +216,24 @@
   import selectItemsType from '@/hxx-components/select-itemsType.vue'
   import selectParts from '@/hxx-components/select-parts.vue'
   import selectPartsGroup from '@/hxx-components/select-partsGroup.vue'
-
+  import mixin from '@/hxx-components/mixin'
   import selectItemPackage from '@/hxx-components/select-itemPackage.vue'
   import selectAccountOrder from '@/hxx-components/select-accountOrder.vue'
-
+  import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
   import ColumnInput from '@/hxx-components/column-input.vue'
 
 
 	export default {
-	name: "repairOrder-list-detail",
-    components: {commonModal6,selectVehicle,selectItemsType,selectParts,selectPartsGroup,selectItemPackage,selectAccountOrder},
+	  name: "repairOrder-list-detail",
+    components: {commonModal6,selectVehicle,selectItemsType,selectParts,selectPartsGroup,selectItemPackage,selectAccountOrder,selectShoukuanOrder},
+    mixins: [mixin],
     data(){
       return{
         showSelectAccount:null,//选择工单结算单
         showoff:null,//选择车辆
         showTenanceItems:null,//选择项目
         initGetItem:[],//初始化选择项目数据
-
+        showShouKuan:false,//收款弹出层-------
         showSelectParts:null,//选择配件开关
         initParts:[],
         showSelectPartsGroup:null,
@@ -241,36 +251,44 @@
         testSingle:false,//判断是否启用维修项目套餐
         //维修项目
         columns: [
-          {title: '序号',  minWidth: 60,type:"index",
+          {title: '序号',  minWidth: 80,type:"index",
           },
-          {title: '维修项目名称', key: 'NAME', sortable: true, minWidth: 200,
+          {title: '维修项目名称', key: 'NAME', sortable: true, minWidth: 170,
             // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.ORDER_TYPE))
           },
-          {title: '标准工时', key: 'REPAIR_TIME', sortable: true, minWidth: 150},
-          {title: '标准金额', key: 'REPAIR_MONEY', sortable: true, minWidth: 150},
-          {title: '油漆面数', key: 'PAINT_NUM', sortable: true, minWidth: 150},
-          {title: '小计金额', key: 'ITEM_MONEY', sortable: true, minWidth: 150,
+          {title: '标准工时', key: 'REPAIR_TIME', sortable: true, minWidth: 120},
+          {title: '标准金额', key: 'REPAIR_MONEY', sortable: true, minWidth: 120},
+          {title: '油漆面数', key: 'PAINT_NUM', sortable: true, minWidth: 120},
+          {title: '小计金额', key: 'ITEM_MONEY', sortable: true, minWidth: 120,
             render: (h, params) => h('span', (params.row.REPAIR_TIME*getUserInfo(this.$store.state.user.userInfo.params, 'P1001')+params.row.PAINT_NUM*getUserInfo(this.$store.state.user.userInfo.params, 'P1002')))
           },
-          {title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 150,
-            render: (h, params) =>  h(ColumnInput, {
-                props: {
-                  params: params,
-                  type: 'number',
-                  min: 0
-                },
-                on: {
-                  'change': val => {
-                    // this.getItem[params.index][params.column.key]= val
-                    this.commitItem[params.index]['ITEM_DERATE_MONEY']=val;
-                    this.commitItem[params.index]['ITEM_LAST_MONEY']=params.row.REPAIR_TIME*getUserInfo(this.$store.state.user.userInfo.params, 'P1001')+params.row.PAINT_NUM*getUserInfo(this.$store.state.user.userInfo.params, 'P1002')-val;
-                    this.computItemMoney();
-                  },
-                }
-              })
-
+          {title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 120,
+              render: (h, params) => {
+                        return h('div', [
+                            h('InputNumber', {
+                                props: {
+                                    min:0,
+                                    value: params.row.ITEM_DERATE_MONEY,
+                                },
+                                on: {
+                                    "on-change":(val)=>{
+                                        
+                                        let self=this;
+                                        clearTimeout(this.timer);
+                                        this.timer = setTimeout(function(){
+                                            self.commitItem[params.index]['ITEM_DERATE_MONEY']=val;
+                                            self.commitItem[params.index]['ITEM_LAST_MONEY']=params.row.REPAIR_TIME*getUserInfo(self.$store.state.user.userInfo.params, 'P1001')+params.row.PAINT_NUM*getUserInfo(self.$store.state.user.userInfo.params, 'P1002')-val;
+                                            self.computItemMoney();
+                                        },1000)
+                                    },
+                                    
+                                }
+                            },
+                            )
+                        ]);
+                    }
           },
-          {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 150,
+          {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 130,
             render: (h, params) => h('span', (params.row.REPAIR_TIME*100+params.row.PAINT_NUM*1200-params.row.ITEM_DERATE_MONEY))
           },
           {title: '车间班组', key: 'WORK_CLASS_ID', sortable: true, minWidth: 150,
@@ -322,7 +340,7 @@
                 ]);
             }
           },
-          {title: '操作', key: '', sortable: true, minWidth: 150, fixed: 'right',
+          {title: '操作', key: '', sortable: true, minWidth: 100, fixed: 'right',
             render: (h, params) => {
                 if(this.titleMsg=='新建'){
                   return h('div', [
@@ -354,46 +372,68 @@
         getItem:[],
         //维修配件
         columns1: [
-          {title: '序号',  minWidth: 60,type:'index',},
-          {title: '配件编号', key: 'PART_NO', sortable: true, minWidth: 200,},
+          {title: '序号',  minWidth: 80,type:'index',},
+          {title: '配件编号', key: 'PART_NO', sortable: true, minWidth: 150,},
           {title: '配件名称', key: 'NAME', sortable: true, minWidth: 150},
-          {title: '数量', key: 'PART_NUM', sortable: true, minWidth: 150,
-            render: (h, params) =>  h(ColumnInput, {
-                props: {
-                  params: params,
-                  type: 'number',
-                  min: 0
-                },
-                on: {
-                  'change': val => {
-                    this.commitParts[params.index]['PART_NUM']=val;
-                    this.commitParts[params.index]['PART_MONEY']=params.row.SALES_PRICE*val;
-                    this.commitParts[params.index]['PART_LAST_MONEY']=params.row.SALES_PRICE*val-params.row.PART_DERATE_MONEY;
-                    this.computItemMoney();
-                  },
-                }
-              })
+          {title: '数量', key: 'PART_NUM', sortable: true, minWidth: 100,
+            
+              render: (h, params) => {
+                        return h('div', [
+                            h('InputNumber', {
+                                props: {
+                                    min:0,
+                                    value: params.row.PART_NUM,
+                                },
+                                on: {
+                                    "on-change":(val)=>{
+                                        
+                                        let self=this;
+                                        clearTimeout(this.timer);
+                                        this.timer = setTimeout(function(){
+                                            self.commitParts[params.index]['PART_NUM']=val;
+                                            self.commitParts[params.index]['PART_MONEY']=params.row.SALES_PRICE*val;
+                                            self.commitParts[params.index]['PART_LAST_MONEY']=params.row.SALES_PRICE*val-params.row.PART_DERATE_MONEY;
+                                            self.computItemMoney();
+                                        },1000)
+                                    },
+                                    
+                                }
+                            },
+                            )
+                        ]);
+                    }
           },
-          {title: '单位', key: 'UNIT', sortable: true, minWidth: 150,
+          {title: '单位', key: 'UNIT', sortable: true, minWidth: 100,
             render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.UNIT))
           },
-          {title: '单价', key: 'SALES_PRICE', sortable: true, minWidth: 150},
-          {title: '小计金额', key: 'PART_MONEY', sortable: true, minWidth: 150,},
-          {title: '优惠金额', key: 'PART_DERATE_MONEY', sortable: true, minWidth: 150,
-            render: (h, params) =>  h(ColumnInput, {
-                props: {
-                  params: params,
-                  type: 'number',
-                  min: 0
-                },
-                on: {
-                  'change': val => {
-                    this.commitParts[params.index]['PART_DERATE_MONEY']=val;
-                    this.commitParts[params.index]['PART_LAST_MONEY']=params.row.SALES_PRICE*params.row.PART_NUM-val;
-                    this.computItemMoney();
-                  },
-                }
-              })
+          {title: '单价', key: 'SALES_PRICE', sortable: true, minWidth: 100},
+          {title: '小计金额', key: 'PART_MONEY', sortable: true, minWidth: 120,},
+          {title: '优惠金额', key: 'PART_DERATE_MONEY', sortable: true, minWidth: 120,
+            
+              render: (h, params) => {
+                        return h('div', [
+                            h('InputNumber', {
+                                props: {
+                                    min:0,
+                                    value: params.row.PART_DERATE_MONEY,
+                                },
+                                on: {
+                                    "on-change":(val)=>{
+                                        
+                                        let self=this;
+                                        clearTimeout(this.timer);
+                                        this.timer = setTimeout(function(){
+                                            self.commitParts[params.index]['PART_DERATE_MONEY']=val;
+                                            self.commitParts[params.index]['PART_LAST_MONEY']=params.row.SALES_PRICE*params.row.PART_NUM-val;
+                                            self.computItemMoney();
+                                        },1000)
+                                    },
+                                    
+                                }
+                            },
+                            )
+                        ]);
+                    }
           },
           {title: '优惠后金额', key: 'PART_LAST_MONEY', sortable: true, minWidth: 150,},
           {title: '备注', key: 'REMARK', sortable: true, minWidth: 150,
@@ -415,7 +455,7 @@
                 ]);
             }
           },
-          {title: '操作', key: '', sortable: true, minWidth: 150,fixed: 'right',
+          {title: '操作', key: '', sortable: true, minWidth: 100,fixed: 'right',
             render: (h, params) => {
                 
                 if(this.titleMsg=='新建'){
@@ -449,28 +489,38 @@
         getParts1:[],
         //维修项目套餐
         columns2: [
-          {title: '序号',  minWidth: 60,type:'index',},
-          {title: '项目套餐名称', key: 'GROUP_NAME', sortable: true, minWidth: 200,},
-          {title: '套餐价格', key: 'SALES_PRICE', sortable: true, minWidth: 150},
-          {title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 150,
-              render: (h, params) =>  h(ColumnInput, {
-                    props: {
-                      params: params,
-                      type: 'number',
-                      min: 0
-                    },
-                    on: {
-                      'change': val => {
-                        this.commitItemGroup[params.index]['ITEM_DERATE_MONEY']=val;
-                        this.commitItemGroup[params.index]['ITEM_LAST_MONEY']=params.row.SALES_PRICE-val;
-                        this.computItemMoney();
-                      },
+          {title: '序号',  minWidth: 80,type:'index',},
+          {title: '项目套餐名称', key: 'GROUP_NAME', sortable: true, minWidth: 170,},
+          {title: '套餐价格', key: 'SALES_PRICE', sortable: true, minWidth: 120},
+          {title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 120,
+              
+              render: (h, params) => {
+                        return h('div', [
+                            h('InputNumber', {
+                                props: {
+                                    min:0,
+                                    value: params.row.ITEM_DERATE_MONEY,
+                                },
+                                on: {
+                                    "on-change":(val)=>{
+                                        
+                                        let self=this;
+                                        clearTimeout(this.timer);
+                                        this.timer = setTimeout(function(){
+                                            self.commitItemGroup[params.index]['ITEM_DERATE_MONEY']=val;
+                                            self.commitItemGroup[params.index]['ITEM_LAST_MONEY']=params.row.SALES_PRICE-val;
+                                            self.computItemMoney();
+                                        },1000)
+                                    },
+                                    
+                                }
+                            },
+                            )
+                        ]);
                     }
-              })
-            
             
           },
-          {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 150,
+          {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 130,
             render: (h, params) => h('span', params.row.SALES_PRICE-params.row.ITEM_DERATE_MONEY)
           },
           {title: '车间班组', key: 'WORK_CLASS_ID', sortable: true, minWidth: 150,
@@ -524,7 +574,7 @@
                 ]);
             }
           },
-          {title: '操作', key: '', sortable: true, minWidth: 150,fixed: 'right',
+          {title: '操作', key: '', sortable: true, minWidth: 100,fixed: 'right',
             render: (h, params) => {
                 
                 if(this.titleMsg=='新建'){
@@ -556,7 +606,7 @@
         getItemGroup:[],
         //其他费用参数
         columns3:[
-          {title: '项目名称', key: 'REPAIR_ITEM1', sortable: true, minWidth: 200,
+          {title: '项目名称', key: 'REPAIR_ITEM1', sortable: true, minWidth: 150,
             render: (h, params) => {
                 return h('div', [
                     h('Input', {
@@ -575,7 +625,7 @@
                 ]);
             }
           },
-          {title: '金额(元)', key: 'REPAIR_MONEY1', sortable: true, minWidth: 150,
+          {title: '金额(元)', key: 'REPAIR_MONEY1', sortable: true, minWidth: 110,
            render: (h, params) => {
                 return h('div', [
                     h('Input', {
@@ -595,7 +645,7 @@
                 ]);
             }
           },
-          {title: '项目名称', key: 'REPAIR_ITEM2', sortable: true, minWidth: 200,
+          {title: '项目名称', key: 'REPAIR_ITEM2', sortable: true, minWidth: 150,
            render: (h, params) => {
                 return h('div', [
                     h('Input', {
@@ -613,7 +663,7 @@
                 ]);
             }
           },
-          {title: '金额(元)', key: 'REPAIR_MONEY2', sortable: true, minWidth: 150,
+          {title: '金额(元)', key: 'REPAIR_MONEY2', sortable: true, minWidth: 110,
             render: (h, params) => {
                 return h('div', [
                     h('Input', {
@@ -631,7 +681,7 @@
                 ]);
             }
           },
-          {title: '项目名称', key: 'REPAIR_ITEM3', sortable: true, minWidth: 200,
+          {title: '项目名称', key: 'REPAIR_ITEM3', sortable: true, minWidth: 150,
             render: (h, params) => {
                 return h('div', [
                     h('Input', {
@@ -649,7 +699,7 @@
                 ]);
             }
           },
-          {title: '金额(元)', key: 'REPAIR_MONEY3', sortable: true, minWidth: 150,
+          {title: '金额(元)', key: 'REPAIR_MONEY3', sortable: true, minWidth: 110,
             render: (h, params) => {
                 return h('div', [
                     h('Input', {
@@ -667,7 +717,7 @@
                 ]);
             }
           },
-          {title: '项目名称', key: 'REPAIR_ITEM4', sortable: true, minWidth: 200,
+          {title: '项目名称', key: 'REPAIR_ITEM4', sortable: true, minWidth: 150,
             render: (h, params) => {
                 return h('div', [
                     h('Input', {
@@ -685,7 +735,7 @@
                 ]);
             }
           },
-          {title: '金额(元)', key: 'REPAIR_MONEY4', sortable: true, minWidth: 150,
+          {title: '金额(元)', key: 'REPAIR_MONEY4', sortable: true, minWidth: 110,
             render: (h, params) => {
                 return h('div', [
                     h('Input', {
@@ -1132,7 +1182,6 @@
             });
         },
         saveData(){
-            //提交维修项目套餐
             this.axios.request({
               url: '/tenant/repair/ttrepairworkorder/saveOrSubmit',
               
@@ -1150,7 +1199,7 @@
                 this.$Message.info('successful');
                 this.listSearch["REPAIR_ID"]=res.data.REPAIR_ID;
                 this.listSearch["REPAIR_NO"]=res.data.REPAIR_NO;
-
+                this.$emit('closeGetList');//重新请求数据
               }
             })
         },
@@ -1194,6 +1243,7 @@
                     default : this.buttonStateArr[i]= true;
                   }
                 }
+                this.$emit('closeGetList');//重新请求数据
               }
             })
         },
@@ -1229,6 +1279,7 @@
                     default : this.buttonStateArr[i]= true;
                   }
                 }
+                this.$emit('closeGetList');//重新请求数据
               }
             })
         },
@@ -1753,7 +1804,47 @@
       testtt(){
         this.showSelectAccount=Math.random();
         console.log('结算之前',this.listSearch);
+      },
+      //结算单组建传出来的按钮判断-----
+      
+      emitAccount(val){
+          if(val=='10201004'){
+            for(let i in this.buttonStateArr){
+                switch(i){
+                  case 'shoukuan':
+                  case 'printAccount':
+                  case 'printWts':
+                  case 'printPgd': this.buttonStateArr[i]= false; break
+                  default : this.buttonStateArr[i]= true;
+                }
+            }
+            this.$emit('closeGetList');//重新请求数据
+          }else if(val=='10201005'){
+            for(let i in this.buttonStateArr){
+                switch(i){
+                  case 'printAccount':
+                  case 'printWts':
+                  case 'printPgd': this.buttonStateArr[i]= false; break
+                  default : this.buttonStateArr[i]= true;
+                }
+            }
+            this.$emit('closeGetList');//重新请求数据
+          }
+      },
+
+      //收款单组件出来的数据
+      closeGetList(){
+        for(let i in this.buttonStateArr){
+            switch(i){
+              case 'printAccount':
+              case 'printWts':
+              case 'printPgd': this.buttonStateArr[i]= false; break
+              default : this.buttonStateArr[i]= true;
+            }
+        }
+        this.$emit('closeGetList');//重新请求数据
       }
+
     }
 	}
 </script>

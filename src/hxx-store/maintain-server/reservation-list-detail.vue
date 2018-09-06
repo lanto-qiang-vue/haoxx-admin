@@ -8,6 +8,7 @@
     :scrollable="true"
     :transfer= "false"
     :footer-hide="false"
+    :mask-closable="false"
     :transition-names="['', '']"
   >
     <div style="height: 100%;overflow: auto;">
@@ -157,8 +158,9 @@
 
       <div slot="footer">
         <Button v-if="isButton" @click="handleSubmit('listSearch')" size="large" type="primary"  style="margin-right: 10px;">保存</Button>
-        <Button v-if="isButton" @click="handleCommit" size="large" type="primary"  style="margin-right: 10px;">提交</Button>
-        <Button v-if="isCar"  size="large" type="primary" style="margin-right: 10px;" >维修接车</Button>
+        <Button v-if="isButton" @click="handleCommit" size="large" type="success"  style="margin-right: 10px;">提交</Button>
+        <Button v-if="isCar"  size="large" type="success" style="margin-right: 10px;" >维修接车</Button>
+        <Button  size="large" type="default" style="margin-right: 10px;" @click="showModal=false;">返回</Button>
       </div>
   </Modal>
 
@@ -648,6 +650,7 @@
               this.isButton=false;
               this.listDisabled=true;
               this.orderDate="";
+              this.isOrderSuccess=false;
           }else{
             console.log("不满足条件");
           }

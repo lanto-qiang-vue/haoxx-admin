@@ -31,19 +31,19 @@
     </div>
     <div slot="operate">
       <Button type="primary" v-if="accessBtn('add')" :disabled="buttonStateArr.add" @click="detailData=null,showDetail=Math.random()">维修开单</Button>
-      <Button type="primary"  @click="detailData=null,showQuickDetail=Math.random()" :disabled="buttonStateArr.quickAdd" class="button-distance">快速开单</Button>
+      <Button type="primary" v-if="accessBtn('quickAdd')" @click="detailData=null,showQuickDetail=Math.random()" :disabled="buttonStateArr.quickAdd" class="button-distance">快速开单</Button>
       <Button type="info" v-if="accessBtn('edit')"  @click="showEditFun" :disabled="buttonStateArr.edit" class="button-distance">编辑/查看</Button>
-      <Button type="warning"  @click="" :disabled="buttonStateArr.rePg" class="button-distance">反派工</Button>
-      <Button type="warning"    @click="" :disabled="buttonStateArr.reFinish" class="button-distance">反完工</Button>
-      <Button type="warning"  @click="" :disabled="buttonStateArr.reAccount" class="button-distance">反结算</Button>
+      <Button type="warning" v-if="accessBtn('reFinish')" @click="reSubmitFun" :disabled="buttonStateArr.rePg" class="button-distance">反派工</Button>
+      <Button type="warning"  v-if="accessBtn('reSubmit')"  @click="reFinishFun" :disabled="buttonStateArr.reFinish" class="button-distance">反完工</Button>
+      <Button type="warning" v-if="accessBtn('reAccount')" @click="reAccountFun" :disabled="buttonStateArr.reAccount" class="button-distance">反结算</Button>
       <Button type="error" v-if="accessBtn('ban')"  @click="deleteDetailData" :disabled="buttonStateArr.ban" class="button-distance">作废</Button>
     </div>
     <repairOrder-list-detail class="table-modal-detail" :showDetail="showDetail"
-                             :detailData="detailData" @closeDetail="closeDetail"
+                             :detailData="detailData" @closeDetail="closeDetail" @closeGetList="closeGetList"
       ></repairOrder-list-detail>
 
       <repairOrder-list-quickDetail class="table-modal-detail" :showQuickDetail="showQuickDetail"
-                             :detailData="detailData" @closeDetail="closeDetail"
+                             :detailData="detailData" @closeDetail="closeDetail" @closeGetList="closeGetList"
       ></repairOrder-list-quickDetail>
 
   </common-table>
@@ -221,6 +221,7 @@
       },
 
       onRowClick( row, index){
+        console.log(row);
           if(row.GD_TYPE=="10181002"){
             this.detailData=row
           }else{
@@ -301,7 +302,10 @@
       closeDetail(){
           this.detailData= null;
           this.clearTableSelect= Math.random();
-          this.getList();
+          
+      },
+      closeGetList(){
+        this.getList();
       },
       //作废按钮---------
       deleteDetailData(){
@@ -332,15 +336,6 @@
               }
           })
       },
-    
-      //获取搜索框开始时间
-      getOrderDateGte(val){
-          this.search.orderDateGte=val;
-      },
-      //获取搜索框结束时间
-      getOrderDateIte(val){
-          this.search.orderDateIte=val;
-      },
       //编辑按钮数据-----------
       showEditFun(){
           if(this.detailData.GD_TYPE=="10181002"){
@@ -349,6 +344,84 @@
             this.showDetail=Math.random();
           }
       },
+      //反结算------
+      reAccountFun(){
+        this.$Modal.confirm({
+            title:"系统提示!",
+            content:"确定要反结算吗？",
+            onOk:this.reAccountFunOk,
+            
+        })
+         
+      },
+      reAccountFunOk(){
+         this.axios.request({
+              url: '/tenant/repair/ttrepairworkorder/reAccount',
+              method: 'post',
+              data: {
+              repairId: this.detailData.REPAIR_ID,
+              access_token: this.$store.state.user.token
+              }
+          }).then(res => {
+              if (res.success === true) {
+                this.getList();
+              }
+          })
+      },
+      //反完工------
+      reFinishFun(){
+        this.$Modal.confirm({
+            title:"系统提示!",
+            content:"确定要反完工吗？",
+            onOk:this.reFinishFunOk,
+            
+        })
+         
+      },
+      reFinishFunOk(){
+         this.axios.request({
+              url: '/tenant/repair/ttrepairworkorder/reFinish',
+              method: 'post',
+              data: {
+              repairId: this.detailData.REPAIR_ID,
+              access_token: this.$store.state.user.token
+              }
+          }).then(res => {
+              if (res.success === true) {
+                this.getList();
+              }
+          })
+      },
+      //反派工----
+      reSubmitFun(){
+        this.$Modal.confirm({
+            title:"系统提示!",
+            content:"确定要反派工吗？",
+            onOk:this.reSubmitFunOk,
+            
+        })
+         
+      },
+      reSubmitFunOk(){
+         this.axios.request({
+              url: '/tenant/repair/ttrepairworkorder/reSubmit',
+              method: 'post',
+              data: {
+              repairId: this.detailData.REPAIR_ID,
+              access_token: this.$store.state.user.token
+              }
+          }).then(res => {
+              if (res.success === true) {
+                this.getList();
+              }else{
+                this.$Modal.confirm({
+                    title:"系统提示!",
+                    content:res.Exception.message,
+                })
+              }
+          })
+      },
+
     }
 	}
 </script>

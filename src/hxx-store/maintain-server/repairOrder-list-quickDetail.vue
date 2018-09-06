@@ -1,4 +1,4 @@
-<!--预约单管理详情-->
+<!--快速开单详情页 2018-09-06-->
 <template>
   <Modal
     v-model="showModal"
@@ -8,74 +8,76 @@
     :scrollable="true"
     :transfer= "false"
     :footer-hide="false"
+    :mask-closable="false"
     :transition-names="['', '']"
   >
-    <div style="font-size: 18px;text-align: right;color: red;padding-right: 30px;">{{titleMsg}}</div>
+    <div style="height: 100%;overflow: auto; padding-bottom: 30px;">
+        <div style="font-size: 18px;text-align: right;color: red;padding-right: 30px;">{{titleMsg}}</div>
     <Collapse v-model="collapse">
       <Panel name="1">查询
-       <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="80" inline class="detail-form">
+       <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="110" class="common-form">
           <FormItem label="车牌号码:" prop="PLATE_NUM">
-              <Input @on-focus="showoff=Math.random();"	type="text" v-model="listSearch.PLATE_NUM" placeholder="请输入车牌号" style="min-width: 250px;" >
-                  <Icon type="ios-search" slot="suffix"/>
+              <Input @on-focus="showoff=Math.random();"	type="text" v-model="listSearch.PLATE_NUM" placeholder="请输入车牌号" >
+                  <Icon type="ios-search" slot="suffix" @click="showoff=Math.random();"/>
               </Input>
           </FormItem>
           <FormItem label="车型:">
-              <Input type="text" disabled v-model="listSearch.VEHICLE_MODEL" placeholder="请输入车型" style="min-width: 250px;"> </Input>
+              <Input type="text" disabled v-model="listSearch.VEHICLE_MODEL" placeholder="请输入车型"> </Input>
           </FormItem>
           <FormItem label="车架号:">
-              <Input type="text" disabled v-model="listSearch.VIN_NO" placeholder="" style="min-width: 250px;"> </Input>
+              <Input type="text" disabled v-model="listSearch.VIN_NO" placeholder="" > </Input>
           </FormItem>
           <FormItem label="车主名称:">
-              <Input type="text" disabled v-model="listSearch.CUSTOMER_NAME" placeholder="" style="min-width: 250px;"> </Input>
+              <Input type="text" disabled v-model="listSearch.CUSTOMER_NAME" placeholder="" > </Input>
           </FormItem>
           <FormItem label="送修人:">
-              <Input type="text" v-model="listSearch.GIVE_REPAIR_PERSON" placeholder="" style="min-width: 250px;"> </Input>
+              <Input type="text" v-model="listSearch.GIVE_REPAIR_PERSON" placeholder="" > </Input>
           </FormItem>
           <FormItem label="联系电话:">
-              <Input type="text" v-model="listSearch.TELPHONE" placeholder="" style="min-width: 250px;"> </Input>
+              <Input type="text" v-model="listSearch.TELPHONE" placeholder="" > </Input>
           </FormItem>
           <FormItem label="维修类型:" >
-              <Select v-model="listSearch.REPAIR_TYPE" placeholder="" style="min-width: 250px;">
+              <Select v-model="listSearch.REPAIR_TYPE" placeholder="" >
                 <Option v-for="(item, index) in repairTypeArr"
                   :key="index" :value="item.code">{{item.name}}</Option>
               </Select>
           </FormItem>
           <FormItem label="送修里程:" prop="MILEAGE">
-              <InputNumber :min="1" v-model="listSearch.MILEAGE" style="min-width: 250px;" placeholder="最大不超过八位数"></InputNumber>
+              <InputNumber :min="1" v-model="listSearch.MILEAGE"  placeholder="最大不超过八位数"></InputNumber>
           </FormItem>
           <FormItem label="主修人:" >
-              <Select v-model="listSearch.REPAIR_PERSON" placeholder="" style="min-width: 250px;">
+              <Select v-model="listSearch.REPAIR_PERSON" placeholder="" >
                 <Option v-for="(item, index) in repairPersonArr"
                   :key="index" :value="item.code">{{item.code}}</Option>
               </Select>
           </FormItem>
           <FormItem label="车辆类型:" >
-              <Select v-model="listSearch.VEHICLE_TYPE" placeholder="" style="min-width: 250px;" @on-change="selectCarInitFun">
+              <Select v-model="listSearch.VEHICLE_TYPE" placeholder=""  @on-change="selectCarInitFun">
                 <Option v-for="(item, index) in vehicleTypeArr"
                   :key="index" :value="item.code">{{item.name}}</Option>
               </Select>
           </FormItem>
           <FormItem label="车辆分类代号:" >
-              <Select v-model="listSearch.VEHICLE_TYPE_CODE" placeholder="" style="min-width: 250px;">
+              <Select v-model="listSearch.VEHICLE_TYPE_CODE" placeholder="" >
                 <Option v-for="(item, index) in vehicleNumberArr"
                   :key="item.code" :value="item.code">{{item.code}}</Option>
               </Select>
           </FormItem>
           <FormItem label="服务顾问:" >
-              <Select v-model="listSearch.FOLLOW_PERSON" placeholder="" style="min-width: 250px;">
+              <Select v-model="listSearch.FOLLOW_PERSON" placeholder="" >
                 <Option v-for="(item, index) in serverPersonArr"
                   :key="index" :value="item.code">{{item.code}}</Option>
               </Select>
           </FormItem>
           <FormItem label="进厂日期:">
-              <DatePicker v-model="listSearch.COME_DATE" type="datetime" placeholder="Select date and time" style="width: 200px"></DatePicker>
+              <DatePicker v-model="listSearch.COME_DATE" type="datetime" placeholder="" ></DatePicker>
           </FormItem>
           <FormItem label="计划完工日期:">
-              <DatePicker v-model="listSearch.PLAN_END_DATE" type="datetime" placeholder="Select date and time" style="width: 200px"></DatePicker>
+              <DatePicker v-model="listSearch.PLAN_END_DATE" type="datetime" placeholder="" ></DatePicker>
           </FormItem>
           
        </Form>
-       <Form ref="formInline"  slot="content" :label-width="80">
+       <Form ref="formInline"  slot="content" :label-width="120">
           <FormItem label="故障描述:">
               <Input type="textarea" v-model="listSearch.FAULT_DESC" placeholder="请输入故障描述"> </Input>
           </FormItem>
@@ -93,7 +95,7 @@
         <h2 style="border-bottom: 1px solid #ccc; margin: 10px 0;padding: 5px 0;">服务项目</h2>
         <div class="itemBox">
             <div class="item" v-for="site in getItem" v-bind:class="{ itemClass: singleItem }">
-                <Checkbox v-model="singleItem" @on-change="sTenanceItem">
+                <Checkbox v-model="singleItem" @on-change="sTenanceItem" :disabled="!isOrderSuccess">
                     <span>{{site.NAME}}</span>
                 </Checkbox>
             </div>
@@ -123,115 +125,13 @@
           <span class="r-list-money-reset">{{listSearch.SUM_MONEY}}元</span>
       </p>
     </div>
-      <!--底部按钮组-->
-      <div slot="footer" style="text-align: center; font-size: 18px;">
-          <Button :disabled="buttonStateArr.save" @click="handleSubmit('listSearch')" size="large" type="primary"  style="margin-right: 10px; padding: 0 10px;"><Icon type="md-checkmark" size="24"/>保存</Button>
-          <Button :disabled="buttonStateArr.doaccount" @click="handleCommit" type="primary"  style="margin-right: 10px; padding: 0 10px;">结算</Button>
-          <Button :disabled="buttonStateArr.printAccount" type="primary"  style="margin-right: 10px; padding: 0 10px;">打印结算单</Button>
-          <Button :disabled="buttonStateArr.shoukuan" @click="shoukuanFun" type="primary"  style="margin-right: 10px; padding: 0 10px;">收款</Button>
-      </div>
+      
       
       <!--选择车型-->
       <select-vehicle :showoff="showoff" @selectCar="selectCar">
       </select-vehicle>
 
-      <!--收款框弹出-->
-        <Modal v-model="showShouKuan"
-            title="维修工单结算"
-            width="90"
-            @on-visible-change=""
-            :scrollable="true"
-            :transfer= "false"
-            :footer-hide="false"
-            :transition-names="['', '']">
-            <Collapse v-model="collapse1">
-                <Panel name="1">客户信息
-                    <Form slot="content" :label-width="120" inline class="detail-form">
-                        <FormItem label="客户姓名:">
-                            <span>{{shoukuanSearch.CUSTOMER_NAME}}</span>
-                        </FormItem>
-                        <FormItem label="储值卡号:">
-                            <span>{{shoukuanData.MEMBER_CARD_NO}}</span>
-                            
-                        </FormItem>
-                        <FormItem label="更换储值卡:">
-                            <Button type="primary">更换</Button>
-                        </FormItem>
-                        <FormItem label="余额:">
-                            <span>{{shoukuanSearch.SURPLUS_MONEY}}元</span>
-                        </FormItem>
-                        <FormItem label="储值卡状态:">
-                            <span>{{shoukuanData.MEMBER_CARD_STATUS}}</span>
-                        </FormItem>
-                    </Form>
-                </Panel>
-                <Panel name="2">结算信息
-                    <Form slot="content" :label-width="120" inline class="detail-form">
-                        <FormItem label="项目合计费用:">
-                            <span>{{shoukuanSearch.REPAIR_ITEM_MONEY}}元</span>
-                        </FormItem>
-                        <FormItem label="优惠金额:">
-                            <span>{{shoukuanSearch.REPAIR_ITEM_DERATE_MONEY}}元</span>
-                            
-                        </FormItem>
-                        <FormItem label="合计应收金额:">
-                            <span>{{shoukuanSearch.SUM_MONEY}}元</span>
-                        </FormItem>
-                        <FormItem label="收款人:">
-                            <Select v-model="shoukuanSearch.FOLLOW_PERSON" placeholder="" style="min-width: 250px;">
-                                <Option v-for="(item, index) in repairPersonArr"
-                                :key="index" :value="item.code">{{item.code}}</Option>
-                            </Select>
-                        </FormItem>
-                    </Form>
-                </Panel>
-                <Panel name="3">支付方式
-                    <Form slot="content" :label-width="120" inline class="detail-form">
-                        <FormItem label="支付宝:">
-                            <Button  type="primary" >支付宝</Button>
-                        </FormItem>
-                        <FormItem label="微信支付:">
-                            
-                            <Button  type="primary" >微信支付</Button>
-                        </FormItem>
-                        <FormItem label="短信账单收款:">
-                            <Button  type="primary" >短信账单收款</Button>
-                        </FormItem>
-                        <FormItem label="其他方式:">
-                            <Select v-model="shoukuanSearch.PAYMENT1" placeholder="" style="min-width: 250px;">
-                                <Option v-for="(item, index) in payModeData"
-                                :key="index" :value="item.code">{{item.name}}</Option>
-                            </Select>
-                        </FormItem>
-                    </Form>
-                </Panel>
-                <Panel name="4">是否开据发票
-                    <Form slot="content" :label-width="120" class="detail-form">
-                        <FormItem label="">
-                            <Checkbox v-model="single" @on-change="isGiveInvoiceFun">是否开据发票</Checkbox>
-                        </FormItem>
-                    </Form>
-                    <Form slot="content" :label-width="120" inline class="detail-form">
-                        <FormItem label="发票编号:">
-                            <Input type="text"  v-model="shoukuanSearch.INVOICE_NO" placeholder="" style="min-width: 250px;"> </Input>
-                        </FormItem>
-                        <FormItem label="发票抬头:">
-                            <Input type="text"  v-model="shoukuanSearch.CORP_NAME" placeholder="" style="min-width: 250px;"> </Input>
-                        </FormItem>
-                        <FormItem label="税号:">
-                            <Input type="text"  v-model="shoukuanSearch.TAX_NO" placeholder="" style="min-width: 250px;"> </Input>
-                        </FormItem>
-                        <FormItem label="备注:">
-                            <Input type="text"  v-model="shoukuanSearch.REMARK" placeholder="" style="min-width: 250px;"> </Input>
-                        </FormItem>
-                    </Form>
-                </Panel>
-            </Collapse>
-            <div slot="footer" style="text-align: center; font-size: 18px;">
-                <Button type="primary" @click="savePay" style="margin-right: 10px; padding: 0 10px;">收款</Button>
-                <Button type="error" @click="showShouKuan=false;" style="margin-right: 10px; padding: 0 10px;">取消</Button>
-            </div>
-        </Modal>
+        <select-shoukuanOrder :showSelectAccount="showShouKuan" :listSearch="listSearch" :repairPersonArr="repairPersonArr" @closeGetList="closeGetList"></select-shoukuanOrder>
     <!--结算框弹出-->
     <Modal
         v-model="showAccount"
@@ -241,6 +141,7 @@
         :scrollable="true"
         :transfer= "false"
         :footer-hide="false"
+        :mask-closable="false"
         :transition-names="['', '']">
         <Collapse v-model="collapse2">
             <Panel name="1">结算信息
@@ -257,12 +158,22 @@
                 </Form>
                 </Panel>
         </Collapse>
-        <div slot="footer" style="text-align: center; font-size: 18px;">
-            <Button type="primary" @click="commitdata" style="margin-right: 10px; padding: 0 10px;">结算</Button>
-            <Button type="error" @click="showAccount=false;" style="margin-right: 10px; padding: 0 10px;">取消</Button>
+        <div slot="footer">
+            <Button type="primary" @click="commitdata" style="margin-right: 10px;">结算</Button>
+            <Button  @click="showAccount=false;" style="margin-right:">取消</Button>
         </div>
     </Modal>
+    </div>
+    
 
+    <!--底部按钮组-->
+      <div slot="footer">
+          <Button :disabled="buttonStateArr.save" @click="handleSubmit('listSearch')" size="large" type="primary"  style="margin-right: 10px; ">保存</Button>
+          <Button :disabled="buttonStateArr.doaccount" @click="handleCommit" type="primary"  style="margin-right: 10px; ">结算</Button>
+          <Button :disabled="buttonStateArr.printAccount" type="primary"  style="margin-right: 10px; ">打印结算单</Button>
+          <Button :disabled="buttonStateArr.shoukuan" @click="shoukuanFun" type="primary"  style="margin-right: 10px; ">收款</Button>
+          <Button  @click="showModal=false;"  style="margin-right: 10px; ">返回</Button>
+      </div>
   </Modal>
 
 </template>
@@ -272,22 +183,24 @@
   import { formatDate } from '@/libs/tools.js'
   import selectVehicle from '@/hxx-components/select-vehicle.vue'
 
+  import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
 export default {
 	name: "repairOrder-list-quickDetail",
-    components: {selectVehicle,},
+    components: {selectVehicle,selectShoukuanOrder},
     data(){
       return{
-        single:false,//是否选择开发票
+        
         singleItem:false,//是否选择项目
         showoff:null,//选择车辆
+        
         showModal: false,//本界面是否显示判断
         showAccount:false,//结算界面弹出
-        showShouKuan:false,//收款界面弹出
+        showShouKuan:false,//收款界面弹出-----
         cardStateArr:[],//储存卡状态值
         payModeData:[],//支付方式数组
         getItem:[],//获取项目数组
         collapse: '1',
-        collapse1:'1',
+        
         collapse2:'1',
         listSearch:{
            "TENANT_ID":"1",
@@ -367,24 +280,7 @@ export default {
             "SUM_MONEY":0,
             "GD_TYPE":"10181002"
         },
-        shoukuanData:{
-            MEMBER_CARD_STATUS:'',
-            MEMBER_CARD_NO:'',
-        },//提交收款工单数据-----------
-        shoukuanSearch:{
-            "CUSTOMER_ID":"",
-            "REPAIR_ITEM_MONEY":0,
-            "SUM_MONEY":0,
-            'REPAIR_ITEM_DERATE_MONEY':0,
-            "FOLLOW_PERSON":"管理员",
-            "PAYMENT1":"10101001",
-            "IS_GIVE_INVOICE":"10041002",
-            "CORP_NAME":"",
-            "INVOICE_NO":"",
-            "TAX_NO":"",
-            "REMARK":"",
-            "REPAIR_ID":""
-        },//提交收款工单数据-----------
+       
 
         ruleValidate: {
             PLATE_NUM: [
@@ -394,6 +290,7 @@ export default {
                 { required: true, type: 'number', message: '请选择里程', trigger: 'change' ,min: 1,}
             ]
         },
+        
         titleMsg:'新建未派工',
         isOrderSuccess:true,//判断是否是派工状态状态---
         //统计费用参数
@@ -438,14 +335,10 @@ export default {
           shoukuan:true,//收款
           printAccount:true,//打印结算单
         },//按钮状态组数据
-        newDatacommit:{
-            "REPAIR_ITEM_MONEY":'',
-            "REPAIR_ITEM_DERATE_MONEY":'',
-            "SUM_MONEY":'',
-            "REPAIR_ID":'',
-        },//结算提交数据----------
 
-        returnData:null,//记录返回数据的引用
+        
+
+        
       }
     },
     props:['showQuickDetail', 'detailData'],
@@ -483,12 +376,7 @@ export default {
                   default : this.buttonStateArr[i]= true;
                 }
               }
-              //重置结算按钮提交的数据-------------------
-              for(let i in this.newDatacommit){
-                if(this.detailData.hasOwnProperty(i)){
-                    this.newDatacommit[i]=this.detailData[i];
-                }
-              }
+              
           }else if(this.detailData['STATUS']=='10201004'){
               this.titleMsg="已结算待收款";
               this.isOrderSuccess=false;
@@ -539,7 +427,7 @@ export default {
             this.singleItem=false;
             this.single=false;//是否选择开发票
             this.isOrderSuccess=true;
-            this.returnData=null;
+            
         }
 
         
@@ -641,7 +529,6 @@ export default {
         },
         saveData(){
             //提交维修项目套餐
-            console.log('this.listSearch',this.listSearch);
             this.axios.request({
                 url: '/tenant/repair/ttrepairworkorder/saveOrSubmit',
                 method: 'post',
@@ -660,10 +547,8 @@ export default {
                         default : this.buttonStateArr[i]= true;
                         }
                     }
-                    for(let i in res.data){
-                        this.newDatacommit[i]=res.data[i];
-                    }
-                    this.returnData=res.data;
+                    this.listSearch['REPAIR_ID']=res.data.REPAIR_ID;
+                    this.$emit('closeGetList');
                 }
             })
         },
@@ -673,11 +558,20 @@ export default {
         },
         commitdata(){
             this.showAccount=false;
+            var newDatacommit={
+                "REPAIR_ITEM_MONEY":'',
+                "REPAIR_ITEM_DERATE_MONEY":'',
+                "SUM_MONEY":'',
+                "REPAIR_ID":'',
+            };
+            for(let key in newDatacommit){
+                newDatacommit[key]=this.listSearch[key];
+            }
             this.axios.request({
                 url: '/tenant/repair/ttrepairworkorder/saveAccount',
                 method: 'post',
                 data: {
-                    data: JSON.stringify(this.newDatacommit),
+                    data: JSON.stringify(newDatacommit),
                     access_token: this.$store.state.user.token
                 }
             }).then(res => {
@@ -693,7 +587,8 @@ export default {
                         default : this.buttonStateArr[i]= true;
                         }
                     }
-                    this.getAccountData(this.returnData["REPAIR_ID"]);
+                    this.getAccountData(this.listSearch["REPAIR_ID"]);
+                    this.$emit('closeGetList');
                 }
             })
         },
@@ -715,68 +610,11 @@ export default {
                 }
             })
         },
+        
         //收款按钮-------------------
         shoukuanFun(){
-           this.showShouKuan=true;
-           this.shoukuanSearch['REPAIR_ITEM_MONEY']=this.returnData['REPAIR_ITEM_MONEY']||0;
-           this.shoukuanSearch['REPAIR_ITEM_DERATE_MONEY']=this.returnData['REPAIR_ITEM_DERATE_MONEY']||0;
-           this.shoukuanSearch['SUM_MONEY']=this.returnData['SUM_MONEY']||0;
-           this.shoukuanSearch['REPAIR_ID']=this.returnData['REPAIR_ID'];
-           this.axios.request({
-                url: '/tenant/repair/ttrepairworkorder/getCustomerInfo',
-                method: 'post',
-                data: {
-                vehicleId: this.listSearch.VEHICLE_ID,
-                access_token: this.$store.state.user.token
-                }
-            }).then(res => {
-                if (res.success === true) {
-                    this.$Message.info('successful');
-                    for(let i in res.data){
-                        if(this.shoukuanSearch.hasOwnProperty(i)){
-                            this.shoukuanSearch[i]=res.data[i];
-                        }
-                    }
-                    this.shoukuanData['MEMBER_CARD_STATUS']=getName(this.cardStateArr,res.data['MEMBER_CARD_STATUS']);
-                    this.shoukuanData['MEMBER_CARD_NO']=res.data['MEMBER_CARD_NO']||'无';
-                    
-                    console.log(this.shoukuanSearch);
-                }
-            })
+           this.showShouKuan=Math.random();
         },
-        savePay(){
-            this.axios.request({
-                url: '/tenant/repair/ttrepairworkorder/savePay',
-                method: 'post',
-                data: {
-                    data: JSON.stringify(this.shoukuanSearch),
-                    access_token: this.$store.state.user.token
-                }
-            }).then(res => {
-                if (res.success === true) {
-                    this.$Message.info('successful');
-                    this.titleMsg="已结清";
-                    this.showShouKuan=false;//收款界面弹出
-                    for(let i in this.buttonStateArr){
-                        switch(i){
-                        case 'printAccount': this.buttonStateArr[i]= false; break
-                        default : this.buttonStateArr[i]= true;
-                        }
-                    }
-                    this.getAccountData(this.shoukuanSearch["REPAIR_ID"]);
-                }
-            })
-        },
-        
-
-        getNewDate(val,currentVal){
-            console.log("val",val,currentVal);
-            this.listSearch.ORDER_DATE=val;
-        },
-        getOnlyNumber(val){
-            this.listSearch.TELPHONE=this.listSearch.TELPHONE.replace(/[^\d]/g,'');
-        },
-      
         handleReset (name) {
             this.$refs[name].resetFields();
         },
@@ -931,14 +769,8 @@ export default {
         accountChange(val){
             this.listSearch.SUM_MONEY=this.listSearch.REPAIR_ITEM_MONEY-val;
         },
-        //是否开发票-------
-        isGiveInvoiceFun(val){
-            console.log(val);
-            if(val){
-                this.shoukuanSearch['IS_GIVE_INVOICE']="10041001";
-            }else{
-                this.shoukuanSearch['IS_GIVE_INVOICE']="10041002";
-            }
+        closeGetList(){
+            this.$emit('closeGetList');
         }
       
 
