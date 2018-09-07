@@ -4,6 +4,7 @@
     <Modal
         v-model="showOnoff"
         title="新增配件档案"
+        class="table-modal-detail"
         width="90"
         :scrollable="true"
         @on-visible-change="visibleChange"
@@ -14,47 +15,55 @@
     <div style="height: 100%;overflow: auto;">
         <Collapse v-model="collapse">
       <Panel name="1">配件基本信息
-       <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="110" inline class="detail-form">
-          <FormItem label="配件名称:" prop="NAME">
-              <Input type="text" v-model="listSearch.NAME" placeholder="" style="min-width: 250px;" >
-              
+       <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="110" inline class="common-form">
+          <FormItem label="配件名称:" style="width:30%;" prop="NAME">
+              <Input type="text" v-model="listSearch.NAME" placeholder="">
               </Input>
           </FormItem>
-          <FormItem label="原厂编号:">
-              <Input type="text" v-model="listSearch.FACTORY_NO" placeholder="" style="min-width: 250px;" >
-              
+          <FormItem label="原厂编号:" style="width:30%;">
+              <Input type="text" v-model="listSearch.FACTORY_NO" style="width:100%;" placeholder="" >
               </Input>
           </FormItem>
-          <FormItem label="所属分类:" prop="TYPE_NAME">
-              <Input @on-focus="showType=true;" type="text" v-model="listSearch.TYPE_NAME" placeholder="选择分类" style="min-width: 250px;" search >
-              </Input>
+          <FormItem label="所属分类:" style="width:30%;" prop="TYPE_NAME">
+              <!-- 特殊下拉 -->
+    <Dropdown trigger="click" style="width: 100%" id="select-type" placement="bottom-start">
+        <!-- <a href="javascript:void(0)"> -->
+          <Input type="text" v-model="listSearch.TYPE_NAME" placeholder="选择分类"  search >
+          </Input>
+        <!-- </a> -->
+        <DropdownMenu slot="list">
+                    <Tree :data="data1" @on-select-change="selectChangeTree" 
+                    style="width: 100%;max-height: 300px;overflow: auto;"></Tree>
+        </DropdownMenu>
+    </Dropdown>
+    <!-- 特殊下拉结束 -->
           </FormItem>
-          <FormItem label="采购指导价:">
-              <InputNumber :min="0" v-model="listSearch.PURCHASE_PRICE" style="min-width: 250px;" placeholder="">
+          <FormItem style="width:30%;" label="采购指导价:">
+              <InputNumber :min="0" style="width:100%;" v-model="listSearch.PURCHASE_PRICE" placeholder="">
                     
               </InputNumber>
           </FormItem>
-          <FormItem label="销售建议价:" prop="SALES_PRICE">
-              <InputNumber :min="0" v-model="listSearch.SALES_PRICE" style="min-width: 250px;" placeholder="" @on-change="salesPriceFun"></InputNumber>
+          <FormItem label="销售建议价:" style="width:30%;" prop="SALES_PRICE">
+              <InputNumber :min="0" style="width:100%;" v-model="listSearch.SALES_PRICE" placeholder="" @on-change="salesPriceFun"></InputNumber>
           </FormItem>
-          <FormItem label="包装单位:" prop="UNIT">
-              <Select v-model="listSearch.UNIT" placeholder="" style="min-width: 250px;" placeholder="选择包装单位">
+          <FormItem label="包装单位:" style="width:30%;" prop="UNIT">
+              <Select v-model="listSearch.UNIT" placeholder="" style="width:100%;" placeholder="选择包装单位">
                 <Option v-for="(item, index) in initUnitArr"
                   :key="index" :value="item.code">{{item.name}}</Option>
               </Select>
           </FormItem>
-          <FormItem label="税率:" >
-              <Select v-model="listSearch.RATE" placeholder="" style="min-width: 250px;" placeholder="" @on-change="rateComputed">
+          <FormItem label="税率:" style="width:30%;" >
+              <Select v-model="listSearch.RATE" placeholder="" style="width:100%;" placeholder="" @on-change="rateComputed">
                 <Option v-for="(item, index) in initRateArr"
                   :key="index" :value="item.code">{{item.name}}</Option>
               </Select>
           </FormItem>
-          <FormItem label="税额(元):">
-              <Input type="text" v-model="listSearch.TAX" placeholder="" style="min-width: 250px;" disabled>
+          <FormItem label="税额(元):" style="width:30%;">
+              <Input type="text" v-model="listSearch.TAX" placeholder="" style="width:100%;" disabled>
               </Input>
           </FormItem>
-         <FormItem label="未含税价(元):">
-              <Input type="text" v-model="listSearch.NOT_CONTAINS_TAX_SALE_PRICE" placeholder="" style="min-width: 250px;" disabled>
+         <FormItem label="未含税价(元):" style="width:30%;">
+              <Input type="text" v-model="listSearch.NOT_CONTAINS_TAX_SALE_PRICE" placeholder="" style="width:100%;" disabled>
               </Input>
           </FormItem>
        </Form>
@@ -62,25 +71,25 @@
       <Panel name="2">配件详细信息
        <Form  slot="content" :label-width="110" inline class="detail-form">
 
-           <FormItem label="品牌:" >
-              <Select v-model="listSearch.BRAND" placeholder="" style="min-width: 250px;" placeholder="选择品牌...">
+           <FormItem label="品牌:" style="width:30%;" >
+              <Select v-model="listSearch.BRAND" placeholder="" style="width:100%;" placeholder="选择品牌...">
                 <Option v-for="(item, index) in initBrandArr"
                   :key="index" :value="item.code">{{item.name}}</Option>
               </Select>
           </FormItem>
-          <FormItem label="规格:">
-              <Input type="text" v-model="listSearch.FORMAT" placeholder="" style="min-width: 250px;" >
+          <FormItem label="规格:" style="width:30%;">
+              <Input type="text" v-model="listSearch.FORMAT" placeholder="" style="width:100%;" >
               </Input>
           </FormItem>
           
-          <FormItem label="三包期:">
-              <InputNumber :min="0" v-model="listSearch.THREE_EXPIRATION_DATE" style="min-width: 250px;" placeholder=""></InputNumber>
+          <FormItem label="三包期:" style="width:30%;">
+              <InputNumber :min="0" v-model="listSearch.THREE_EXPIRATION_DATE" style="width:100%;" placeholder=""></InputNumber>
           </FormItem>
-          <FormItem label="保质期:">
-              <InputNumber :min="0" v-model="listSearch.EXPIRATION_DATE" style="min-width: 250px;" placeholder=""></InputNumber>
+          <FormItem label="保质期:" style="width:30%;">
+              <InputNumber :min="0" v-model="listSearch.EXPIRATION_DATE" style="width:100%;" placeholder=""></InputNumber>
           </FormItem>
-          <FormItem label="配件来源:" >
-              <Select v-model="listSearch.PART_SOURCE" placeholder="" style="min-width: 250px;" placeholder="选择来源...">
+          <FormItem label="配件来源:" style="width:30%;">
+              <Select v-model="listSearch.PART_SOURCE" placeholder="" style="width:100%;" placeholder="选择来源...">
                 <Option v-for="(item, index) in initPartSource"
                   :key="index" :value="item.code">{{item.name}}</Option>
               </Select>
@@ -88,31 +97,31 @@
        </Form>
       </Panel>
       <Panel name="3">配件限价信息
-       <Form  slot="content" :label-width="110" inline class="detail-form">
+       <Form  slot="content" :label-width="110" inline class="common-form">
 
-          <FormItem label="采购最低价:">
-              <InputNumber :min="0" v-model="listSearch.MIN_SHOP_PRICE" style="min-width: 250px;" placeholder=""></InputNumber>
+          <FormItem label="采购最低价:" style="width:30%;">
+              <InputNumber :min="0" v-model="listSearch.MIN_SHOP_PRICE" style="width:100%;" placeholder=""></InputNumber>
           </FormItem>
-          <FormItem label="销售最低价:">
-              <InputNumber :min="0" v-model="listSearch.MIN_SALES_PRICE" style="min-width: 250px;" placeholder=""></InputNumber>
+          <FormItem label="销售最低价:" style="width:30%;">
+              <InputNumber :min="0" v-model="listSearch.MIN_SALES_PRICE" style="width:100%;" placeholder=""></InputNumber>
           </FormItem>
-          <FormItem label="安全库存:">
-              <InputNumber :min="0" v-model="listSearch.SAFE_STOCK_NUM" style="min-width: 250px;" placeholder=""></InputNumber>
+          <FormItem label="安全库存:" style="width:30%;">
+              <InputNumber :min="0" v-model="listSearch.SAFE_STOCK_NUM" style="width:100%;" placeholder=""></InputNumber>
           </FormItem>
-          <FormItem label="采购最高价:">
-              <InputNumber :min="0" v-model="listSearch.MAX_SHOP_PRICE" style="min-width: 250px;" placeholder=""></InputNumber>
+          <FormItem label="采购最高价:" style="width:30%;">
+              <InputNumber :min="0" v-model="listSearch.MAX_SHOP_PRICE" style="width:100%;" placeholder=""></InputNumber>
           </FormItem>
-          <FormItem label="销售最高价:">
-              <InputNumber :min="0" v-model="listSearch.MAX_SALES_PRICE" style="min-width: 250px;" placeholder=""></InputNumber>
+          <FormItem label="销售最高价:" style="width:30%;">
+              <InputNumber :min="0" v-model="listSearch.MAX_SALES_PRICE" style="width:100%;" placeholder=""></InputNumber>
           </FormItem>
-          <FormItem label="最高库存:">
-              <InputNumber :min="0" v-model="listSearch.MAX_STOCK_NUM" style="min-width: 250px;" placeholder=""></InputNumber>
+          <FormItem label="最高库存:" style="width:30%;">
+              <InputNumber :min="0" v-model="listSearch.MAX_STOCK_NUM" style="width:100%;" placeholder=""></InputNumber>
           </FormItem>
           
        </Form>
       </Panel>
     </Collapse>
-        <Modal
+<!--         <Modal
         v-model="showType"
         title="配件分类列表"
         width="90"
@@ -129,7 +138,7 @@
                 </div>
             </Card>
         </div>
-    </Modal>
+    </Modal> -->
     </div>
     
     <div slot="footer">
@@ -186,7 +195,8 @@
                     "SAFE_STOCK_NUM":0,
                     "MAX_SHOP_PRICE":0,
                     "MAX_SALES_PRICE":0,
-                    "MAX_STOCK_NUM":0
+                    "MAX_STOCK_NUM":0,
+                    "TYPE_ID":'',
                 },
                 initList:{
                     "PART_ID":"",
@@ -210,7 +220,8 @@
                     "SAFE_STOCK_NUM":0,
                     "MAX_SHOP_PRICE":0,
                     "MAX_SALES_PRICE":0,
-                    "MAX_STOCK_NUM":0
+                    "MAX_STOCK_NUM":0,
+                    "TYPE_ID":'',
                 },
                 ruleValidate: {
                     NAME:[{required: true, message: '配件名称必填'}],
@@ -241,6 +252,17 @@
 
                 this.$refs[name].validate((valid) => {
                     if (valid) {
+                      var flag = "";
+                      if(this.listSearch.SALES_PRICE > this.listSearch.MAX_SALES_PRICE){flag = "销售建议价应小于等于销售最高价!"};
+                      if(this.listSearch.SALES_PRICE < this.listSearch.MIN_SALES_PRICE){flag = "销售建议价应大于等于销售最低价!"};
+                      if(this.listSearch.MIN_SALES_PRICE < this.listSearch.MAX_SHOP_PRICE){flag = "销售最低价应大于等于采购最高价!"};
+                      if(this.listSearch.MAX_SHOP_PRICE < this.listSearch.MIN_SHOP_PRICE){flag = "采购最高价应大于等于采购最低价!"};
+                      if(this.listSearch.MAX_SALES_PRICE < this.listSearch.MIN_SALES_PRICE){flag = "销售最高价应大于等于销售最低价!"};
+                      if(flag != ""){
+                      this.$Modal.error({title:'系统提示',content:flag});
+                      return false;
+                      }
+                      if(this.listSearch)
                                 this.$Modal.confirm({
                                     title:"系统提示!",
                                     content:"确定要保存吗？",
@@ -267,6 +289,7 @@
                 
             },
             del(){
+              //这里是添加操作 就服你名字都不换....社会我鑫哥....人狠话不多....
                 this.axios.request({
                     url: '/tenant/basedata/partinfo/save',
                     method: 'post',
@@ -277,6 +300,7 @@
                 }).then(res => {
                     if (res.success === true) {
                         this.$Message.info('successful')
+                        this.$emit('refresh');
                         this.showOnoff=false;
                     }
                 })
@@ -312,6 +336,7 @@
             selectChangeTree(val){
                 this.showType=false;
                 this.listSearch["TYPE_NAME"]=val[0].title;
+                this.listSearch.TYPE_ID = val[0].nodeId;
                 console.log(val);
             },
             //弹出层状态变化--------
@@ -329,39 +354,10 @@
         }
 	}
 </script>
-
-<style lang="less" scoped>
-    .search-block{
-        display: inline-block;
-        width: 200px;
-        margin-right: 10px;
-    }
-    .common-table{
-        padding: 10px;
-        background-color: white;
-        height: 100%;
-        overflow: hidden;
-        position: relative;
-        .table-search{
-        }
-        .operate{
-            margin-top: 10px;
-            padding: 15px;
-            border: 1px solid #dcdee2;
-            border-radius: 3px;
-        }
-        .main-table{
-            margin-top: 10px;
-        }
-        .table-bottom{
-            position: absolute;
-            height: 52px;
-            padding: 10px;
-            width: 100%;
-            left: 0;
-            bottom: 0;
-            background-color: white;
-            z-index: 4;
-        }
+<style lang="less">
+   #select-type{
+      .ivu-select-dropdown{
+        width: 250px
+      }
     }
 </style>

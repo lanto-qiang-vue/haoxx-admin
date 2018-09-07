@@ -5,7 +5,7 @@
     <Spin size="large" fix v-if="spinShow" ></Spin>
     </div>
     <div slot="right" class="split-pane">
-    <common-table :columns="columns" :total="total" :page="page" v-model="tableData" :show="show" @changePageSize="changePageSize" @changePage="changePage">
+    <common-table :columns="columns" :total="total" :page="page" v-model="tableData" :show="show" @changePageSize="changePageSize" @changePage="changePage" onRowClick="onRowClick">
           <div slot="search">
           <Input  placeholder="配件名称/原厂编号..." v-model="KEYWORD" style="width: 300px"></Input>
           <label>&nbsp;&nbsp;&nbsp;配件类别:&nbsp;&nbsp;&nbsp;</label>
@@ -20,7 +20,7 @@
       <Button type="info" :disabled="cando"   @click="edit()">修改</Button>
       <Button type="error" :disabled="cando" @click="remove()">废除</Button>
     </div>
-      <select-add-parts :showSelectAddParts="addshow"></select-add-parts>
+      <select-add-parts @refresh="refresh" :showSelectAddParts="addshow"></select-add-parts>
     </common-table>
     </div>
   </Split>
@@ -85,6 +85,9 @@ import selectAddParts from '@/hxx-components/select-addParts.vue'
 		},
 		},
 		methods:{
+          refresh(){
+      this.getList();
+    },
 			getnode(row){
 				console.log(row);
 			if(row.length > 0){
@@ -101,7 +104,6 @@ import selectAddParts from '@/hxx-components/select-addParts.vue'
 			this.TYPE_ID = '';
 			},
 			add(){
-				alert(1);
 			this.addshow = Math.random();
 			},
 			edit(){},
@@ -191,28 +193,4 @@ import selectAddParts from '@/hxx-components/select-addParts.vue'
     }
   }
 }
-</style>
-<style lang="less">
-  .vehicle-tree{
-    >.ivu-tree-children{
-      height: 100%;
-      overflow: auto;
-    }
-    .highlight{
-      color: red;
-    }
-  }
-      .demo-spin-icon-load{
-        animation: ani-demo-spin 1s linear infinite;
-    }
-    @keyframes ani-demo-spin {
-        from { transform: rotate(0deg);}
-        50%  { transform: rotate(180deg);}
-        to   { transform: rotate(360deg);}
-    }
-    .demo-spin-col{
-        height: 100px;
-        position: relative;
-        border: 1px solid #eee;
-    }
 </style>
