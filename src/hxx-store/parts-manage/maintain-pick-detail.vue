@@ -11,7 +11,7 @@
     class="table-modal-detail"
     :transition-names="['', '']"
   > 
-  <div style="overflow: auto;height: 100%;">
+  <div style="overflow: auto;height: 100%;padding-bottom: 30px;">
       <div style="font-size: 18px;text-align: right;color: red;padding-right: 30px;">工单号:{{listSearch.REPAIR_NO}}</div>
     <Collapse v-model="collapse">
       <Panel name="1">查询
