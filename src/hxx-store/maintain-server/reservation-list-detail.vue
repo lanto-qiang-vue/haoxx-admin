@@ -31,7 +31,7 @@
                 </Select>
             </FormItem>
             <FormItem label="预约日期:" prop="ORDER_DATE">
-                <DatePicker format="yyyy-MM-dd" v-model="listSearch.ORDER_DATE" type="date" placeholder="请选择..."></DatePicker>
+                <DatePicker format="yyyy-MM-dd" v-model="listSearch.ORDER_DATE" type="date" placeholder="请选择..." :options="options"></DatePicker>
 
             </FormItem>
             <FormItem label="预约时间:" prop="ORDER_TIME">
@@ -570,7 +570,8 @@
         ],
         ruleValidate: {
           ORDER_DATE:[
-            { required: true, message: '请选择日期', }
+            { required: true, message: '请选择日期', },
+            // { validator: this.validatePass, trigger: 'change' },
           ],
           ORDER_TIME: [
               { required: true,  message: '请选择时间',}
@@ -588,7 +589,14 @@
         commitItem:[],//提交选择项目
         commitParts:[],//提交配件
         timer:null,
+        options: {
+            
+            disabledDate (date) {
 
+                console.log('aaaa',date && date.valueOf() < Date.now() - 86400000);
+                return date && date.valueOf() < Date.now() - 86400000;
+            }
+        },//限制日期选择-----
 
       }
     },
@@ -772,6 +780,7 @@
               this.isButton=false;
               this.titleMsg="已预约";
               this.listDisabled=true;
+              this.isOrderSuccess=false;
             }
           })
       },
@@ -1288,12 +1297,42 @@
       },
       //维修接车----
       handleCar(){
+        console.log(this.$store.state.user.userInfo.user.userId);
+        this.axios.request({
+              url: '/tenant/repair/ttrepairorder/get_wxkd',
+              method: 'post',
+              data: {
+                  KEYWORD: this.$store.state.user.userInfo.user.userId,
+                  access_token: this.$store.state.user.token
+              }
+          }).then(res => {
+              if (res.success === true) {
+                  // var query=JSON.stringify({flag:true,listSearch:this.listSearch,commitItem:this.commitItem,commitItemGroup:this.commitItemGroup,commitParts:this.commitParts});
+                  var query={flag:true,listSearch:this.listSearch,commitItem:this.commitItem,commitItemGroup:this.commitItemGroup,commitParts:this.commitParts};
+                  
+                  this.$router.push({path:'/repairOrder-list',query:query});
+              }else{
+                  this.$Modal.confirm({
+                      title:"系统提示!",
+                      content:"该用户无权限",
+                      
+                  })
+              }
+        })
         
-        // var query=JSON.stringify({flag:true,listSearch:this.listSearch,commitItem:this.commitItem,commitItemGroup:this.commitItemGroup,commitParts:this.commitParts});
-        var query={flag:true,listSearch:this.listSearch,commitItem:this.commitItem,commitItemGroup:this.commitItemGroup,commitParts:this.commitParts};
+      },
+
+      //规则判断-------
+      validatePass(rule, value, callback){
         
-        this.$router.push({path:'/repairOrder-list',query:query});
-      }
+            if (new Date(value).getTime()<=new Date().getTime()) {
+                callback(new Error('预约时间不可早于今天'));
+            }else{
+                    
+                callback();
+            }
+    },
+
 
     }
 	}

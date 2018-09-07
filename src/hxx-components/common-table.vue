@@ -33,7 +33,8 @@
     @on-row-click="onRowClick"
     @on-row-dblclick="onRowDblclick"
     @on-current-change="onCurrentChange"
-  ></Table>
+  >
+  </Table>
   <div class="table-bottom">
     <div><slot name="footer"></slot></div>
     <Page :current="page" :page-size="25" show-sizer show-elevator show-total :page-size-opts="[25, 50, 100, 150]"

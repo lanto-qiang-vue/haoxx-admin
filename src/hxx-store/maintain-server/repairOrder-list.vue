@@ -39,7 +39,7 @@
       <Button type="error" v-if="accessBtn('ban')"  @click="deleteDetailData" :disabled="buttonStateArr.ban" class="button-distance">作废</Button>
     </div>
     <repairOrder-list-detail class="table-modal-detail" :showDetail="showDetail"
-                             :detailData="detailData" @closeDetail="closeDetail" @closeGetList="closeGetList"
+                             :detailData="detailData" :detailQuery="detailQuery" @closeDetail="closeDetail" @closeGetList="closeGetList" 
       ></repairOrder-list-detail>
 
       <repairOrder-list-quickDetail class="table-modal-detail" :showQuickDetail="showQuickDetail"
@@ -62,12 +62,6 @@
     data(){
 		  return{
         showQuickDetail:null,//快速开单框
-        tooltipObj:{
-            mshow:null,
-            funName:'del',
-            description:'',
-            title:'',
-        },
         columns: [
           // {type: 'selection', width: 50, fixed: 'left'},
           {title: '序号',  minWidth: 80,
@@ -117,6 +111,7 @@
         showTable:false,
         showDetail: false,
         detailData: null,
+        detailQuery:null,
         clearTableSelect: null,
         isOrderSuccess:false,//判断是不是预约成功
         buttonStateArr:{
@@ -308,7 +303,7 @@
       closeDetail(){
           this.detailData= null;
           this.clearTableSelect= Math.random();
-          
+          this.detailQuery=null;
       },
       closeGetList(){
         this.getList();
@@ -430,7 +425,14 @@
 
       getRouterData(){
         var queryData=this.$route.query;
-        console.log(queryData);
+        if(queryData.flag){
+            this.detailQuery=queryData;
+            this.showDetail=Math.random();
+            console.log("有值",queryData);
+        }else{
+            console.log("没有值");
+        }
+        
       },
 
     }

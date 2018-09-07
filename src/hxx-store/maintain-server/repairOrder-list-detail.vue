@@ -16,7 +16,7 @@
       <Panel name="1">查询
        <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="110"  class="common-form">
           <FormItem label="车牌号码:" prop="PLATE_NUM">
-              <Input @on-focus="showoff=Math.random();"	type="text" v-model="listSearch.PLATE_NUM" placeholder="请输入车牌号" >
+              <Input @on-focus="showoff=Math.random();"	type="text" v-model="listSearch.PLATE_NUM" placeholder="请输入车牌号" :disabled="publicButtonFlag">
                   <Icon type="ios-search" slot="suffix"/>
               </Input>
           </FormItem>
@@ -69,10 +69,10 @@
               </Select>
           </FormItem>
           <FormItem label="进厂日期:">
-              <DatePicker v-model="listSearch.COME_DATE" type="datetime" placeholder="Select date and time"></DatePicker>
+              <DatePicker v-model="listSearch.COME_DATE" type="datetime" format="yyyy-MM-dd HH:mm" :time-picker-options="{steps: [1, 30, 30]}" placeholder="Select date and time" :options="startTimeOptions" @on-change="startTimeChange"></DatePicker>
           </FormItem>
           <FormItem label="计划完工日期:">
-              <DatePicker v-model="listSearch.PLAN_END_DATE" type="datetime" placeholder="Select date and time"></DatePicker>
+              <DatePicker v-model="listSearch.PLAN_END_DATE" type="datetime" format="yyyy-MM-dd HH:mm" :time-picker-options="{steps: [1, 30, 30]}" placeholder="Select date and time" :options="endTimeOptions" @on-change="endTimeChange"></DatePicker>
           </FormItem>
           
        </Form>
@@ -953,16 +953,22 @@
           printAccount:true,//打印结算单
         },//按钮状态组数据
         // returnData:null,//返回数据结果---公共的---
+        publicButtonFlag:true,
+
+        startTimeOptions: {}, //开始日期设置
+        endTimeOptions: {}, //结束日期设置
+        starttime: '', //开始日期model
+        endtime: '',//结束日期model
+
 
       }
     },
-    props:['showDetail', 'detailData'],
+    props:['showDetail', 'detailData','detailQuery'],
     watch:{
       showDetail(){
         console.log('进来的参数：',this.detailData,);
         this.showModal=true
         //--------------------
-        
         //清空公共数据值------
         this.getItem=[];
         this.getItemGroup=[];
@@ -972,37 +978,160 @@
         this.commitItem=[];
         this.commitParts=[];
         this.testSingle=false;
-        //判断进来的参数是否存在---------------------
-        if(this.detailData){
-          //初始化车辆数据----------------
-          this.selectCarInitFun(this.detailData.VEHICLE_TYPE,this.VEHICLE_TYPE_CODE);
+        this.publicButtonFlag=false;
+        if(this.detailQuery){
+            this.commitItemGroup=this.detailQuery.commitItemGroup;
+            this.commitItem=this.detailQuery.commitItem;
+            this.commitParts=this.detailQuery.commitParts;
+            this.publicButtonFlag=true;
+            //进来数据重新赋值-----------------
+            this.listSearch={
+                  "TENANT_ID":"",
+                  "REPAIR_ID":"",
+                  "REPAIR_NO":"",
+                  "VEHICLE_ID":"",
+                  "ENGINE_NO":"",
+                  "VEHICLE_COLOR":"",
+                  "ORDER_ID":"",
+                  "OUT_DATE":"",
+                  "OUT_MILEAGE":"",
+                  "OLD_PART_RESULT":"",
+                  "ZY_PART":"",
+                  "ZY_PART_BZQ":"",
+                  "PLATE_NUM":"",
+                  "VEHICLE_MODEL":"",
+                  "VIN_NO":"",
+                  "CUSTOMER_NAME":"",
+                  "GIVE_REPAIR_PERSON":"",
+                  "TELPHONE":"",
+                  "REPAIR_TYPE":"10191001",
+                  "MILEAGE":0,
+                  "REPAIR_PERSON":"",
+                  "VEHICLE_TYPE":"10521001",
+                  "VEHICLE_TYPE_CODE":"轿车-排量<1.6升-A",
+                  "FOLLOW_PERSON":"",
+                  "COME_DATE":new Date(),
+                  "PLAN_END_DATE":new Date(),
+                  "FAULT_DESC":"",
+                  "CUSTOMER_INFO":"",
+                  "REPAIR_INFO":"",
+                  "IS_ITEM_GROUP":"10041002",
+                  "REPAIR_ITEM_DERATE_MONEY":0,
+                  "REPAIR_PART_DERATE_MONEY":0,
+                  "STATUS":"10201001",
+                  "REPAIR_ITEM_MONEY":0,
+                  "REPAIR_PART_MONEY":0,
+                  "SUM_MONEY":0,
+                  "GD_TYPE":""
+              };
 
-          for(let key in this.listSearch){
-            if(this.detailData[key]){
-              this.listSearch[key]= this.detailData[key]
+            for(let key in this.listSearch){
+              if(this.detailQuery.listSearch.hasOwnProperty(key) ){
+                this.listSearch[key]= this.detailQuery.listSearch[key];
+              }
             }
-          }
-          //获取项目组数据---------------
-          this.getItemFun(this.listSearch["REPAIR_ID"]);
-          this.getItemGroupFun(this.listSearch["REPAIR_ID"]);
-          this.getPartsFun(this.listSearch["REPAIR_ID"]);
-          this.getOtherFun(this.listSearch["REPAIR_ID"]);
+            this.selectCarInitFun(this.listSearch.VEHICLE_TYPE,this.listSearch.VEHICLE_TYPE_CODE);
+            this.listSearch['GIVE_REPAIR_PERSON']=this.detailQuery.listSearch['CUSTOMER_NAME'];
 
-          //判断维修项目套餐是否显示---------------------------
-          if("10041002"==this.detailData['IS_ITEM_GROUP']){
-            this.testSingle=false;
-          }else if("10041001"==this.detailData['IS_ITEM_GROUP']){
-            this.testSingle=true;
-          }else{
-            this.testSingle=false;
-          }
+        }else{
+          //判断进来的参数是否存在---------------------
+            if(this.detailData){
+              //初始化车辆数据----------------
+              this.selectCarInitFun(this.detailData.VEHICLE_TYPE,this.detailData.VEHICLE_TYPE_CODE);
 
-          if(this.detailData['STATUS']=='10201001'){
-              this.titleMsg="新建未派工";
+              for(let key in this.listSearch){
+                if(this.detailData[key]){
+                  this.listSearch[key]= this.detailData[key]
+                }
+              }
+              //获取项目组数据---------------
+              this.getItemFun(this.listSearch["REPAIR_ID"]);
+              this.getItemGroupFun(this.listSearch["REPAIR_ID"]);
+              this.getPartsFun(this.listSearch["REPAIR_ID"]);
+              this.getOtherFun(this.listSearch["REPAIR_ID"]);
 
-              this.orderDate="";
-              this.isOrderSuccess=true;
+              //判断维修项目套餐是否显示---------------------------
+              if("10041002"==this.detailData['IS_ITEM_GROUP']){
+                this.testSingle=false;
+              }else if("10041001"==this.detailData['IS_ITEM_GROUP']){
+                this.testSingle=true;
+              }else{
+                this.testSingle=false;
+              }
 
+              if(this.detailData['STATUS']=='10201001'){
+                  this.titleMsg="新建未派工";
+
+                  this.orderDate="";
+                  this.isOrderSuccess=true;
+
+                  for(let i in this.buttonStateArr){
+                    switch(i){
+                      case 'save':
+                      case 'dopay': this.buttonStateArr[i]= false; break
+                      default : this.buttonStateArr[i]= true;
+                    }
+                  }
+
+              }else if(this.detailData['STATUS']=='10201002'){
+                  this.titleMsg="已派工维修中";
+
+                  this.orderDate="";
+                  this.isOrderSuccess=false;
+
+                  for(let i in this.buttonStateArr){
+                    switch(i){
+                      case 'finish':
+                      case 'printWts':
+                      case 'printPgd': this.buttonStateArr[i]= false; break
+                      default : this.buttonStateArr[i]= true;
+                    }
+                  }
+
+              }else if(this.detailData['STATUS']=='10201003'){
+                  this.titleMsg="已完工待结算";
+                  this.isOrderSuccess=false;
+                  this.orderDate="";
+                  for(let i in this.buttonStateArr){
+                    switch(i){
+                      case 'doaccount':
+                      case 'printWts':
+                      case 'printPgd': this.buttonStateArr[i]= false; break
+                      default : this.buttonStateArr[i]= true;
+                    }
+                  }
+              }else if(this.detailData['STATUS']=='10201004'){
+                  this.titleMsg="已结算待收款";
+                  this.isOrderSuccess=false;
+                  this.orderDate="";
+                  for(let i in this.buttonStateArr){
+                    switch(i){
+                      case 'shoukuan':
+                      case 'printAccount':
+                      case 'printWts':
+                      case 'printPgd': this.buttonStateArr[i]= false; break
+                      default : this.buttonStateArr[i]= true;
+                    }
+                  }
+              }else if(this.detailData['STATUS']=='10201005'){
+                  this.titleMsg="已结清";
+                  this.isOrderSuccess=false;
+                  this.orderDate="";
+                  for(let i in this.buttonStateArr){
+                    switch(i){
+                      case 'printAccount':
+                      case 'printWts':
+                      case 'printPgd': this.buttonStateArr[i]= false; break
+                      default : this.buttonStateArr[i]= true;
+                    }
+                  }
+              }
+
+            }else{
+              for(let key in this.listSearchInit){
+                this.listSearch[key]=this.listSearchInit[key];
+              }
+              //初始化按钮状态-----------
               for(let i in this.buttonStateArr){
                 switch(i){
                   case 'save':
@@ -1010,89 +1139,23 @@
                   default : this.buttonStateArr[i]= true;
                 }
               }
-
-          }else if(this.detailData['STATUS']=='10201002'){
-              this.titleMsg="已派工维修中";
+              this.vehicleNumberArr=[
+                { code: '轿车-排量<1.6升-A', type: '10521001' },
+                { code: '轿车-1.6升≤排量≤1.8升-B', type: '10521001' },
+                { code: '轿车-1.8升<排量≤2.3升-C', type: '10521001' },
+                { code: '轿车-2.3升<排量≤3升-D', type: '10521001' },
+                { code: '轿车-3升<排量≤4升-E', type: '10521001' },
+              ];
+              
+              //新建功能表------
+              this.titleMsg="新建未派工";
 
               this.orderDate="";
-              this.isOrderSuccess=false;
-
-              for(let i in this.buttonStateArr){
-                switch(i){
-                  case 'finish':
-                  case 'printWts':
-                  case 'printPgd': this.buttonStateArr[i]= false; break
-                  default : this.buttonStateArr[i]= true;
-                }
-              }
-
-          }else if(this.detailData['STATUS']=='10201003'){
-              this.titleMsg="已完工待结算";
-              this.isOrderSuccess=false;
-              this.orderDate="";
-              for(let i in this.buttonStateArr){
-                switch(i){
-                  case 'doaccount':
-                  case 'printWts':
-                  case 'printPgd': this.buttonStateArr[i]= false; break
-                  default : this.buttonStateArr[i]= true;
-                }
-              }
-          }else if(this.detailData['STATUS']=='10201004'){
-              this.titleMsg="已结算待收款";
-              this.isOrderSuccess=false;
-              this.orderDate="";
-              for(let i in this.buttonStateArr){
-                switch(i){
-                  case 'shoukuan':
-                  case 'printAccount':
-                  case 'printWts':
-                  case 'printPgd': this.buttonStateArr[i]= false; break
-                  default : this.buttonStateArr[i]= true;
-                }
-              }
-          }else if(this.detailData['STATUS']=='10201005'){
-              this.titleMsg="已结清";
-              this.isOrderSuccess=false;
-              this.orderDate="";
-              for(let i in this.buttonStateArr){
-                switch(i){
-                  case 'printAccount':
-                  case 'printWts':
-                  case 'printPgd': this.buttonStateArr[i]= false; break
-                  default : this.buttonStateArr[i]= true;
-                }
-              }
-          }
-
-        }else{
-          for(let key in this.listSearchInit){
-            this.listSearch[key]=this.listSearchInit[key];
-          }
-          //初始化按钮状态-----------
-          for(let i in this.buttonStateArr){
-            switch(i){
-              case 'save':
-              case 'dopay': this.buttonStateArr[i]= false; break
-              default : this.buttonStateArr[i]= true;
+              this.isOrderSuccess=true;
+              console.log(this.listSearch);
             }
-          }
-          this.vehicleNumberArr=[
-            { code: '轿车-排量<1.6升-A', type: '10521001' },
-            { code: '轿车-1.6升≤排量≤1.8升-B', type: '10521001' },
-            { code: '轿车-1.8升<排量≤2.3升-C', type: '10521001' },
-            { code: '轿车-2.3升<排量≤3升-D', type: '10521001' },
-            { code: '轿车-3升<排量≤4升-E', type: '10521001' },
-          ];
-          
-          //新建功能表------
-          this.titleMsg="新建未派工";
-
-          this.orderDate="";
-          this.isOrderSuccess=true;
-          console.log(this.listSearch);
         }
-
+        
         this.getShopClassList();
         this.getEmployeeList(this.detailData);
       }
@@ -1242,7 +1305,8 @@
 
                 this.orderDate="";
                 this.isOrderSuccess=false;
-
+                this.listSearch["REPAIR_ID"]=res.data.REPAIR_ID;
+                this.listSearch["REPAIR_NO"]=res.data.REPAIR_NO;
                 for(let i in this.buttonStateArr){
                   switch(i){
                     case 'finish':
@@ -1851,7 +1915,37 @@
             }
         }
         this.$emit('closeGetList');//重新请求数据
-      }
+      },
+      //选择时间判断是否大于出厂时间
+      selectDateFun(val){
+        if(new Date(val).getTime()<new Date(this.listSearch['COME_DATE']).getTime()){
+            this.listSearch['PLAN_END_DATE']='';
+            this.$Modal.confirm({
+                title:"系统提示!",
+                content:"出厂日期不能大于完工日期",
+            })
+        }
+      },
+
+    startTimeChange: function(e) { //设置开始时间
+        this.starttime = e;
+        this.endTimeOptions = {
+          disabledDate: date => {
+            let startTime = this.starttime ? new Date(this.starttime).valueOf() : '';
+            return date && (date.valueOf() < startTime);
+          }
+        }
+      },
+      endTimeChange: function(e) { //设置结束时间
+        this.endtime = e;
+        let endTime = this.endtime ? new Date(this.endtime).valueOf() - 1 * 24 * 60 * 60 * 1000 : '';
+        this.startTimeOptions = {
+          disabledDate(date) {
+            return date && date.valueOf() > endTime;
+          }
+        }
+      },
+
 
     }
 	}

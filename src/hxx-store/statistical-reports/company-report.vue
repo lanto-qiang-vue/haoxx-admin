@@ -1,6 +1,6 @@
-<!--维修班组业绩统计 2018-09-04 -->
+<!--业务类别统计 2018-09-04 -->
 <template>
-  <common-table v-model="tableData" :columns="columns" :total="total" :clearSelect="clearTableSelect"
+  <!--<common-table v-model="tableData" :columns="columns" :total="total" :clearSelect="clearTableSelect"
                 @changePage="changePage" @changePageSize="changePageSize" @onRowClick="onRowClick"
                 @onRowDblclick="onRowDblclick" :show="showTable" :page="page" :showOperate=false>
     <div slot="search">
@@ -19,47 +19,71 @@
     <div slot="footer">
       <table  width='100%' cellpadding='5' cellspacing='0'>
             <tr>
-                <td style="min-width:120px;height:30px;"></td>
-                <td style="min-width:120px; height:30px;padding:0 18px;">合计：</td>
-                <td style="min-width:120px; height:30px;padding:0 18px;" v-for="site in computedMoney">{{site.money}}{{site.unit}}</td>
+                <td style="min-width:120px; height:30px;padding:0 18px; text-align: center;">合计：</td>
+                <td style="min-width:120px; height:30px;padding:0 18px;text-align: center;" v-for="site in computedMoney">{{site.money}}{{site.unit}}</td>
                 
             </tr>
         </table>
     </div>
 
-  </common-table>
+  </common-table>-->
+
+  <div>
+      <div ref="dom" class="charts chart-bar"></div>
+  </div>
 </template>
 <script>
   import commonTable from '@/hxx-components/common-table.vue'
   import { getName, getDictGroup ,getCreate} from '@/libs/util.js'
   import mixin from '@/hxx-components/mixin'
   import { formatDate } from '@/libs/tools.js'
+    import echarts from 'echarts'
 
 export default {
-	name: "maintenan-statistical",
+	name: "company-report",
     components: {commonTable},
     mixins: [mixin],
     data(){
 		return{
             columns: [
-                {title: '序号',  minWidth: 120,
-                    render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
+                {title: '业务类型', key: 'rEPAIR_NAME', sortable: true, minWidth: 120,align: 'center',
                 },
-                {title: '维修技师', key: 'user_name', sortable: true, minWidth: 120,
-                },
-                {title: '工时金额', key: 'repair_money', sortable: true, minWidth: 120,
+                {title: '结算台次', key: 'rEPAIR_TYPE', sortable: true, minWidth: 120,align: 'center',
                     
                 },
-                {title: '工时', key: 'repair_time', sortable: true, minWidth: 120},
-                {title: '材料金额', key: 'amount', sortable: true, minWidth: 120,
-                    
+                {title: '实际产值', align: 'center',
+                    children: [
+                        {
+                            title: '工时',
+                            key: 'rEPAIR_TIME', sortable: true, minWidth: 120,align: 'center',
+                        },
+                        {
+                            title: '材料',
+                            key: 'sALES_PRICE', sortable: true, minWidth: 120,align: 'center',
+                            
+                        },
+                        {
+                            title: '产值合计',
+                            key: 'total', sortable: true, minWidth: 120,align: 'center',
+                            
+                        }
+                    ]
+
                 },
-                {title: '营业额', key: 'outputValue', sortable: true, minWidth: 120,
+                {title: '成本', align: 'center',
+                     children: [
+                            {
+                                title: '成本',
+                                key: 'operatingCost', sortable: true, minWidth: 120,align: 'center',
+                            },
+                            {
+                                title: '利润',
+                                key: 'pCost', sortable: true, minWidth: 120,align: 'center',
+                                
+                            },
+                        ]
                 },
-                {title: '成本', key: 'cost', sortable: true, minWidth: 120,
-                },
-                {title: '利润', key: 'pcost', sortable: true, minWidth: 120,
-                },
+                
             ],
             tableData: [],
             search:{
@@ -75,14 +99,7 @@ export default {
             detailData: null,
             clearTableSelect: null,
 
-            computedMoney:{
-                "repair_money":0,
-                "repair_time":0,
-                "amount":0,
-                "outputValue":0,
-                "cost":0,
-                "pcost":0,
-            },//计算合计金额------
+            computedMoney:[],//计算合计金额------
             
       }
     },
@@ -92,15 +109,41 @@ export default {
     mounted () {
       this.getList();
       this.showTable= Math.random();
-      
+
+    //   this.$nextTick(() => {
+    //     let xAxisData = Object.keys(this.value)
+    //     let seriesData = Object.values(this.value)
+    //     let option = {
+    //         title: {
+    //         text: this.text,
+    //         subtext: this.subtext,
+    //         x: 'center'
+    //         },
+    //         xAxis: {
+    //         type: 'category',
+    //         data: xAxisData
+    //         },
+    //         yAxis: {
+    //         type: 'value'
+    //         },
+    //         series: [{
+    //         data: seriesData,
+    //         type: 'bar'
+    //         }]
+    //     }
+    //     let dom = echarts.init(this.$refs.dom, 'tdTheme')
+    //     dom.setOption(option)
+    //     })
+  
     },
     methods:{
         //获取列表值-----
+
         getList(){
             this.search.ACCOUNT_TIME_gte=formatDate(this.search.ACCOUNT_TIME_gte);
             this.search.ACCOUNT_TIME_lte=formatDate(this.search.ACCOUNT_TIME_lte);
             this.axios.request({
-                url: '/tenant/report/maintain_tech/techList',
+                url: '/tenant/report/work_count/work_list',
                 method: 'post',
                 data: {
                     BeginTime: this.search.ACCOUNT_TIME_gte,
@@ -122,18 +165,15 @@ export default {
         //计算金额------
         computedList(val){
             //先初始化，后计算
-            
             this.computedMoney=[];
             var siteMoney={
-                "repair_money":0,
-                "repair_time":0,
-                "amount":0,
-                "outputValue":0,
-                "cost":0,
-                "pcost":0,
+                "rEPAIR_TYPE":0,
+                "rEPAIR_TIME":0,
+                "sALES_PRICE":0,
+                "total":0,
+                "operatingCost":0,
+                "pCost":0,
             };
-                
-            
             for(let i in val){
                 for(let j in siteMoney){
                     siteMoney[j]+=parseInt(val[i][j]);
@@ -146,8 +186,13 @@ export default {
                 }
                 switch(i){
                     
-                    case 'repair_time':
+                    case 'rEPAIR_TIME':
                         obj.unit='工时';
+                        obj.money=siteMoney[i];
+                        this.computedMoney.push(obj);
+                    break;
+                    case 'rEPAIR_TYPE':
+                        obj.unit='台';
                         obj.money=siteMoney[i];
                         this.computedMoney.push(obj);
                     break;
