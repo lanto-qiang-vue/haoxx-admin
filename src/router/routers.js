@@ -404,6 +404,17 @@ export default [
         },
         component: () => import('@/hxx-store/parts-manage/warehouse-check.vue')
       },
+      {
+        path: '/parts-record',
+        name: 'parts-record',
+        meta: {
+          icon: 'md-funnel',
+          title: '配件档案',
+          lgType: "1002",
+          access: '100510',
+        },
+        component: () => import('@/hxx-store/parts-manage/parts-record.vue')
+      },
     ]
 },
 

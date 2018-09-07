@@ -21,7 +21,7 @@
     </div>
     </common-table>
     <!-- 导入标准库使用 -->
-        <Modal  
+    <Modal  
     v-model="showModal"
     class="table-modal-detail"
     title="未导入的维修项目"
