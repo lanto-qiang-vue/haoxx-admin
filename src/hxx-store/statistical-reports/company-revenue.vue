@@ -1,8 +1,8 @@
-<!--维修班组业绩统计 2018-09-04 -->
+<!--公司营收报告统计 2018-09-04 -->
 <template>
   <common-table v-model="tableData" :columns="columns" :total="total" :clearSelect="clearTableSelect"
                 @changePage="changePage" @changePageSize="changePageSize" @onRowClick="onRowClick"
-                @onRowDblclick="onRowDblclick" :show="showTable" :page="page" :showOperate=false>
+                @onRowDblclick="onRowDblclick" :show="showTable" :page="page" :showOperate=false :loading="loading">
     <div slot="search">
       <Form ref="search" :rules="ruleValidate"  :model="search" :label-width="85" inline>
           <FormItem label="查询日期:" style="width: 100%; margin-right: 10px;">
@@ -19,9 +19,8 @@
     <div slot="footer">
       <table  width='100%' cellpadding='5' cellspacing='0'>
             <tr>
-                <td style="min-width:120px;height:30px;"></td>
-                <td style="min-width:120px; height:30px;padding:0 18px;">合计：</td>
-                <td style="min-width:120px; height:30px;padding:0 18px;" v-for="site in computedMoney">{{site.money}}{{site.unit}}</td>
+                <td style="min-width:150px; height:30px;padding:0 18px;">合计：</td>
+                <td style="min-width:150px; height:30px;padding:0 18px;" v-for="(value, key) in computedMoney">{{value}}元</td>
                 
             </tr>
         </table>
@@ -36,29 +35,22 @@
   import { formatDate } from '@/libs/tools.js'
 
 export default {
-	name: "maintenan-statistical",
+	name: "company-revenue",
     components: {commonTable},
     mixins: [mixin],
     data(){
 		return{
             columns: [
-                {title: '序号',  minWidth: 120,
-                    render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
+                {title: '业务分类', key: 'Name', sortable: true, minWidth: 150,
                 },
-                {title: '维修技师', key: 'user_name', sortable: true, minWidth: 120,
+                {title: '营业额', key: 'Turnover', sortable: true, minWidth: 150,
+                    render: (h, params) => h('span', params.row.Turnover||0)
                 },
-                {title: '工时金额', key: 'repair_money', sortable: true, minWidth: 120,
-                    
+                {title: '营业成本', key: 'OperatingCost', sortable: true, minWidth: 150,
+                    render: (h, params) => h('span', params.row.OperatingCost||0)
                 },
-                {title: '工时', key: 'repair_time', sortable: true, minWidth: 120},
-                {title: '材料金额', key: 'amount', sortable: true, minWidth: 120,
-                    
-                },
-                {title: '营业额', key: 'outputValue', sortable: true, minWidth: 120,
-                },
-                {title: '成本', key: 'cost', sortable: true, minWidth: 120,
-                },
-                {title: '利润', key: 'pcost', sortable: true, minWidth: 120,
+                {title: '纯利润', key: 'PCost', sortable: true, minWidth: 150,
+                    render: (h, params) => h('span', params.row.PCost||0)
                 },
             ],
             tableData: [],
@@ -74,14 +66,11 @@ export default {
             showDetail: false,
             detailData: null,
             clearTableSelect: null,
-
+            loading:true,//加载进度-----------
             computedMoney:{
-                "repair_money":0,
-                "repair_time":0,
-                "amount":0,
-                "outputValue":0,
-                "cost":0,
-                "pcost":0,
+                "Turnover":0,
+                "OperatingCost":0,
+                "PCost":0,
             },//计算合计金额------
             
       }
@@ -97,14 +86,15 @@ export default {
     methods:{
         //获取列表值-----
         getList(){
+            this.loading=true;
             this.search.ACCOUNT_TIME_gte=formatDate(this.search.ACCOUNT_TIME_gte);
             this.search.ACCOUNT_TIME_lte=formatDate(this.search.ACCOUNT_TIME_lte);
             this.axios.request({
-                url: '/tenant/report/maintain_tech/techList',
+                url: '/tenant/report/tt_fundreport/list',
                 method: 'post',
                 data: {
-                    BeginTime: this.search.ACCOUNT_TIME_gte,
-                    EndTime: this.search.ACCOUNT_TIME_lte,
+                    ACCOUNT_TIME_gte: this.search.ACCOUNT_TIME_gte,
+                    ACCOUNT_TIME_lte: this.search.ACCOUNT_TIME_lte,
                     page: this.page,
                     limit: this.limit,
                     access_token: this.$store.state.user.token
@@ -115,6 +105,7 @@ export default {
                     this.total= res.total
 
                     this.computedList(res.data);
+                    this.loading=false;
                 }
             })
             this.detailData = null;
@@ -122,41 +113,20 @@ export default {
         //计算金额------
         computedList(val){
             //先初始化，后计算
-            
-            this.computedMoney=[];
-            var siteMoney={
-                "repair_money":0,
-                "repair_time":0,
-                "amount":0,
-                "outputValue":0,
-                "cost":0,
-                "pcost":0,
+            this.computedMoney={
+                "Turnover":0,
+                "OperatingCost":0,
+                "PCost":0,
             };
-                
-            
             for(let i in val){
-                for(let j in siteMoney){
-                    siteMoney[j]+=parseInt(val[i][j]);
-                }
-            }
-
-            for(let i in siteMoney){
-                var obj={
-                    unit:'',money:0
-                }
-                switch(i){
+                for(let j in this.computedMoney){
+                    if(parseInt(val[i][j])){
+                        this.computedMoney[j]+=parseInt(val[i][j]);
+                    }
                     
-                    case 'repair_time':
-                        obj.unit='工时';
-                        obj.money=siteMoney[i];
-                        this.computedMoney.push(obj);
-                    break;
-                    default : 
-                        obj.unit='元';
-                        obj.money=siteMoney[i];
-                        this.computedMoney.push(obj);
                 }
             }
+            console.log(this.computedMoney);
         },
         clear(){
             for(var i in this.search){

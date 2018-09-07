@@ -554,6 +554,50 @@ export default [
         },
         component: () => import('@/hxx-store/statistical-reports/server-statistical.vue')
       },
+      {
+        path: '/procurement-statistical',
+        name: 'procurement-statistical',
+        meta: {
+          icon: 'md-funnel',
+          title: '采购台账',
+          lgType: "1002",
+          access: '1009105',
+        },
+        component: () => import('@/hxx-store/statistical-reports/procurement-statistical.vue')
+      },
+      {
+        path: '/company-revenue',
+        name: 'company-revenue',
+        meta: {
+          icon: 'md-funnel',
+          title: '公司营收资金报表',
+          lgType: "1002",
+          access: '100602',
+        },
+        component: () => import('@/hxx-store/statistical-reports/company-revenue.vue')
+      },
+      {
+        path: '/business-statistical',
+        name: 'business-statistical',
+        meta: {
+          icon: 'md-funnel',
+          title: '业务类别统计',
+          lgType: "1002",
+          access: '100603',
+        },
+        component: () => import('@/hxx-store/statistical-reports/business-statistical.vue')
+      },
+      {
+        path: '/company-report',
+        name: 'company-report',
+        meta: {
+          icon: 'md-funnel',
+          title: '公司经营报告',
+          lgType: "1002",
+          access: '100601',
+        },
+        component: () => import('@/hxx-store/statistical-reports/company-report.vue')
+      },
       
     ]
   },
