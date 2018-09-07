@@ -136,6 +136,9 @@
     },
     mounted () {
       //重置搜索框数据
+      
+      
+
       this.searchSelectOption= getDictGroup(this.$store.state.app.dict, '1018');
       this.searchSelectOption1.push({
           "code":"",
@@ -162,6 +165,9 @@
       this.showTable= Math.random()
 
             
+    },
+    activated(){
+      this.getRouterData();
     },
     methods:{
 		  getList(){
@@ -420,6 +426,11 @@
                 })
               }
           })
+      },
+
+      getRouterData(){
+        var queryData=this.$route.query;
+        console.log(queryData);
       },
 
     }

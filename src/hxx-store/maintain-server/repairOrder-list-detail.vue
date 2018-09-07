@@ -342,7 +342,7 @@
           },
           {title: '操作', key: '', sortable: true, minWidth: 100, fixed: 'right',
             render: (h, params) => {
-                if(this.titleMsg=='新建'){
+                if(this.titleMsg=='新建未派工'){
                   return h('div', [
                       h('Button', {
                           props: {
@@ -356,13 +356,21 @@
                           }
                       }, 'Delete')
                   ]);
-                }else if(this.titleMsg=='已预约'){
+                }else if(this.titleMsg=='已派工维修中'){
                   return h('div', [
-                      h('span', '已预约')
+                      h('span', '已派工维修中')
                   ]);
-                }else if(this.titleMsg=='已接车'){
+                }else if(this.titleMsg=='已完工待结算'){
                   return h('div', [
-                      h('span', '已接车')
+                      h('span', '已完工待结算')
+                  ]);
+                }else if(this.titleMsg=='已结算待收款'){
+                  return h('div', [
+                      h('span', '已结算待收款')
+                  ]);
+                }else if(this.titleMsg=='已结清'){
+                  return h('div', [
+                      h('span', '已结清')
                   ]);
                 }
                 
@@ -1020,7 +1028,7 @@
 
           }else if(this.detailData['STATUS']=='10201003'){
               this.titleMsg="已完工待结算";
-
+              this.isOrderSuccess=false;
               this.orderDate="";
               for(let i in this.buttonStateArr){
                 switch(i){
@@ -1032,7 +1040,7 @@
               }
           }else if(this.detailData['STATUS']=='10201004'){
               this.titleMsg="已结算待收款";
-
+              this.isOrderSuccess=false;
               this.orderDate="";
               for(let i in this.buttonStateArr){
                 switch(i){
@@ -1045,7 +1053,7 @@
               }
           }else if(this.detailData['STATUS']=='10201005'){
               this.titleMsg="已结清";
-
+              this.isOrderSuccess=false;
               this.orderDate="";
               for(let i in this.buttonStateArr){
                 switch(i){

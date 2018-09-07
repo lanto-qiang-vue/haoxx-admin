@@ -159,7 +159,7 @@
       <div slot="footer">
         <Button v-if="isButton" @click="handleSubmit('listSearch')" size="large" type="primary"  style="margin-right: 10px;">保存</Button>
         <Button v-if="isButton" @click="handleCommit" size="large" type="success"  style="margin-right: 10px;">提交</Button>
-        <Button v-if="isCar"  size="large" type="success" style="margin-right: 10px;" >维修接车</Button>
+        <Button v-if="isCar" @click="handleCar" size="large" type="success" style="margin-right: 10px;" >维修接车</Button>
         <Button  size="large" type="default" style="margin-right: 10px;" @click="showModal=false;">返回</Button>
       </div>
   </Modal>
@@ -1286,6 +1286,14 @@
         }
 
       },
+      //维修接车----
+      handleCar(){
+        
+        // var query=JSON.stringify({flag:true,listSearch:this.listSearch,commitItem:this.commitItem,commitItemGroup:this.commitItemGroup,commitParts:this.commitParts});
+        var query={flag:true,listSearch:this.listSearch,commitItem:this.commitItem,commitItemGroup:this.commitItemGroup,commitParts:this.commitParts};
+        
+        this.$router.push({path:'/repairOrder-list',query:query});
+      }
 
     }
 	}

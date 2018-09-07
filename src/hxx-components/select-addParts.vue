@@ -14,7 +14,7 @@
     <div style="height: 100%;overflow: auto;">
         <Collapse v-model="collapse">
       <Panel name="1">配件基本信息
-       <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="80" inline class="detail-form">
+       <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="110" inline class="detail-form">
           <FormItem label="配件名称:" prop="NAME">
               <Input type="text" v-model="listSearch.NAME" placeholder="" style="min-width: 250px;" >
               
@@ -60,7 +60,7 @@
        </Form>
       </Panel>
       <Panel name="2">配件详细信息
-       <Form  slot="content" :label-width="80" inline class="detail-form">
+       <Form  slot="content" :label-width="110" inline class="detail-form">
 
            <FormItem label="品牌:" >
               <Select v-model="listSearch.BRAND" placeholder="" style="min-width: 250px;" placeholder="选择品牌...">
@@ -88,7 +88,7 @@
        </Form>
       </Panel>
       <Panel name="3">配件限价信息
-       <Form  slot="content" :label-width="80" inline class="detail-form">
+       <Form  slot="content" :label-width="110" inline class="detail-form">
 
           <FormItem label="采购最低价:">
               <InputNumber :min="0" v-model="listSearch.MIN_SHOP_PRICE" style="min-width: 250px;" placeholder=""></InputNumber>
@@ -152,10 +152,9 @@
         components: {},
         data(){
             return{
-                
                 showType:false,
                 showOnoff:false,
-                collapse:"1",
+                collapse:["1","2","3"],
                 initUnitArr:[],
                 initRateArr:[
                     {code:0,name:"0%"},
@@ -256,12 +255,16 @@
             },
             salesPriceFun(val){
                 this.listSearch.SALES_PRICE=val;
-                this.listSearch.TAX=(val*this.listSearch.RATE).toFixed(2);
-                this.listSearch.NOT_CONTAINS_TAX_SALE_PRICE=val-(val*this.listSearch.RATE).toFixed(2);
+                
+                this.listSearch.NOT_CONTAINS_TAX_SALE_PRICE=(val/(this.listSearch.RATE+1)).toFixed(2);
+                this.listSearch.TAX=(this.listSearch.NOT_CONTAINS_TAX_SALE_PRICE*this.listSearch.RATE).toFixed(2);
             },
             rateComputed(val){
-                this.listSearch.TAX=(val*this.listSearch.SALES_PRICE).toFixed(2);
-                this.listSearch.NOT_CONTAINS_TAX_SALE_PRICE=this.listSearch.SALES_PRICE-(val*this.listSearch.SALES_PRICE).toFixed(2);
+                this.listSearch.NOT_CONTAINS_TAX_SALE_PRICE=(this.listSearch.SALES_PRICE/(this.listSearch.RATE+1)).toFixed(2);
+                this.listSearch.TAX=(this.listSearch.NOT_CONTAINS_TAX_SALE_PRICE*this.listSearch.RATE).toFixed(2);
+
+                
+                
             },
             del(){
                 this.axios.request({
