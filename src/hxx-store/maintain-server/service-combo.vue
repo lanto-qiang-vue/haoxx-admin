@@ -1,5 +1,5 @@
 <template>
-  <common-table v-model="tableData" :columns="columns" @changePageSize="changePageSize" @changePage="changePage" :total="total"  :show="showTable" @onRowDblclick="dbclick" :page="page">
+  <common-table v-model="tableData" :columns="columns" @changePageSize="changePageSize" @changePage="changePage" :total="total"  :show="showTable" clearSelect="clearType" @onRowClick="onRowClick" @onRowDblclick="dbclick" :page="page">
     <div slot="search"  >
       <div class="search-block">
         <Input v-model="search.keyword"  placeholder="客户名称/车牌号码/联系电话..."></Input>
@@ -17,8 +17,7 @@
     </div>
     <div slot="operate">
       <Button type="primary" @click="add()">新增</Button>
-      <Button type="info" @click="edit()">修改</Button>
-      <Button type="error" @click="remove()">作废</Button>
+      <Button type="info" :disabled="cando" @click="edit()">修改</Button>
     </div>
         <Modal  
     v-model="showModal"
@@ -26,6 +25,7 @@
     title="维修项目套餐"
     width="90"
     :mask-closable="false"
+    @on-visible-change="visibleChange"
     :scrollable="true"
     :transfer= "false"
     :footer-hide="false"
@@ -33,12 +33,29 @@
         <Collapse v-model="value1">
         <Panel name="1">
                 项目基本信息
-                <Form slot="content" :model="formData"  ref="list" :label-width="120" class="common-form">
-                <FormItem label="项目名称:" style="width:30%;" prop="NAME" >
-                <Input type="text"> </Input>
+                <Form slot="content" :model="formData"  ref="list" :rules="rules" :label-width="120" class="common-form">
+                <FormItem label="套餐名称:" style="width:30%;" prop="GROUP_NAME" >
+                <Input v-model="formData.GROUP_NAME" type="text"> </Input>
                 </FormItem>
-                <FormItem label="项目编号:" style="width:30%;" prop="ITEM_NO">
-                <Input type="text"> </Input>
+                <FormItem label="套餐销售价:" style="width:30%;" prop="SALES_PRICE">
+                 <InputNumber
+                 style="width:100%;height:33px;"
+                 :min="0"
+                 v-model="formData.SALES_PRICE"
+                 :formatter="value => `${value}元`"
+                 :parser="value => value.replace('元', '')"></InputNumber>
+                </FormItem>
+                <FormItem label="状态:" style="width:30%;" prop="STATUS">
+                <Select v-model="formData.STATUS">
+                <Option v-for="(item, index) in statuslist"
+                :key="index" :value="item.code">{{item.name}}</Option>
+                </Select>
+                </FormItem>
+                <FormItem label="是否预设项目:">
+                <i-switch v-model="IS_PREINSTALL" size="large">
+                <span slot="open">是</span>
+                <span slot="close">否</span>
+                </i-switch>
                 </FormItem>
                 </Form>
               </Panel>
@@ -49,7 +66,6 @@
               	<div slot="content">
               	<div>
               	<Button type="primary" @click="changeadd()">添加</Button>
-                <Button type="error" @click="changedel()">删除</Button>
               	</div>
                     <Table
                     class="main-table"
@@ -61,12 +77,23 @@
                 </div>
               </Panel>
               </Collapse>
-<!--       <div slot="footer">
+              <Collapse v-model="value3">
+              <Panel name="3">
+                备注描述:
+                <div slot="content">
+                <Form slot="content"  ref="lists" class="common-form">
+                <Input type="textarea" v-model="formData.REMARK" placeholder="请输入备注信息..."> </Input>
+                </Form>
+                </div>
+              </Panel>
+              </Collapse>
+              <div style="height:50px;"></div>
+      <div slot="footer">
       <Button @click="addcancle()">取消</Button>
       <Button type="primary" @click="addpost('list')">保存</Button>
-      </div> -->
+      </div>
     </Modal>
-    <select-item :itemShow="changeModal" :delrow="delrow" @addpush="addpush"></select-item>
+    <select-item :itemShow="changeModal" :initData="initData" :delrow="delrow" @addpush="addpush"></select-item>
   </common-table>
 </template>
 <script>
@@ -80,15 +107,31 @@
 		return{
 		value1:'1',
 		value2:'2',
+    value3:'3',
+    initData:'',
+    IS_PREINSTALL:false,
+    list:'',
 		showModal:false,
-		formData:{},
+    clearType:false,
+		formData:{
+    GROUP_ID:'',
+    GROUP_NAME:'',
+    SALES_PRICE:0,
+    STATUS:'',
+    IS_PREINSTALL:'',
+    REMARK:'',
+    },
     selectData:[],
     delrow:{},
 		tableData:[],
+    rules:{
+      GROUP_NAME:[{required: true,message:'套餐名称必填'}],
+      SALES_PRICE:[{required: true}],
+    },
 		changeModal:false,
            columns: [
           {title: '序号',  minWidth: 80,
-            render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
+            render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1)
           },
            {title: '项目套餐编号', key: 'GROUP_NO', sortable: true, minWidth: 140},
            {title: '项目套餐名称', key: 'GROUP_NAME', sortable: true, minWidth: 140},
@@ -119,9 +162,9 @@
           {title: '是否预设项目', key: 'IS_PREINSTALL', sortable: true, minWidth: 150,
           render: (h,params)=>h('span',getName(this.isorno,params.row.IS_PREINSTALL))
           },
-          {title: '状态', key: 'STATUS', sortable: true, minWidth: 150,
+          {title: '状态', key: 'STATUS', sortable: true, minWidth: 100,
           render: (h,params)=>h('span',getName(this.statuslist,params.row.STATUS))
-          },{title: '操作', key: 'operation', sortable: true, minWidth: 80,fixed: 'right',
+          },{title: '操作', key: 'operation', sortable: true, minWidth: 120,fixed: 'right',
                         render: (h, params) => {
                             let buttonContent= '删除';
                             let buttonStatus = 'error';
@@ -170,14 +213,101 @@
     }
     },
 		methods:{
+      visibleChange(){
+        this.clearsection();
+      },
+      clearsection(){
+        this.list = '';
+        this.clearType = Math.random();
+      },
+      dbclick(row){
+        this.update(row);
+      },
+      update(row){
+       this.formData = row;
+       this.IS_PREINSTALL = this.formData.IS_PREINSTALL == this.isorno[0].code ? true : false;
+       this.showModal = true;
+       //获取单挑项目 /tenant/basedata/repairitemgroup/detailList
+       this.axios.request({
+          url: '/tenant/basedata/repairitemgroup/detailList',
+          method: 'post',
+          data: {access_token: this.$store.state.user.token,
+                 limit:25,
+                 page:1,
+                 groupId:this.formData.GROUP_ID,
+                }
+        }).then(res => {
+          if (res.success === true) {
+            this.selectData = res.data;
+            this.initData = res.data;
+          }
+        })
+      },
+      onRowClick(row){
+        this.list = row;
+      },
+      addpost(name){
+      this.$refs[name].validate((valid) => {
+      if(this.selectData.length < 1){this.$Message.info("请添加维修项目");return;};
+                    if (valid) {
+                    this.$Modal.confirm({
+                      title:'系统提示',
+                      content:'确认保存吗?',
+                       onOk:this.tosave,
+                    });
+                    } else {
+                        this.$Message.error("请校对红框信息");
+                    }
+                })
+      },
+      tosave(){
+        var items = [];
+        for(var i in this.selectData){
+          items.push({ITEM_ID:this.selectData[i].ITEM_ID});
+        }
+        if(this.IS_PREINSTALL){this.formData.IS_PREINSTALL = this.isorno[0].code;}else{this.formData.IS_PREINSTALL = this.isorno[1].code;}
+       this.axios.request({
+          url: '/tenant/basedata/repairitemgroup/save',
+          method: 'post',
+          data: {access_token: this.$store.state.user.token,
+                 data:JSON.stringify(this.formData),
+                 items:JSON.stringify(items),
+                }
+        }).then(res => {
+          if (res.success === true) {
+            if(this.formData.GROUP_ID == ''){
+             this.$Message.success('新增成功');
+            }else{
+             this.$Message.success('修改成功');
+            }
+             this.getList();
+             this.showModal = false;
+          }
+        })
+      },
+      addcancle(){
+        this.showModal = false;
+      },
       changeadd(){
         this.changeModal = Math.random();
       },
 			changedel(){},
 			add(){
+        this.$refs['list'].resetFields();
+        for(var i in this.formData){
+          this.formData[i] = '';
+        }
+        this.selectData = [];
+        this.IS_PREINSTALL = false;
+        this.formData.SALES_PRICE = 0;
 				this.showModal = true;
+        this.initData = '';
+        //默认有效
+        this.formData.STATUS = this.statuslist[0].code;
 			},
-			edit(){},
+			edit(){
+        this.update(this.list);
+      },
 			remove(){},
 			getList(){
 	      this.axios.request({
@@ -193,6 +323,7 @@
           if (res.success === true) {
             this.tableData= res.data
             this.total= res.total
+            this.clearsection();
           }
         })
 			},
@@ -205,13 +336,16 @@
       },
 			changePageSize(size){this.limit = size;},
 			changePage(page){this.page = page;},
-			dbclick(){},
 		},
 		mounted(){
 			this.showTable = Math.random();
 			this.getList();
 		},
 		computed:{
+      cando(){
+        var flag = this.list == '' ? true : false;
+        return flag;
+      },
 			counttype(){
 			return getDictGroup(this.$store.state.app.dict,'1014');
 			},
@@ -222,7 +356,7 @@
 			return getDictGroup(this.$store.state.app.dict,'1001');
 			},
 			statusarrList(){
-		    var arr = this.statuslist;
+		  var arr = this.statuslist;
 			var group = [];
 			group.push({"name":'请选择...',"code":0});
 			for(var i =0;i<arr.length;i++){

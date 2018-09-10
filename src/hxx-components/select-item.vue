@@ -127,7 +127,7 @@
               })
 		}
 		},
-		props:['itemShow','delrow'],
+		props:['itemShow','delrow','initData'],
 		watch:{
 	       itemShow(){
 	       this.changeModal = true;
@@ -142,6 +142,9 @@
             }
           });
          this.itemList = data;
+         },
+         initData(row){
+          if(row !=''){this.itemList = row;}else{this.itemList = [];}
          }
 		}
 	}

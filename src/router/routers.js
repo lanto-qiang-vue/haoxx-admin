@@ -415,6 +415,17 @@ export default [
         },
         component: () => import('@/hxx-store/parts-manage/parts-record.vue')
       },
+      {
+        path: '/parts-combo',
+        name: 'parts-combo',
+        meta: {
+          icon: 'md-funnel',
+          title: '配件套餐',
+          lgType: "1002",
+          access: '100511',
+        },
+        component: () => import('@/hxx-store/parts-manage/parts-combo.vue')
+      },
     ]
 },
 
@@ -668,6 +679,17 @@ export default [
           access: '1009101',
         },
         component: () => import('@/hxx-store/system-manage/technical-support.vue')
+      },
+      {
+        path: '/work-team',
+        name: 'work-team',
+        meta: {
+          icon: 'md-funnel',
+          title: '车间班组',
+          lgType: "1002",
+          access: '100512',
+        },
+        component: () => import('@/hxx-store/system-manage/work-team.vue')
       },
     ]
 },

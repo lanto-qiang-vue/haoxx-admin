@@ -5,7 +5,7 @@
     <Spin size="large" fix v-if="spinShow" ></Spin>
     </div>
     <div slot="right" class="split-pane">
-    <common-table :columns="columns" :total="total" :page="page" v-model="tableData" :show="show" @changePageSize="changePageSize" @changePage="changePage" onRowClick="onRowClick">
+    <common-table :columns="columns" :total="total" :page="page" v-model="tableData" :show="show" @changePageSize="changePageSize" @changePage="changePage" :clearSelect="cleartype" @onRowClick="onRowClick">
           <div slot="search">
           <Input  placeholder="配件名称/原厂编号..." v-model="KEYWORD" style="width: 300px"></Input>
           <label>&nbsp;&nbsp;&nbsp;配件类别:&nbsp;&nbsp;&nbsp;</label>
@@ -20,7 +20,7 @@
       <Button type="info" :disabled="cando"   @click="edit()">修改</Button>
       <Button type="error" :disabled="cando" @click="remove()">废除</Button>
     </div>
-      <select-add-parts @refresh="refresh" :showSelectAddParts="addshow"></select-add-parts>
+      <select-add-parts @refresh="refresh" @clearsection="clearsection" :editdata="list" :showSelectAddParts="addshow"></select-add-parts>
     </common-table>
     </div>
   </Split>
@@ -37,6 +37,7 @@ import selectAddParts from '@/hxx-components/select-addParts.vue'
 			  split:0.2,
 		      list:'',
 		      data2:[],
+          cleartype:false,
 			  columns:[
               {title: '配件编号', key: 'PART_NO', sortable: true, minWidth: 120},
               {title: '配件名称', key: 'NAME', sortable: true, minWidth: 140},
@@ -85,8 +86,15 @@ import selectAddParts from '@/hxx-components/select-addParts.vue'
 		},
 		},
 		methods:{
-          refresh(){
+    refresh(){
       this.getList();
+    },
+    clearsection(){
+      this.list = "";
+      this.cleartype = Math.random();
+    },
+    onRowClick(row){
+      this.list = row;
     },
 			getnode(row){
 				console.log(row);
@@ -104,10 +112,29 @@ import selectAddParts from '@/hxx-components/select-addParts.vue'
 			this.TYPE_ID = '';
 			},
 			add(){
+      this.list = '';
 			this.addshow = Math.random();
 			},
-			edit(){},
-			remove(){},
+			edit(){
+      this.addshow = Math.random();   
+      },
+			remove(){
+        this.$Modal.confirm({'title':'系统提示','content':'确认要作废吗','onOk':this.del});
+      },
+      del(){
+          this.axios.request({
+          url: '/tenant/basedata/partinfo/cancel',
+          method: 'post',
+          data: {access_token: this.$store.state.user.token,
+                 ids:this.list.PART_ID,
+          }
+        }).then(res => {
+          if (res.success === true) {
+            this.$Message.success('作废成功');
+            this.getList();
+          }
+        })
+      },
 			changePage(page){this.page = page;this.getList();},
 			changePageSize(size){this.limit = size;this.getList();},
 			getList(){
@@ -126,6 +153,7 @@ import selectAddParts from '@/hxx-components/select-addParts.vue'
           if (res.success === true) {
           	this.tableData = res.data;
           	this.total = res.total;
+            this.clearsection();
           }
         })
 

@@ -157,7 +157,7 @@
   import { getName, getDictGroup } from '@/libs/util.js'
 	export default {
 		name: "select-addParts",
-        props:['showSelectAddParts','initPartsGroup'],
+        props:['showSelectAddParts','initPartsGroup','editdata'],
         components: {},
         data(){
             return{
@@ -236,11 +236,19 @@
         watch:{
             showSelectAddParts(){
                 this.showOnoff=true;
+
+                if(this.editdata != ''){
+                this.listSearch = this.editdata;
+                }else{
                 for(let i in this.listSearch){
                     this.listSearch[i]=this.initList[i];
                 }
+                }
                 this.selectPartsType();
-            }
+            },
+            // editdata(row){
+            // if(row != '') this.listSearch = row;
+            // },
         },
         mounted() {
             this.initUnitArr=getDictGroup(this.$store.state.app.dict, '1015');
@@ -258,6 +266,10 @@
                       if(this.listSearch.MIN_SALES_PRICE < this.listSearch.MAX_SHOP_PRICE){flag = "销售最低价应大于等于采购最高价!"};
                       if(this.listSearch.MAX_SHOP_PRICE < this.listSearch.MIN_SHOP_PRICE){flag = "采购最高价应大于等于采购最低价!"};
                       if(this.listSearch.MAX_SALES_PRICE < this.listSearch.MIN_SALES_PRICE){flag = "销售最高价应大于等于销售最低价!"};
+                      //采购指导价PURCHASE_PRICE
+                      if(this.listSearch.PURCHASE_PRICE < this.listSearch.MIN_SHOP_PRICE){flag = "采购最低价应小于等于采购指导价!"};
+                      if(this.listSearch.PURCHASE_PRICE > this.listSearch.MAX_SHOP_PRICE){flag = "采购最高价应大于等于采购指导价!";
+                      }
                       if(flag != ""){
                       this.$Modal.error({title:'系统提示',content:flag});
                       return false;
@@ -322,8 +334,6 @@
             },
             getNameFun(data){
                 for (let i in data) {
-                    console.log('i',i);
-                    console.log('datai',data.children);
                     if (data[i].nodeName) {
                         data[i]["title"]=data[i].nodeName;
                         this.getNameFun(data[i].children);
@@ -336,14 +346,14 @@
             selectChangeTree(val){
                 this.showType=false;
                 this.listSearch["TYPE_NAME"]=val[0].title;
-                this.listSearch.TYPE_ID = val[0].nodeId;
-                console.log(val);
+                this.listSearch.TYPE_ID = val[0].title == '配件分类' ? '' :val[0].nodeId;
             },
             //弹出层状态变化--------
         visibleChange(status){
             if(status === false){
                 this.$emit('closeDetail');
                 this.handleReset("listSearch");
+                this.$emit('clearsection');
             }
         },
         //校验重置

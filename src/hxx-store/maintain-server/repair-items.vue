@@ -4,7 +4,7 @@
     <Tree :data="data2" @on-select-change="getnode"></Tree>
     </div>
     <div slot="right" class="split-pane">
-    <common-table :columns="columns" :total="total" :page="page" v-model="tableData" :show="show" @changePageSize="changePageSize" @changePage="changePage">
+    <common-table :columns="columns" :total="total" :page="page" v-model="tableData" :show="show" @changePageSize="changePageSize" @changePage="changePage" :clearSelect="clearType" @onRowClick="onRowClick">
           <div slot="search">
           <Input  placeholder="项目编号/名称..." v-model="KEYWORD" style="width: 300px"></Input>
           <label>&nbsp;&nbsp;&nbsp;项目类别:&nbsp;&nbsp;&nbsp;</label>
@@ -14,10 +14,10 @@
         <Button type="primary" @click="clear()"><Icon type="ios-undo" size="24"/></Button>
       </ButtonGroup>
           </div>
-              <div slot="operate">
+      <div slot="operate">
       <Button type="primary" @click="impor()">导入标准库</Button>
       <Button type="primary" :disabled="isdisabled" @click="add()">新增</Button>
-      <Button type="info" :disabled="isdisabled" @click="edit()">修改</Button>
+      <Button type="info" :disabled="cando" @click="edit()">修改</Button>
     </div>
     </common-table>
     <!-- 导入标准库使用 -->
@@ -31,7 +31,7 @@
     :transfer= "false"
     :footer-hide="false"
     :transition-names="['', '']">
-    <div><Tree :data="changeTree" show-checkbox></Tree></div>
+    <div><Tree :data="changeTree" @on-check-change="onCheck" show-checkbox></Tree></div>
         <Spin size="large" fix v-if="spinShow" ></Spin>
       <div slot="footer">
       <Button @click="cancle()">取消</Button>
@@ -43,8 +43,9 @@
     <Modal  
     v-model="customModal"
     class="table-modal-detail"
-    title="自定义新增"
+    :title="title"
     width="90"
+    @on-visible-change="visibleChange"
     :mask-closable="false"
     :scrollable="true"
     :transfer= "false"
@@ -58,7 +59,7 @@
                 <Input type="text" v-model="formData.NAME"> </Input>
                 </FormItem>
                 <FormItem label="项目分类:" style="width:30%;" prop="TYPE_ID"  >
-                <Select  placeholder="" v-model="formData.TYPE_ID" style="min-width: 100%;">
+                <Select  placeholder="" :disabled="editType" v-model="formData.TYPE_ID" style="min-width: 100%;">
                 <Option v-for="(item, index) in caritems"
                   :key="index" :value="item.TYPE_ID">{{item.TYPE_NAME}}</Option>
                 </Select>
@@ -69,13 +70,13 @@
                 <!-- 手动 -->
                 <!-- <div style="height:20px;"></div> -->
                 <!-- 手动 -->
-                <FormItem label="发动机类型:" style="width:45%;" prop="ENGINE_TYPE" >
+                <FormItem label="发动机类型:" v-if="!editType" style="width:45%;" prop="ENGINE_TYPE" >
                 <Select  v-model="formData.ENGINE_TYPE" style="min-width: 100%;">
                 <Option v-for="(item, index) in engine"
                   :key="index" :value="item.ENGINE_TYPE">{{item.ENGINE_TYPE_NAME}}</Option>
                 </Select>
                 </FormItem>
-                 <FormItem label="汽车参数:" style="width:45%;" prop="CLASS_TYPE" >
+                 <FormItem label="汽车参数:" v-if="!editType" style="width:45%;" prop="CLASS_TYPE" >
                 <Select  v-model="formData.CLASS_TYPE" style="min-width: 100%;">
                 <Option v-for="(item, index) in parameter"
                   :key="index" :value="item.CLASS_TYPE">{{item.CLASS_NAME}}</Option>
@@ -98,22 +99,22 @@
                 </FormItem>
                 </FormItem>
                     <FormItem label="别名1:" style="width:30%;" >
-                <Input type="text" v-model="formData.ALIAS1"> </Input>
+                <Input type="text" :disabled="editType" v-model="formData.ALIAS1"> </Input>
                 </FormItem>
                     <FormItem label="别名2:" style="width:30%;" >
-                <Input type="text" v-model="formData.ALIAS2"> </Input>
+                <Input type="text" :disabled="editType" v-model="formData.ALIAS2"> </Input>
                 </FormItem>
                 <!-- 手动 -->
             <!--     <div style="height:20px;"></div> -->
                 <!-- 手动 -->
                     <FormItem label="别名3:" style="width:30%;" >
-                <Input type="text" v-model="formData.ALIAS3"> </Input>
+                <Input type="text" :disabled="editType" v-model="formData.ALIAS3"> </Input>
                 </FormItem>
                 <FormItem label="别名4:" style="width:30%;" >
-                <Input type="text" v-model="formData.ALIAS4"> </Input>
+                <Input type="text" :disabled="editType" v-model="formData.ALIAS4"> </Input>
                 </FormItem>
-                <FormItem label="别名5:" style="width:30%;" >
-                <Input type="text" v-model="formData.ALIAS5" > </Input>
+                <FormItem label="别名5:"  style="width:30%;" >
+                <Input type="text" :disabled="editType" v-model="formData.ALIAS5" > </Input>
                 </FormItem>
                 <!-- 手动 -->
                 <!-- <div style="height:10px;"></div> -->
@@ -146,6 +147,8 @@ export default{
   components:{commonTable},
           data () {
             return {
+              title:'',
+              clearType:false,
               value1:'1',
               des:'元',
               value2:'2',
@@ -153,9 +156,13 @@ export default{
               number:0,
               customModal:false,
               checkid:[],
+              editType:false,
               data2:[],
               spinShow:false,
               changeTree:[],
+              init1:[],
+              init2:[],
+              list:'',
               split:0.2,
               caritems:[],//项目分类
               engine:[],
@@ -211,15 +218,7 @@ export default{
         mounted(){
           //获取树
           this.show = Math.random();
-          this.axios.request({
-          url: '/tenant/basedata/repairproject/get_infoitem_tree',
-          method: 'post',
-          data: {access_token: this.$store.state.user.token},
-        }).then(res => {
-          if (res.success === true) {
-             this.data2.push(this.machine(res.data));
-          }
-        })
+         this.getTree();
          this.getList();
         },
         computed:{
@@ -233,7 +232,14 @@ export default{
           }else{
           return true;
           }
-        }
+        },
+        cando(){
+         if(this.TYPE == '自定义' && this.list != ''){
+          return false;
+         }else{
+          return true;
+         }
+        },
         },
         watch:{
           'formData.CHARGE_TYPE'(val){
@@ -254,20 +260,53 @@ export default{
           }
         },
         methods:{
+          visibleChange(){
+            this.clearsection();
+          },
+          clearsection(){
+            this.clearType = Math.random();
+            this.list = '';
+          },
           cancle(){
             this.showModal = false;
           },
+          getTree(){
+        this.axios.request({
+          url: '/tenant/basedata/repairproject/get_infoitem_tree',
+          method: 'post',
+          data: {access_token: this.$store.state.user.token},
+        }).then(res => {
+          if (res.success === true) {
+            var data = this.machine1(res.data);
+             data['expand'] = true;
+             this.data2.push(data);
+          }
+        })
+          },
+          onRowClick(row){
+            this.list = row;
+          },
           addcancle(){
             this.customModal = false;
+          },
+          onCheck(row){
+            console.log(row);
           },
           tosave(){
                 var obj = {
 
                 };
+                var url;
                 obj.ITEM_ID = this.formData.ITEM_ID;
+                if(obj.ITEM_ID != ''){
+                  obj.DETAIL_ID = this.formData.DETAIL_ID;
+                  url = "/tenant/basedata/repairiteminfo/save";
+                }else{
+                  obj.ENGINE_TYPE = this.formData.ENGINE_TYPE;//发动机类型
+                  obj.CLASS_TYPE = this.formData.CLASS_TYPE;
+                  url = "/tenant/basedata/repairiteminfo/saveitem";
+                }
                 obj.TYPE_ID = this.formData.TYPE_ID;
-                obj.ENGINE_TYPE = this.formData.ENGINE_TYPE;//发动机类型
-                obj.CLASS_TYPE = this.formData.CLASS_TYPE;
                 obj.CHARGE_TYPE = this.formData.CHARGE_TYPE;
                 obj.ITEM_NO = this.formData.ITEM_NO;
                 obj.NAME = this.formData.NAME;
@@ -290,14 +329,18 @@ export default{
           }
           //开始保存数据...
           this.axios.request({
-          url: '/tenant/basedata/repairiteminfo/saveitem',
+          url:url,
           method: 'post',
           data: {access_token: this.$store.state.user.token,
                  data:JSON.stringify(obj)
                 },
         }).then(res => {
           if (res.success === true) {
+          if(obj.ITEM_ID == ''){
           this.$Message.success('新增成功');
+          }else{
+          this.$Message.success('修改成功');
+          }
           this.getList();
           this.customModal = false;
           }
@@ -325,17 +368,31 @@ export default{
             this.getList();
             }
           },
-          machine(data){
+          machine1(data){
            data['title'] = data.nodeName;
+           if(data.nodeId != '') this.init1.push(data.nodeId);
            var flag = data.children ? true : false;
            if(flag){
-           for(var i = 0;i<data.children.length;i++){
-            this.machine(data.children[i]);
-           }
+            for(var i=0;i<data.children.length;i++){
+              this.machine1(data.children[i]);
+            }
            }else{
 
            }
-           return data; 
+           return data;
+          },
+          machine2(data){
+           data['title'] = data.nodeName;
+           data['expand'] = true;
+           var flag = data.children ? true : false;
+           if(flag){
+            for(var i=0;i<data.children.length;i++){
+              this.machine2(data.children[i]);
+            }
+           }else{
+
+           }
+           return data;
           },
           getList(){
          this.axios.request({
@@ -351,6 +408,7 @@ export default{
           if (res.success === true) {
             this.tableData = res.data;
             this.total = res.total;
+            this.clearsection();
           }
         })
           },
@@ -364,17 +422,23 @@ export default{
         }).then(res => {
           this.changeTree = [];
           if (res.success === true) {
-            this.changeTree.push(this.machine(res.data));
+             this.changeTree.push(this.machine2(res.data));
            this.spinShow = false;
           }
         })
           this.showModal = true;
           },
           add(){
+          this.title = "自定义新增";
+          this.editType = false;
+          this.number = 0;
           this.$refs['list'].resetFields();
           this.$refs['lists'].resetFields();
           this.customModal = true;
-          //获取汽车项目
+          this.getbase(true);
+          },
+          getbase(flag){
+                      //获取汽车项目
           // /tenant/basedata/repairiteminfo/getTypeSelList1
         this.axios.request({
           url: '/tenant/basedata/repairiteminfo/getTypeSelList1',
@@ -382,7 +446,7 @@ export default{
           data: {access_token: this.$store.state.user.token,page:1,limit:25}
         }).then(res => {
           this.caritems = res.data;
-          this.formData.TYPE_ID = this.caritems[0].TYPE_ID;
+          if(flag) this.formData.TYPE_ID = this.caritems[0].TYPE_ID;
         })
         //获取发动机类型 /tenant/basedata/repairiteminfo/getBanJinList
         this.axios.request({
@@ -391,7 +455,7 @@ export default{
           data: {access_token: this.$store.state.user.token,page:1,limit:25}
         }).then(res => {
           this.engine = res.data;
-          this.formData.ENGINE_TYPE = this.engine[0].ENGINE_TYPE;
+          if(flag) this.formData.ENGINE_TYPE = this.engine[0].ENGINE_TYPE;
         })
         //获取汽车参数/tenant/basedata/repairiteminfo/getCarList
         this.axios.request({
@@ -400,13 +464,30 @@ export default{
           data: {access_token: this.$store.state.user.token,page:1,limit:25}
         }).then(res => {
           this.parameter = res.data;
-          this.formData.CLASS_TYPE = this.parameter[0].CLASS_TYPE;
+          if(flag) this.formData.CLASS_TYPE = this.parameter[0].CLASS_TYPE;
         })
         //获取单选框分钟
         this.group = getDictGroup(this.$store.state.app.dict,'1014');
         this.formData.CHARGE_TYPE = this.group[0]['code'];
           },
-          edit(){},
+          edit(){
+            this.title = "自定义修改";
+            this.editType = true;
+            this.getbase(false);
+            this.formData = this.list;
+            switch(this.formData.CHARGE_TYPE){
+            case '10141001':
+             this.number = this.formData.REPAIR_MONEY;
+            break;
+            case '10141002':
+             this.number = this.formData.REPAIR_TIME;
+            break;
+            case '10141003':
+             this.number = this.formData.PAINT_NUM;
+            break;
+          }
+            this.customModal = true;
+          },
           clear(){
             this.KEYWORD = '';
             this.TYPE = "全部";
