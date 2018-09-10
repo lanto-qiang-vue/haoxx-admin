@@ -7,7 +7,7 @@
       </div>
     </Panel>
   </Collapse>
-  <div class="operate" v-show="showOperate" >
+  <div class="operate" v-show="showOperate">
     <slot name="operate"></slot>
   </div>
   <div>

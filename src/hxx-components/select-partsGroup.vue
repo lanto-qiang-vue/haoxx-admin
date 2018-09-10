@@ -3,13 +3,14 @@
 <template>
     <Modal
         v-model="showOnoff"
-        title="选择配件"
+        title="选择配件档案"
         width="90"
         :scrollable="true"
         :transfer= "transferFlag"
         :footer-hide="false"
         :mask-closable="false"
         :transition-names="['', '']"
+        class="table-modal-detail class1"
     >
     <common-table v-model="tableData" :columns="columns" :show="showSelectPartsGroup" :total="total" @changePage="changePage" 
         @changePageSize="changePageSize" @onRowClick="onRowClick" :showOperate=false>

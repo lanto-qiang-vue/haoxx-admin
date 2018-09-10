@@ -1,7 +1,7 @@
 <!--门店信息-->
 <template>
 <common-table v-model="tableData" :columns="columns" :total="total" :show="showTable" :page="query.page"
-              :loading="loading"
+              :loading="loading" class="store-info-list"
               @changePage="changePage" @changePageSize="changePageSize" @onRowClick="onRowClick"
               @onRowDblclick="onRowDblclick" >
   <div slot="search">
@@ -26,7 +26,7 @@
     </ButtonGroup>
   </div>
   <div slot="operate">
-    <Button type="primary" :disabled="!detailData" @click="">查看/编辑</Button>
+    <Button type="primary" :disabled="!detailData" @click="showStoreModal= true">查看/编辑</Button>
     <Button type="success" :disabled="!detailData" @click="showRecordInfo">添加电子健康档案账号</Button>
     <Button type="error" v-show="!detailData || detailData.CHECK_STATUS!='10351004'" :disabled="!detailData" @click="updateCheckStatus">门店停用</Button>
     <Button type="success" v-show="detailData && detailData.CHECK_STATUS=='10351004'" :disabled="!detailData" @click="updateCheckStatus">门店恢复</Button>
@@ -50,14 +50,21 @@
     </div>
   </Modal>
 
+  <Modal v-model="showStoreModal" title="门店注册信息" :width="90" footer-hide :transfer="false"
+         class="table-modal-detail store-modal" :transition-names="['', '']">
+    <div style="height: 100%">
+      <store-info-detail :data="detailData" :show="showStoreModal" @save="saveStoreInfo"></store-info-detail>
+    </div>
+  </Modal>
 </common-table>
 </template>
 
 <script>
   import CommonTable from '@/hxx-components/common-table.vue'
+  import StoreInfoDetail from '@/hxx-components/store-info-detail.vue'
   import { getName, getDictGroup } from '@/libs/util.js'
 	export default {
-    components: {CommonTable},
+    components: {CommonTable, StoreInfoDetail},
     name: "store-info-list",
     data(){
       return{
@@ -70,7 +77,7 @@
           limit: 25,
           access_token: this.$store.state.user.token
         },
-        showTable:false,
+        showTable: false,
         total: 0,
         loading: true,
 
@@ -100,6 +107,7 @@
         detailData: null,
 
         showAddModal: false,
+        showStoreModal: false,
         recordInfo:{
           COMPANYCODE: '',
           COMPANYPASSWORD: '',
@@ -122,6 +130,7 @@
     mounted(){
       console.log('mounted')
       this.getList()
+      this.showTable= true
     },
     methods:{
       getList(){
@@ -138,7 +147,6 @@
           if (res.success === true) {
             this.tableData= res.data
             this.total= res.total
-            this.showTable= true
           }
           this.loading= false
         })
@@ -220,11 +228,37 @@
             // this.$Message.error('Fail!');
           }
         })
+      },
+      saveStoreInfo( data){
+        this.axios.request({
+          url: '/manage/info/tenantinfo/save',
+          method: 'post',
+          data: {
+            data: JSON.stringify(data),
+            access_token: this.query.access_token
+          }
+        }).then(res => {
+          if (res.success === true) {
+            this.showStoreModal= false
+            this.getList()
+            this.$Message.success('保存成功');
+          }
+        })
       }
     }
 	}
 </script>
 
-<style scoped>
-
+<style lang="less">
+.store-info-list{
+  .store-modal{
+    .ivu-modal-body{
+      padding-bottom: 0!important;
+      #store-info-detail .footer{
+        border: 0;
+        border-top: 1px solid #e8eaec;;
+      }
+    }
+  }
+}
 </style>

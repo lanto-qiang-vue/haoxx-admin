@@ -33,11 +33,11 @@
           </FormItem>
           <FormItem prop="LICENSE_START_DATE" label="许可证开始日期">
             <!--<Input v-model="info.LICENSE_START_DATE"></Input>-->
-            <DatePicker type="date" :value="info.LICENSE_START_DATE" :readonly="!editAble"></DatePicker>
+            <DatePicker type="date" v-model="info.LICENSE_START_DATE" :readonly="!editAble"></DatePicker>
           </FormItem>
           <FormItem prop="LICENSE_END_DATE" label="许可证结束日期">
             <!--<Input v-model="info.LICENSE_END_DATE"></Input>-->
-            <DatePicker type="date" :value="info.LICENSE_END_DATE" :readonly="!editAble"></DatePicker>
+            <DatePicker type="date" v-model="info.LICENSE_END_DATE" :readonly="!editAble"></DatePicker>
           </FormItem>
           <FormItem prop="LEGAL_NAME" label="负责人姓名">
             <Input v-model="info.LEGAL_NAME" :readonly="!editAble"></Input>
@@ -91,7 +91,8 @@
             <p slot="title"><i class="red" v-if="!isAdmin">*</i>上传营业执照图片</p>
             <div class="pic-body">
               <img v-show="!info.BUS_FILE_PATH" class="no-pic" src="../assets/images/no_img.png"/>
-              <img v-show="info.BUS_FILE_PATH" class="pic" :src="info.BUS_FILE_PATH"/>
+              <img v-show="info.BUS_FILE_PATH" class="pic" :src="info.BUS_FILE_PATH"
+                   @click="showImg(info.BUS_FILE_PATH)"/>
               <div class="button" v-show="editAble">
                 <div class="up-img">
                   <Button type="primary">上传</Button>
@@ -106,7 +107,8 @@
             <p slot="title">上传门头图片</p>
             <div class="pic-body">
               <img v-show="!info.TENANT_FILE_PATH" class="no-pic" src="../assets/images/no_img.png"/>
-              <img v-show="info.TENANT_FILE_PATH" class="pic" :src="info.TENANT_FILE_PATH"/>
+              <img v-show="info.TENANT_FILE_PATH" class="pic" :src="info.TENANT_FILE_PATH"
+                   @click="showImg(info.TENANT_FILE_PATH)"/>
               <div class="button" v-show="editAble">
                 <div class="up-img">
                   <Button type="primary">上传</Button>
@@ -122,18 +124,21 @@
     </Collapse>
   </div>
   <div class="footer">
-    <Button v-show="!editAble" type="info" :disabled="false" @click="editAble= true">编辑</Button>
-    <Button v-show="editAble" :disabled="false" @click="editAble= false">取消编辑</Button>
-    <Button type="primary" :disabled="!editAble" @click="">保存</Button>
+    <Button v-show="!editAble" type="info" :disabled="false" @click="editAble= true"
+            v-if="isAdmin ||accessBtn('save')">编辑</Button>
+    <Button v-show="editAble" :disabled="false" @click="cancelEdit">取消编辑</Button>
+    <Button type="primary" :disabled="!editAble" @click="save" v-if="isAdmin ||accessBtn('save')">保存</Button>
   </div>
 </div>
 </template>
 
 <script>
   import { getName, getDictGroup, imgToBase64 } from '@/libs/util.js'
+  import mixin from '@/hxx-components/mixin'
 	export default {
 		name: "store-info-detail",
-    props: ['data'],
+    props: ['data', 'show'],
+    mixins: [mixin],
     data(){
 		  return{
         collapse: ['1', '2'],
@@ -177,6 +182,14 @@
         return this.$store.getters.loginType=='1001'
       }
     },
+    watch:{
+		  data(datas){
+       this.cancelEdit()
+      },
+      show(val){
+        val? document.querySelector("#store-info-detail .info").scrollTop= 0: ''
+      }
+    },
     created(){
       let rule= (this.isAdmin? []: [{ required: true, message:'必填项不能为空'}])
       this.ruleValidate= {
@@ -212,6 +225,33 @@
       },
       removeImg(name){
         this.info[name]= ''
+      },
+      cancelEdit(){
+        this.$refs.form.resetFields()
+        if(this.data){
+          for (let key in this.info){
+            this.info[key]= this.data[key]
+          }
+        }
+        this.editAble= false
+      },
+      save(){
+        this.$refs.form.validate((valid) => {
+          if (valid) {
+            if(!this.isAdmin && (!this.info.ROAD_FILE_PATH || !this.info.BUS_FILE_PATH)){
+              this.$Message.error('请上传相关证照!');
+              return
+            }
+            this.$Modal.confirm({
+              title: '确定保存吗？',
+              onOk: () =>{
+                this.$emit('save', this.info)
+              }
+            })
+          } else {
+            this.$Message.error('请输入必填项!');
+          }
+        })
       }
     }
 	}
@@ -307,6 +347,9 @@
     left: 0;
     bottom: 0;
     background-color: white;
+    button{
+      margin-left: 8px;
+    }
   }
 }
 </style>

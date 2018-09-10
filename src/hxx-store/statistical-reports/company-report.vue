@@ -1,8 +1,9 @@
 <!--业务类别统计 2018-09-04 -->
 <template>
-  <!--<common-table v-model="tableData" :columns="columns" :total="total" :clearSelect="clearTableSelect"
+  <common-table v-model="tableData" :columns="columns" :total="total" :clearSelect="clearTableSelect"
                 @changePage="changePage" @changePageSize="changePageSize" @onRowClick="onRowClick"
-                @onRowDblclick="onRowDblclick" :show="showTable" :page="page" :showOperate=false>
+                @onRowDblclick="onRowDblclick" :show="showTable" :page="page">
+
     <div slot="search">
       <Form ref="search" :rules="ruleValidate"  :model="search" :label-width="85" inline>
           <FormItem label="查询日期:" style="width: 100%; margin-right: 10px;">
@@ -15,6 +16,12 @@
           </FormItem>
      </Form>
     </div>
+    <div slot="operate">
+        <div span="16">
+            <div ref="dom" style="height: 300px; border: 2px solid block; position: relative;" ></div>
+        </div>
+            
+    </div>
     
     <div slot="footer">
       <table  width='100%' cellpadding='5' cellspacing='0'>
@@ -26,11 +33,8 @@
         </table>
     </div>
 
-  </common-table>-->
+  </common-table>
 
-  <div>
-      <div ref="dom" class="charts chart-bar"></div>
-  </div>
 </template>
 <script>
   import commonTable from '@/hxx-components/common-table.vue'
@@ -44,44 +48,32 @@ export default {
     components: {commonTable},
     mixins: [mixin],
     data(){
-		return{
+	    return{
+            value: {
+                Mon: 13253,
+                Tue: 34235,
+                Wed: 26321,
+                Thu: 12340,
+                Fri: 24643,
+                Sat: 1322,
+                Sun: 1324
+            },
             columns: [
-                {title: '业务类型', key: 'rEPAIR_NAME', sortable: true, minWidth: 120,align: 'center',
+                {title: "营业总额", key: '_Turnover', sortable: true, minWidth: 120,
+                    render: (h, params) => h('span', params.row._Turnover||0)
                 },
-                {title: '结算台次', key: 'rEPAIR_TYPE', sortable: true, minWidth: 120,align: 'center',
-                    
+                {title: '营业成本', key: '_OperatingCost', sortable: true, minWidth: 120,
+                    render: (h, params) => h('span', params.row._OperatingCost||0)
                 },
-                {title: '实际产值', align: 'center',
-                    children: [
-                        {
-                            title: '工时',
-                            key: 'rEPAIR_TIME', sortable: true, minWidth: 120,align: 'center',
-                        },
-                        {
-                            title: '材料',
-                            key: 'sALES_PRICE', sortable: true, minWidth: 120,align: 'center',
-                            
-                        },
-                        {
-                            title: '产值合计',
-                            key: 'total', sortable: true, minWidth: 120,align: 'center',
-                            
-                        }
-                    ]
+                {title: '纯利润', key: '_PCost', sortable: true, minWidth: 120,
+                    render: (h, params) => h('span', params.row._PCost||0)
 
                 },
-                {title: '成本', align: 'center',
-                     children: [
-                            {
-                                title: '成本',
-                                key: 'operatingCost', sortable: true, minWidth: 120,align: 'center',
-                            },
-                            {
-                                title: '利润',
-                                key: 'pCost', sortable: true, minWidth: 120,align: 'center',
-                                
-                            },
-                        ]
+                {title: '应收金额', key: '_AmountReceivable_Alleceivable', sortable: true, minWidth: 120,
+                     render: (h, params) => h('span', params.row._AmountReceivable_Alleceivable||0)
+                },
+                {title: '实收金额', key: '_AmountCollected', sortable: true, minWidth: 120,
+                     render: (h, params) => h('span', params.row._AmountCollected||0)
                 },
                 
             ],
@@ -101,7 +93,7 @@ export default {
 
             computedMoney:[],//计算合计金额------
             
-      }
+        }
     },
     computed:{
         
@@ -134,20 +126,40 @@ export default {
     //     let dom = echarts.init(this.$refs.dom, 'tdTheme')
     //     dom.setOption(option)
     //     })
+
+    
+    var myChart = echarts.init(this.$refs.dom);
+    var option = null;
+    option = {
+        xAxis: {
+            type: 'category',
+            data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+        },
+        yAxis: {
+            type: 'value'
+        },
+        series: [{
+            data: [120, 200, 150, 80, 70, 110, 130],
+            type: 'bar'
+        }]
+    };
+    ;
+    
+    myChart.setOption(option, true);
+    
   
     },
     methods:{
-        //获取列表值-----
-
+        //获取列表值----
         getList(){
             this.search.ACCOUNT_TIME_gte=formatDate(this.search.ACCOUNT_TIME_gte);
             this.search.ACCOUNT_TIME_lte=formatDate(this.search.ACCOUNT_TIME_lte);
             this.axios.request({
-                url: '/tenant/report/work_count/work_list',
+                url: '/tenant/report/tt_managereport/info_list',
                 method: 'post',
                 data: {
-                    BeginTime: this.search.ACCOUNT_TIME_gte,
-                    EndTime: this.search.ACCOUNT_TIME_lte,
+                    ACCOUNT_TIME_gte: this.search.ACCOUNT_TIME_gte,
+                    ACCOUNT_TIME_lte: this.search.ACCOUNT_TIME_lte,
                     page: this.page,
                     limit: this.limit,
                     access_token: this.$store.state.user.token
