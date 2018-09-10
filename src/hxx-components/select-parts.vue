@@ -3,7 +3,7 @@
 <template>
     <Modal
         v-model="showOnoff"
-        title="选择配件"
+        title="选择配件库存"
         width="90"
         :scrollable="true"
         :transfer= "transferFlag"

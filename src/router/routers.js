@@ -346,6 +346,17 @@ export default [
         component: () => import('@/hxx-store/maintain-server/repair-items.vue')
       },
       {
+        path: '/policy-manage',
+        name: 'policy-manage',
+        meta: {
+          icon: 'md-funnel',
+          title: '保单管理',
+          lgType: "1002",
+          access: '100103',
+        },
+        component: () => import('@/hxx-store/maintain-server/policy-manage.vue')
+      },
+      {
         path: '/service-combo',
         name: 'service-combo',
         meta: {
@@ -598,17 +609,17 @@ export default [
         },
         component: () => import('@/hxx-store/statistical-reports/business-statistical.vue')
       },
-      {
-        path: '/company-report',
-        name: 'company-report',
-        meta: {
-          icon: 'md-funnel',
-          title: '公司经营报告',
-          lgType: "1002",
-          access: '100601',
-        },
-        component: () => import('@/hxx-store/statistical-reports/company-report.vue')
-      },
+      // {
+      //   path: '/company-report',
+      //   name: 'company-report',
+      //   meta: {
+      //     icon: 'md-funnel',
+      //     title: '公司经营报告',
+      //     lgType: "1002",
+      //     access: '100601',
+      //   },
+      //   component: () => import('@/hxx-store/statistical-reports/company-report.vue')
+      // },
       
     ]
   },

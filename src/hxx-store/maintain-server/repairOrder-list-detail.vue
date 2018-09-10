@@ -8,6 +8,7 @@
     :scrollable="true"
     :transfer= "false"
     :footer-hide="false"
+    class="table-modal-detail"
     :transition-names="['', '']"
   >
     <div style="height: 100%;overflow: auto; padding-bottom: 30px;">
@@ -176,7 +177,7 @@
       </select-itemsType>
       <!--选择配件-->
       <select-parts :showSelectParts="showSelectParts" @selectPartsItem="selectPartsItem" :initParts="initParts">
-      </select-parts>
+      </select-parts >
       <!--选择配件组-->
       <select-partsGroup :showSelectPartsGroup="showSelectPartsGroup" @selectPartsGroup="selectPartsGroup" :initPartsGroup="initPartsGroup">
       </select-partsGroup>
