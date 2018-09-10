@@ -367,7 +367,7 @@ export default [
         },
         component: () => import('@/hxx-store/maintain-server/service-combo.vue')
       },
-      
+
     ]
 },
 
@@ -520,30 +520,6 @@ export default [
     ]
 },
   {
-    path: '/manage-store',
-    name: 'manage-store',
-    meta: {
-      icon: 'logo-buffer',
-      title: '门店管理',
-      lgType: "1001",
-      access: '1001',
-    },
-    component: Main,
-    children:[
-      {
-        path: '/manage-store-info',
-        name: 'manage-store-info',
-        meta: {
-          icon: 'md-funnel',
-          title: '门店信息',
-          lgType: "1001",
-          access: '100101',
-        },
-        component: () => import('@/hxx-admin/store-manager/store-info-list.vue')
-      },
-    ]
-  },
-  {
     path: '/statistical-reports',
     name: 'statistical-reports',
     meta: {
@@ -609,18 +585,19 @@ export default [
         },
         component: () => import('@/hxx-store/statistical-reports/business-statistical.vue')
       },
-      // {
-      //   path: '/company-report',
-      //   name: 'company-report',
-      //   meta: {
-      //     icon: 'md-funnel',
-      //     title: '公司经营报告',
-      //     lgType: "1002",
-      //     access: '100601',
-      //   },
-      //   component: () => import('@/hxx-store/statistical-reports/company-report.vue')
-      // },
-      
+
+      {
+        path: '/company-report',
+        name: 'company-report',
+        meta: {
+          icon: 'md-funnel',
+          title: '公司经营报告',
+          lgType: "1002",
+          access: '100601',
+        },
+        component: () => import('@/hxx-store/statistical-reports/company-report.vue')
+      },
+
     ]
   },
   {
@@ -670,6 +647,17 @@ export default [
     component: Main,
     children:[
       {
+        path: '/store-info',
+        name: 'store-info',
+        meta: {
+          icon: 'md-funnel',
+          title: '门店信息',
+          lgType: "1002",
+          access: '100501',
+        },
+        component: () => import('@/hxx-store/system-manage/store-info.vue')
+      },
+      {
         path: '/technical-support',
         name: 'technical-support',
         meta: {
@@ -681,7 +669,33 @@ export default [
         component: () => import('@/hxx-store/system-manage/technical-support.vue')
       },
     ]
-},
+  },
+
+  //⬇好修修-后台管理系统⬇
+  {
+    path: '/manage-store',
+    name: 'manage-store',
+    meta: {
+      icon: 'logo-buffer',
+      title: '门店管理',
+      lgType: "1001",
+      access: '1001',
+    },
+    component: Main,
+    children:[
+      {
+        path: '/manage-store-info',
+        name: 'manage-store-info',
+        meta: {
+          icon: 'md-funnel',
+          title: '门店信息',
+          lgType: "1001",
+          access: '100101',
+        },
+        component: () => import('@/hxx-admin/store-manager/store-info-list.vue')
+      },
+    ]
+  },
   {
     path: '/401',
     name: 'error_401',
