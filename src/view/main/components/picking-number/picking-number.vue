@@ -26,7 +26,7 @@
         'getPickingNumber'
       ]),
       goTo(){
-        console.log('goTo-picking')
+        this.$router.push('/maintain-pick')
       }
     }
 	}
