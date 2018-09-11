@@ -611,6 +611,30 @@ export default [
 
     ]
   },
+    {
+    path: '/base-data',
+    name: 'base-data',
+    meta: {
+      icon: 'logo-buffer',
+      title: '基础资料',
+      lgType: "1002",
+      access: '1005',
+    },
+    component: Main,
+    children:[
+      {
+        path: '/warehouse-manage',
+        name: 'warehouse-manage',
+        meta: {
+          icon: 'md-funnel',
+          title: '仓库管理',
+          lgType: "1002",
+          access: '100507',
+        },
+        component: () => import('@/hxx-store/base-data/warehouse-manage.vue')
+      },
+    ]
+  },
   {
     path: '/resource-application',
     name: 'resource-application',
@@ -689,6 +713,17 @@ export default [
           access: '100512',
         },
         component: () => import('@/hxx-store/system-manage/work-team.vue')
+      },
+      {
+        path: '/system-parameter',
+        name: 'system-parameter',
+        meta: {
+          icon: 'md-funnel',
+          title: '系统参数设置',
+          lgType: "1002",
+          access: '100705',
+        },
+        component: () => import('@/hxx-store/system-manage/system-parameter.vue')
       },
     ]
   },
