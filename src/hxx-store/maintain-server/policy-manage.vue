@@ -27,7 +27,7 @@
     </div>
     <!--预约详情单-->
     <policy-manage-detail class="table-modal-detail" :showDetail="showDetail"
-                             :detailData="detailData" @closeDetail="closeDetail"
+                             :detailData="detailData" @closeDetail="closeDetail" @closeGetList="closeGetList"
       ></policy-manage-detail>
       
   </common-table>
@@ -44,7 +44,6 @@
     data(){
 		  return{
             columns: [
-                
                 {title: '车牌', key: 'PLATE_NUM', sortable: true, minWidth: 120,
                     // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.ORDER_TYPE))
                 },
@@ -158,10 +157,12 @@
         closeDetail(){
             this.detailData= null
             this.clearTableSelect= Math.random()
-            this.getList();
             for(let key in this.buttonStateArr){
                 this.buttonStateArr[key]= true;
             }
+        },
+        closeGetList(){
+            this.getList();
         },
         //审核按钮---------
         auditButton(){
@@ -182,7 +183,8 @@
                 }
             }).then(res => {
                 if (res.success === true) {
-                this.closeDetail();
+                    this.closeDetail();
+                    this.closeGetList();
                 }
             })
         },
@@ -205,7 +207,8 @@
                 }
             }).then(res => {
                 if (res.success === true) {
-                this.closeDetail();
+                    this.closeDetail();
+                    this.closeGetList();
                 }
             })
         },
@@ -228,7 +231,8 @@
                 }
             }).then(res => {
                 if (res.success === true) {
-                this.closeDetail();
+                    this.closeDetail();
+                    this.closeGetList();
                 }
             })
         },
