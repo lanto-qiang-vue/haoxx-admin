@@ -7,22 +7,70 @@
       <div style="width:100%;line-height:30px;border-top:1px solid black;border-bottom:1px solid black;text-align: center;">车间名称</div>
     <Tree :data="data2" @on-select-change="getnode"></Tree>
     </div>
-    <div slot="right">
-    	我是右边
+    <div slot="right" style="height:100%;">
+       <common-table v-model="tableData" :columns="columns" @changePageSize="changePageSize" :showSearch="false" @changePage="changePage" :total="total"  :show="showTable" :page="page">
+    <div slot="operate">
+      <Button type="primary" @click="setMember">设置班组成员</Button>
+    </div>
+</common-table>
     </div>
 </Split>
 </template>
 <script>
+	import commonTable from '@/hxx-components/common-table.vue'
 	export default{
 		name:'work-team',
+		components:{commonTable},
 		data(){
 		 return {
 		  split:0.2,
 		  data2:[],
+		  showTable:false,
+		  page:1,
+		  total:0,
+		  tableData:[],
+		  limit:25,
+		  columns:[
+		  {title: '员工姓名', key: 'USER_NAME', sortable: true, minWidth: 140},
+		  {title: '职务', key: 'GROUP_NO', sortable: true, minWidth: 140},
+		  {title: '员工电话', key: 'TEL_PHONE', sortable: true, minWidth: 140},
+		  ],
 		 }
 		},
 		methods:{
-			getnode(){},
+			setMember(){},
+			changePage(page){
+				this.page = page;
+				this.getList();
+			},
+			changePageSize(size){
+				this.limit = size;
+				this.getList();
+			},
+			getList(id){
+			///tenant/basedata/ttworkshop/worker_list CLASS_ID_eq
+		  this.axios.request({
+          url: '/tenant/basedata/ttworkshop/worker_list',
+          method: 'post',
+          data: {access_token: this.$store.state.user.token,
+                 CLASS_ID_eq:id,
+                 limit:this.limit,
+                 page:this.page,
+                }
+        }).then(res => {
+          if (res.success === true) {
+            this.tableData= res.data
+            this.total= res.total
+          }
+        })
+			},
+			getnode(row){
+			var nodeId = row[0].nodeId;
+			var type = row[0].type ? row[0].type : 0;
+			if(nodeId > 0 && type == 2){
+			 this.getList(nodeId);
+			}
+			},
 			machine(data){
            data['title'] = data.nodeName;
            var flag = data.children ? true : false;
@@ -53,6 +101,7 @@
 			},
 		},
 		mounted(){
+			this.showTable = Math.random();
 			this.getwork();
 		}
 	}
