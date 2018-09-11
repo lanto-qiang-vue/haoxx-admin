@@ -46,17 +46,17 @@ import selectAddParts from '@/hxx-components/select-addParts.vue'
 	export default {
 		name: "select-partsGroup",
         props:{
-            showSelectPartsGroup:{},
-            initPartsGroup:{},
-            transferFlag:{},
+            showSelectPartsGroup:{},//弹窗对象-----是否显示
+            initPartsGroup:{},//传进来的初始数据----
+            transferFlag:{},//弹窗是否放在body
             showSearch:{
                 type:Boolean,
                 default:true
-            },
+            },//控制配件下拉框是否显示
             showOperate:{
                 type:Boolean,
                 default:true
-            },
+            },//控制新增配件是否显示
         },
         
         components: {commonTable,selectAddParts},
