@@ -1,4 +1,4 @@
-<!--保单管理 详情 2018 09 05-->
+<!--保单管理 详情 2018 09 11-->
 <template>
   <Modal
     v-model="showModal"

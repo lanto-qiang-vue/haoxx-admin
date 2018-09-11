@@ -16,7 +16,7 @@
         @changePageSize="changePageSize" @onRowClick="onRowClick" :showOperate=false>
         <div slot="search">
             <Form class="common-form">
-                <FormItem label="配件分类:" :label-width="80">
+                <FormItem label="配件分类:" :label-width="80" v-show="showSearch">
                     <Select v-model="test1" >
                         <Option v-for="(item, index) in getSellItem" :key="index" :value="item.TYPE_ID">{{item.TYPE_NAME}}</Option>
                     </Select>
@@ -24,10 +24,10 @@
                 <FormItem >
                     <Input  placeholder="预约单号/预约人/联系电话..." v-model="test3" ></Input>
                 </FormItem>
-                <ButtonGroup size="small">
+                <ButtonGroup size="small" v-show="showOperate">
                     <Button type="primary" title="查询" @click="searchVehicle"><Icon type="ios-search" size="28"/></Button>
                     <Button type="primary" title="重置" @click="resetVehicle"><Icon type="ios-undo" size="28"/></Button>
-                    <Button @click="showSelectAddParts=Math.random()" type="primary" style="margin-left: 30px;"><Icon type="md-add" size="28"/>新增配件</Button>
+                    <Button @click="showSelectAddParts=Math.random()" type="primary" style="margin-left: 30px;" v-show="showOperate"><Icon type="md-add" size="28"/>新增配件</Button>
                 </ButtonGroup>
            </Form>
            
@@ -45,7 +45,20 @@ import selectAddParts from '@/hxx-components/select-addParts.vue'
   import { getName, getDictGroup } from '@/libs/util.js'
 	export default {
 		name: "select-partsGroup",
-        props:['showSelectPartsGroup','initPartsGroup',"transferFlag"],
+        props:{
+            showSelectPartsGroup:{},
+            initPartsGroup:{},
+            transferFlag:{},
+            showSearch:{
+                type:Boolean,
+                default:true
+            },
+            showOperate:{
+                type:Boolean,
+                default:true
+            },
+        },
+        
         components: {commonTable,selectAddParts},
         data(){
             return{
@@ -135,8 +148,17 @@ import selectAddParts from '@/hxx-components/select-addParts.vue'
                     {title: '含税销售价(元)', key: 'SALES_PRICE', sortable: true, minWidth: 160,
                         // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.UNIT))
                     },
+                    {title: '销售建议价(元)', key: 'SALES_PRICE', sortable: true, minWidth: 160,
+                        // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.UNIT))
+                    },
                     {title: '销售税率', key: 'RATE', sortable: true, minWidth: 120,
                         // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.UNIT))
+                    },
+                    {title: '来源', key: 'PART_SOURCE', sortable: true, minWidth: 120,
+                        render: (h, params) => h('span', getName(this.sourceArr, params.row.PART_SOURCE))
+                    },
+                    {title: '状态', key: 'STATUS', sortable: true, minWidth: 100,
+                        render: (h, params) => h('span', getName(this.statusArr, params.row.STATUS))
                     },
                     {title: '操作', key: 'operation', sortable: true, minWidth: 100,fixed: 'right',
                         render: (h, params) => {
@@ -171,7 +193,8 @@ import selectAddParts from '@/hxx-components/select-addParts.vue'
                 limit: 25,
 
                 getSellItem:[],//配件分类
-                
+                statusArr:[],//状态值---------
+                sourceArr:[],//来源值---------
 
             }
         },
@@ -185,7 +208,8 @@ import selectAddParts from '@/hxx-components/select-addParts.vue'
             }
         },
         mounted() {
-            
+            this.statusArr=getDictGroup(this.$store.state.app.dict, 1001);
+            this.sourceArr=getDictGroup(this.$store.state.app.dict, 1017);
         },
         methods:{
             state(item){
