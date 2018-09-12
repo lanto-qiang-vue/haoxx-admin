@@ -60,7 +60,6 @@
   <Transfer
         :data="data1"
         :target-keys="targetKeys"
-        :render-format="render1"
         :titles="titles"
         @on-change="handleChange1"></Transfer>
        <div slot="footer">

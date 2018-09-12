@@ -725,6 +725,17 @@ export default [
         },
         component: () => import('@/hxx-store/system-manage/system-parameter.vue')
       },
+      {
+        path: '/staff-manage',
+        name: '/staff-manage',
+        meta: {
+          icon: 'md-funnel',
+          title: '员工管理',
+          lgType: "1002",
+          access: '100701',
+        },
+        component: () => import('@/hxx-store/system-manage/staff-manage')
+      },
     ]
   },
 
