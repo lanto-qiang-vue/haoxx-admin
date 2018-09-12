@@ -1,4 +1,4 @@
-<!--预约单管理-->
+<!--维修领料 2018-09-12修改 -->
 <template>
   <common-table v-model="tableData" :columns="columns" :total="total" :clearSelect="clearTableSelect"
                 @changePage="changePage" @changePageSize="changePageSize" @onRowClick="onRowClick"
@@ -43,7 +43,7 @@ export default {
                 {title: '序号',  minWidth: 80,
                     render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
                 },
-                {title: '领料状态', key: 'Status2', sortable: true, minWidth: 150,
+                {title: '领料状态', key: 'Status2', sortable: true, minWidth: 120,
                     render: (h, params) => {
                         var bgColor='#00bcd4';
                         if(params.row.Status2==10221002){
@@ -62,30 +62,30 @@ export default {
                             },getName(this.getStatus, params.row.Status2))
                         }
                 },
-                {title: '送修人', key: 'GIVE_REPAIR_PERSON', sortable: true, minWidth: 150,
+                {title: '送修人', key: 'GIVE_REPAIR_PERSON', sortable: true, minWidth: 110,
                 },
-                {title: '车牌号', key: 'PLATE_NUM', sortable: true, minWidth: 150},
-                {title: '车型', key: 'VEHICLE_MODEL', sortable: true, minWidth: 100},
-                {title: '进厂日期', key: 'COME_DATE', sortable: true, minWidth: 200},
-                {title: '维修类型', key: 'REPAIR_TYPE', sortable: true, minWidth: 150,
+                {title: '车牌号', key: 'PLATE_NUM', sortable: true, minWidth: 120},
+                {title: '车型', key: 'VEHICLE_MODEL', sortable: true, minWidth: 250},
+                {title: '进厂日期', key: 'COME_DATE', sortable: true, minWidth: 120},
+                {title: '维修类型', key: 'REPAIR_TYPE', sortable: true, minWidth: 120,
                     render: (h, params) => h('span', getName(this.getREPAIRTYPE, params.row.REPAIR_TYPE))
                 },
                 {title: '工单类型', key: 'GD_TYPE', sortable: true, minWidth: 120,
                     render: (h, params) => h('span', getName(this.getGD_TYPE, params.row.GD_TYPE))
                 },
-                {title: '主修人', key: 'REPAIR_PERSON', sortable: true, minWidth: 150,
+                {title: '主修人', key: 'REPAIR_PERSON', sortable: true, minWidth: 110,
                     // render: (h, params) => h('span', params.row.SUM_MONEY|| '0.00')
                 },
-                {title: '状态', key: 'STATUS', sortable: true, minWidth: 150,
+                {title: '状态', key: 'STATUS', sortable: true, minWidth: 140,
                     render: (h, params) => h('span', getName(this.getSTATUS, params.row.STATUS))
                 },
-                {title: '服务顾问', key: 'FOLLOW_PERSON', sortable: true, minWidth: 150},
+                {title: '服务顾问', key: 'FOLLOW_PERSON', sortable: true, minWidth: 120},
 
                 {title: '客诉信息', key: 'CUSTOMER_INFO', sortable: true, minWidth: 150},
                 
                 {title: '维修建议', key: 'REPAIR_INFO', sortable: true, minWidth: 150,
                 },
-                {title: '工单单号', key: 'REPAIR_NO', sortable: true, minWidth: 150},
+                {title: '工单单号', key: 'REPAIR_NO', sortable: true, minWidth: 160},
             ],
             tableData: [],
             searchSelectState:[],//搜索框选择状态

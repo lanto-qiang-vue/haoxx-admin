@@ -1,4 +1,4 @@
-﻿
+﻿import { Modal } from 'iview';
 
 //====判断是否需要安装CLodop云打印服务器:====
 function needCLodop(){
@@ -50,6 +50,7 @@ if (needCLodop()) {
 
 //====获取LODOP对象的主过程：====
 export const getLodop=function(oOBJECT,oEMBED){
+
     var alertStr = '';
     var strHtmInstall="<br><font color='#0277bd'>打印控件未安装!点击这里<a href='resources/lodop/install_lodop32.exe' style='color:#FF00FF;' target='_self'>执行安装</a>,安装后请刷新页面或重新进入。</font>";
     var strHtmUpdate="<br><font color='#0277bd'>打印控件需要升级!点击这里<a href='resources/lodop/install_lodop32.exe' style='color:#FF00FF;' target='_self'>执行升级</a>,升级后请重新进入。</font>";
@@ -69,7 +70,10 @@ export const getLodop=function(oOBJECT,oEMBED){
             if (!LODOP) {
                 if (isIE) obj(strCLodopInstall); else
                         alertStr=strCLodopInstall+alertStr;
-                        obj(alertStr);
+                            Modal.confirm({
+                                title:"系统提示!",
+                                content:alertStr,
+                            })
                         return;
             } else {
 

@@ -1,4 +1,4 @@
-<!--预约单管理详情-->
+<!--维修领料详情2018-09-12修改  详情-->
 <template>
   <Modal
     v-model="showModal"
@@ -553,7 +553,6 @@
         },
         //领料入库按钮----------
         receiveFun(){
-            
             if(this.commitOneParts){
                 this.showReceive=true;
             }else{
@@ -575,13 +574,18 @@
                         }
                     }).then(res => {
                         if (res.success === true) {
-                            for(let i in this.storeObj){
-                                this.storeObj[i]='';
+                            if(res.data && res.data=='2'){
+                                this.receiveFunOnce();
+                            }else{
+                                for(let i in this.storeObj){
+                                    this.storeObj[i]='';
+                                }
+                                this.getPartsFun(this.listSearch.REPAIR_ID);
+                                this.commitOneParts=null;
+                                this.$Message.info('领料成功');
+                                this.handleReset('storeObj');
                             }
-                            this.getPartsFun(this.listSearch.REPAIR_ID);
-                            this.commitOneParts=null;
-                            this.$Message.info('领料成功');
-                            this.handleReset('storeObj');
+                            
                         }else{
                             this.$Message.error(res.Exception.message);
                         }
@@ -591,6 +595,40 @@
                     this.$Message.error("请填写红框信息");
                 }
             })
+        },
+        receiveFunOnce(){
+            this.$Modal.confirm({
+                title:"系统提示!",
+                content:"出库数量大于实际库存，是否允许出库？",
+                onOk:this.savePartOutOnce,
+                
+            })
+        },
+        savePartOutOnce(){
+            this.axios.request({
+                        url: '/tenant/repair/ttrepairgetpart/savePartOut',
+                        method: 'post',
+                        data: {
+                        REPAIR_ID: this.listSearch.REPAIR_ID,
+                        STORE_ID:this.storeObj.selectStore,
+                        PERSON: this.storeObj.selectPerson,
+                        parts: JSON.stringify([this.commitOneParts]),
+                        IS_CONF_OUT:'10041001',
+                        access_token: this.$store.state.user.token
+                        }
+                    }).then(res => {
+                        if (res.success === true) {
+                                for(let i in this.storeObj){
+                                    this.storeObj[i]='';
+                                }
+                                this.getPartsFun(this.listSearch.REPAIR_ID);
+                                this.commitOneParts=null;
+                                this.$Message.info('领料成功');
+                                this.handleReset('storeObj');
+                        }else{
+                            this.$Message.error(res.Exception.message);
+                        }
+                    })
         },
         visibleChange(status){
             if(status === false){
