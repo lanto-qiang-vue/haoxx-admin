@@ -9,6 +9,7 @@
     :transfer= "false"
     :footer-hide="false"
     class="table-modal-detail"
+    :mask-closable="false"
     :transition-names="['', '']"
   >
     <div style="height: 100%;overflow: auto; padding-bottom: 30px;">
@@ -200,8 +201,8 @@
           <Button v-if="accessBtn('finish')" :disabled="buttonStateArr.finish" @click="handleFinish" type="warning"  >完工</Button>
           <Button v-if="accessBtn('doaccount')" :disabled="buttonStateArr.doaccount" @click="testtt" type="warning"  >结算</Button>
           <Button v-if="accessBtn('shoukuan')" :disabled="buttonStateArr.shoukuan" @click="showShouKuan=Math.random()" type="warning"  >收款</Button>
-          <Button v-if="accessBtn('printWts')" :disabled="buttonStateArr.printWts" type="success">打印委托书</Button>
-          <Button v-if="accessBtn('printPgd')" :disabled="buttonStateArr.printPgd" type="success">打印派工单</Button>
+          <Button v-if="accessBtn('printWts')" :disabled="buttonStateArr.printWts" @click="printWTS" type="success">打印委托书</Button>
+          <Button v-if="accessBtn('printPgd')" :disabled="buttonStateArr.printPgd" @click="printPgdButton" type="success">打印派工单</Button>
           <Button v-if="accessBtn('printAccount')" :disabled="buttonStateArr.printAccount" type="success">打印结算单</Button>
           <Button @click="showModal=false;">返回</Button>
       </div>
@@ -222,6 +223,8 @@
   import selectAccountOrder from '@/hxx-components/select-accountOrder.vue'
   import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
   import ColumnInput from '@/hxx-components/column-input.vue'
+  import {getLodop} from '@/hxx-components/LodopFuncs.js'
+  import {printWtsFun,printPgdFun} from '@/hxx-components/repairPrintUtil.js'
 
 
 	export default {
@@ -416,7 +419,9 @@
             render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.UNIT))
           },
           {title: '单价', key: 'SALES_PRICE', sortable: true, minWidth: 100},
-          {title: '小计金额', key: 'PART_MONEY', sortable: true, minWidth: 120,},
+          {title: '小计金额', key: 'PART_MONEY', sortable: true, minWidth: 120,
+            render: (h, params) => h('span', params.row.SALES_PRICE*params.row.PART_NUM)
+          },
           {title: '优惠金额', key: 'PART_DERATE_MONEY', sortable: true, minWidth: 120,
             
               render: (h, params) => {
@@ -444,7 +449,9 @@
                         ]);
                     }
           },
-          {title: '优惠后金额', key: 'PART_LAST_MONEY', sortable: true, minWidth: 150,},
+          {title: '优惠后金额', key: 'PART_LAST_MONEY', sortable: true, minWidth: 150,
+            render: (h, params) => h('span', params.row.SALES_PRICE*params.row.PART_NUM-params.row.PART_DERATE_MONEY)
+          },
           {title: '备注', key: 'REMARK', sortable: true, minWidth: 150,
             render: (h, params) => {
                 return h('div', [
@@ -466,8 +473,7 @@
           },
           {title: '操作', key: '', sortable: true, minWidth: 100,fixed: 'right',
             render: (h, params) => {
-                
-                if(this.titleMsg=='新建'){
+                if(this.titleMsg=='新建未派工'){
                   return h('div', [
                       h('Button', {
                           props: {
@@ -476,20 +482,29 @@
                           },
                           on: {
                               click: () => {
-                                  this.deletePartsGroup(params.index,params.row.STOCK_ID,params.row.PART_ID);
+                                  this.deleteTenanceItem(params.index);
                               }
                           }
                       }, 'Delete')
                   ]);
-                }else if(this.titleMsg=='已预约'){
+                }else if(this.titleMsg=='已派工维修中'){
                   return h('div', [
-                      h('span', '已预约')
+                      h('span', '待领料')
                   ]);
-                }else if(this.titleMsg=='已接车'){
+                }else if(this.titleMsg=='已完工待结算'){
                   return h('div', [
-                      h('span', '已接车')
+                      h('span', '待领料')
+                  ]);
+                }else if(this.titleMsg=='已结算待收款'){
+                  return h('div', [
+                      h('span', '待领料')
+                  ]);
+                }else if(this.titleMsg=='已结清'){
+                  return h('div', [
+                      h('span', '待领料')
                   ]);
                 }
+                
             }
             
           },
@@ -585,8 +600,7 @@
           },
           {title: '操作', key: '', sortable: true, minWidth: 100,fixed: 'right',
             render: (h, params) => {
-                
-                if(this.titleMsg=='新建'){
+                if(this.titleMsg=='新建未派工'){
                   return h('div', [
                       h('Button', {
                           props: {
@@ -595,20 +609,29 @@
                           },
                           on: {
                               click: () => {
-                                  this.deleteItemGroup(params.index);
+                                  this.deleteTenanceItem(params.index);
                               }
                           }
                       }, 'Delete')
                   ]);
-                }else if(this.titleMsg=='已预约'){
+                }else if(this.titleMsg=='已派工维修中'){
                   return h('div', [
-                      h('span', '已预约')
+                      h('span', '待领料')
                   ]);
-                }else if(this.titleMsg=='已接车'){
+                }else if(this.titleMsg=='已完工待结算'){
                   return h('div', [
-                      h('span', '已接车')
+                      h('span', '待领料')
+                  ]);
+                }else if(this.titleMsg=='已结算待收款'){
+                  return h('div', [
+                      h('span', '待领料')
+                  ]);
+                }else if(this.titleMsg=='已结清'){
+                  return h('div', [
+                      h('span', '待领料')
                   ]);
                 }
+                
             }
           },
         ],
@@ -961,6 +984,7 @@
         starttime: '', //开始日期model
         endtime: '',//结束日期model
 
+        wtdData:null,//委托单服务-------
 
       }
     },
@@ -1936,7 +1960,7 @@
             return date && (date.valueOf() < startTime);
           }
         }
-      },
+    },
       endTimeChange: function(e) { //设置结束时间
         this.endtime = e;
         let endTime = this.endtime ? new Date(this.endtime).valueOf() - 1 * 24 * 60 * 60 * 1000 : '';
@@ -1946,6 +1970,62 @@
           }
         }
       },
+      //打印测试部分-----------
+      printWTS(){
+        this.wtdData=this.$store.state.user.userInfo.tenant;
+        console.log(this.wtdData);
+       
+        // try{
+          var LODOP=getLodop();
+          console.log('LODOP数据',LODOP);
+          console.log(this.commitParts);
+
+          // this.listSearch.SUM_MONEY=this.Arabia_to_Chinese('200.1');
+
+
+          var temp=printWtsFun(this.wtdData,this.listSearch,this.commitItem,this.commitParts);
+
+          LODOP.PRINT_INITA(1,1,770,660,"测试预览功能");
+          LODOP.SET_SHOW_MODE("SKIN_TYPE",'1');
+          LODOP.ADD_PRINT_TEXT(30, 0, "100%", 20, "车 辆 维 修 委 托 单");
+          LODOP.SET_PRINT_STYLEA(0, "FontSize", 18);
+          //LODOP.SET_PRINT_STYLEA(0,"Bold",1);
+          LODOP.SET_PRINT_STYLEA(0, "Alignment", 2);
+          LODOP.ADD_PRINT_TABLE(70, 0, "100%", 980, temp);
+
+          LODOP.PREVIEW();
+        // }catch(err){
+
+        // }
+
+      },
+      //打印派工单部分---------
+      printPgdButton(){
+          this.wtdData=this.$store.state.user.userInfo.tenant;
+          console.log(this.wtdData);
+        
+          // try{
+            var LODOP=getLodop();
+            console.log('LODOP数据',LODOP);
+            console.log(this.commitParts);
+
+            // this.listSearch.SUM_MONEY=this.Arabia_to_Chinese('200.1');
+
+
+            var temp=printPgdFun(this.wtdData,this.listSearch,this.commitItem,this.commitParts);
+
+            
+            
+            LODOP.ADD_PRINT_TEXT(60, 0, "100%", 20, "车 辆 维 修 派 工 单");
+            LODOP.SET_PRINT_STYLEA(0, "FontSize", 20);
+            //LODOP.SET_PRINT_STYLEA(0,"Bold",1);
+            LODOP.SET_PRINT_STYLEA(0, "Alignment", 2);
+            LODOP.ADD_PRINT_TABLE(90, 0, "100%", 950, temp);
+            LODOP.PREVIEW();
+      }
+      
+
+
 
 
     }

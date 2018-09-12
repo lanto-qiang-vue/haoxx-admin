@@ -22,7 +22,7 @@
                     </Select>
                 </FormItem>
                 <FormItem >
-                    <Input  placeholder="预约单号/预约人/联系电话..." v-model="test3" ></Input>
+                    <Input  placeholder="配件编号/名称..." v-model="test3" ></Input>
                 </FormItem>
                 <ButtonGroup size="small" v-show="showOperate">
                     <Button type="primary" title="查询" @click="searchVehicle"><Icon type="ios-search" size="28"/></Button>

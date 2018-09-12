@@ -66,7 +66,7 @@
                 <FormItem label="服务顾问:" prop="FOLLOW_PERSON">
                     <Select v-model="listSearch.FOLLOW_PERSON" placeholder="">
                         <Option v-for="(item, index) in serverPersonArr"
-                        :key="item.code" :value="item.code">{{item.code}}</Option>
+                        :key="item.code" :value="item.code">{{item.name}}</Option>
                     </Select>
                 </FormItem>
             </Form>
@@ -126,7 +126,6 @@
             showTable:false,
             
             clearTableSelect: null,
-            isOrderSuccess:true,//判断是不是预约成功
             showModal: false,//本界面是否显示判断
             showDetail1:null,
             //维修配件
@@ -137,10 +136,29 @@
                     
                 },
                 {title: '购买日期', key: 'BUY_DATE', sortable: true, minWidth: 140,
-                    
+                    render: (h, params) => {
+                        var str=params.row.BUY_DATE.substring(0,10)
+                        return h('div', [
+                            h('span', str)
+                        ]);
+                    }
                 },
-                {title: '生效日期', key: 'START_DATE', sortable: true, minWidth: 140},
-                {title: '结束日期', key: 'END_DATE', sortable: true, minWidth: 140,},
+                {title: '生效日期', key: 'START_DATE', sortable: true, minWidth: 140,
+                    render: (h, params) => {
+                        var str=params.row.START_DATE.substring(0,10)
+                        return h('div', [
+                            h('span', str)
+                        ]);
+                    }
+                },
+                {title: '结束日期', key: 'END_DATE', sortable: true, minWidth: 140,
+                    render: (h, params) => {
+                        var str=params.row.END_DATE.substring(0,10)
+                        return h('div', [
+                            h('span', str)
+                        ]);
+                    }
+                },
                 {title: '金额', key: 'MONEY', sortable: true, minWidth: 120,
                     
                 },
@@ -184,16 +202,9 @@
                     { required: true,  message: '服务顾问必填',}
                 ]
             },//规则验证
-
-           
-            isCar:false,
             isButton:true,
-            listDisabled:false,
-            orderDate:"",
-            isOrderSuccess:true,//判断是否是预约状态---
 
             timer:null,
-            
             serverPersonArr:null,
             tableDetailData:null,
             editFlag:true,//修改按钮状态
@@ -211,14 +222,14 @@
         this.showTable= Math.random();
         //判断进来的参数是否存在---------------------
         if(this.detailData){
-                this.getEmployeeList(this.detailData.FOLLOW_PERSON);
               this.listSearch= this.detailData;
               if(this.detailData.STATUS=="10461002"){
                   this.isButton=false;
               }else if(this.detailData.STATUS=="10461001"){
                   this.isButton=true;
               }
-              
+              this.tableData=[];
+              this.getList();
         }else{
             this.listSearch={
                 "GUAR_ID":"",
@@ -239,29 +250,20 @@
                 "RECOGNIZEE_TELPHONE":"",
                 "RECOGNIZEE_CERT_NO":"",
                 "RECOMMEND_PERSON":"",
-                "FOLLOW_PERSON":""
+                "FOLLOW_PERSON":this.$store.state.user.userInfo.user.userName,
             },
             //新建功能表------
-            
-            this.isCar=false;
+            this.tableData=[];
             this.isButton=true;
-            this.listDisabled=false;
-            this.orderDate="";
-            this.isOrderSuccess=true;
-            console.log(this.listSearch);
-
-            this.getEmployeeList();
         }
         
       }
     },
     mounted () {
-      this.searchSelectOption= getDictGroup(this.$store.state.app.dict, '1019');
-      this.searchSelectOption1= getDictGroup(this.$store.state.app.dict, '1041');
-      
+      this.getEmployeeList();
     },
     methods:{
-        //得到主修人数据
+        //得到主修人数据------
         getEmployeeList(val){
             this.serverPersonArr=[];
             this.axios.request({
@@ -273,51 +275,46 @@
                     limit: 25,
                     access_token: this.$store.state.user.token
                 }
-                }).then(res => {
+            }).then(res => {
                 if (res.success === true) {
-                    for(let i in res.data){
-                        var obj={code:''};
+                    for(var i in res.data){
+                        var obj={code:'',name:''};
                         obj.code=res.data[i].USER_NAME;
+                        obj.name=res.data[i].USER_NAME;
                         this.serverPersonArr.push(obj);
                     }
                     //初始化主修人数据
-                    if(!val){
-                        console.log('满足条件进入主修人数据',val);
-                      this.listSearch.FOLLOW_PERSON=this.serverPersonArr[0].code;
-                    }else{
-                        console.log('不满足条件进入主修人数据',val);
-                        this.listSearch.FOLLOW_PERSON=val;
-                    }
-                    
                 }
             })
         },
+        //获取新增保单详情数据------
         getList(){
             this.axios.request({
-            url: '/tenant/repair/tt_guarantee_slip/info_list',
-            method: 'post',
-            data: {
-                GUAR_ID_eq: this.listSearch.GUAR_ID,
-                page: this.page,
-                limit: this.limit,
-                access_token: this.$store.state.user.token
-            }
+                url: '/tenant/repair/tt_guarantee_slip/info_list',
+                method: 'post',
+                data: {
+                    GUAR_ID_eq: this.listSearch.GUAR_ID,
+                    page: this.page,
+                    limit: this.limit,
+                    access_token: this.$store.state.user.token
+                }
             }).then(res => {
-            if (res.success === true) {
-                this.tableData= res.data
-                this.total= res.total
-            }
+                if (res.success === true) {
+                    this.tableData= res.data
+                    this.total= res.total
+                }
             })
 
-            this.detailData= null
-            this.isOrderSuccess=true;
+            
         },
+        //监听窗口状态------
         visibleChange(status){
             if(status === false){
-            this.$emit('closeDetail');
-            this.handleReset("listSearch");
+                this.$emit('closeDetail');
+                this.handleReset("listSearch");
             }
         },
+        //保存数据------------
         handleSubmit (name) {
             this.$refs[name].validate((valid) => {
                 if (valid) {
@@ -325,13 +322,9 @@
                         title:"系统提示!",
                         content:"确定要保存吗？",
                         onOk:this.saveData,
-                        
                     })
-                } else {
-                    this.$Message.info('请填写必选项')
                 }
             });
-
         },
         saveData(){
             this.axios.request({
@@ -345,9 +338,11 @@
             }).then(res => {
                 if (res.success === true) {
                     this.showModal=false;
+                    this.$emit('closeGetList');
                 }
             })
         },
+        //重置规则数据-----
         handleReset (name) {
             this.$refs[name].resetFields();
         },
@@ -361,11 +356,11 @@
             this.listSearch["MOBILE_PHONE"]=val["MOBILE_PHONE"];
         },
         clear(){
-                for(let i in this.search){
-            this.search[i]= ''
+            for(let i in this.search){
+                this.search[i]= '';
             }
-            this.page=1;
-                this.getList()
+                this.page=1;
+                this.getList();
         },
         changePage(page){
                 this.page= page
@@ -424,6 +419,7 @@
             oldValue['END_DATE']=formatDate(oldValue['END_DATE']);
             this.tableData.push(oldValue);
             //关闭清除状态
+            this.computedMoney();
 
             this.closeDetail();
             
@@ -431,13 +427,22 @@
         //选择金额------
         selectMoney(val){
             console.log(val);
-            this.listSearch.SUM_MONEY=val;
+            this.computedMoney();
         },
         //删除数据-----------
         delTableData(){
             this.tableData.splice(this.tableIndex,1);
             this.closeDetail();
-        }
+        },
+        //计算保单详情金额----------
+        computedMoney(){
+            this.listSearch.SUM_MONEY=0;
+            for(let i in this.tableData){
+                this.listSearch.SUM_MONEY+=parseInt(this.tableData[i].MONEY);
+            }
+            this.listSearch.SUM_MONEY+=this.listSearch.VEHICLE_TAX;
+
+        },
 
     }
 }
