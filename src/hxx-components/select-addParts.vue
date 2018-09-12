@@ -237,12 +237,37 @@
             showSelectAddParts(){
                 this.showOnoff=true;
 
-                if(this.editdata != ''){
-                this.listSearch = this.editdata;
+                if(this.editdata){
+                    console.log('谢瑞翔个猪')
+                    this.listSearch = this.editdata;
                 }else{
-                for(let i in this.listSearch){
-                    this.listSearch[i]=this.initList[i];
-                }
+                    
+                    this.listSearch={
+                        "PART_ID":"",
+                        "TYPE_ID":"",
+                        "NAME":"",
+                        "FACTORY_NO":"",
+                        "TYPE_NAME":"",
+                        "PURCHASE_PRICE":0,
+                        "SALES_PRICE":0,
+                        "UNIT":"",
+                        "RATE":0,
+                        "TAX":"",
+                        "NOT_CONTAINS_TAX_SALE_PRICE":"",
+                        "BRAND":"",
+                        "FORMAT":"",
+                        "THREE_EXPIRATION_DATE":0,
+                        "EXPIRATION_DATE":0,
+                        "PART_SOURCE":"",
+                        "MIN_SHOP_PRICE":0,
+                        "MIN_SALES_PRICE":0,
+                        "SAFE_STOCK_NUM":0,
+                        "MAX_SHOP_PRICE":0,
+                        "MAX_SALES_PRICE":0,
+                        "MAX_STOCK_NUM":0,
+                        "TYPE_ID":'',
+                    };
+                   
                 }
                 this.selectPartsType();
             },

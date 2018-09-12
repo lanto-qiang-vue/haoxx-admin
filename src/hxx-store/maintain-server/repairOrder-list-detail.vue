@@ -202,7 +202,7 @@
           <Button v-if="accessBtn('doaccount')" :disabled="buttonStateArr.doaccount" @click="testtt" type="warning"  >结算</Button>
           <Button v-if="accessBtn('shoukuan')" :disabled="buttonStateArr.shoukuan" @click="showShouKuan=Math.random()" type="warning"  >收款</Button>
           <Button v-if="accessBtn('printWts')" :disabled="buttonStateArr.printWts" @click="printWTS" type="success">打印委托书</Button>
-          <Button v-if="accessBtn('printPgd')" :disabled="buttonStateArr.printPgd" type="success">打印派工单</Button>
+          <Button v-if="accessBtn('printPgd')" :disabled="buttonStateArr.printPgd" @click="printPgdButton" type="success">打印派工单</Button>
           <Button v-if="accessBtn('printAccount')" :disabled="buttonStateArr.printAccount" type="success">打印结算单</Button>
           <Button @click="showModal=false;">返回</Button>
       </div>
@@ -224,7 +224,7 @@
   import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
   import ColumnInput from '@/hxx-components/column-input.vue'
   import {getLodop} from '@/hxx-components/LodopFuncs.js'
-  import {printWtsFun} from '@/hxx-components/repairPrintUtil.js'
+  import {printWtsFun,printPgdFun} from '@/hxx-components/repairPrintUtil.js'
 
 
 	export default {
@@ -419,7 +419,9 @@
             render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.UNIT))
           },
           {title: '单价', key: 'SALES_PRICE', sortable: true, minWidth: 100},
-          {title: '小计金额', key: 'PART_MONEY', sortable: true, minWidth: 120,},
+          {title: '小计金额', key: 'PART_MONEY', sortable: true, minWidth: 120,
+            render: (h, params) => h('span', params.row.SALES_PRICE*params.row.PART_NUM)
+          },
           {title: '优惠金额', key: 'PART_DERATE_MONEY', sortable: true, minWidth: 120,
             
               render: (h, params) => {
@@ -447,7 +449,9 @@
                         ]);
                     }
           },
-          {title: '优惠后金额', key: 'PART_LAST_MONEY', sortable: true, minWidth: 150,},
+          {title: '优惠后金额', key: 'PART_LAST_MONEY', sortable: true, minWidth: 150,
+            render: (h, params) => h('span', params.row.SALES_PRICE*params.row.PART_NUM-params.row.PART_DERATE_MONEY)
+          },
           {title: '备注', key: 'REMARK', sortable: true, minWidth: 150,
             render: (h, params) => {
                 return h('div', [
@@ -1970,10 +1974,16 @@
       printWTS(){
         this.wtdData=this.$store.state.user.userInfo.tenant;
         console.log(this.wtdData);
-        try{
+       
+        // try{
           var LODOP=getLodop();
           console.log('LODOP数据',LODOP);
-          var temp=printWtsFun(this.wtdData,this.listSearch,this.commitItem);
+          console.log(this.commitParts);
+
+          // this.listSearch.SUM_MONEY=this.Arabia_to_Chinese('200.1');
+
+
+          var temp=printWtsFun(this.wtdData,this.listSearch,this.commitItem,this.commitParts);
 
           LODOP.PRINT_INITA(1,1,770,660,"测试预览功能");
           LODOP.SET_SHOW_MODE("SKIN_TYPE",'1');
@@ -1984,18 +1994,36 @@
           LODOP.ADD_PRINT_TABLE(70, 0, "100%", 980, temp);
 
           LODOP.PREVIEW();
-        }catch(err){
+        // }catch(err){
 
-        }
-
-      },
-      CreateOneFormPage(alertStr) {
-        this.$Modal.confirm({
-            title:"系统提示!",
-            content:alertStr,
-        })
+        // }
 
       },
+      //打印派工单部分---------
+      printPgdButton(){
+          this.wtdData=this.$store.state.user.userInfo.tenant;
+          console.log(this.wtdData);
+        
+          // try{
+            var LODOP=getLodop();
+            console.log('LODOP数据',LODOP);
+            console.log(this.commitParts);
+
+            // this.listSearch.SUM_MONEY=this.Arabia_to_Chinese('200.1');
+
+
+            var temp=printPgdFun(this.wtdData,this.listSearch,this.commitItem,this.commitParts);
+
+            
+            
+            LODOP.ADD_PRINT_TEXT(60, 0, "100%", 20, "车 辆 维 修 派 工 单");
+            LODOP.SET_PRINT_STYLEA(0, "FontSize", 20);
+            //LODOP.SET_PRINT_STYLEA(0,"Bold",1);
+            LODOP.SET_PRINT_STYLEA(0, "Alignment", 2);
+            LODOP.ADD_PRINT_TABLE(90, 0, "100%", 950, temp);
+            LODOP.PREVIEW();
+      }
+      
 
 
 
