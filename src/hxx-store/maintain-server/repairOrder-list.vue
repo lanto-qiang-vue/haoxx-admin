@@ -422,7 +422,7 @@
               }
           })
       },
-
+      //监听传过来的数据值-----------，
       getRouterData(){
         var queryData=this.$route.query;
         if(queryData.flag){

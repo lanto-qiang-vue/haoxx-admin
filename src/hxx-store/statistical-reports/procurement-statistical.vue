@@ -17,7 +17,7 @@
     </div>
 
     <div slot="operate">
-      <Button type="primary">打印采购台账</Button>
+      <Button type="primary" @click="printPB">打印采购台账</Button>
     </div>
     
   </common-table>
@@ -27,6 +27,10 @@
   import { getName, getDictGroup ,getCreate} from '@/libs/util.js'
   import mixin from '@/hxx-components/mixin'
   import { formatDate } from '@/libs/tools.js'
+
+  import {getLodop} from '@/hxx-components/LodopFuncs.js'
+  import {printPBFun} from '@/hxx-components/repairPrintUtil.js'
+
 
 export default {
 	name: "procurement-statistical",
@@ -137,6 +141,20 @@ export default {
         reset(){
             this.getList();
         },
+        //打印台账-----
+        printPB(){
+            var LODOP=getLodop();
+            
+            var temp=printPBFun(this.tableData);
+            LODOP.ADD_PRINT_TEXT(30, 0, "100%", 20, "采 购 台 账");
+            LODOP.SET_SHOW_MODE("LANDSCAPE_DEFROTATED", 1);
+            LODOP.SET_PRINT_STYLEA(0, "FontSize", 18);
+            //LODOP.SET_PRINT_STYLEA(0,"Bold",1);
+            LODOP.SET_PRINT_STYLEA(0, "Alignment", 2);
+            LODOP.ADD_PRINT_TABLE(70, 0, "100%", 980, temp);
+            LODOP.PREVIEW();
+
+        }
 
     }
 }
