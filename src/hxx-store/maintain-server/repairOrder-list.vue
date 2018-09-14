@@ -165,15 +165,10 @@
       this.getRouterData();
     },
     methods:{
+      //获取列表数据-----
 		  getList(){
-        if(this.search.orderDateGte){
-            this.search.orderDateGte=formatDate(this.search.orderDateGte);
-        }
-
-        if(this.search.orderDateIte){
-            this.search.orderDateIte=formatDate(this.search.orderDateIte);
-        }
-        console.log(this.search);
+        this.search.orderDateGte=formatDate(this.search.orderDateGte);
+        this.search.orderDateIte=formatDate(this.search.orderDateIte);
         this.axios.request({
             url: '/tenant/repair/ttrepairworkorder/list',
             method: 'post',
@@ -191,8 +186,6 @@
               if (res.success === true) {
                   this.tableData= res.data
                   this.total= res.total
-                  
-                  
               }
           })
           //重置按钮状态------------

@@ -14,8 +14,8 @@
         </Select>
       </div>
       <div class="search-block"style="width:250px;">
-        <DatePicker @on-change="getOrderDateGte" format="yyyy-MM-dd" type="date" placeholder="开始时间" style="width: 120px;"></DatePicker>
-        <DatePicker @on-change="getOrderDateIte" format="yyyy-MM-dd" type="date" placeholder="结束时间" style="width: 120px;margin-left: 5px;"></DatePicker>
+        <DatePicker v-model="search.orderDateGte" format="yyyy-MM-dd" type="date" placeholder="开始时间" style="width: 120px;"></DatePicker>
+        <DatePicker v-model="search.orderDateIte" format="yyyy-MM-dd" type="date" placeholder="结束时间" style="width: 120px;margin-left: 5px;"></DatePicker>
       </div>
 
       <ButtonGroup size="small">
@@ -30,7 +30,7 @@
     </div>
     <!--预约详情单-->
     <reservation-list-detail class="table-modal-detail" :showDetail="showDetail"
-                             :detailData="detailData" @closeDetail="closeDetail"
+                             :detailData="detailData" @closeDetail="closeDetail" @closeGetList="closeGetList"
       ></reservation-list-detail>
       
   </common-table>
@@ -39,6 +39,7 @@
   import commonTable from '@/hxx-components/common-table.vue'
   import reservationListDetail from './reservation-list-detail.vue'
   import { getName, getDictGroup } from '@/libs/util.js'
+  import { formatDate } from '@/libs/tools.js'
   import mixin from '@/hxx-components/mixin'
 	export default {
 		name: "reservation-list",
@@ -46,12 +47,6 @@
     mixins: [mixin],
     data(){
 		  return{
-        tooltipObj:{
-            mshow:null,
-            funName:'del',
-            description:'',
-            title:'',
-        },
         columns: [
           {title: '序号',  minWidth: 80,
             render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
@@ -113,8 +108,10 @@
       this.showTable= Math.random()
     },
     methods:{
+      //获取当前页面数据------
 		  getList(){
-        
+        this.search.orderDateGte=formatDate(this.search.orderDateGte);
+        this.search.orderDateIte=formatDate(this.search.orderDateIte);
         this.axios.request({
           url: '/tenant/repair/ttrepairorder/list',
           method: 'post',
@@ -137,6 +134,7 @@
         this.detailData= null
         this.isOrderSuccess=true;
       },
+      //页面重置按钮-----
       clear(){
 		    for(let i in this.search){
           this.search[i]= ''
@@ -160,7 +158,6 @@
           }else{
               this.isOrderSuccess=false;
           }
-
         this.detailData=row
       },
       onRowDblclick( row, index){
@@ -172,7 +169,10 @@
         this.detailData= null
         this.isOrderSuccess=true;
         this.clearTableSelect= Math.random()
-        this.getList()
+      },
+      //只有保存数据和提交数据的时候更新界面列表，
+      closeGetList(){
+        this.getList();
       },
       //作废按钮---------
       deleteDetailData(){
@@ -202,14 +202,6 @@
               this.getList();
             }
           })
-      },
-      //获取搜索框开始时间
-      getOrderDateGte(val){
-        this.search.orderDateGte=val;
-      },
-      //获取搜索框结束时间
-      getOrderDateIte(val){
-        this.search.orderDateIte=val;
       },
 
     }
