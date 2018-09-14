@@ -28,7 +28,7 @@
     title="用户新增"
     :transition-names="['', '']"
     v-model="showModal"
-    width="90"
+    width="80"
     :mask-closable="false"
     :scrollable="false"
     :transfer= "true"
@@ -255,7 +255,7 @@ import commonTable from '@/hxx-components/common-table.vue'
                       this.$Modal.confirm({
                       title:'系统提示!',
                       content:'<div style="color:red;">确认保存吗？</div>',
-                      onOk:this.dpost,
+                      onOk:this.addsave,
                     });
                     } else {
                         this.$Message.error("请校对红框信息");
@@ -263,6 +263,11 @@ import commonTable from '@/hxx-components/common-table.vue'
                 })
             },
             addsave(){
+                this.formData.CUSTOMER_SOURCE = this.formData.CUSTOMER_SOURCE == 0 ? '' : this.formData.CUSTOMER_SOURCE;
+                this.formData.CUSTOMER_LEVEL = this.formData.CUSTOMER_LEVEL == 0 ? '' : this.formData.CUSTOMER_LEVEL;
+                // alert(this.formData.CUSTOMER_TYPE);
+                this.formData.CUSTOMER_TYPE = this.formData.CUSTOMER_TYPE == 0 ? '' : this.formData.CUSTOMER_TYPE;
+                // alert(this.formData.CUSTOMER_TYPE);
           this.axios.request({
           url: 'tenant/basedata/ttcustomerfile/save',
           method: 'post',
@@ -271,13 +276,9 @@ import commonTable from '@/hxx-components/common-table.vue'
                 }
         }).then(res => {
           if (res.success === true) {
-             if(this.tabshow < 1){
-              this.$Message.success('新增成功');
-              this.tabshow = res.data.CUSTOMER_ID;
-             }else{
-              this.$Message.success('修改成功');
-             }
-             this.$emit('refresh');
+            this.$Message.success('新增成功');
+            this.showModal = false;
+            this.getList();
           }
         })
             },
