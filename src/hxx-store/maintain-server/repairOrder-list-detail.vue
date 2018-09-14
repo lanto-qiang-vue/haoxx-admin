@@ -19,7 +19,7 @@
        <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="110"  class="common-form">
           <FormItem label="车牌号码:" prop="PLATE_NUM">
               <Input @on-focus="showoff=Math.random();"	type="text" v-model="listSearch.PLATE_NUM" placeholder="请输入车牌号" :disabled="publicButtonFlag">
-                  <Icon type="ios-search" slot="suffix"/>
+                  <Icon type="ios-search" slot="suffix" @click="showoff=Math.random();" style="cursor:pointer;"/>
               </Input>
           </FormItem>
           <FormItem label="车型:">
@@ -203,7 +203,7 @@
           <Button v-if="accessBtn('shoukuan')" :disabled="buttonStateArr.shoukuan" @click="showShouKuan=Math.random()" type="warning"  >收款</Button>
           <Button v-if="accessBtn('printWts')" :disabled="buttonStateArr.printWts" @click="printWTS" type="success">打印委托书</Button>
           <Button v-if="accessBtn('printPgd')" :disabled="buttonStateArr.printPgd" @click="printPgdButton" type="success">打印派工单</Button>
-          <Button v-if="accessBtn('printAccount')" :disabled="buttonStateArr.printAccount" type="success">打印结算单</Button>
+          <Button v-if="accessBtn('printAccount')" :disabled="buttonStateArr.printAccount" @click="printAccountButton" type="success">打印结算单</Button>
           <Button @click="showModal=false;">返回</Button>
       </div>
   </Modal>
@@ -224,7 +224,7 @@
   import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
   import ColumnInput from '@/hxx-components/column-input.vue'
   import {getLodop} from '@/hxx-components/LodopFuncs.js'
-  import {printWtsFun,printPgdFun} from '@/hxx-components/repairPrintUtil.js'
+  import {printWtsFun,printPgdFun,printAccountFun} from '@/hxx-components/repairPrintUtil.js'
 
 
 	export default {
@@ -1008,7 +1008,7 @@
             this.commitItemGroup=this.detailQuery.commitItemGroup;
             this.commitItem=this.detailQuery.commitItem;
             this.commitParts=this.detailQuery.commitParts;
-            this.publicButtonFlag=true;
+            // this.publicButtonFlag=true;
             //进来数据重新赋值-----------------
             this.listSearch={
                   "TENANT_ID":"",
@@ -1064,11 +1064,12 @@
               //初始化车辆数据----------------
               this.selectCarInitFun(this.detailData.VEHICLE_TYPE,this.detailData.VEHICLE_TYPE_CODE);
 
-              for(let key in this.listSearch){
-                if(this.detailData[key]){
-                  this.listSearch[key]= this.detailData[key]
-                }
-              }
+              // for(let key in this.listSearch){
+              //   if(this.detailData[key]){
+              //     this.listSearch[key]= this.detailData[key]
+              //   }
+              // }
+              this.listSearch=this.detailData;
               //获取项目组数据---------------
               this.getItemFun(this.listSearch["REPAIR_ID"]);
               this.getItemGroupFun(this.listSearch["REPAIR_ID"]);
@@ -1266,16 +1267,30 @@
         handleSubmit (name) {
             this.$refs[name].validate((valid) => {
                 if (valid) {
-                      this.$Modal.confirm({
-                          title:"系统提示!",
-                          content:"确定要保存吗？",
-                          onOk:this.saveData,
-                          
-                      })
+                      if(this.listSearch.VEHICLE_MODEL&&this.listSearch.VIN_NO&&this.listSearch.CUSTOMER_NAME){
+                        this.$Modal.confirm({
+                            title:"系统提示!",
+                            content:"确定要保存吗？",
+                            onOk:this.saveData,
+                            
+                        })
+                      }else{
+                        this.$Modal.confirm({
+                            title:"系统提示!",
+                            content:"请先完善车辆信息",
+                            onOk:this.perfectCarData,
+                            
+                        })
+                      }
+                      
+                      
                 } else {
 
                 }
             });
+        },
+        perfectCarData(){
+          this.$router.push({path:'/cart-list'});
         },
         saveData(){
             this.axios.request({
@@ -2021,6 +2036,26 @@
             //LODOP.SET_PRINT_STYLEA(0,"Bold",1);
             LODOP.SET_PRINT_STYLEA(0, "Alignment", 2);
             LODOP.ADD_PRINT_TABLE(90, 0, "100%", 950, temp);
+            LODOP.PREVIEW();
+      },
+      //打印结算单部分-------------------
+      printAccountButton(){
+            var temp=null;
+            console.log(this.listSearch.COLLECT_NO,this.commitItemGroup,this.commitParts,this.commitOtherItem);
+
+            this.wtdData=this.$store.state.user.userInfo.tenant;
+
+            if (this.$store.state.user.userInfo.tenant && this.$store.state.user.userInfo.tenant.businessType == '10331003') {
+              console.log('三级维修');
+                temp=printAccountFun(this.wtdData,this.listSearch,this.commitItem,this.commitItemGroup,this.commitParts,this.commitOtherItem);
+            } else {
+              console.log('不是三级维修');
+                temp=printAccountFun(this.wtdData,this.listSearch,this.commitItem,this.commitItemGroup,this.commitParts,this.commitOtherItem);
+            }
+            var LODOP=getLodop();
+            LODOP.SET_PRINT_STYLEA(0, "Alignment", 2);
+            LODOP.ADD_PRINT_TABLE(50, 0, "100%", 1000, temp);
+            //LODOP.SET_PRINT_STYLEA(0,"Offset2Top",-60); //设置次页偏移把区域向上扩 
             LODOP.PREVIEW();
       }
       

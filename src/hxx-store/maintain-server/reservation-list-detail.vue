@@ -35,12 +35,7 @@
 
             </FormItem>
             <FormItem label="预约时间:" prop="ORDER_TIME">
-                
-                <Select v-model="listSearch.ORDER_TIME" placeholder="">
-                  <Option v-for="(item, index) in timeGruop"
-                    :key="item.value" :value="item.value">{{item.label}}</Option>
-                    
-                </Select>
+                <TimePicker format="HH:mm" placeholder="请选择..." v-model="listSearch.ORDER_TIME"></TimePicker>
             </FormItem>
             <FormItem label="预约类型:">
                 <Select v-model="listSearch.ORDER_TYPE" placeholder="">
@@ -147,7 +142,7 @@
       <select-itemsType :showTenanceItems="showTenanceItems" @sTenanceItem="sTenanceItem" :initGetItem="initGetItem" class="table-modal-detail" :showTransfer='selectItemransfer'>
       </select-itemsType>
       <!--选择配件-->
-      <select-parts :showSelectParts="showSelectParts" @selectPartsItem="selectPartsItem" :initParts="initParts" class="table-modal-detail" :stockFlag=true :transferFlag=true>
+      <select-parts :showSelectParts="showSelectParts" @selectPartsItem="selectPartsItem" :initParts="commitParts" class="table-modal-detail" :stockFlag=true :transferFlag=true>
       </select-parts>
       <!--选择配件组-->
       <select-partsGroup :showSelectPartsGroup="showSelectPartsGroup" @selectPartsGroup="selectPartsGroup" :initPartsGroup="initPartsGroup" class="table-modal-detail" :transferFlag=true>
@@ -208,7 +203,6 @@
           {title: '序号',  minWidth: 80,type:"index",
           },
           {title: '维修项目名称', key: 'NAME', sortable: true, minWidth: 180,
-            // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.ORDER_TYPE))
           },
           {title: '标准工时', key: 'REPAIR_TIME', sortable: true, minWidth: 120},
           {title: '标准金额', key: 'REPAIR_MONEY', sortable: true, minWidth: 120},
@@ -226,14 +220,15 @@
                                 },
                                 on: {
                                     "on-change":(val)=>{
-                                        
+                                        params.row.ITEM_DERATE_MONEY=val;
                                         let self=this;
-                                        clearTimeout(this.timer);
-                                        this.timer = setTimeout(function(){
-                                            self.commitItem[params.index]['ITEM_DERATE_MONEY']=val;
+                                        // clearTimeout(this.timer);
+                                        // this.timer = setTimeout(function(){
+                                            this.commitItem[params.index]=params.row;
                                             self.commitItem[params.index]['ITEM_LAST_MONEY']=params.row.REPAIR_TIME*getUserInfo(self.$store.state.user.userInfo.params, 'P1001')+params.row.PAINT_NUM*getUserInfo(self.$store.state.user.userInfo.params, 'P1002')-val;
                                             self.computItemMoney();
-                                        },1000)
+                                        // },1000)
+                                    
                                     },
                                     
                                 }
@@ -309,15 +304,14 @@
                                 },
                                 on: {
                                     "on-change":(val)=>{
-                                        // alert(1);
-                                        // let self=this;
+                                        params.row.PART_NUM=val;
+                                        let self=this;
                                         // clearTimeout(this.timer);
-                                        this.commitParts[params.index]['PART_NUM'] = val;
                                         // this.timer = setTimeout(function(){
-                                        //     self.commitParts[params.index]['PART_NUM']=val;
-                                        //     self.commitParts[params.index]['PART_MONEY']=params.row.SALES_PRICE*val;
-                                        //     self.commitParts[params.index]['PART_LAST_MONEY']=params.row.SALES_PRICE*val-params.row.PART_DERATE_MONEY;
-                                        //     self.computItemMoney();
+                                            this.commitParts[params.index]=params.row;
+                                            self.commitParts[params.index]['PART_MONEY']=params.row.SALES_PRICE*val;
+                                            self.commitParts[params.index]['PART_LAST_MONEY']=params.row.SALES_PRICE*val-params.row.PART_DERATE_MONEY;
+                                            self.computItemMoney();
                                         // },1000)
                                     },
                                     
@@ -344,14 +338,14 @@
                                 },
                                 on: {
                                     "on-change":(val)=>{
-                                        
+                                        params.row.PART_DERATE_MONEY=val;
                                         let self=this;
-                                        clearTimeout(this.timer);
-                                        this.timer = setTimeout(function(){
-                                            self.commitParts[params.index]['PART_DERATE_MONEY']=val;
+                                        // clearTimeout(this.timer);
+                                        // this.timer = setTimeout(function(){
+                                            self.commitParts[params.index]=params.row;
                                             self.commitParts[params.index]['PART_LAST_MONEY']=params.row.SALES_PRICE*params.row.PART_NUM-val;
                                             self.computItemMoney();
-                                        },1000)
+                                        // },1000)
                                     },
                                     
                                 }
@@ -428,14 +422,14 @@
                                 },
                                 on: {
                                     "on-change":(val)=>{
-                                        
+                                        params.row.ITEM_DERATE_MONEY=val;
                                         let self=this;
-                                        clearTimeout(this.timer);
-                                        this.timer = setTimeout(function(){
-                                            self.commitItemGroup[params.index]['ITEM_DERATE_MONEY']=val;
+                                        // clearTimeout(this.timer);
+                                        // this.timer = setTimeout(function(){
+                                            self.commitItemGroup[params.index]=params.row;
                                             self.commitItemGroup[params.index]['ITEM_LAST_MONEY']=params.row.SALES_PRICE-val;
                                             self.computItemMoney();
-                                        },1000)
+                                        // },1000)
                                     },
                                     
                                 }
@@ -527,48 +521,6 @@
 
         searchSelectOption:[],
         searchSelectOption1:[],
-        timeGruop:[
-          {value:"上午",label:"上午"},
-          {value:"下午",label:"下午"},
-          {value:"5:00",label:"5:00"},
-          {value:"5:30",label:"5:30"},
-          {value:"6:00",label:"6:00"},
-          {value:"6:30",label:"6:30"},
-          {value:"7:00",label:"7:00"},
-          {value:"7:30",label:"7:30"},
-          {value:"8:00",label:"8:00"},
-          {value:"8:30",label:"8:30"},
-          {value:"9:00",label:"9:00"},
-          {value:"9:30",label:"9:30"},
-          {value:"10:00",label:"10:00"},
-          {value:"10:30",label:"10:30"},
-          {value:"11:00",label:"11:00"},
-          {value:"11:30",label:"11:30"},
-          {value:"12:00",label:"12:00"},
-          {value:"12:30",label:"12:30"},
-          {value:"13:00",label:"13:00"},
-          {value:"13:30",label:"13:30"},
-          {value:"14:00",label:"14:00"},
-          {value:"14:30",label:"14:30"},
-          {value:"15:00",label:"15:00"},
-          {value:"15:30",label:"15:30"},
-          {value:"16:00",label:"16:00"},
-          {value:"16:30",label:"16:30"},
-          {value:"17:00",label:"17:00"},
-          {value:"17:30",label:"17:30"},
-          {value:"18:00",label:"18:00"},
-          {value:"18:30",label:"18:30"},
-          {value:"19:00",label:"19:00"},
-          {value:"19:30",label:"19:30"},
-          {value:"20:00",label:"20:00"},
-          {value:"20:30",label:"20:30"},
-          {value:"21:00",label:"21:00"},
-          {value:"21:30",label:"21:30"},
-          {value:"22:00",label:"22:00"},
-          {value:"22:30",label:"22:30"},
-          {value:"23:00",label:"23:00"},
-          {value:"23:30",label:"23:30"},
-        ],
         ruleValidate: {
           ORDER_DATE:[
             { required: true, message: '请选择日期', },
@@ -589,24 +541,20 @@
         commitItemGroup:[],
         commitItem:[],//提交选择项目
         commitParts:[],//提交配件
-        timer:null,
+        //日期时间验证-----
         options: {
-            
             disabledDate (date) {
-
                 console.log('aaaa',date && date.valueOf() < Date.now() - 86400000);
                 return date && date.valueOf() < Date.now() - 86400000;
             }
         },//限制日期选择-----
-
       }
     },
     props:['showDetail', 'detailData'],
     watch:{
       showDetail(){
         console.log('进来的参数：',this.detailData,);
-        this.showModal=true
-
+        this.showModal=true;
         //清空公共数据值------
         this.getItem=[];
         this.getItemGroup=[];
@@ -616,12 +564,29 @@
         this.commitItem=[];
         this.commitParts=[];
         this.testSingle=false;
+
+        //进来先清空数据--------
+        for(let key in this.listSearch){
+            switch (key){
+              case 'MILEAGE':
+              case 'REPAIR_ITEM_MONEY':
+              case 'REPAIR_PART_MONEY':
+              case 'REPAIR_ITEM_DERATE_MONEY':
+              case 'REPAIR_PART_DERATE_MONEY':
+              case 'SUM_MONEY': this.listSearch[key]= 0; break
+              case 'STATUS': this.listSearch[key]= "10421001"; break
+              case 'REPAIR_TYPE': this.listSearch[key]= "10191001"; break
+              case 'ORDER_TYPE': this.listSearch[key]= "10411001"; break
+              case 'IS_ITEM_GROUP': this.listSearch[key]= "10041002"; break
+              default : this.listSearch[key]= ''
+
+            }
+        }
+
         //判断进来的参数是否存在---------------------
         if(this.detailData){
-          for(let key in this.listSearch){
-            if(this.detailData[key]){
-              this.listSearch[key]= this.detailData[key]
-            }
+          for(let key in this.detailData){
+            this.listSearch[key]= this.detailData[key]
           }
 
           this.getItemFun(this.listSearch["ORDER_ID"]);
@@ -665,22 +630,6 @@
           }
 
         }else{
-          for(let key in this.listSearch){
-            switch (key){
-              case 'MILEAGE':
-              case 'REPAIR_ITEM_MONEY':
-              case 'REPAIR_PART_MONEY':
-              case 'REPAIR_ITEM_DERATE_MONEY':
-              case 'REPAIR_PART_DERATE_MONEY':
-              case 'SUM_MONEY': this.listSearch[key]= 0; break
-              case 'STATUS': this.listSearch[key]= "10421001"; break
-              case 'REPAIR_TYPE': this.listSearch[key]= "10191001"; break
-              case 'ORDER_TYPE': this.listSearch[key]= "10411001"; break
-              case 'IS_ITEM_GROUP': this.listSearch[key]= "10041002"; break
-              default : this.listSearch[key]= ''
-
-            }
-          }
           //新建功能表------
           this.titleMsg="新建";
           this.isCar=false;
@@ -753,8 +702,11 @@
             }
           }).then(res => {
             if (res.success === true) {
-              this.listSearch['ORDER_ID']= res.data['ORDER_ID'];
-              this.$Message.info('successful')
+              // this.listSearch['ORDER_ID']= res.data['ORDER_ID'];
+              for(let i in res.data){
+                this.listSearch[i]=res.data[i];
+              }
+              this.$Message.info('保存成功');
             }
           })
       },
@@ -776,7 +728,7 @@
             console.log(11111)
             console.log(res)
             if (res.success === true) {
-              this.$Message.info('successful')
+              this.$Message.info('提交成功')
               this.isCar=true;
               this.isButton=false;
               this.titleMsg="已预约";
@@ -858,7 +810,8 @@
       //选择维修项目按钮----------
       goOnTenanceItem(){
           this.showTenanceItems=Math.random();
-          this.initGetItem=this.commitItem;
+          var aaa=this.commitItem;
+          this.initGetItem=aaa;
       },
       //获取维修项目数据-------
       sTenanceItem(val){
@@ -1041,7 +994,6 @@
         console.log("选择配件数据组",val);
         this.getParts1=val;
         this.commitParts=[];
-        // alert(1);
         for(let j in this.getParts){
           if(this.getParts[j]["STOCK_ID"]){
               var commitParts={
@@ -1151,7 +1103,7 @@
       //选择配件按钮------
       goOnSelectParts(){
           this.showSelectParts=Math.random();
-          this.initParts=this.commitParts;
+          // this.initParts=this.commitParts;
       },
       //选择配件组按钮--------
       goOnSelectPartsGroup(){
@@ -1311,7 +1263,6 @@
               if (res.success === true) {
                   // var query=JSON.stringify({flag:true,listSearch:this.listSearch,commitItem:this.commitItem,commitItemGroup:this.commitItemGroup,commitParts:this.commitParts});
                   var query={flag:true,listSearch:this.listSearch,commitItem:this.commitItem,commitItemGroup:this.commitItemGroup,commitParts:this.commitParts};
-                  
                   this.$router.push({path:'/repairOrder-list',query:query});
               }else{
                   this.$Modal.confirm({
