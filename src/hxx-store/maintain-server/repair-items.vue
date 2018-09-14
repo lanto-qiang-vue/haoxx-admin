@@ -28,11 +28,19 @@
     width="90"
     :mask-closable="false"
     :scrollable="true"
-    :transfer= "false"
+    :transfer= "true"
     :footer-hide="false"
     :transition-names="['', '']">
-    <div><Tree :data="changeTree" @on-check-change="onCheck" show-checkbox></Tree></div>
-        <Spin size="large" fix v-if="spinShow" ></Spin>
+        <Split v-model="split" :min="0.1" :max="0.5" class="split" style="height:100%;">
+          <div slot="left">
+        <Tree :data="changeTree" @on-select-change="getdata"></Tree>
+        <Spin size="large" fix v-if="spinShow"></Spin>            
+          </div>
+          <div slot="right" style="height:100%;">
+              <common-table :columns="columns1" :showSearch="false" :showOperate="false" :showPage="false" v-model="initParts" :show="ishow">
+              </common-table>
+        </div>
+        </Split>
       <div slot="footer">
       <Button @click="cancle()">取消</Button>
       <Button type="info" @click="toimport()">导入</Button>
@@ -154,6 +162,7 @@ export default{
               value2:'2',
               description:'标准金额',
               number:0,
+              ishow:false,
               customModal:false,
               checkid:[],
               editType:false,
@@ -187,7 +196,7 @@ export default{
               {title: '序号',  minWidth: 80,
                render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
               },
-                {title: '项目编号', key: 'ITEM_NO', sortable: true, minWidth: 120},
+              {title: '项目编号', key: 'ITEM_NO', sortable: true, minWidth: 120},
               {title: '维修项目名称', key: 'NAME', sortable: true, minWidth: 140},
               {title: '项目分类', key: 'TYPE_NAME', sortable: true, minWidth: 120},
               {title: '计费标准', key: 'CHARGE_TYPE', sortable: true, minWidth: 140,
@@ -197,6 +206,20 @@ export default{
               {title: '标准工时(小时)', key: 'REPAIR_TIME', sortable: true, minWidth: 150},
               {title: '油漆面数(面)', key: 'PAINT_NUM', sortable: true, minWidth: 140},
               ],
+              columns1:[
+              {type: 'selection',width: 60,align: 'center'},
+              {title: '项目名称', key: 'nodeName', sortable: true, minWidth: 120},
+              {title: '项目编号', key: 'itemNo', sortable: true, minWidth: 120},
+              {title: '计费标准', key: 'chargeType', sortable: true, minWidth: 140,
+              render:(h,params) => h('span',getName(this.chargetype,params.row.chargeType))
+              },
+              {title: '标准金额(元)', key: 'repairMoney', sortable: true, minWidth: 140},
+              {title: '标准工时(小时)', key: 'repairTime', sortable: true, minWidth: 150},
+              {title: '油漆面数(面)', key: 'paintNum', sortable: true, minWidth: 140},
+              {title: '类型1', key: 'engine_type_name', sortable: true, minWidth: 120},
+              {title: '类型2', key: 'class_name', sortable: true, minWidth: 120},
+              ],
+              initParts:[],
               page:1,
               limit:25,
               total:0,
@@ -260,6 +283,17 @@ export default{
           }
         },
         methods:{
+          getdata(row){
+            if(!row[0]){
+              return;
+            }
+            var store = row[0].store;
+            var data = []
+            for(var i = 0; i <store.length;i++){
+              data.push(store[i]);
+            }
+            this.initParts = data;
+          },
           visibleChange(){
             this.clearsection();
           },
@@ -370,7 +404,6 @@ export default{
           },
           machine1(data){
            data['title'] = data.nodeName;
-           if(data.nodeId != '') this.init1.push(data.nodeId);
            var flag = data.children ? true : false;
            if(flag){
             for(var i=0;i<data.children.length;i++){
@@ -381,18 +414,25 @@ export default{
            }
            return data;
           },
-          machine2(data){
-           data['title'] = data.nodeName;
-           data['expand'] = true;
+          machine2(data,da,level=1){
+           da['title'] = data.nodeName;
+           da['nodeId'] = data.nodeId ? data.nodeId : 0;
+           da['expand'] = false;
            var flag = data.children ? true : false;
            if(flag){
-            for(var i=0;i<data.children.length;i++){
-              this.machine2(data.children[i]);
-            }
-           }else{
-
+            da['store'] = data.children;
            }
-           return data;
+           if(level < 3){
+           da['children'] = [];
+           var flag = data.children ? true : false;
+           if(flag){
+            for(var i =0;i<data.children.length;i++){
+              da['children'][i] = {};
+              this.machine2(data.children[i],da['children'][i],level+1);
+            }
+           }
+           return da;
+          }
           },
           getList(){
          this.axios.request({
@@ -414,6 +454,7 @@ export default{
           },
           impor(){
           ///tenant/basedata/repairproject/get_checkitem_tree
+          this.ishow = Math.random();
           this.spinShow = true;
          this.axios.request({
           url: '/tenant/basedata/repairproject/get_checkitem_tree',
@@ -422,7 +463,8 @@ export default{
         }).then(res => {
           this.changeTree = [];
           if (res.success === true) {
-             this.changeTree.push(this.machine2(res.data));
+            var data = this.machine2(res.data,{});
+             this.changeTree.push(data);
            this.spinShow = false;
           }
         })
@@ -529,28 +571,4 @@ export default{
     }
   }
 }
-</style>
-<style lang="less">
-  .vehicle-tree{
-    >.ivu-tree-children{
-      height: 100%;
-      overflow: auto;
-    }
-    .highlight{
-      color: red;
-    }
-  }
-      .demo-spin-icon-load{
-        animation: ani-demo-spin 1s linear infinite;
-    }
-    @keyframes ani-demo-spin {
-        from { transform: rotate(0deg);}
-        50%  { transform: rotate(180deg);}
-        to   { transform: rotate(360deg);}
-    }
-    .demo-spin-col{
-        height: 100px;
-        position: relative;
-        border: 1px solid #eee;
-    }
 </style>
