@@ -633,6 +633,17 @@ export default [
         },
         component: () => import('@/hxx-store/base-data/warehouse-manage.vue')
       },
+      {
+        path: '/cart-brand',
+        name: 'cart-brand',
+        meta: {
+          icon: 'md-funnel',
+          title: '品牌车型',
+          lgType: "1002",
+          access: '100503',
+        },
+        component: () => import('@/hxx-store/base-data/cart-brand.vue')
+      },
     ]
   },
   {

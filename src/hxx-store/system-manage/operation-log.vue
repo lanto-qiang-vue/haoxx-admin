@@ -17,6 +17,7 @@
 </template>
 <script>
 import commonTable from '@/hxx-components/common-table.vue'
+import { formatDate } from '@/libs/tools.js'
 import { getName, getDictGroup, getCreate } from '@/libs/util.js'
 	export default{
 		name:'operation-log',
@@ -29,15 +30,18 @@ import { getName, getDictGroup, getCreate } from '@/libs/util.js'
 				showTable:false,
 				tableData:[],
 				columns:[
-				{title: '仓库编号', key: 'STORE_NO', sortable: true, minWidth: 140},
-				{title: '仓库名称', key: 'NAME', sortable: true, minWidth: 140},
-				{title: '所在地', key: 'ADDRESS', sortable: true, minWidth: 140},
-				{title: '是否默认仓库', key: 'IS_DEFAULT', sortable: true, minWidth: 140,
-				  render: (h,params)=> h('span',getName(this.defaultList,params.row.IS_DEFAULT))
+				{title: '业务名称', key: 'LOG_TYPE', sortable: true, minWidth: 140},
+				{title: '操作名称', key: 'LOG_OPE_TYPE', sortable: true, minWidth: 120},
+				{title: '内容', key: 'LOG_CONTENT', sortable: true, minWidth: 300},
+				{title: '操作人', key: 'CREATE', sortable: true, minWidth: 100,
+				  render: (h,params)=> h('span',getCreate(this.$store.state.app.tenant,params.row.CREATE))
 			    },
+                {title: '操作时间', key: 'CREATE_TIME', sortable: true, minWidth: 120},
 				],
 				search:{
 					keyword:'',
+					start:'',
+					end:'',
 				},
 		    }
 		},
@@ -57,13 +61,17 @@ import { getName, getDictGroup, getCreate } from '@/libs/util.js'
 			},
 			getList(){
 				///tenant/basedata/ttstorehouse/list
+				var start = this.search.start ? formatDate(this.search.start) : '';
+				var end = this.search.end ? formatDate(this.search.end) : '';
 				this.axios.request({
-				  url: '/tenant/basedata/ttstorehouse/list',
+				  url: '/tenant/sys/ttsyslog/list',
 				  method: 'post',
 				  data: {access_token: this.$store.state.user.token,
 				         limit:25,
 				         page:1,
 				         KEYWORD:this.search.keyword,
+				         CREATE_TIME_gte:start,
+				         CREATE_TIME_lte:end,
 				        }
 				}).then(res => {
 				  if (res.success === true) {
@@ -74,6 +82,8 @@ import { getName, getDictGroup, getCreate } from '@/libs/util.js'
 			},
 			clear(){
 				this.search.keyword = '';
+				this.search.start = '';
+				this.search.end = '';
 			},
 		},
 		mounted(){
