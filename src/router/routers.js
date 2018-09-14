@@ -734,7 +734,18 @@ export default [
           lgType: "1002",
           access: '100701',
         },
-        component: () => import('@/hxx-store/system-manage/staff-manage')
+        component: () => import('@/hxx-store/system-manage/staff-manage.vue')
+      },
+      {
+        path: '/operation-log',
+        name: '/operation-log',
+        meta: {
+          icon: 'md-funnel',
+          title: '操作日志',
+          lgType: "1002",
+          access: '100703',
+        },
+        component: () => import('@/hxx-store/system-manage/operation-log.vue')
       },
     ]
   },

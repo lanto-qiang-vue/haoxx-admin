@@ -35,7 +35,7 @@
     @on-current-change="onCurrentChange"
   >
   </Table>
-  <div class="table-bottom">
+  <div class="table-bottom" v-show="showPage">
     <div><slot name="footer"></slot></div>
     <Page :current="page" :page-size="25" show-sizer show-elevator show-total :page-size-opts="[25, 50, 100, 150]"
     placement="top" :total="total" @on-change="changePage" @on-page-size-change="changePageSize"/>
@@ -77,6 +77,10 @@
       },
       showHeader: {
         type: Boolean,
+        default: true
+      },
+      showPage:{
+        type:Boolean,
         default: true
       },
       highlightRow: {

@@ -21,6 +21,24 @@
       <Button type="error" :disabled="cando" @click="remove()">作废</Button>
       <Button type="success" :disabled="cando" @click="reset()">重置密码</Button>
     </div>
+    <Modal
+    v-model="setPasswordModal"
+    :mask-closable="false"
+    @on-visible-change="visibleChange"
+    :transition-names="['', '']">
+    <div slot="header" style="font-weight: bold;font-size: 18px;">
+    重置[<span style="color:blue;">{{list.USER_NAME}}</span>]的登录密码
+    </div>
+    <Form :model="formData1"  ref="list1" :rules="rule1" :label-width="120" >
+    <FormItem label="请输入新密码:" style="width:90%;" prop="PWD">
+    <Input v-model="formData1.PWD" @on-keyup="kg" type="text"> </Input>
+    </FormItem>   
+    </Form>
+    <div slot="footer">
+    <Button @click="resetcancle()">取消</Button>
+    <Button type="primary" @click="resetpost('list1')">保存</Button>
+    </div>
+    </Modal>
             <Modal  
     v-model="showModal"
     class="table-modal-detail"
@@ -34,49 +52,61 @@
     :transition-names="['', '']">
        <Split v-model="split" :min="0.3" :max="0.7" class="split">
     <div slot="left" class="split-pane" style="overflow: auto;height:100%;">
-     <Form slot="content" :model="formData"  ref="list" :rules="rules" :label-width="80" class="common-form">
+     <Form slot="content" :model="formData"  ref="list" :rules="rules" :label-width="100" class="common-form">
                 <FormItem label="员工账号:" style="width:90%;" prop="USER_CODE" >
-                <Input v-model="formData.USER_CODE" type="text"> </Input>
+                <Input v-model="formData.USER_CODE"  :disabled="isdisabled"  type="text"> </Input>
                 </FormItem>
                 <FormItem label="员工姓名:" style="width:90%;" prop="USER_NAME" >
                 <Input v-model="formData.USER_NAME" type="text"> </Input>
                 </FormItem>
-                <FormItem label="登录密码:" style="width:90%;">
-                <Input v-model="formData.PWD" type="text"> </Input>
+                <FormItem label="登录密码:" v-if="!isdisabled" style="width:90%;" prop="PWD">
+                <Input v-model="formData.PWD" @on-keyup="kg" type="text"> </Input>
                 </FormItem>                
-                <FormItem label="职务:" style="width:90%;" >
-    <!--             <Select v-model="formData.PROFESSION" placeholder="选择状态...">
-          		<Option v-for="(item, index) in searchSelectOption1"
+                <FormItem label="职务:" style="width:90%;" prop="PROFESSION">
+                <Select v-model="formData.PROFESSION">
+          		<Option v-for="(item, index) in classList"
                   :key="index" :value="item.code">{{item.name}}</Option>
-        		</Select> -->
+        		</Select>
                 </FormItem>
-                <FormItem label="性别:" style="width:90%;" prop="GROUP_NAME" >
-                <Input v-model="formData.GROUP_NAME" type="text"> </Input>
+                <FormItem label="性别:" style="width:90%;" prop="SEX">
+                <Select v-model="formData.SEX">
+          		<Option v-for="(item, index) in sexList"
+                  :key="index" :value="item.code">{{item.name}}</Option>
+        		</Select>                	
                 </FormItem>
-                <FormItem label="电子邮箱:" style="width:90%;" prop="GROUP_NAME" >
-                <Input v-model="formData.GROUP_NAME" type="text"> </Input>
+                <FormItem label="电子邮箱:" style="width:90%;" prop="EMAIL" >
+                <Input v-model="formData.EMAIL" type="text"> </Input>
                 </FormItem>
-                <FormItem label="手机号码:" style="width:90%;" prop="GROUP_NAME" >
-                <Input v-model="formData.GROUP_NAME" type="text"> </Input>
+                <FormItem label="手机号码:" style="width:90%;" prop="TEL_PHONE" >
+                <Input v-model="formData.TEL_PHONE" type="text"> </Input>
                 </FormItem>                
-                <FormItem label="QQ号码:" style="width:90%;" prop="GROUP_NAME" >
-                <Input v-model="formData.GROUP_NAME" type="text"> </Input>
+                <FormItem label="QQ号码:" style="width:90%;" prop="QQ_NUM" >
+                <Input v-model="formData.QQ_NUM" type="text"> </Input>
                 </FormItem>
-                <FormItem label="微信号码:" style="width:90%;" prop="GROUP_NAME" >
-                <Input v-model="formData.GROUP_NAME" type="text"> </Input>
+                <FormItem label="微信号码:" style="width:90%;" prop="WEIXIN_NUM" >
+                <Input v-model="formData.WEIXIN_NUM" type="text"> </Input>
                 </FormItem>
-                <FormItem label="身份证号:" style="width:90%;" prop="GROUP_NAME" >
-                <Input v-model="formData.GROUP_NAME" type="text"> </Input>
+                <FormItem label="身份证号:" style="width:90%;" prop="CERT_NO" >
+                <Input v-model="formData.CERT_NO" type="text"> </Input>
                 </FormItem>
-                <FormItem label="入职日期:" style="width:90%;" prop="GROUP_NAME" >
-                <Input v-model="formData.GROUP_NAME" type="text"> </Input>
+                <FormItem label="入职日期:" style="width:90%;" prop="JOIN_DATE" >
+                <Col span="11" style="width:100%;">
+				<DatePicker type="date" v-model="formData.JOIN_DATE"  format="yyyy-MM-dd" style="min-width: 100%;"></DatePicker>
+                </Col> 
                 </FormItem>                
-                <FormItem label="家庭地址:" style="width:90%;" prop="GROUP_NAME" >
-                <Input v-model="formData.GROUP_NAME" type="text"> </Input>
+                <FormItem label="家庭地址:" style="width:90%;" prop="HOME_ADDRESS" >
+                <Input v-model="formData.HOME_ADDRESS" type="text"> </Input>
                 </FormItem>
-                <FormItem label="所属部门:" style="width:90%;" prop="GROUP_NAME" >
-                <Input v-model="formData.GROUP_NAME" type="text"> </Input>
-                </FormItem>                                        
+                <FormItem label="所属部门:" style="width:90%;" prop="DEPT" >
+                <Input v-model="formData.DEPT" type="text"> </Input>
+                </FormItem>
+                </FormItem>
+                <FormItem label="账号状态:" style="width:90%;" prop="STATUS">
+                <Select v-model="formData.STATUS">
+          		<Option v-for="(item, index) in statusList"
+                  :key="index" :value="item.code">{{item.name}}</Option>
+        		</Select>
+                </FormItem>                                                            
      </Form>
     </div>
     <div slot="right" class="split-pane">
@@ -101,26 +131,93 @@ import { getName, getDictGroup, getCreate } from '@/libs/util.js'
 		name:'staff-manage',
 		components:{commonTable},
 		data(){
+			const validatePWD = (rule, value, callback) => {
+                if (value != '' && value.length >= 6 && value.length <= 18) {
+                    callback();
+                }else{
+                	callback(new Error('密码长度应在6-18位之间'));
+                }
+            };
+			const validateEMAIL = (rule, value, callback) => {
+				var reg = /^([0-9A-Za-z\-_\.]+)@([0-9a-z]+\.[a-z]{2,3}(\.[a-z]{2})?)$/g;
+                if (value != '' && !reg.test(value)) {
+                    callback(new Error('邮箱格式不正确'));
+                }else{
+                	callback();
+                }
+            };
+			const validatePHONE = (rule, value, callback) => {
+				var reg = /^[1][3,4,5,7,8][0-9]{9}$/;
+                if (value != '' && !reg.test(value)) {
+                    callback(new Error('手机格式不正确'));
+                }else{
+                	callback();
+                }
+            };
 			return {
             split:0.3,
+            title:'标题',
+            setPasswordModal:false,
+            formData1:{
+            	PWD:'',
+            },
 			page:1,
+			userId:'',
 			limit:25,
+			isdisabled:false,
 			showModal:false,
 			total:0,
 			tableData:[],
 			clearType:false,
 			showTable:false,
+			data:[],
 			data1:[],
 			titles:['未选角色','当前已选角色'],
 			targetKeys:[],
 			formData:{
-			NAME:'',
-			ADDRESS:'',
-			REMARK:'',
+            	USER_ID: "",
+	            USER_TYPE: "",
+	            USER_CODE: "",
+	            USER_NAME: "",
+	            PWD: "",//密码
+	            PROFESSION: "",//职务
+	            SEX: "",//性别
+	            EMAIL: "",//邮箱
+	            TEL_PHONE: "",//电话
+	            QQ_NUM: "",//qq号码
+	            WEIXIN_NUM: "",
+	            CERT_NO: "",
+	            JOIN_DATE: "",//入职时间
+	            HOME_ADDRESS: "",
+	            DEPT: "",//所属部门
+	            STATUS: "",//是否有效
+	            ROLES: ""
 			},
 			list:'',
 			rules:{
-				NAME:[{required:true,message:'名称必填'}]
+				USER_NAME:[{required:true,message:'账号必填'}],
+				USER_CODE:[{required:true,message:'姓名必填'}],
+				PROFESSION:[{required:true}],
+				SEX:[{required:true}],
+				STATUS:[{required:true}],
+				PWD:[{required:true,message:'密码必填'},
+				{ validator: validatePWD, trigger: 'change' },
+			    { validator: validatePWD, trigger: 'blur' },
+				],
+				EMAIL:[
+				{ validator: validateEMAIL, trigger: 'change' },
+			    { validator: validateEMAIL, trigger: 'blur' },
+				],
+				TEL_PHONE:[
+				{ validator: validatePHONE, trigger: 'change' },
+			    { validator: validatePHONE, trigger: 'blur' },
+				]
+			},
+			rule1:{
+				PWD:[{required:true,message:'密码必填'},
+				{ validator: validatePWD, trigger: 'change' },
+			    { validator: validatePWD, trigger: 'blur' },
+				],		
 			},
 			columns:[
 			{title: '员工账号', key: 'USER_CODE', sortable: true, minWidth: 140},
@@ -147,15 +244,61 @@ import { getName, getDictGroup, getCreate } from '@/libs/util.js'
 		    }
 		},
 		methods:{
+			reset(){
+				this.$refs['list1'].resetFields();
+				this.userId = this.list.USER_ID;
+				this.title = "重置[<div>"+ this.list.USER_NAME + "</div>]" 
+				this.setPasswordModal = true;
+			},
+			resetcancle(){
+				this.setPasswordModal = false;
+			},
+			resetpost(name){
+			this.$refs[name].validate((valid) => {
+                    if (valid) {
+                    this.$Modal.confirm({
+                      title:'系统提示',
+                      content:'确认保存吗?',
+                       onOk:this.resetsave,
+                    });
+                    } else {
+                        this.$Message.error("请校对红框信息");
+                    }
+                })
+			},
+			resetsave(){
+	      this.axios.request({
+          url: '/tenant/sys/users/resetPass',
+          method: 'post',
+          data: {access_token: this.$store.state.user.token,
+          		newPass:this.formData1.PWD,
+          		userId:this.userId
+                }
+        }).then(res => {
+          if (res.success === true) {
+          	this.setPasswordModal = false;
+          	this.getList();
+          }
+        })
+			},
+			kg(e){
+		    var data = e.target.value;
+		    e.target.value = data.replace(/\s+/g,'');
+			},
 			handleChange1 (newTargetKeys, direction, moveKeys) {
 
                 this.targetKeys = newTargetKeys;
             },
 		 add(){
-		 	for(var i in this.formData){
-		 		this.formData[i] = '';
-		 	}
+		 	this.$refs['list'].resetFields();
+		 	this.isdisabled = false;
+		 	this.formData.PROFESSION = this.classList[0].code;
+		 	this.formData.SEX = this.sexList[0].code;
+		 	this.formData.STATUS = this.statusList[0].code;
+		 	this.formData.PWD = '';
+		 	this.data = [];
 		 	this.getRoll();
+		 	this.targetKeys = [];
 		 	this.showModal = true;
 		 },
 		 remove(){
@@ -163,11 +306,11 @@ import { getName, getDictGroup, getCreate } from '@/libs/util.js'
 		 },
 		 del(){
 		 	// /tenant/basedata/ttstorehouse/cancel
-		 			this.axios.request({
-          url: '/tenant/basedata/ttstorehouse/cancel',
+		  this.axios.request({
+          url: '/tenant/sys/users/delete',
           method: 'post',
           data: {access_token: this.$store.state.user.token,
-          		 ids:this.list.STORE_ID,
+          		 ids:this.list.USER_ID
                 }
         }).then(res => {
           if (res.success === true) {
@@ -181,7 +324,9 @@ import { getName, getDictGroup, getCreate } from '@/libs/util.js'
 	     visibleChange(){
 	     	this.clearsection();
 	     },
-		 addcancle(){},
+		 addcancle(){
+		 this.showModal = false;
+		 },
 		 addpost(name){
 		this.$refs[name].validate((valid) => {
                     if (valid) {
@@ -196,13 +341,13 @@ import { getName, getDictGroup, getCreate } from '@/libs/util.js'
                 })
 		 },
 		 tosave(){
-		 	///tenant/basedata/ttstorehouse/save
-		this.formData.IS_DEFAULT = this.IS_DEFAULT === true ? this.defaultList[0].code : this.defaultList[1].code; 
+		this.formData.ROLES = this.targetKeys.join(',');
         this.axios.request({
-          url: '/tenant/basedata/ttstorehouse/save',
+          url: '/tenant/sys/users/save',
           method: 'post',
           data: {access_token: this.$store.state.user.token,
                  data:JSON.stringify(this.formData),
+                 roles:this.formData.ROLES,
                 }
         }).then(res => {
           if (res.success === true) {
@@ -254,6 +399,14 @@ import { getName, getDictGroup, getCreate } from '@/libs/util.js'
             for(var i in data){
             this.data1.push({ "key":data[i].ID, "label":data[i].NAME, "disabled": false });
             }
+          for(var i in this.data){
+		 	for(var a in this.data1){
+		 		if(this.data1[a].label.indexOf(this.data[i]) > -1){
+		 		this.targetKeys.push(this.data1[a].key);
+		 		break;		
+		 		}
+		 	}
+		 }
           }
          })
 		 },
@@ -265,7 +418,11 @@ import { getName, getDictGroup, getCreate } from '@/libs/util.js'
 		 },
 		 update(row){
 		 this.formData = row;
-		 this.IS_DEFAULT = row.IS_DEFAULT == this.defaultList[0].code ? true : false;
+		 var data = row.ROLE_NAME.split(',');
+		 this.data = data;
+		 this.targetKeys = [];
+		 this.isdisabled = true;
+		 this.getRoll();
 		 this.showModal = true;
 		 },
 		 clear(){
@@ -287,13 +444,7 @@ import { getName, getDictGroup, getCreate } from '@/libs/util.js'
 				return flag;
 			},
 			statusList(){
-				var grop = getDictGroup(this.$store.state.app.dict,'1001');
-				var data = [];
-				data.push({name:'请选择...',code:0});
-				for(var i in grop){
-					data.push(grop[i]);
-				}
-				return data;
+				return getDictGroup(this.$store.state.app.dict,'1001');
 			},
 			sexList(){
 				return getDictGroup(this.$store.state.app.dict,'1003');

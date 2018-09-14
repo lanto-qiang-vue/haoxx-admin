@@ -309,15 +309,16 @@
                                 },
                                 on: {
                                     "on-change":(val)=>{
-                                        
-                                        let self=this;
-                                        clearTimeout(this.timer);
-                                        this.timer = setTimeout(function(){
-                                            self.commitParts[params.index]['PART_NUM']=val;
-                                            self.commitParts[params.index]['PART_MONEY']=params.row.SALES_PRICE*val;
-                                            self.commitParts[params.index]['PART_LAST_MONEY']=params.row.SALES_PRICE*val-params.row.PART_DERATE_MONEY;
-                                            self.computItemMoney();
-                                        },1000)
+                                        // alert(1);
+                                        // let self=this;
+                                        // clearTimeout(this.timer);
+                                        this.commitParts[params.index]['PART_NUM'] = val;
+                                        // this.timer = setTimeout(function(){
+                                        //     self.commitParts[params.index]['PART_NUM']=val;
+                                        //     self.commitParts[params.index]['PART_MONEY']=params.row.SALES_PRICE*val;
+                                        //     self.commitParts[params.index]['PART_LAST_MONEY']=params.row.SALES_PRICE*val-params.row.PART_DERATE_MONEY;
+                                        //     self.computItemMoney();
+                                        // },1000)
                                     },
                                     
                                 }
@@ -1040,6 +1041,7 @@
         console.log("选择配件数据组",val);
         this.getParts1=val;
         this.commitParts=[];
+        // alert(1);
         for(let j in this.getParts){
           if(this.getParts[j]["STOCK_ID"]){
               var commitParts={

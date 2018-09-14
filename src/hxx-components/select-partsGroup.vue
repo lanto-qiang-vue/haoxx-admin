@@ -231,7 +231,6 @@ import selectAddParts from '@/hxx-components/select-addParts.vue'
                 }
                 if(flag) this.selectData.push(item);
                 this.$emit('selectPartsGroup', this.selectData);
-                console.log('this.selectData',this.selectData)
             },
             //获取表格数据
             getList(){

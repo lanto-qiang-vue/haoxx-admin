@@ -374,6 +374,20 @@ export const getUserInfo = (arr, group) => {
   }
 
 }
+
+export const getBtns = (access, menu) => {  
+    let btnAction = ''
+    for (let i in menu) {
+      if (menu[i].id == access) {
+        btnAction = menu[i].btnAction
+        break
+      } else if (menu[i].children) {
+        btnAction = getBtns(access, menu[i].children)
+        if (btnAction) break
+      }
+    }
+    return btnAction
+}
 /**
  * @param {obj} 任意参数
  * @returns {String}
