@@ -50,11 +50,16 @@
                                         <Input type="text" v-model="shoukuanSearch.OUT_MILEAGE" placeholder="" > </Input>
                                     </FormItem>
                                     <FormItem label="旧件处理结果:" style="width:100%">
-                                        <RadioGroup v-model="OLD_PART_RESULT">
-                                            <Radio label="旧配件已确认,由托修方收回"></Radio>
+                                        <!--<RadioGroup v-model="shoukuanSearch.OLD_PART_RESULT">
+                                            <Radio :label="item.code" v-for="(item, index) in partsArr">{{item.name}}</Radio>
+                                            
+                                            <Radio label="旧配件已确认,由托修方收回" v-for="(item, index) in partsArr"></Radio>
                                             <Radio label="旧配件已确认,由承修方收回"></Radio>
                                             <Radio label="无旧配件"></Radio>
-                                        </RadioGroup>
+                                        </RadioGroup>-->
+                                        <Select v-model="shoukuanSearch.OLD_PART_RESULT">
+                                            <Option v-for="(item, index) in partsArr" :value="item.code" :key="item.code">{{ item.name }}</Option>
+                                        </Select>
                                     </FormItem>
                                     <FormItem label="新能源专用部件:">
                                         <Input type="text" v-model="shoukuanSearch.ZY_PART" placeholder="" > </Input>
@@ -72,7 +77,7 @@
                         <Collapse v-model="collapse">
                             <Panel name="1">结算单预览
                                 <div style="height: auto;width: 700px; overflow-x: auto; margin: 0 auto;" slot="content">
-                                    <div style="padding:20px;" class="print_style" >
+                                    <div style="padding:20px; margin: 0 auto;" class="print_style" >
                                         <table border=0 width="100%" cellspacing="0" cellpadding="0" bordercolor="#000000">
                                         <thead>
                                             <tr class="noBorder">
@@ -245,7 +250,7 @@
                                                 <td colspan="10" class="text-left" style="padding:0px 10px">6. 请扫描二维码或登录上海汽修平台，对本次维修服务进行评价。</td>
                                             </tr>
                                             <tr class="noBorder">
-                                                <td colspan="5" style="text-align:right;"><img src="resources/images/main/pj_qrcode.png" style="width:152px;height:152px;"/></td>
+                                                <td colspan="5" style="text-align:right;"><img src="/static/img/pj_qrcode.png" style="width:152px;height:152px;"/></td>
                                                 <td colspan="5" style="padding:30px 0px;vertical-align: top;text-align:left;">上海市机动车维修公共服务平台</td>
                                             </tr>
                                             <tr class="noBorder">
@@ -273,12 +278,8 @@
             <select-shoukuanOrder :showSelectAccount="showShouKuan" :listSearch="showAccountData" :repairPersonArr="repairPersonArr" @closeGetList="closeGetList"></select-shoukuanOrder>
             
         </div>
-        
-        
-     
         <!--底部按钮组-->
       <div slot="footer" >
-
           <Button v-if="accessBtn('doaccount')" @click="saveAccountFun('shoukuanSearch')"  type="warning" :disabled="jiesuanButton" >结算</Button>
           <Button v-if="accessBtn('shoukuan')" @click="shoukuanFun" type="warning" :disabled="shoukuanButton" >收款</Button>
           <Button @click="showOnoff=false;">返回</Button>
@@ -311,12 +312,11 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                     "SUM_MONEY":0,
                     "OUT_DATE":"",
                     "OUT_MILEAGE":0,
-                    "OLD_PART_RESULT":"",
+                    "OLD_PART_RESULT":"3",
                     "ZY_PART":"",
                     "ZY_PART_BZQ":0,
                     "REPAIR_ID":""
                 },//提交收款工单数据-----------
-                OLD_PART_RESULT:'无旧配件',
                 showShouKuan:false,//收款弹出----
                 ruleValidate: {
                     OUT_DATE: [
@@ -326,6 +326,11 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                         { required: true, type: 'string', message: '请选择里程', }
                     ]
                 },
+                partsArr:[
+                    {name:'旧配件已确认,由托修方收回',code:'1'},
+                    {name:'旧配件已确认,由承修方收回',code:'2'},
+                    {name:'无旧配件',code:'3'},
+                ],
 
                 jiesuanButton:false,
                 shoukuanButton:true,
@@ -335,9 +340,10 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
             showSelectAccount(){
                 this.showOnoff=true;
                 this.readInData();
+
                 this.jiesuanButton=false;
                 this.shoukuanButton=true;
-                console.log(this.showAccountData);
+                
             }
         },
         mounted() {
@@ -353,15 +359,22 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                         break;
                         case'OUT_DATE':
                             this.shoukuanSearch[i]=new Date();
-                            console.log(this.shoukuanSearch[i]);
                         break;
                         case'OUT_MILEAGE':
                             this.shoukuanSearch[i]=this.showAccountData['MILEAGE']+'';
                         break;
                         case'OLD_PART_RESULT':
-                            this.shoukuanSearch[i]=3;
+                            this.shoukuanSearch[i]="3";
                         break;
-                        default : this.shoukuanSearch[i]= this.showAccountData[i];
+                        case'REPAIR_ITEM_MONEY':
+                        case'REPAIR_PART_MONEY':
+                        case'REPAIR_ITEM_DERATE_MONEY':
+                        case'REPAIR_PART_DERATE_MONEY':
+                        case'SUM_MONEY':
+                        case'REPAIR_ID':
+                            this.shoukuanSearch[i]=this.showAccountData[i];
+                        break;
+                        default : this.shoukuanSearch[i]= '';
                     };
                 }
                 this.OLD_PART_RESULT='无旧配件';
@@ -383,6 +396,7 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                 });
             },
             saveAccount(){
+                this.shoukuanSearch.OUT_DATE=formatDate(this.shoukuanSearch.OUT_DATE);
                 this.axios.request({
                     url: '/tenant/repair/ttrepairworkorder/saveAccount',
                     method: 'post',
