@@ -1,5 +1,5 @@
 //2018-09-12
-import store from '../store/index.js'
+// import store from '../store/index.js'
 //打印委托单-----------
 export const printWtsFun=function(wtdData,listSearch,commitItem,commitParts){
     var itemString='';
@@ -398,7 +398,10 @@ export const printPgdFun=function(wtdData,listSearch,commitItem,commitParts) {
 };
 
 //打印结算单--------
-export const printAccountFun=function(wtdData,listSearch,commitItem,commitItemGroup,commitParts,commitOtherItem){
+export const printAccountFun=function(wtdData,listSearch,commitItem,commitItemGroup,commitParts,commitOtherItem,store){
+
+
+  console.log(wtdData,listSearch,commitItem,commitItemGroup,commitParts,commitOtherItem,store);
   var itemString='';
   var partsString='';
   var otherString='';
@@ -663,7 +666,7 @@ export const printAccountFun=function(wtdData,listSearch,commitItem,commitItemGr
             '<td colspan="10" class="text-left" style="padding:0px 10px">6. 请扫描二维码或登录上海汽修平台，对本次维修服务进行评价。</td>'+
             '</tr>'+
             '<tr class="noBorder">'+
-            '<td colspan="5" style="text-align:right;"><img src="resources/images/main/pj_qrcode.png" style="width:152px;height:152px;"/></td>'+
+            '<td colspan="5" style="text-align:right;"><img src="/static/img/pj_qrcode.png" style="width:152px;height:152px;"/></td>'+
             '<td colspan="5" style="padding:30px 0px;vertical-align: top;text-align:left;">上海市机动车维修公共服务平台</td>'+
             '</tr>'+
             '<tr class="noBorder">'+

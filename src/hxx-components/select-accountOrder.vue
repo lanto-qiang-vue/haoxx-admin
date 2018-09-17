@@ -4,6 +4,7 @@
         v-model="showOnoff"
         title="维修工单结算"
         width="90"
+        @on-visible-change="visibleChange"
         :scrollable="true"
         :transfer= "true"
         :footer-hide="false"
@@ -26,11 +27,13 @@
                                     </FormItem>
                                     <FormItem label="项目优惠金额:">
                                         
-                                        <Input type="text" v-model="shoukuanSearch.REPAIR_ITEM_DERATE_MONEY" placeholder="" > </Input>
+                                        
+                                        <InputNumber :min="0" v-model="shoukuanSearch.REPAIR_ITEM_DERATE_MONEY"></InputNumber>
                                     </FormItem>
                                     <FormItem label="配件优惠金额:">
                                         
-                                        <Input type="text" v-model="shoukuanSearch.REPAIR_PART_DERATE_MONEY" placeholder="" > </Input>
+                                        
+                                        <InputNumber :min="0" v-model="shoukuanSearch.REPAIR_PART_DERATE_MONEY"></InputNumber>
                                     </FormItem>
                                     <FormItem label="合计优惠金额:">
                                         <span>{{shoukuanSearch.LESS_MONEY}}元</span>
@@ -47,16 +50,10 @@
                                     </FormItem>
                                    <FormItem label="出厂里程:" prop="OUT_MILEAGE">
                                         <!--<InputNumber :min="0" v-model="shoukuanSearch.OUT_MILEAGE"  placeholder=""></InputNumber>-->
-                                        <Input type="text" v-model="shoukuanSearch.OUT_MILEAGE" placeholder="" > </Input>
+                                        <!--<Input type="text" v-model="shoukuanSearch.OUT_MILEAGE" placeholder="" > </Input>-->
+                                        <InputNumber :min="0" v-model="shoukuanSearch.OUT_MILEAGE"></InputNumber>
                                     </FormItem>
                                     <FormItem label="旧件处理结果:" style="width:100%">
-                                        <!--<RadioGroup v-model="shoukuanSearch.OLD_PART_RESULT">
-                                            <Radio :label="item.code" v-for="(item, index) in partsArr">{{item.name}}</Radio>
-                                            
-                                            <Radio label="旧配件已确认,由托修方收回" v-for="(item, index) in partsArr"></Radio>
-                                            <Radio label="旧配件已确认,由承修方收回"></Radio>
-                                            <Radio label="无旧配件"></Radio>
-                                        </RadioGroup>-->
                                         <Select v-model="shoukuanSearch.OLD_PART_RESULT">
                                             <Option v-for="(item, index) in partsArr" :value="item.code" :key="item.code">{{ item.name }}</Option>
                                         </Select>
@@ -66,7 +63,8 @@
                                     </FormItem>
                                     <FormItem label="质量保证期:">
                                         <!--<InputNumber :min="0" v-model="shoukuanSearch.ZY_PART_BZQ"  placeholder=""></InputNumber>-->
-                                        <Input type="text" v-model="shoukuanSearch.ZY_PART_BZQ" placeholder="" > </Input>
+                                        <!--<Input type="text" v-model="shoukuanSearch.ZY_PART_BZQ" placeholder="" > </Input>-->
+                                        <InputNumber :min="0" v-model="shoukuanSearch.ZY_PART_BZQ"></InputNumber>
                                     </FormItem>
                                 </Form>
                             </Panel>
@@ -76,197 +74,8 @@
                     <div slot="right" class="demo-split-pane">
                         <Collapse v-model="collapse">
                             <Panel name="1">结算单预览
-                                <div style="height: auto;width: 700px; overflow-x: auto; margin: 0 auto;" slot="content">
-                                    <div style="padding:20px; margin: 0 auto;" class="print_style" >
-                                        <table border=0 width="100%" cellspacing="0" cellpadding="0" bordercolor="#000000">
-                                        <thead>
-                                            <tr class="noBorder">
-                                                <td colspan="10" style="text-align:center;"><b style="line-height:30px;font-size:18px;">机动车维修费用结算清单</b></td>
-                                            </tr>
-                                            <tr class="noBorder">
-                                                <td colspan="3"></td>
-                                                <td colspan="7" style="text-align:right;">结算清单编号：{{showAccountData.COLLECT_NO}}</td>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr class="text-center">
-                                                <td colspan="2" class="w100">机动车所有人</td>
-                                                <td colspan="2" >{{showAccountData.CUSTOMER_NAME}}</td>
-                                                <td>送修人</td>
-                                                <td colspan="2" >{{showAccountData.GIVE_REPAIR_PERSON}}</td>
-                                                <td colspan="2">联系电话</td>
-                                                <td>{{showAccountData.TELPHONE}}</td>
-                                            </tr>
-                                            <tr class="text-center">
-                                                <td colspan="2" >品牌型号</td>
-                                                <td colspan="2" >{{showAccountData.VEHICLE_MODEL}}</td>
-                                                <td>车牌号码</td>
-                                                <td colspan="2" >{{showAccountData.PLATE_NUM}}</td>
-                                                <td colspan="2">发动机号</td>
-                                                <td>{{showAccountData.ENGINE_NO}}</td>
-                                            </tr>
-                                            <tr class="text-center">
-                                                <td colspan="3" >车辆识别代码(VIN)</td>
-                                                <td colspan="4" >{{showAccountData.VIN_NO}}</td>
-                                                <td colspan="2">车辆类型</td>
-                                                <td>{{showAccountData.VEHICLE_TYPE}}</td>
-                                            </tr>
-                                            <tr class="text-center">
-                                                <td colspan="3" >工时定额执行标准</td>
-                                                <td colspan="4" >
-                                                    <div style="display:inline-block;width:12px;height:12px;border:#000000 1px solid;"></div> 行业
-                                                    &nbsp;&nbsp;&nbsp;&nbsp;<div style="display:inline-block;width:12px;height:12px;border:#000000 1px solid;"></div> 制造企业
-                                                </td>
-                                                <td colspan="2">车辆分类代号</td>
-                                                <td>{{showAccountData.VEHICLE_TYPE_CODE}}</td>
-                                            </tr>
-                                            <tr class="text-center">
-                                                <td colspan="2" >维修企业名称</td>
-                                                <td colspan="5" >{{showAccountData.tenantName}}</td>
-                                                <td colspan="2">维修企业联系人</td>
-                                                <td>{{showAccountData.linkMan}}</td>
-                                            </tr>
-                                            <tr class="text-center">
-                                                <td colspan="2" >维修企业地址</td>
-                                                <td colspan="5" >{{showAccountData.tenantAdd}}</td>
-                                                <td colspan="2">维修企业联系电话</td>
-                                                <td>{{showAccountData.linkTel}}</td>
-                                            </tr>
-                                            <tr class="text-center">
-                                                <td colspan="5" >维修企业统一社会信用代码或组织机构代码</td>
-                                                <td colspan="5" >{{showAccountData.orgNumber}}</td>
-                                            </tr>
-                                            <tr class="text-center">
-                                                <td colspan="2" >送修日期</td>
-                                                <td colspan="2" >{{showAccountData.COME_DATE}}</td>
-                                                <td>出厂日期</td>
-                                                <td colspan="2" >{{showAccountData.OUT_DATE}}</td>
-                                                <td colspan="2">维修类别</td>
-                                                <td>{{showAccountData.REPAIR_TYPE}}</td>
-                                            </tr>
-                                            <tr class="text-center">
-                                                <td colspan="2" >送修里程</td>
-                                                <td colspan="3" >{{showAccountData.MILEAGE}}</td>
-                                                <td colspan="2">出厂里程</td>
-                                                <td colspan="3">{{showAccountData.OUT_MILEAGE}}</td>
-                                            </tr>
-                                            <tr class="text-center">
-                                                <td colspan="2" style="border-bottom:2px #000 solid;">故障描述</td>
-                                                <td colspan="8" style="border-bottom:2px #000 solid;">{{showAccountData.FAULT_DESC}}</td>
-                                            </tr>
-                                            <tr class="text-center">
-                                                <td rowspan="">工时<br/>费用</td>
-                                                <td class="w30">序号</td>
-                                                <td colspan="2">维修项目</td>
-                                                <td colspan="2">结算工时</td>
-                                                <td colspan="2">工时单价<br/>(元/工时)</td>
-                                                <td colspan="2">工时费用(元)</td>
-                                            </tr>
-
-                                                <tr class="text-center" v-for="(item,index) in showAccountItem ">
-                                                    <td>{{item.REPAIR_TIME}}</td>
-                                                    <td colspan="2">{{index+1}}</td>
-                                                    <td colspan="2" tclass="a">{{item.NAME}}</td>
-                                                    <td colspan="2" tclass="a">{{item.REPAIR_TIME}}</td>
-                                                    <td colspan="2" tclass="a">100</td>
-                                                    <td colspan="2" tclass="a">{{item.ITEM_MONEY}}</td>
-                                                </tr>
-
-                                            <tr class="text-center">
-                                                <td colspan="8" style="border-bottom:2px #000 solid;text-align:right;">小计(元)：</td>
-                                                <td colspan="2" tdata="Sum" tindex="9" tclass="a" format="0.00" style="border-bottom:2px #000 solid;">{{showAccountData.REPAIR_ITEM_MONEY}}</td>
-                                            </tr>
-                                            <tr class="text-center">
-                                                <td rowspan="">材料<br/>费用</td>
-                                                <td class="w30">序号</td>
-                                                <td>材料名称</td>
-                                                <td>配件<br/>编码</td>
-                                                <td>品牌</td>
-                                                <td>数量</td>
-                                                <td>单价(元)</td>
-                                                <td>金额(元)</td>
-                                                <td>配件类型</td>
-                                                <td>是否为托修<br/>方自备配件</td>
-                                            </tr>
-
-                                                <tr class="text-center" v-for="(item,index) in showAccountParts">
-                                                    <td>{{item.SALES_PRICE}}</td>
-                                                    <td>{{index+1}}</td>
-                                                    <td>{{item.NAME}}</td>
-                                                    <td>{{item.PART_NO}}</td>
-                                                    <td tclass="b">{{item.BRAND}}</td>
-                                                    <td tclass="b">{{item.PART_NUM}}</td>
-                                                    <td tclass="b">{{item.SALES_PRICE}}</td>
-                                                    <td>{{item.PART_MONEY}}</td>
-                                                    <td>{{item.TYPE_NAME}}</td>
-                                                </tr>
-
-                                            <tr class="text-center">
-                                                <td colspan="7" style="border-bottom:2px #000 solid;text-align:right;">小计(元)：</td>
-                                                <td tdata="Sum" tindex="8" tclass="b" format="0.00" style="border-bottom:2px #000 solid;">{{showAccountData.REPAIR_PART_MONEY}}</td>
-                                                <td colspan="2" style="border-bottom:2px #000 solid;"></td>
-                                            </tr>
-                                            <tr class="text-center">
-                                                <td rowspan="">其它<br/>费用</td>
-                                                <td class="w30">序号</td>
-                                                <td colspan="6">项目</td>
-                                                <td colspan="2">金额(元)</td>
-                                            </tr>
-
-                                                <tr class="text-center" v-for="(item,index) in showAccountOther">
-                                                    <td></td>
-                                                    <td colspan="6">{{item.REPAIR_ITEM1}}</td>
-                                                    <td colspan="2">{{item.REPAIR_MONEY1}}</td>
-                                                </tr>
-
-                                            <tr class="text-center">
-                                                <td colspan="8" style="border-bottom:2px #000 solid;text-align:right;">小计(元)：</td>
-                                                <td colspan="2" style="border-bottom:2px #000 solid;">{{showAccountOther.REPAIR_MONEY1}}</td>
-                                            </tr>
-                                            <tr class="text-center">
-                                                <td colspan="3">总费用：</td>
-                                                <td colspan="7" style="text-align:left;">{{showAccountData.SUM_MONEY}}</td>
-                                            </tr>
-                                            <tr class="text-center">
-                                                <td colspan="3" style="border-bottom:2px #000 solid;">旧件处理结果：</td>
-                                                <td colspan="7" style="border-bottom:2px #000 solid;"><div style="display:inline-block;width:12px;height:12px;border:#000000 1px solid;{showAccountData.OLD_PART_RESULT:this.formatResult1}"></div> 旧配件已确认，由托修方收回；&nbsp;<div style="display:inline-block;width:12px;height:12px;border:1px #000000 solid;align-left:30px;{showAccountData.OLD_PART_RESULT:this.formatResult2}"></div> 旧件已确认，由承修方收回；&nbsp;<div style="display:inline-block;width:12px;height:12px;border:1px #000000 solid;align-left:30px;{showAccountData.OLD_PART_RESULT:this.formatResult3}"></div> 无旧配件</td>
-                                            </tr>
-                                            <tr class="noBorder">
-                                                <td colspan="10" class="text-left" style="padding:10px 10px 0px 10px;">1. 本结算清单一式两联，分别由托修方、承修方留存。</td>
-                                            </tr>
-                                            <tr class="noBorder">
-                                                <td colspan="10" class="text-left" style="padding:0px 10px">2. 结算清单项目及应付金额经双方核实，托修方签字后生效。</td>
-                                            </tr>
-                                            <tr class="noBorder">
-                                                <td colspan="10" class="text-left" style="padding:0px 10px">3. 承修方不承担托修方自备配件质量保证责任。</td>
-                                            </tr>
-                                            <tr class="noBorder">
-                                                <td colspan="10" class="text-left" style="padding:0px 10px">4. 企业承诺本次维修质量保证期为车辆行驶<span style="border-bottom:#000 1px solid;display:inline-block;padding:0 10px;">2000</span>公里或者<span style="border-bottom:#000 1px solid;display:inline-block;padding:0 10px;">10</span>日，里程和时间以先到者为准。</td>
-                                            </tr>
-                                            <tr class="noBorder">
-                                                <td colspan="10" class="text-left" style="padding:0px 10px">5. 企业承诺本次维修的新能源汽车专用部件<span style="border-bottom:#000 1px solid;display:inline-block;padding:0 10px;min-width:30px;">{{showAccountData.ZY_PART}}</span>维修质量保证期为<span style="border-bottom:#000 1px solid;display:inline-block;padding:0 10px;min-width:30px;">{{showAccountData.ZY_PART_BZQ}}</span>。</td>
-                                            </tr>
-                                            <tr class="noBorder">
-                                                <td colspan="10" class="text-left" style="padding:0px 10px">6. 请扫描二维码或登录上海汽修平台，对本次维修服务进行评价。</td>
-                                            </tr>
-                                            <tr class="noBorder">
-                                                <td colspan="5" style="text-align:right;"><img src="/static/img/pj_qrcode.png" style="width:152px;height:152px;"/></td>
-                                                <td colspan="5" style="padding:30px 0px;vertical-align: top;text-align:left;">上海市机动车维修公共服务平台</td>
-                                            </tr>
-                                            <tr class="noBorder">
-                                                <td colspan="5" style="text-align:left;">承修方 (盖章)：</td>
-                                                <td colspan="5" style="text-align:left;">托修方签名 (盖章)：</td>
-                                            </tr>
-                                            <tr class="noBorder">
-                                                <td colspan="5" style="text-align:left;">日期：<span style="display:inline-block;width:40px;"></span>年<span style="display:inline-block;width:40px;"></span>月<span style="display:inline-block;width:40px;"></span>日</td>
-                                                <td colspan="5" style="text-align:left;">日期：<span style="display:inline-block;width:40px;"></span>年<span style="display:inline-block;width:40px;"></span>月<span style="display:inline-block;width:40px;"></span>日</td>
-                                            </tr>
-                                            <tr class="noBorder">
-                                                <td colspan="10" style="height:10px;"></td>
-                                            </tr>
-                                        </tbody>
-                                        </table>
-                                    </div>
+                                <div slot="content" style="width: 700px;" id="ggggg">
+                                    
                                 </div>
                             </Panel>
                         </Collapse>
@@ -275,7 +84,7 @@
                 </Split>
             </div>
 
-            <select-shoukuanOrder :showSelectAccount="showShouKuan" :listSearch="showAccountData" :repairPersonArr="repairPersonArr" @closeGetList="closeGetList"></select-shoukuanOrder>
+            <select-shoukuanOrder :showSelectAccount="showShouKuan" :listSearch="listSearch" :repairPersonArr="repairPersonArr" @closeGetList="closeGetList"></select-shoukuanOrder>
             
         </div>
         <!--底部按钮组-->
@@ -292,10 +101,12 @@ import { getName, getDictGroup } from '@/libs/util.js'
 import mixin from '@/hxx-components/mixin'
 import { formatDate } from '@/libs/tools.js'
 import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
+  import {printAccountFun} from '@/hxx-components/repairPrintUtil.js'
+
 	export default {
 		name: "select-accountOrder",
         mixins: [mixin],
-        props:['showSelectAccount','showAccountData','showAccountItem','showAccountParts','showAccountOther','repairPersonArr'],
+        props:['showSelectAccount','showAccountData','showAccountItem','showItemGroup','showAccountParts','showAccountOther','repairPersonArr'],
         components: {selectShoukuanOrder},
         data(){
             return{
@@ -323,7 +134,7 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                         { required: true, type: 'date', message: '请选择时间', }
                     ],
                     OUT_MILEAGE: [
-                        { required: true, type: 'string', message: '请选择里程', }
+                        { required: true,  message: '请选择里程', }
                     ]
                 },
                 partsArr:[
@@ -334,52 +145,194 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
 
                 jiesuanButton:false,
                 shoukuanButton:true,
+                carTypeFun:null,//车辆类型
+                repairTypeFun:null,//维修类型
+                bandTypeFun:null,//品牌类型
+                partsType:null,//配件类型
+                wtdData:null,//企业信息
+                //初始数据值
+                listSearch:{
+                    "TENANT_ID":"",
+                    "REPAIR_ID":"",
+                    "REPAIR_NO":"",
+                    "VEHICLE_ID":"",
+                    "ENGINE_NO":"",
+                    "VEHICLE_COLOR":"",
+                    "ORDER_ID":"",
+                    "OUT_DATE":"",
+                    "OUT_MILEAGE":"",
+                    "OLD_PART_RESULT":"",
+                    "ZY_PART":"",
+                    "ZY_PART_BZQ":"",
+                    "PLATE_NUM":"",
+                    "VEHICLE_MODEL":"",
+                    "VIN_NO":"",
+                    "CUSTOMER_NAME":"",
+                    "GIVE_REPAIR_PERSON":"",
+                    "TELPHONE":"",
+                    "REPAIR_TYPE":"10191001",
+                    "MILEAGE":0,
+                    "REPAIR_PERSON":"",
+                    "VEHICLE_TYPE":"10521001",
+                    "VEHICLE_TYPE_CODE":"轿车-排量<1.6升-A",
+                    "FOLLOW_PERSON":"",
+                    "COME_DATE":new Date(),
+                    "PLAN_END_DATE":new Date(),
+                    "FAULT_DESC":"",
+                    "CUSTOMER_INFO":"",
+                    "REPAIR_INFO":"",
+                    "IS_ITEM_GROUP":"10041002",
+                    "REPAIR_ITEM_DERATE_MONEY":0,
+                    "REPAIR_PART_DERATE_MONEY":0,
+                    "STATUS":"10201001",
+                    "REPAIR_ITEM_MONEY":0,
+                    "REPAIR_PART_MONEY":0,
+                    "OTHER_MONEY":0,
+                    "SUM_MONEY":0,
+                    "GD_TYPE":""
+                },
+                itemArr:[],
+                itemGroup:[],
+                itemMoney:0,
+                itemNumber:0,
+                partArr:[],
+                partMoney:0,
+                otherArr:{},
+                otherMoney:10,
+
+
             }
         },
         watch:{
             showSelectAccount(){
+                console.log("进来结算单数据",this.showAccountData);
+                //数据清空
+                for(let key in this.listSearch){
+                    switch (key){
+                        case 'MILEAGE':
+                        case 'OTHER_MONEY':              
+                        case 'REPAIR_ITEM_MONEY':
+                        case 'REPAIR_PART_MONEY':
+                        case 'REPAIR_ITEM_DERATE_MONEY':
+                        case 'REPAIR_PART_DERATE_MONEY':
+                        case 'SUM_MONEY': this.listSearch[key]= 0; break
+                        case 'STATUS': this.listSearch[key]= "10201001"; break
+                        case 'REPAIR_TYPE': this.listSearch[key]= "10191001"; break
+                        case 'IS_ITEM_GROUP': this.listSearch[key]= "10041002"; break
+                        case 'COME_DATE':this.listSearch[key]= new Date();break
+                        case 'PLAN_END_DATE':this.listSearch[key]= new Date();break
+                        case 'VEHICLE_TYPE':this.listSearch[key]= "10521001";break
+                        case 'VEHICLE_TYPE_CODE':this.listSearch[key]= "轿车-排量<1.6升-A";break
+                        default : this.listSearch[key]= ''
+
+                        }
+                }
+                for(let i in this.showAccountData){
+                    this.listSearch[i]=this.showAccountData[i];
+                }
+
+                for(let i in this.showAccountItem){
+                    this.itemArr.push(this.showAccountItem[i]);
+                }
+                for(let i in this.showItemGroup){
+                    this.itemGroup.push(this.showItemGroup[i]);
+                }
+                // for(let i in this.showAccountOther){
+                //     this.otherArr[i]=this.showAccountOther[i];
+                // }
+                this.otherArr=this.showAccountOther;
+                this.itemNumber=this.itemArr.length;
+
                 this.showOnoff=true;
                 this.readInData();
-
                 this.jiesuanButton=false;
                 this.shoukuanButton=true;
-                
             }
         },
         mounted() {
-
+            this.carTypeFun=getDictGroup(this.$store.state.app.dict, '1052');
+            this.repairTypeFun=getDictGroup(this.$store.state.app.dict, '1019');
+            this.bandTypeFun=getDictGroup(this.$store.state.app.dict, '1016');
+            this.partsType=getDictGroup(this.$store.state.app.dict, '1017');
+            this.wtdData=this.$store.state.user.userInfo.tenant;
+            
+            
         },
         methods:{
             //读取进来的数据
             readInData(){
                 for(let i in this.shoukuanSearch){
                     switch(i){
-                        case'LESS_MONEY':
-                            this.shoukuanSearch[i]=this.showAccountData['REPAIR_ITEM_DERATE_MONEY']+this.showAccountData['REPAIR_PART_DERATE_MONEY'];
+                        case 'LESS_MONEY':
+                            this.shoukuanSearch[i]=this.listSearch['REPAIR_ITEM_DERATE_MONEY']+this.listSearch['REPAIR_PART_DERATE_MONEY'];
                         break;
-                        case'OUT_DATE':
+                        case 'OUT_DATE':
                             this.shoukuanSearch[i]=new Date();
                         break;
-                        case'OUT_MILEAGE':
-                            this.shoukuanSearch[i]=this.showAccountData['MILEAGE']+'';
+                        case 'OUT_MILEAGE':
+                            this.shoukuanSearch[i]=this.listSearch['MILEAGE']||0;
                         break;
-                        case'OLD_PART_RESULT':
+                        case 'OLD_PART_RESULT':
                             this.shoukuanSearch[i]="3";
                         break;
-                        case'REPAIR_ITEM_MONEY':
-                        case'REPAIR_PART_MONEY':
-                        case'REPAIR_ITEM_DERATE_MONEY':
-                        case'REPAIR_PART_DERATE_MONEY':
-                        case'SUM_MONEY':
-                        case'REPAIR_ID':
-                            this.shoukuanSearch[i]=this.showAccountData[i];
+                        case 'REPAIR_ITEM_MONEY':
+                        case 'REPAIR_PART_MONEY':
+                        case 'REPAIR_ITEM_DERATE_MONEY':
+                        case 'REPAIR_PART_DERATE_MONEY':
+                        case 'SUM_MONEY':
+                            this.shoukuanSearch[i]=this.listSearch[i]||0;
                         break;
-                        default : this.shoukuanSearch[i]= '';
+                        case 'ZY_PART_BZQ':
+                            this.shoukuanSearch[i]=this.listSearch[i]||0;
+                        break;
+                        default : this.shoukuanSearch[i]= this.listSearch[i];
                     };
                 }
-                this.OLD_PART_RESULT='无旧配件';
-            },
 
+                
+                for(let i in this.listSearch){
+                    switch(i){
+                        case'COME_DATE':
+                        case'OUT_DATE':
+                            this.listSearch[i]=formatDate(this.listSearch[i])+ ' '+ formatDate(this.listSearch[i], 'hh:mm:ss');
+                            console.log(this.listSearch[i]);
+                        break;
+                        case'VEHICLE_TYPE':
+                            console.log(this.listSearch[i],getName(this.carTypeFun,this.listSearch[i]));
+                            this.listSearch[i]=getName(this.carTypeFun,this.listSearch[i]);
+                        break;
+                        case'REPAIR_TYPE':
+                            this.listSearch[i]=getName(this.repairTypeFun,this.listSearch[i]);
+                        break;
+                        default : this.listSearch[i]= this.listSearch[i];
+                    };
+               }
+
+               for(let j in this.partArr){
+                   for(let i in this.partArr[j]){
+                       switch(i){
+                        case 'BRAND':
+                            this.partArr[j][i]=getName(this.bandTypeFun,this.partArr[j][i]);
+                        break;
+                        case 'PART_SOURCE':
+                            this.partArr[j][i]=getName(this.partsType,this.partArr[j][i]);
+                        break;
+                        case 'IS_SELF':
+                            if(this.partArr[j][i]){
+                                this.partArr[j][i]="是"
+                            }else{
+                                this.partArr[j][i]="否"
+                            }
+                        break;
+                        default : this.partArr[j][i]= this.partArr[j][i];
+                    };
+                   }
+                   
+               }
+               this.formatDataFun(true);
+            console.log("转化之后的数据------",this.listSearch);
+               
+            },
             //保存数据----
             saveAccountFun(name){
                 this.$refs[name].validate((valid) => {
@@ -396,7 +349,7 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                 });
             },
             saveAccount(){
-                this.shoukuanSearch.OUT_DATE=formatDate(this.shoukuanSearch.OUT_DATE);
+                this.shoukuanSearch.OUT_DATE=formatDate(this.shoukuanSearch.OUT_DATE)+ ' '+ formatDate(this.shoukuanSearch.OUT_DATE, 'hh:mm:ss');
                 this.axios.request({
                     url: '/tenant/repair/ttrepairworkorder/saveAccount',
                     method: 'post',
@@ -406,9 +359,21 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                     }
                 }).then(res => {
                     if (res.success === true) {
-                        this.$emit('emitAccount','10201004');//重新请求数据
+                        var newArr=['10201004',this.shoukuanSearch];
+                        this.$emit('emitAccount',newArr);//重新请求数据
                         this.jiesuanButton=true;
                         this.shoukuanButton=false;
+                        for(let i in this.shoukuanSearch){
+                            switch(i){
+                                case'OUT_DATE':
+                                    this.listSearch[i]=formatDate(this.shoukuanSearch[i]);
+                                break;
+                                
+                                default : this.listSearch[i]= this.shoukuanSearch[i];
+                            }
+                        }
+                        this.formatDataFun(true);
+
                     }else{
                         this.$Modal.confirm({
                             title:"系统提示!",
@@ -426,7 +391,35 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
            closeGetList(){
                this.$emit('emitAccount','10201005');//重新请求数据
                this.showOnoff=false;
-           }
+           },
+           //数据格式转化----------
+           formatDataFun(flag){
+               var temp=null;
+               var LODOP=document.getElementById('ggggg');
+                    
+               if(flag){
+                
+                    this.wtdData=this.$store.state.user.userInfo.tenant;
+                    var store=this.$store;
+                    if (this.$store.state.user.userInfo.tenant && this.$store.state.user.userInfo.tenant.businessType == '10331003') {
+                    console.log('三级维修');
+                        temp=printAccountFun(this.wtdData,this.listSearch,this.itemArr,this.itemGroup,this.partArr,this.otherArr,store);
+                    } else {
+                    console.log('不是三级维修');
+                        temp=printAccountFun(this.wtdData,this.listSearch,this.itemArr,this.itemGroup,this.partArr,this.otherArr,store);
+                    }
+                    LODOP.innerHTML=temp;
+               }else{
+                   temp='';
+                   LODOP.innerHTML=temp;
+               }
+               
+           },
+           visibleChange(status){
+                if(status === false){
+                   this.formatDataFun(false);
+                }
+            },
 
         }
 	}

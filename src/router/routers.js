@@ -597,17 +597,17 @@ export default [
         component: () => import('@/hxx-store/statistical-reports/business-statistical.vue')
       },
 
-      {
-        path: '/company-report',
-        name: 'company-report',
-        meta: {
-          icon: 'md-funnel',
-          title: '公司经营报告',
-          lgType: "1002",
-          access: '100601',
-        },
-        component: () => import('@/hxx-store/statistical-reports/company-report.vue')
-      },
+      // {
+      //   path: '/company-report',
+      //   name: 'company-report',
+      //   meta: {
+      //     icon: 'md-funnel',
+      //     title: '公司经营报告',
+      //     lgType: "1002",
+      //     access: '100601',
+      //   },
+      //   component: () => import('@/hxx-store/statistical-reports/company-report.vue')
+      // },
 
     ]
   },
