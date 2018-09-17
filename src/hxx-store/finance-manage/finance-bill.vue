@@ -3,6 +3,7 @@
     v-model="showModal"
     :title="title"
     @on-visible-change="visibleChange"
+    :mask-closable="false"
     width="80"
     :scrollable="true"
     :transfer= "false"
@@ -177,6 +178,7 @@
           ref="tablesMain"
           :columns="columns2"
           :data="projectcombo"
+          @on-row-dblclick="dbclick"
           stripe
           border
         ></Table>
@@ -342,16 +344,17 @@
     <div v-if="tem == 5" style="float:left;">合计金额:<span style="color:red;"><b>{{returninfo.RETURN_MONEY}}</b></span></div>
     <Button type="primary" @click="showModal = false">返回</Button>
     </div>
+    <combo-detail :tshow="tcshow" :tid="tcid"></combo-detail>
   </Modal>
 </template>
 <script>
   import { getName, getDictGroup ,getUserInfo} from '@/libs/util.js'
   import { formatDate } from '@/libs/tools.js'
   import commonModal6 from '@/hxx-components/common-modal6.vue'
-
+  import comboDetail from '@/hxx-components/combo-detail.vue'
 	export default {
 		name: "finance-bill",
-    components: {commonModal6},
+    components: {commonModal6,comboDetail},
     data(){
       return{
         parts:'',
@@ -375,23 +378,25 @@
         shoppay:[],//付款信息
         returninfo:[],//退货详情
         returndetail:[],//退货列表
+        tcid:'',//套餐详情
+        tcshow:false,//套餐详情显示
         infos:[],
         other:[],
         showModal:false,
         columns: [
-          {title: '序号',  minWidth: 100,type:"index",
-          },
-          {title: '维修项目名称', key: 'NAME', sortable: true, minWidth: 200,
+          // {title: '序号',  minWidth: 80,type:"index",
+          // },
+          {title: '维修项目名称', key: 'NAME', sortable: true, minWidth: 140,
             // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.ORDER_TYPE))
           },
-          {title: '标准工时', key: 'REPAIR_TIME', sortable: true, minWidth: 150},
-          {title: '标准金额', key: 'REPAIR_MONEY', sortable: true, minWidth: 150},
-          {title: '油漆面数', key: 'PAINT_NUM', sortable: true, minWidth: 150},
-          {title: '小计金额', key: 'ITEM_MONEY', sortable: true, minWidth: 150},
-          {title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 150},
-          {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 150},
-          {title: '车间班组', key: 'WORK_CLASS_NAME', sortable: true, minWidth: 150},
-          {title: '备注', key: 'REMARK', sortable: true, minWidth: 150}
+          {title: '标准工时', key: 'REPAIR_TIME', sortable: true, minWidth: 120},
+          {title: '标准金额', key: 'REPAIR_MONEY', sortable: true, minWidth: 120},
+          {title: '油漆面数', key: 'PAINT_NUM', sortable: true, minWidth: 120},
+          {title: '小计金额', key: 'ITEM_MONEY', sortable: true, minWidth: 120},
+          {title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 120},
+          {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 130},
+          {title: '车间班组', key: 'WORK_CLASS_NAME', sortable: true, minWidth: 120},
+          {title: '备注', key: 'REMARK', sortable: true, minWidth:120}
         ],
         columns1: [
           {title: '序号',  minWidth: 100,type:'index',},
@@ -432,17 +437,17 @@
         ],
           columns4: [
           {title: '序号',  minWidth: 80,type:'index'},
-          {title: '仓库', key: 'STORE_NAME', sortable: true, minWidth: 150},
-          {title: '配件名称', key: 'NAME', sortable: true, minWidth: 150},
-          {title: '原厂编号', key: 'FACTORY_NO', sortable: true, minWidth: 150},
-          {title: '数量', key: 'PART_NUM', sortable: true, minWidth: 150},
-          {title: '单位', key: 'UNIT', sortable: true, minWidth: 150,
+          {title: '仓库', key: 'STORE_NAME', sortable: true, minWidth: 100},
+          {title: '配件名称', key: 'NAME', sortable: true, minWidth: 120},
+          {title: '原厂编号', key: 'FACTORY_NO', sortable: true, minWidth: 120},
+          {title: '数量', key: 'PART_NUM', sortable: true, minWidth: 80},
+          {title: '单位', key: 'UNIT', sortable: true, minWidth: 80,
           render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.UNIT))},
-          {title: '品牌', key: 'BRAND', sortable: true, minWidth: 150,
+          {title: '品牌', key: 'BRAND', sortable: true, minWidth: 120,
           render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.BRAND))
           },
-          {title: '退货单价', key: 'PURCHASE_PRICE', sortable: true, minWidth: 150,},
-          {title: '退款金额', key: 'SUM_MONEY', sortable: true, minWidth: 150},
+          {title: '退货单价', key: 'PURCHASE_PRICE', sortable: true, minWidth: 120,},
+          {title: '退款金额', key: 'SUM_MONEY', sortable: true, minWidth: 120},
         ],
           columns5: [
           {title: '应付金额', key: 'REAL_MONEY', sortable: true, minWidth: 150},
@@ -513,7 +518,6 @@
           {title: '小计金额', key: 'SUM_MONEY', sortable: true, minWidth: 150},
           {title: '单位成本', key: 'PART_COST', sortable: true, minWidth: 150},
          ],
-
         collapse: '1',
         titleMsg:'',
       }
@@ -549,6 +553,12 @@
       }
     },
     methods:{
+      dbclick(row){
+        //GROUP_ID;
+        // console.log(row);
+      this.tcshow = Math.random();
+      this.tcid = row.GROUP_ID;
+      },
       visibleChange(){
         this.$emit('clearsection');
       },

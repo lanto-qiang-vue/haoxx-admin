@@ -634,6 +634,18 @@ export default [
         component: () => import('@/hxx-store/base-data/warehouse-manage.vue')
       },
       {
+        path: '/insurance-company',
+        name: 'insurance-company',
+        meta: {
+          icon: 'md-funnel',
+          title: '保险公司',
+          lgType: "1002",
+          access: '100508',
+        },
+        component: () => import('@/hxx-store/base-data/insurance-company.vue')
+      }
+      ,
+      {
         path: '/cart-brand',
         name: 'cart-brand',
         meta: {
@@ -692,6 +704,17 @@ export default [
     },
     component: Main,
     children:[
+      {
+        path: '/health-record.vue',
+        name: 'health-record',
+        meta: {
+          icon: 'md-funnel',
+          title: '健康档案参数',
+          lgType: "1002",
+          access: '100704',
+        },
+        component: () => import('@/hxx-store/system-manage/health-record.vue')
+      },
       {
         path: '/store-info',
         name: 'store-info',

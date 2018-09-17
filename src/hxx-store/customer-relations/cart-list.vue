@@ -191,7 +191,7 @@
     mounted(){
       this.showTable = Math.random();
       var group = getDictGroup(this.$store.state.app.dict,'1013');
-      this.color.push({'code':0,'order':0,'group':'1013','name':'请选择'});
+      this.color.push({'code':0,'order':0,'group':'1013','name':'选择颜色...'});
       for(var i in group){
       this.color.push(group[i]);
       }

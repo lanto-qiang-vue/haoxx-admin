@@ -203,6 +203,14 @@
                 	  callback();
                 }
             };
+          const servicePass = (rule,value,callback) => {
+            var p1 = /\d?[A-Z]+\d?/
+             if(p1.test(value) && value.length == 17){
+                this.checkCart(value);
+             }else{
+                callback(new Error('请输入正确的车架号'));
+             }
+          }
 			return{
         cleartype:false,
 				obj:'',//单选内容存储
@@ -252,7 +260,7 @@
 					 ],
 					 VIN_NO:[{required: true, message: '车架号必填', trigger: 'blur' },
 					 	{ validator: validatePass, trigger: 'change' },
-					 	{ validator: validatePass, trigger: 'blur' }
+					 	{ validator: servicePass, trigger: 'blur' }
 					 ],
 					 VEHICLE_MODEL:[{required: true, message: '请点击选取车型', trigger: 'blur'}],
            CUSTOMER_CODE:[{required: true, message: '请点击搜索图标选取客户', trigger: 'blur'}],
@@ -316,6 +324,22 @@
            },
 		},
 		methods:{
+      checkCart(val){
+        //能否根据车架号获取到车型...
+      this.axios.request({
+          url: '/tenant/basedata/ttvehiclefile/get_vehicle_model',
+          method: 'post',
+          data: {access_token: this.$store.state.user.token,
+                vin:val,
+                }
+        }).then(res => {
+          if (res.success === true) {
+            
+          }else{
+            this.$Modal.info({title:'系统提示',content:res.title+"<span style='color:red;'>请手动选取车型</span>"}); 
+          }
+        })
+      },
       visibleChange(){
         this.$emit('clearsection');
       },
@@ -385,7 +409,9 @@
         })
 			},
       onRowClick(row){
+        //车型名字...
       this.formData.VEHICLE_MODEL = row.MODEL_NAME;
+      //车型id...
       this.formData.TID = row.TID;
       this.vehicleShow = false;
       },

@@ -93,7 +93,7 @@
                                         <span slot="prepend">
           <Icon :size="16" type="ios-person"></Icon>
         </span>
-                <span slot="append"><a href="javascript:void()" @click="getCode">获取</a></span>
+                <span slot="append"><a href="javascript:void()" @click="getCode">{{description}}</a></span>
                                         </Input>
                                     </FormItem>
                                     <FormItem prop="password">
@@ -132,11 +132,12 @@ import {mapActions} from 'vuex'
 export default {
   data () {
     return {
+      description:'获取',
       form: {
         userName: '13888888888',
         password: '123456'
       },
-      form2: {
+      form2:{
         tenantId: 'T00001',
         userCode: 'zzz',
         password: '123456'
@@ -252,11 +253,14 @@ export default {
       this.isShow = 1;
     },
     getCode:function(){
-      var pattern = /^((1[3,5,8][0-9])|(14[5,7])|(17[0,6,7,8])|(19[7]))\d{8}$/;
-      if(!pattern.test(this.form3.phone)){
-       this.$Message.error('请输入正确的手机号');
-       return;
-      }
+      //倒计时....
+      this.description = "开始倒计时";
+      // alert(this.form3.phone);
+      // var pattern = /^((1[3,5,8][0-9])|(14[5,7])|(17[0,6,7,8])|(19[7]))\d{8}$/;
+      // if(!pattern.test(this.form3.phone)){
+
+      // }
+
     }
   }
 }

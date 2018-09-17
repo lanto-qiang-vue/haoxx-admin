@@ -39,12 +39,14 @@
     <!-- 特殊下拉结束 -->
           </FormItem>
           <FormItem style="width:30%;" label="采购指导价:">
-              <InputNumber :min="0" style="width:100%;" v-model="listSearch.PURCHASE_PRICE" placeholder="">
+              <InputNumber :min="0" style="width:100%;" v-model="listSearch.PURCHASE_PRICE"             :formatter="value => `${value}元`"
+            :parser="value => value.replace('元', '')" placeholder="">
                     
               </InputNumber>
           </FormItem>
           <FormItem label="销售建议价:" style="width:30%;" prop="SALES_PRICE">
-              <InputNumber :min="0" style="width:100%;" v-model="listSearch.SALES_PRICE" placeholder="" @on-change="salesPriceFun"></InputNumber>
+              <InputNumber :min="0" style="width:100%;" v-model="listSearch.SALES_PRICE" placeholder="" @on-change="salesPriceFun"             :formatter="value => `${value}元`"
+            :parser="value => value.replace('元', '')"></InputNumber>
           </FormItem>
           <FormItem label="包装单位:" style="width:30%;" prop="UNIT">
               <Select v-model="listSearch.UNIT" placeholder="" style="width:100%;" placeholder="选择包装单位">
@@ -63,7 +65,7 @@
               </Input>
           </FormItem>
          <FormItem label="未含税价(元):" style="width:30%;">
-              <Input type="text" v-model="listSearch.NOT_CONTAINS_TAX_SALE_PRICE" placeholder="" style="width:100%;" disabled>
+              <Input type="text" v-model="listSearch.NOT_CONTAINS_TAX_SALE_PRICE"  placeholder="" style="width:100%;" disabled>
               </Input>
           </FormItem>
        </Form>
@@ -83,10 +85,12 @@
           </FormItem>
           
           <FormItem label="三包期:" style="width:30%;">
-              <InputNumber :min="0" v-model="listSearch.THREE_EXPIRATION_DATE" style="width:100%;" placeholder=""></InputNumber>
+              <InputNumber :min="0" v-model="listSearch.THREE_EXPIRATION_DATE" style="width:100%;" placeholder=""             :formatter="value => `${value}月`"
+            :parser="value => value.replace('月', '')"></InputNumber>
           </FormItem>
           <FormItem label="保质期:" style="width:30%;">
-              <InputNumber :min="0" v-model="listSearch.EXPIRATION_DATE" style="width:100%;" placeholder=""></InputNumber>
+              <InputNumber :min="0" v-model="listSearch.EXPIRATION_DATE" style="width:100%;" placeholder=""             :formatter="value => `${value}月`"
+            :parser="value => value.replace('月', '')"></InputNumber>
           </FormItem>
           <FormItem label="配件来源:" style="width:30%;">
               <Select v-model="listSearch.PART_SOURCE" placeholder="" style="width:100%;" placeholder="选择来源...">
@@ -100,22 +104,29 @@
        <Form  slot="content" :label-width="110" inline class="common-form">
 
           <FormItem label="采购最低价:" style="width:30%;">
-              <InputNumber :min="0" v-model="listSearch.MIN_SHOP_PRICE" style="width:100%;" placeholder=""></InputNumber>
+              <InputNumber :min="0" v-model="listSearch.MIN_SHOP_PRICE" style="width:100%;" placeholder=""             :formatter="value => `${value}元`"
+            :parser="value => value.replace('元', '')"></InputNumber>
           </FormItem>
           <FormItem label="销售最低价:" style="width:30%;">
-              <InputNumber :min="0" v-model="listSearch.MIN_SALES_PRICE" style="width:100%;" placeholder=""></InputNumber>
+              <InputNumber :min="0" v-model="listSearch.MIN_SALES_PRICE" style="width:100%;" placeholder=""
+            :formatter="value => `${value}元`"
+            :parser="value => value.replace('元', '')"></InputNumber>
           </FormItem>
           <FormItem label="安全库存:" style="width:30%;">
               <InputNumber :min="0" v-model="listSearch.SAFE_STOCK_NUM" style="width:100%;" placeholder=""></InputNumber>
           </FormItem>
           <FormItem label="采购最高价:" style="width:30%;">
-              <InputNumber :min="0" v-model="listSearch.MAX_SHOP_PRICE" style="width:100%;" placeholder=""></InputNumber>
+              <InputNumber :min="0" v-model="listSearch.MAX_SHOP_PRICE" style="width:100%;" placeholder=""
+            :formatter="value => `${value}元`"
+            :parser="value => value.replace('元', '')"></InputNumber>
           </FormItem>
           <FormItem label="销售最高价:" style="width:30%;">
-              <InputNumber :min="0" v-model="listSearch.MAX_SALES_PRICE" style="width:100%;" placeholder=""></InputNumber>
+              <InputNumber :min="0" v-model="listSearch.MAX_SALES_PRICE" style="width:100%;" placeholder=""
+            :formatter="value => `${value}元`"
+            :parser="value => value.replace('元', '')"></InputNumber>
           </FormItem>
           <FormItem label="最高库存:" style="width:30%;">
-              <InputNumber :min="0" v-model="listSearch.MAX_STOCK_NUM" style="width:100%;" placeholder=""></InputNumber>
+              <InputNumber  :min="0" v-model="listSearch.MAX_STOCK_NUM" style="width:100%;" placeholder=""></InputNumber>
           </FormItem>
           
        </Form>
@@ -236,12 +247,12 @@
         watch:{
             showSelectAddParts(){
                 this.showOnoff=true;
-
                 if(this.editdata){
-                    console.log('谢瑞翔个猪')
+                    // console.log('大猩猩陈一。。。。。')
                     this.listSearch = this.editdata;
+                    this.listSearch.RATE = this.listSearch.RATE == '' ? 0 : this.listSearch.RATE;
+                    this.listSearch.NOT_CONTAINS_TAX_SALE_PRICE = this.listSearch.NOT_CONTAINS_TAX_SALE_PRICE  ? this.listSearch.NOT_CONTAINS_TAX_SALE_PRICE : 0;
                 }else{
-                    
                     this.listSearch={
                         "PART_ID":"",
                         "TYPE_ID":"",
@@ -321,9 +332,6 @@
             rateComputed(val){
                 this.listSearch.NOT_CONTAINS_TAX_SALE_PRICE=(this.listSearch.SALES_PRICE/(this.listSearch.RATE+1)).toFixed(2);
                 this.listSearch.TAX=(this.listSearch.NOT_CONTAINS_TAX_SALE_PRICE*this.listSearch.RATE).toFixed(2);
-
-                
-                
             },
             del(){
               //这里是添加操作 就服你名字都不换....社会我鑫哥....人狠话不多....
@@ -369,9 +377,11 @@
                 this.data1=data;
             },
             selectChangeTree(val){
-                this.showType=false;
-                this.listSearch["TYPE_NAME"]=val[0].title;
-                this.listSearch.TYPE_ID = val[0].title == '配件分类' ? '' :val[0].nodeId;
+              var TYPE_ID = val[0].title == '配件分类' ? '' :val[0].nodeId;
+                if(TYPE_ID != ''){
+                this.listSearch.TYPE_ID = TYPE_ID;
+                this.listSearch.TYPE_NAME = val[0].title;
+                }
             },
             //弹出层状态变化--------
         visibleChange(status){

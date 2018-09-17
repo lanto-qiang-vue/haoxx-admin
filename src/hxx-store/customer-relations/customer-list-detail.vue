@@ -182,7 +182,7 @@
         },
         ruleValidate: {
           name:[{required: true, message: '客户名称必填', trigger: 'change' }],
-          phone:[{required: true, message: '移动电话必填', trigger: 'change' },
+          phone:[{required: true,pattern:/^[1][3,4,5,7,8][0-9]{9}$/, message: '请输入有效手机号码', trigger: 'change,blur' },
           // { type:'string',pattern:/^[1][3,4,5,7,8][0-9]{9}$/, message:'请输入有效手机号码', trigger:'blur'}
           ],
           idcard:[{ type:'string',pattern:/(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/, message:'请输入正确的身份证号码', trigger:'blur'}]
