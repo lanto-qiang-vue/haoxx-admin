@@ -2063,13 +2063,13 @@
             console.log(this.listSearch.COLLECT_NO,this.commitItemGroup,this.commitParts,this.commitOtherItem);
 
             this.wtdData=this.$store.state.user.userInfo.tenant;
-
+            var store=this.$store;
             if (this.$store.state.user.userInfo.tenant && this.$store.state.user.userInfo.tenant.businessType == '10331003') {
               console.log('三级维修');
-                temp=printAccountFun(this.wtdData,this.listSearch,this.commitItem,this.commitItemGroup,this.commitParts,this.commitOtherItem);
+                temp=printAccountFun(this.wtdData,this.listSearch,this.commitItem,this.commitItemGroup,this.commitParts,this.commitOtherItem,store);
             } else {
               console.log('不是三级维修');
-                temp=printAccountFun(this.wtdData,this.listSearch,this.commitItem,this.commitItemGroup,this.commitParts,this.commitOtherItem);
+                temp=printAccountFun(this.wtdData,this.listSearch,this.commitItem,this.commitItemGroup,this.commitParts,this.commitOtherItem,store);
             }
             var LODOP=getLodop();
             LODOP.SET_PRINT_STYLEA(0, "Alignment", 2);
