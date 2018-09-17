@@ -51,7 +51,7 @@
                     </Form>
                 </Panel>
                 <Panel name="3">支付方式
-                    <Form slot="content" :label-width="120" inline class="detail-form">
+                    <Form slot="content" :label-width="120" inline class="detail-form" ref="shoukuanSearch" :rules="ruleValidate1">
                         <FormItem label="支付宝:">
                             <Button  type="primary" >支付宝</Button>
                         </FormItem>
@@ -62,7 +62,7 @@
                         <FormItem label="短信账单收款:">
                             <Button  type="primary" >短信账单收款</Button>
                         </FormItem>
-                        <FormItem label="其他方式:">
+                        <FormItem label="其他方式:" prop="PAYMENT1">
                             <Select v-model="shoukuanSearch.PAYMENT1" placeholder="" style="min-width: 250px;">
                                 <Option v-for="(item, index) in payModeData"
                                 :key="index" :value="item.code">{{item.name}}</Option>
@@ -108,6 +108,25 @@ export default {
     props:['showSelectAccount','listSearch','repairPersonArr'],
     components: {selectValueCard},
     data(){
+         const validatePass = (rule, value, callback) => {
+             console.log(this.shoukuanSearch['IS_GIVE_INVOICE']);
+             if(this.shoukuanSearch['IS_GIVE_INVOICE']=="10041001"){
+                    if (value) {
+                        callback();
+                    }else{
+                            
+                        callback(new Error('必选'));
+                    }
+             }else{
+                    
+                    if (!value) {
+                        callback();
+                    }else{
+                        callback(new Error('请选择是否开具发票'));
+                    }
+             }
+            
+        };
         return{
             single:false,//是否选择开发票
             showShouKuan:false,//弹出层是否显隐
@@ -139,10 +158,14 @@ export default {
             },//提交收款工单数据-----------
             ruleValidate1: {
                 INVOICE_NO: [
-                    { required: true, type: 'string', message: '发票编号必填',}
+                    { validator: validatePass, trigger: 'change'},
                 ],
-                
+                PAYMENT1: [
+                    { required: true, type: 'string', message: '必填',}
+                    
+                ],
             },
+            
             cardStateArr:[],
             payModeData:[],
         }
@@ -256,45 +279,50 @@ export default {
                     }
                 });
             }else{
-                var savePayData={
-                                "CUSTOMER_ID":"",
-                                "REPAIR_ITEM_MONEY":0,
-                                "SUM_MONEY":0,
-                                "FOLLOW_PERSON":"",
-                                "PAYMENT1":"",
-                                "IS_GIVE_INVOICE":"",
-                                "INVOICE_NO":"",
-                                "CORP_NAME":"",
-                                "TAX_NO":"",
-                                "REMARK":"",
-                                "REPAIR_ID":""
+                this.$refs[name].validate((valid) => {
+                    if (valid) {
+                        var savePayData={
+                            "CUSTOMER_ID":"",
+                            "REPAIR_ITEM_MONEY":0,
+                            "SUM_MONEY":0,
+                            "FOLLOW_PERSON":"",
+                            "PAYMENT1":"",
+                            "IS_GIVE_INVOICE":"",
+                            "INVOICE_NO":"",
+                            "CORP_NAME":"",
+                            "TAX_NO":"",
+                            "REMARK":"",
+                            "REPAIR_ID":""
+                        }
+                        for(let key in savePayData){
+                            savePayData[key]=this.shoukuanSearch[key];
+                        }
+                        this.axios.request({
+                            url: '/tenant/repair/ttrepairworkorder/savePay',
+                            method: 'post',
+                            data: {
+                                data: JSON.stringify(savePayData),
+                                access_token: this.$store.state.user.token
                             }
-                            for(let key in savePayData){
-                                savePayData[key]=this.shoukuanSearch[key];
-                            }
-                            this.axios.request({
-                                url: '/tenant/repair/ttrepairworkorder/savePay',
-                                method: 'post',
-                                data: {
-                                    data: JSON.stringify(savePayData),
-                                    access_token: this.$store.state.user.token
-                                }
-                            }).then(res => {
-                                if (res.success === true) {
-                                    this.$Message.info('successful');
-                                    this.titleMsg="已结清";
-                                    this.showShouKuan=false;//收款界面弹出
-                                    for(let i in this.buttonStateArr){
-                                        switch(i){
-                                        case 'printAccount': this.buttonStateArr[i]= false; break
-                                        default : this.buttonStateArr[i]= true;
-                                        }
+                        }).then(res => {
+                            if (res.success === true) {
+                                this.$Message.info('successful');
+                                this.titleMsg="已结清";
+                                this.showShouKuan=false;//收款界面弹出
+                                for(let i in this.buttonStateArr){
+                                    switch(i){
+                                    case 'printAccount': this.buttonStateArr[i]= false; break
+                                    default : this.buttonStateArr[i]= true;
                                     }
-
-                                    this.getAccountData(this.shoukuanSearch["REPAIR_ID"]);
-                                    this.$emit('closeGetList');
                                 }
-                            })
+
+                                this.getAccountData(this.shoukuanSearch["REPAIR_ID"]);
+                                this.$emit('closeGetList');
+                            }
+                        }) 
+                    }
+                });
+                
             }
             
         },

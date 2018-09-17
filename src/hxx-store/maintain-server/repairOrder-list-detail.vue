@@ -152,7 +152,8 @@
       stripe
       border
     ></Table>
-    <div class="r-list-money">
+
+    <div class="r-list-money" v-if="isAccountFlag">
       <p>
         维修项目费用：
         <span>{{listSearch.REPAIR_ITEM_MONEY}}元</span> + 维修配件费用:
@@ -163,6 +164,20 @@
           <span>{{listSearch.SUM_MONEY}}元</span>
       </p>
     </div>
+    <!--//结算信息-->
+    <div class="r-list-header" v-if="!isAccountFlag">
+      <h1>结算信息</h1>
+    </div>
+    <Table
+      class="main-table"
+      ref="tablesMain"
+      :columns="columns4"
+      :data="accountInfo"
+      stripe
+      border
+      v-if="!isAccountFlag"
+    ></Table>
+
       
       <!--选择车型-->
       <select-vehicle :showoff="showoff" @selectCar="selectCar">
@@ -180,8 +195,8 @@
       <select-itemPackage :showSelectItemGroup="showSelectItemGroup" @selectItemGroup="selectItemGroup" :initItemGroup="initItemGroup">
       </select-itemPackage>
       <!--选择工单结算单-->
-      <select-accountOrder :showSelectAccount="showSelectAccount" :showAccountData="listSearch" :showAccountItem="commitItem" :showAccountParts="commitParts" :showAccountOther="commitOtherItem" 
-      :repairPersonArr="repairPersonArr" @emitAccount="emitAccount">
+      <select-accountOrder :showSelectAccount="showSelectAccount" :showAccountData="listSearch" :showAccountItem="commitItem" :showItemGroup="commitItemGroup" :showAccountParts="commitParts" :showAccountOther="commitOtherItem" 
+      :repairPersonArr="repairPersonArr" @emitAccount="emitAccount" @emitComputedMoney="emitComputedMoney">
       </select-accountOrder>
       <select-shoukuanOrder :showSelectAccount="showShouKuan" :listSearch="listSearch" :repairPersonArr="repairPersonArr" @closeGetList="closeGetList">
 
@@ -741,7 +756,8 @@
                         props: {
                             type: 'text',
                             value: params.row.REPAIR_ITEM1,
-                            placeholder:'请输入项目名称'
+                            placeholder:'请输入项目名称',
+                            disabled:!this.isOrderSuccess,
                         },
                         on: {
                             "on-blur":(e)=>{
@@ -756,7 +772,7 @@
           },
           {title: '金额(元)', key: 'REPAIR_MONEY1', sortable: true, minWidth: 110,
               render: (h, params) => {
-                        var moneNum=parseInt(params.row.REPAIR_MONEY1);
+                        var moneNum=parseFloat(params.row.REPAIR_MONEY1)||0;
                         return h('div', [
                             h('InputNumber', {
                                 props: {
@@ -785,7 +801,8 @@
                         props: {
                             type: 'text',
                             value: params.row.REPAIR_ITEM2,
-                            placeholder:'请输入项目名称'
+                            placeholder:'请输入项目名称',
+                            disabled:!this.isOrderSuccess,
                         },
                         on: {
                             "on-blur":(e)=>{
@@ -799,7 +816,7 @@
           },
           {title: '金额(元)', key: 'REPAIR_MONEY2', sortable: true, minWidth: 110,
               render: (h, params) => {
-                        var moneNum=parseInt(params.row.REPAIR_MONEY2);
+                        var moneNum=parseFloat(params.row.REPAIR_MONEY2)||0;
                         return h('div', [
                             h('InputNumber', {
                                 props: {
@@ -828,7 +845,8 @@
                         props: {
                             type: 'text',
                             value: params.row.REPAIR_ITEM3,
-                            placeholder:'请输入项目名称'
+                            placeholder:'请输入项目名称',
+                            disabled:!this.isOrderSuccess,
                         },
                         on: {
                             "on-blur":(e)=>{
@@ -842,7 +860,7 @@
           },
           {title: '金额(元)', key: 'REPAIR_MONEY3', sortable: true, minWidth: 110,
               render: (h, params) => {
-                        var moneNum=parseInt(params.row.REPAIR_MONEY3);
+                        var moneNum=parseFloat(params.row.REPAIR_MONEY3)||0;
                         return h('div', [
                             h('InputNumber', {
                                 props: {
@@ -872,7 +890,8 @@
                         props: {
                             type: 'text',
                             value: params.row.REPAIR_ITEM4,
-                            placeholder:'请输入项目名称'
+                            placeholder:'请输入项目名称',
+                            disabled:!this.isOrderSuccess,
                         },
                         on: {
                             "on-blur":(e)=>{
@@ -886,7 +905,7 @@
           },
           {title: '金额(元)', key: 'REPAIR_MONEY4', sortable: true, minWidth: 110,
               render: (h, params) => {
-                        var moneNum=parseInt(params.row.REPAIR_MONEY4);
+                        var moneNum=parseFloat(params.row.REPAIR_MONEY4)||0;
                         return h('div', [
                             h('InputNumber', {
                                 props: {
@@ -909,7 +928,29 @@
                     }
           },
         ],
-
+        //结算信息-----
+        columns4:[
+          {title: '维修项目费用', key: 'itemMoney',  minWidth: 130,
+            
+          },
+          {title: '维修配件费用', key: 'partMoney',  minWidth: 130,
+              
+          },
+          {title: '维修项目优惠金额', key: 'itemDerateMoney',  minWidth: 150,
+           
+          },
+          {title: '维修配件优惠金额', key: 'partDerateMoney', minWidth: 140,
+             
+          },
+          {title: '其他项目费用', key: 'otherItemMoney',  minWidth: 130,
+             
+          },
+          {title: '合计应收金额', key: 'sumMoney',  minWidth: 130,
+             
+          },
+        ],
+        accountInfo:[],
+        isAccountFlag:true,
         collapse: '1',
         //基础数据-----
         listSearch:{
@@ -1053,7 +1094,22 @@
         this.commitParts=[];
         this.testSingle=false;
         this.publicButtonFlag=false;
-
+        this.commitOtherItem=[
+          {
+            "REPAIR_ITEM1":"",
+            "REPAIR_MONEY1":0,
+            "REPAIR_ITEM2":"",
+            "REPAIR_MONEY2":0,
+            "REPAIR_ITEM3":"",
+            "REPAIR_MONEY3":0,
+            "REPAIR_ITEM4":"",
+            "REPAIR_MONEY4":0,
+            "CREATE_TIME":null,
+            "UPDATE_TIME":null,
+            "id":""
+          },
+        ];
+        this.isAccountFlag=true;
         //数据清空
         for(let key in this.listSearch){
           switch (key){
@@ -1076,14 +1132,16 @@
             }
         }
 
+
         if(this.detailQuery){
+            console.log('this.detailQuery',this.detailQuery);
             this.commitItemGroup=this.detailQuery.commitItemGroup;
             this.commitItem=this.detailQuery.commitItem;
             this.commitParts=this.detailQuery.commitParts;
             // this.publicButtonFlag=true;
             //进来数据重新赋值-----------------
-            for(let key in this.detailQuery){
-              this.listSearch[key]=this.detailQuery[key];
+            for(let key in this.detailQuery.listSearch){
+              this.listSearch[key]=this.detailQuery.listSearch[key];
             }
             this.selectCarInitFun(this.listSearch.VEHICLE_TYPE,this.listSearch.VEHICLE_TYPE_CODE);
             this.listSearch['GIVE_REPAIR_PERSON']=this.detailQuery.listSearch['CUSTOMER_NAME'];
@@ -1452,7 +1510,7 @@
         //结算单组建传出来的按钮判断-----
         
         emitAccount(val){
-            if(val=='10201004'){
+            if(val[0]=='10201004'){
               for(let i in this.buttonStateArr){
                   switch(i){
                     case 'shoukuan':
@@ -1463,7 +1521,7 @@
                   }
               }
               this.$emit('closeGetList');//重新请求数据
-            }else if(val=='10201005'){
+            }else if(val[0]=='10201005'){
               for(let i in this.buttonStateArr){
                   switch(i){
                     case 'printAccount':
@@ -1474,7 +1532,49 @@
               }
               this.$emit('closeGetList');//重新请求数据
             }
+
+            if(val[1]){
+                this.accountInfo=[];
+                var newJson={
+                    itemMoney:0,
+                    partMoney:0,
+                    itemDerateMoney:0,
+                    partDerateMoney:0,
+                    otherItemMoney:0,
+                    sumMoney:0,
+                }
+
+                for(let i in val[1]){
+                    switch(i){
+                        case 'REPAIR_ITEM_MONEY':
+                            newJson['itemMoney']= val[1][i]; 
+                        break;
+                        case 'REPAIR_ITEM_DERATE_MONEY':
+                            newJson['itemDerateMoney']= val[1][i]; 
+                        break;
+                        case 'REPAIR_PART_DERATE_MONEY':
+                            newJson['partDerateMoney']= val[1][i]; 
+                        break;
+                        case 'REPAIR_PART_MONEY':
+                            newJson['partMoney']= val[1][i]; 
+                        break;
+                        case 'REPAIR_ITEM_MONEY':
+                            newJson['itemMoney']= val[1][i]; 
+                        break;
+                        case 'SUM_MONEY':
+                            newJson['sumMoney']= val[1][i]; 
+                        break;
+                    }
+                }
+
+                this.accountInfo.push(newJson);
+                this.isAccountFlag=false;
+            }
+
+
         },
+
+
 
       
       
@@ -1560,8 +1660,7 @@
             console.log(res)
             if (res.success === true) {
               this.commitOtherItem=res.data;
-              
-              
+            
             }
           })
       },
@@ -1945,12 +2044,12 @@
           this.listSearch["REPAIR_PART_MONEY"]+=this.commitParts[i]["SALES_PRICE"]*(this.commitParts[i]["PART_NUM"]||1);
           this.listSearch["REPAIR_PART_DERATE_MONEY"]+=this.commitParts[i]["PART_DERATE_MONEY"];
         }
-        for(let i in this.commitOtherItem[0]){
+        for(let key in this.commitOtherItem[0]){
             switch (key){
               case 'REPAIR_MONEY1':
-              case 'REPAIR_MONEY1':              
-              case 'REPAIR_MONEY1':
-              case 'REPAIR_MONEY1':
+              case 'REPAIR_MONEY2':              
+              case 'REPAIR_MONEY3':
+              case 'REPAIR_MONEY4':
               case 'VEHICLE_TYPE_CODE':this.listSearch["OTHER_MONEY"]+= this.commitOtherItem[0][key];break
             }
         }
@@ -2076,7 +2175,11 @@
             LODOP.ADD_PRINT_TABLE(50, 0, "100%", 1000, temp);
             //LODOP.SET_PRINT_STYLEA(0,"Offset2Top",-60); //设置次页偏移把区域向上扩 
             LODOP.PREVIEW();
-      }
+      },
+      //计算金额统计数据--------
+      emitComputedMoney(value){
+
+      },
       
 
 

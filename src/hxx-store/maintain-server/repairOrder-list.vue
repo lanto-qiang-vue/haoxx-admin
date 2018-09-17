@@ -5,7 +5,7 @@
                 @onRowDblclick="onRowDblclick" :show="showTable" :page="page">
     <div  slot="search">
       <div class="search-block">
-        <Input v-model="search.input" placeholder="预约单号/预约人/联系电话..."></Input>
+        <Input v-model="search.input" placeholder="工单单号/送修人/联系电话..."></Input>
       </div>
       <div class="search-block">
         <Select v-model="search.select" placeholder="选择工单类型...">
@@ -297,6 +297,14 @@
           this.detailData= null;
           this.clearTableSelect= Math.random();
           this.detailQuery=null;
+          //重置按钮状态
+          for(let i in this.buttonStateArr){
+              switch(i){
+                case 'add':
+                case 'quickAdd': this.buttonStateArr[i]= false; break
+                default : this.buttonStateArr[i]= true;
+              }
+          }
       },
       closeGetList(){
         this.getList();

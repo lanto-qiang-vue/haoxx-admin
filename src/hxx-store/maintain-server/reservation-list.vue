@@ -102,7 +102,12 @@
           "name":"全部"
       });
       for(let i=0;i<this.searchSelectOption.length;i++){
-        this.searchSelectOption1.push(this.searchSelectOption[i]);
+        if(this.searchSelectOption[i].code==="10421004"){
+
+        }else{
+          this.searchSelectOption1.push(this.searchSelectOption[i]);
+        }
+        
       }
       this.getList()
       this.showTable= Math.random()
