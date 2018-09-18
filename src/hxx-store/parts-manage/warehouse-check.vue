@@ -50,7 +50,10 @@ export default {
                 {title: '盘点类型', key: 'CHECK_TYPE', sortable: true, minWidth: 150,
                     render: (h, params) => h('span', getName(this.getCheckType, params.row.CHECK_TYPE))
                 },
-                {title: '盘点日期', key: 'CHECK_DATE', sortable: true, minWidth: 150},
+                {title: '盘点日期', key: 'CHECK_DATE', sortable: true, minWidth: 150,
+                    render: (h, params) => h('span', params.row.CHECK_DATE.substr(0, 10))
+                
+                },
                 {title: '盘点人', key: 'CHECK_PERSON', sortable: true, minWidth: 100,
                     
                 },
@@ -82,7 +85,7 @@ export default {
             isOrderSuccess:false,//判断是不是预约成功
             buttonStateArr:{
                 add:false,//维修开单
-                edit:false,//编辑
+                edit:true,//编辑
                 ban:true,//作废
             },//按钮状态组数据
             allCheckStatus:[],//选择状态数据
@@ -120,6 +123,13 @@ export default {
                 }
             })
             this.detailData = null;
+            for(let i in this.buttonStateArr){
+                switch(i){
+                    case 'edit':
+                    case 'ban': this.buttonStateArr[i]= true; break
+                    default : this.buttonStateArr[i]= false;
+                }
+            }
         },
         clear(){
                 for(var i in this.search){
@@ -154,6 +164,7 @@ export default {
                     
                 }
             }
+            this.buttonStateArr.edit=false;
             this.detailData=row
         },
         onRowDblclick( row, index){
@@ -207,6 +218,7 @@ export default {
             this.getList();
             for(let i in this.buttonStateArr){
                 switch(i){
+                    case 'edit':
                     case 'ban': this.buttonStateArr[i]= true; break
                     default : this.buttonStateArr[i]= false;
                 }

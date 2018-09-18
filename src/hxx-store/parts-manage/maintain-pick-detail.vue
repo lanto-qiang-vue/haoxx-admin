@@ -98,6 +98,12 @@
       stripe
       border
     ></Table>
+    <div style="width: 100%;height: 50px;line-height: 50px;font-size: 16px;">
+        <span>配件数量合计:</span>
+        <span style="color: red;">{{costNumber}}</span>
+        <span style="padding-left: 10px;">   成本金额合计：</span>
+        <span style="color: red;">{{costMoney}} 元</span>
+    </div>
     
     <!--退料弹框-->
     <Modal
@@ -203,13 +209,15 @@
             render: (h, params) => h('span', getName(this.getUnit, params.row.UNIT))
           },
           {title: '成本单价', key: 'UNIT_COST', sortable: true, minWidth: 120},
-          {title: '成本金额', key: 'PART_MONEY', sortable: true, minWidth: 120,},
+          {title: '成本金额', key: '', sortable: true, minWidth: 120,
+            render: (h, params) => h('span', parseFloat(params.row.PART_NUM)*parseFloat(params.row.UNIT_COST))
+            },
           {title: '销售税率', key: 'TAX', sortable: true, minWidth: 120,
             
           },
           {title: '含销售价', key: 'SALES_PRICE', sortable: true, minWidth: 120,},
           {title: '销售税额', key: 'RATE', sortable: true, minWidth: 120,},
-          {title: '未含销售价', key: 'PART_MONEY', sortable: true, minWidth: 150,},
+          {title: '未含销售价', key: 'NOT_CONTAINS_TAX_SALE_PRICE', sortable: true, minWidth: 150,},
           {title: '领/退料人', key: 'GET_PART_PERSON', sortable: true, minWidth: 150,},
           {title: '领/退料时间', key: 'GET_PART_TIME', sortable: true, minWidth: 150,},
           {title: '领料仓库', key: 'STORE_NAME', sortable: true, minWidth: 150,},
@@ -358,6 +366,9 @@
         },//小弹框选择主修人
         commitOneParts:null,//单条配件数据----
         allStore:[],//全部仓库
+        costMoney:0,//成本金额
+        costNumber:0,//成本数量
+
 
       }
     },
@@ -503,6 +514,12 @@
             }).then(res => {
                 if (res.success === true) {
                     this.commitParts=res.data;
+                    this.costNumber=this.commitParts.length;
+                    this.costMoney=0;
+                    for(let i in this.commitParts){
+                        this.costMoney+=parseFloat(this.commitParts[i].PART_NUM)*parseFloat(this.commitParts[i].UNIT_COST);
+                    }
+                    this.costMoney=this.costMoney.toFixed(2)
                 }
             })
         },

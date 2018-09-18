@@ -285,11 +285,20 @@ import commonTable from '@/hxx-components/common-table.vue'
                 this.getList();
             },
             resetVehicle(){
-                this.test1="";
-                this.test2="";
-                this.test3="";
-                this.page=1;
-                this.getList();
+                
+                if(this.stockFlag){
+                    this.test1="";
+                    this.test2="";
+                    this.test3="";
+                    this.page=1;
+                    this.getList();
+                }else{
+                     this.test1="";
+                    this.test3="";
+                    this.page=1;
+                    this.getList();
+                }
+                
             },
             
 

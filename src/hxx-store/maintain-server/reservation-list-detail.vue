@@ -76,12 +76,13 @@
         ref="tablesMain"
         :columns="columns"
         :data="commitItem"
+        :disabled-hover="true"
         stripe
         border
       ></Table>
       <div class="r-list-search" v-if="isOrderSuccess">
             <Button @click="goOnTenanceItem" type="primary" shape="circle" style="margin-right: 10px;"><Icon type="md-checkmark" size="24"/>选择项目</Button>
-            <Button type="primary" shape="circle"><Icon type="md-add" size="24"/>进入维修项目</Button>
+            <!--<Button type="primary" shape="circle"><Icon type="md-add" size="24"/>进入维修项目</Button>-->
       </div>
       <div v-if="testSingle">
           <div class="r-list-header">
@@ -92,12 +93,13 @@
             ref="tablesMain"
             :columns="columns2"
             :data="commitItemGroup"
+            :disabled-hover="true"
             stripe
             border
           ></Table>
           <div class="r-list-search" v-if="isOrderSuccess">
                 <Button @click="goOnItemGroup" type="primary" shape="circle" style="margin-right: 10px;"><Icon type="md-checkmark" size="24"/>选择项目套餐</Button>
-                <Button type="primary" shape="circle"><Icon type="md-add" size="24"/>进入项目套餐</Button>
+                <!--<Button type="primary" shape="circle"><Icon type="md-add" size="24"/>进入项目套餐</Button>-->
           </div>
       </div>
       <div class="r-list-header">
@@ -108,12 +110,13 @@
         ref="tablesMain"
         :columns="columns1"
         :data="commitParts"
+        :disabled-hover="true"
         stripe
         border
       ></Table>
       <div class="r-list-choose-parts" v-if="isOrderSuccess" >
-            <Button @click="goOnSelectParts " type="primary" shape="circle" style="margin-right: 10px;"><Icon type="md-checkmark" size="24"/>从配件库存选择配件</Button>
-            <Button @click="goOnSelectPartsGroup" type="primary" shape="circle" ><Icon type="md-add" size="24"/>从配件档案选择配件</Button>
+            <!--<Button @click="goOnSelectParts " type="primary" shape="circle" style="margin-right: 10px;"><Icon type="md-checkmark" size="24"/>选择配件</Button>-->
+            <Button @click="goOnSelectPartsGroup" type="primary" shape="circle" ><Icon type="md-add" size="24"/>选择配件</Button>
       </div>
 
       <div class="r-list-money">
@@ -469,7 +472,45 @@
         columns2: [
           {title: '序号',  minWidth: 80,type:'index',},
           {title: '项目套餐名称', key: 'GROUP_NAME', sortable: true, minWidth: 180,},
-          {title: '套餐价格', key: 'SALES_PRICE', sortable: true, minWidth: 120},
+          {title: '套餐价格', key: 'SALES_PRICE', sortable: true, minWidth: 120,
+              render: (h, params) => {
+                        return h('div', [
+                            h('InputNumber', {
+                                props: {
+                                    min:0,
+                                    value: params.row.SALES_PRICE,
+                                    disabled:this.listDisabled,
+                                },
+                                on: {
+                                    "on-change":(val)=>{
+                                            if(val>params.row.ITEM_DERATE_MONEY){
+                                                params.row.SALES_PRICE=val;
+                                                this.commitItemGroup[params.index]=params.row;
+                                                this.computItemMoney();
+                                            }else{
+                                                this.$Modal.confirm({
+                                                    title:"系统提示!",
+                                                    content:"优惠金额过大",
+                                                    
+                                                })
+                                                params.row.ITEM_DERATE_MONEY=0;
+                                                params.row.SALES_PRICE=val;
+                                                this.commitItemGroup[params.index]=params.row;
+                                                this.computItemMoney();
+                                            }
+                                            
+                                       
+
+                                    },
+                                    
+                                }
+                            },
+                            )
+                        ]);
+                    }
+          
+        
+          },
           {title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 120,
               render: (h, params) => {
                         return h('div', [
@@ -892,6 +933,14 @@
         this.listSearch["TELPHONE"]=val["MOBILE_PHONE"];
         this.listSearch["VIN_NO"]=val["VIN_NO"];
         this.listSearch["VEHICLE_ID"]=val["VEHICLE_ID"];
+
+
+
+
+        this.listSearch["GIVE_REPAIR_PERSON"]=val["CUSTOMER_NAME"];
+
+        this.listSearch["VEHICLE_COLOR"]=val["VEHICLE_COLOR"];
+        this.listSearch["ENGINE_NO"]=val["ENGINE_NO"];
       },
 
       //选择维修项目按钮----------
@@ -1343,6 +1392,8 @@
                   // var query=JSON.stringify({flag:true,listSearch:this.listSearch,commitItem:this.commitItem,commitItemGroup:this.commitItemGroup,commitParts:this.commitParts});
                   var query={flag:true,listSearch:this.listSearch,commitItem:this.commitItem,commitItemGroup:this.commitItemGroup,commitParts:this.commitParts};
                   this.$router.push({path:'/repairOrder-list',query:query});
+
+                  this.showModal=false;
               }else{
                   this.$Modal.confirm({
                       title:"系统提示!",
@@ -1350,7 +1401,8 @@
                       
                   })
               }
-        })
+        });
+
         
       },
     }
