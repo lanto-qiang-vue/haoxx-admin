@@ -144,8 +144,11 @@ import commonTable from '@/hxx-components/common-table.vue'
                 }).then(res => {
                     if (res.success === true) {
                         console.log("得到列表数据",res);
-                        this.tableData= res.data;
-                        this.total= res.total;
+                        this.tableData= res.data.filter((value)=>{
+                            return value.STATUS=="10011001";
+                        });
+                        
+                        this.total= this.tableData.length;
 
                     }
               })

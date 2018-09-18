@@ -439,7 +439,9 @@ export default {
             }).then(res => {
                 if (res.success === true) {
                     this.$Message.info('保存成功...');
-                    this.listSearch['CHECK_ID']=res.data.CHECK_ID;
+                    for(let i in res.data){
+                        this.listSearch[i]=res.data[i];
+                    }
                     
                 }
             })
@@ -486,6 +488,9 @@ export default {
             }).then(res => {
                 if (res.success === true) {
                     this.$Message.info('提交成功...');
+                    for(let i in res.data){
+                        this.listSearch[i]=res.data[i];
+                    }
                     //数据处理类
                     this.titleMsg='已提交';
                     this.saveFlag=false;

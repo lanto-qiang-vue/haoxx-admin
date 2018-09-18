@@ -19,7 +19,7 @@
     </div>
     <div slot="operate">
       <Button type="primary" v-if="" :disabled='buttonFlag' @click="selectPick">申请</Button>
-      <Button type="primary" v-if="" @click="editButton">查看详情</Button>
+      <Button type="primary" v-if="" :disabled='!detailData' @click="editButton">查看详情</Button>
     </div>
     <!--详情-->
     <person-training-detail class="table-modal-detail" :showDetail="showDetail" :detailData="detailData" @closeDetail="closeDetail"></person-training-detail>
@@ -136,12 +136,17 @@ export default {
         onRowClick(row, index){
             console.log(row);
             this.detailData=row
-            if(this.detailData.isjoin=='0'){
-                this.buttonFlag=false;
-                
-            }else{
+            if(this.detailData.isjoin=="0"){
                 this.buttonFlag=true;
+            }else{
+                if(this.detailData.state=='2'){
+                    this.buttonFlag=true;
+                    
+                }else{
+                    this.buttonFlag=false;
+                }
             }
+            
         },
         onRowDblclick( row, index){
             this.detailData=row;

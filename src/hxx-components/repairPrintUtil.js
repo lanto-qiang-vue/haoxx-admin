@@ -1,12 +1,13 @@
 //2018-09-12
 // import store from '../store/index.js'
 //打印委托单-----------
-export const printWtsFun=function(wtdData,listSearch,commitItem,commitParts){
+export const printWtsFun=function(wtdData,listSearch,commitItem,commitParts,commitOtherItem){
     var itemString='';
     var partsString='';
+    var otherString='';
     for(let i in commitItem){
             itemString+='<tr class="noRLBorder text-center">';
-            itemString+='<td>'+(i+1)+'</td>';
+            itemString+='<td>'+(parseInt(i)+1)+'</td>';
             itemString+='<td colspan="2">'+commitItem[i].NAME+'</td>';
             itemString+='<td tclass="a">'+commitItem[i].REPAIR_TIME+'</td>';
             itemString+='<td tclass="a">'+commitItem[i].ITEM_MONEY+'</td>';
@@ -18,7 +19,7 @@ export const printWtsFun=function(wtdData,listSearch,commitItem,commitParts){
 
     for(let i in commitParts){
             partsString+='<tr class="noRLBorder text-center">';
-            partsString+='<td>'+(i+1)+'</td>';
+            partsString+='<td>'+(parseInt(i)+1)+'</td>';
             partsString+='<td>'+commitParts[i].PART_NO+'</td>';
             partsString+='<td>'+commitParts[i].NAME+'</td>';
             partsString+='<td>'+commitParts[i].UNIT+'</td>';
@@ -29,16 +30,18 @@ export const printWtsFun=function(wtdData,listSearch,commitItem,commitParts){
             partsString+='</tr>';
 
             
+    }
 
-            // '<td>{partCode}</td>'+
-            // '<td>{partName}</td>'+
-            // '<td>{unit:formatDict}</td>'+
-            // '<td tclass="b">{partNum}</td>'+
-            // '<td tclass="b">{salesPrice:number("0.00")}</td>'+
-            // '<td tclass="b">{partMoney:number("0.00")}</td>'+
-            // '<td tclass="b">{partYhMoney:number("0.00")}</td>'+
-            // '</tr>'+
-            // '</tpl>'+
+    for(let i=0;i<4;i++){
+      otherString+='<tr class="noRLBorder text-center">';
+      otherString+='<td colspan="2">'+(parseInt(i)+1)+'</td>';
+
+      otherString+='<td colspan="2">'+commitOtherItem[0]['REPAIR_ITEM'+(parseInt(i)+1)]+'</td>';
+      otherString+='<td colspan="4" tclass="c">'+commitOtherItem[0]['REPAIR_MONEY'+(parseInt(i)+1)]+'</td>';
+      otherString+='</tr>';
+
+      // otherMoney+=parseFloat(commitOtherItem[0]['REPAIR_MONEY'+(parseInt(i)+1)]);
+
     }
 
 
@@ -216,14 +219,37 @@ export const printWtsFun=function(wtdData,listSearch,commitItem,commitParts){
             '<td tdata="Sum" tindex="7" tclass="b" format="0.00">######</td>'+
             '<td tdata="Sum" tindex="8" tclass="b" format="0.00">######</td>'+
             '</tr>'+
+            '<tr class="noRLBorder">'+
+            '<td colspan="8" class="text-left">其他费用</td>'+
+            '</tr>'+
+            '<tr class="noRLBorder text-center">'+
+            '<td colspan="2" >序号</td>'+
+            '<td colspan="2" >项目</td>'+
+            '<td colspan="4" >金额(元)</td>'+
+            '</tr>'+
+            otherString+
+            // '<tpl for="others">'+
+            // '<tr class="text-center">'+
+            // '<td>{[xindex]}</td>'+
+            // '<td colspan="6">{repairItem1}</td>'+
+            // '<td colspan="2">{repairMoney1:number("0.00")}</td>'+
+            // '</tr>'+
+            // '</tpl>'+
+
+            '<tr class="noRLBorder text-center">'+
+            '<td colspan="4" style="border-bottom:2px #000 solid;text-align:right;">小计(元)：</td>'+
+            '<td colspan="4" tdata="Sum" tindex="9" tclass="c" format="0.00" style="border-bottom:2px #000 solid;">###</td>'+
+            '</tr>'+
 
             '<tr class="noBorder">'+
             '<td colspan="8" style="min-height:80px;vertical-align: top;"><b>故障描述：</b><p style="text-indent:2em;">'+listSearch.FAULT_DESC+'</p></td>'+
             '</tr>'+
 
             '<tr class="noRTLBorder">'+
-                '<td colspan="8" style="text-align:left;"><b>预计费用 = 预计材料费 + 预计工时费 - 材料优惠金额 - 工时优惠金额</b><span style="display:inline-block;width:20px;">&nbsp;</span><b>预计费用：<font >￥'+listSearch.SUM_MONEY+'</font>'+
-                '<span style="display:inline-block;width:20px;">&nbsp;</span>金额大写：<div style="display:inline-block;line-height:18px;float:right;">'+convertCurrency(listSearch.SUM_MONEY)+'</div></b></td>'+
+                '<td colspan="8" style="text-align:left;"><b>预计费用 = 预计材料费 + 预计工时费 +其他费用 - 材料优惠金额 - 工时优惠金额</b><span style="display:inline-block;width:20px;">&nbsp;</span></td>'+
+            '</tr>'+
+            '<tr class="noRTLBorder">'+
+                '<td colspan="8" style="text-align:left;"><b>预计费用：<font >￥'+listSearch.SUM_MONEY+'</font><span style="display:inline-block;width:20px;">&nbsp;</span>金额大写：<div style="display:inline-block;line-height:18px;">'+convertCurrency(listSearch.SUM_MONEY)+'</div></b></td>'+
             '</tr>'+
             '<tr class="noRLBorder">'+
             '<td colspan="8" class="text-left">'+
@@ -264,27 +290,17 @@ export const printPgdFun=function(wtdData,listSearch,commitItem,commitParts) {
             '<td colspan="4">帐   号：</td>'+
             '<td colspan="4">网   址：</td>'+ 
             '</tr>';
-        // if (is3) {
-        //     tenantInfo = '<tr class="noBorder">' +
-        //         '<td colspan="8">承修方(盖章）: {record.tenantName}</td>' +
-        //         '</tr>' +
-        //         '<tr class="noRTLBorder">' +
-        //         '<td colspan="4" >地   址： {record.tenantAdd}</td>' +
-        //         '<td colspan="2">电   话： {record.linkTel}</td>' +
-        //         '<td colspan="2">传   真： </td>' +
-        //         '</tr>';
-        // }
-
+        
         var itemString='';
         var partsString='';
         for(let i in commitItem){
                 itemString+='<tr class="noRLBorder text-center">';
-                itemString+='<td>'+(i+1)+'</td>';
+                itemString+='<td>'+(parseInt(i)+1)+'</td>';
                 itemString+='<td colspan="3">'+commitItem[i].NAME+'</td>';
                 itemString+='<td>'+commitItem[i].REPAIR_TIME+'</td>';
                 itemString+='<td colspan="1" tclass="b"></td>';
                 itemString+='<td colspan="1" tclass="b">'+(commitItem[i].REMARK||'')+'</td>';
-                itemString+='<td colspan="1" tclass="b">'+commitItem[i].WORK_CLASS_NAME+'</td>';
+                itemString+='<td colspan="1" tclass="b">'+(commitItem[i].WORK_CLASS_NAME||'')+'</td>';
                 itemString+='</tr>';
 
                
@@ -292,22 +308,14 @@ export const printPgdFun=function(wtdData,listSearch,commitItem,commitParts) {
 
         for(let i in commitParts){
                 partsString+='<tr class="noRLBorder text-center">';
-                partsString+='<td>'+(i+1)+'</td>';
+                partsString+='<td>'+(parseInt(i)+1)+'</td>';
                 partsString+='<td colspan="3">'+commitParts[i].PART_NO+'</td>';
                 partsString+='<td colspan="3">'+commitParts[i].NAME+'</td>';
                 partsString+='<td colspan="1">'+commitParts[i].PART_NUM+'</td>';
                 partsString+='</tr>';
 
-                
 
-                // '<tpl for="parts">'+
-                // '<tr class="noRLBorder text-center">'+
-                // '<td>{[xindex]}</td>'+
-                // '<td colspan="3">{partCode}</td>'+
-                // '<td colspan="3">{partName}</td>'+
-                // '<td colspan="1">{partNum:number("0")}</td>'+
-                // '</tr>'+
-                // '</tpl>'+
+
         }
 
 
@@ -341,7 +349,7 @@ export const printPgdFun=function(wtdData,listSearch,commitItem,commitParts) {
             '<td>进厂日期</td>'+
             '<td colspan="2">'+listSearch.COME_DATE+'</td>'+
             '<td>预计交车时间</td>'+
-            '<td>'+listSearch.PLAN_END_DATE+'</td>'+
+            '<td colspan="2">'+listSearch.PLAN_END_DATE+'</td>'+
             '</tr>'+
             '<tr  class="noRLBorder text-center">'+
             '<td class="w30">序号</td>'+
@@ -405,6 +413,9 @@ export const printAccountFun=function(wtdData,listSearch,commitItem,commitItemGr
   var itemString='';
   var partsString='';
   var otherString='';
+  var itemMoney=0;
+  var partsMoney=0;
+  var otherMoney=0;
   for(let i in commitItem){
       itemString+='<tr class="text-center">';
       itemString+='<td>'+(parseInt(i)+1)+'</td>';
@@ -414,16 +425,9 @@ export const printAccountFun=function(wtdData,listSearch,commitItem,commitItemGr
       itemString+='<td colspan="2" tclass="a">'+commitItem[i].ITEM_MONEY+'</td>';
       itemString+='</tr>';
 
+      itemMoney+=parseFloat(commitItem[i].ITEM_MONEY);
 
-      // '<tpl for="items">'+
-            // '<tr class="text-center">'+
-            // '<td>{[xindex]}</td>'+
-            // '<td colspan="2">{itemName}</td>'+
-            // '<td colspan="2" tclass="a">{times:number("0.00")}</td>'+
-            // '<td colspan="2" tclass="a">{timePrice:number("0.00")}</td>'+
-            // '<td colspan="2" tclass="a">{itemMoney:number("0.00")}</td>'+
-            // '</tr>'+
-            // '</tpl>'+
+
   }
   for(let i in commitItemGroup){
       itemString+='<tr class="text-center">';
@@ -433,11 +437,13 @@ export const printAccountFun=function(wtdData,listSearch,commitItem,commitItemGr
       itemString+='<td colspan="2" tclass="a">-</td>';
       itemString+='<td colspan="2" tclass="a">'+commitItemGroup[i].SALES_PRICE+'</td>';
       itemString+='</tr>';
+
+      itemMoney+=parseFloat(commitItemGroup[i].SALES_PRICE);
   }
 
   for(let i in commitParts){
 
-    partsString+='<tr text-center">';
+    partsString+='<tr class="text-center">';
     partsString+='<td>'+(parseInt(i)+1)+'</td>';
     partsString+='<td>'+commitParts[i].NAME+'</td>';
     partsString+='<td>'+commitParts[i].PART_NO+'</td>';
@@ -448,36 +454,21 @@ export const printAccountFun=function(wtdData,listSearch,commitItem,commitItemGr
     partsString+='<td tclass="b">'+commitParts[i].PART_SOURCE+'</td>';
     partsString+='<td>'+commitParts[i].IS_SELF+'</td>';
     partsString+='</tr>';
-    // '<tpl for="parts">'+
-            // '<tr class="text-center">'+
-            // '<td>{[xindex]}</td>'+
-            // '<td>{partName}</td>'+
-            // '<td>{partCode}</td>'+
-            // '<td>{BRAND:this.formatDict}</td>'+
-            // '<td tclass="b">{partNum}</td>'+
-            // '<td tclass="b">{salesPrice:number("0.00")}</td>'+
-            // '<td tclass="b">{partMoney:number("0.00")}</td>'+
-            // '<td>{partSource:this.formatDict}</td>'+
-            // '<td>{isSelf}</td>'+
-            // '</tr>'+
-            // '</tpl>'+
+
+    partsMoney+=parseFloat(commitParts[i].PART_MONEY);
+
   }
 
   for(let i=0;i<4;i++){
-    otherString+='<tr text-center">';
+    otherString+='<tr class="text-center">';
     otherString+='<td>'+(parseInt(i)+1)+'</td>';
 
     otherString+='<td colspan="6">'+commitOtherItem[0]['REPAIR_ITEM'+(parseInt(i)+1)]+'</td>';
     otherString+='<td colspan="2" tclass="c">'+commitOtherItem[0]['REPAIR_MONEY'+(parseInt(i)+1)]+'</td>';
     otherString+='</tr>';
 
-    // '<tpl for="others">'+
-    // '<tr class="text-center">'+
-    // '<td>{[xindex]}</td>'+
-    // '<td colspan="6">{repairItem1}</td>'+
-    // '<td colspan="2">{repairMoney1:number("0.00")}</td>'+
-    // '</tr>'+
-    // '</tpl>'+
+    otherMoney+=parseFloat(commitOtherItem[0]['REPAIR_MONEY'+(parseInt(i)+1)]);
+
   }
 
 
@@ -583,7 +574,7 @@ export const printAccountFun=function(wtdData,listSearch,commitItem,commitItemGr
             itemString+
             '<tr class="text-center">'+
             '<td colspan="8" style="border-bottom:2px #000 solid;text-align:right;">小计(元)：</td>'+
-            '<td colspan="2" tdata="Sum" tindex="9" tclass="a" format="0.00" style="border-bottom:2px #000 solid;">######</td>'+
+            '<td colspan="2" tdata="Sum" tindex="9" tclass="a" format="0.00" style="border-bottom:2px #000 solid;">'+itemMoney.toFixed(2)+'</td>'+
             '</tr>'+
 
             '<tr class="text-center">'+
@@ -615,7 +606,7 @@ export const printAccountFun=function(wtdData,listSearch,commitItem,commitItemGr
 
             '<tr class="text-center">'+
             '<td colspan="7" style="border-bottom:2px #000 solid;text-align:right;">小计(元)：</td>'+
-            '<td tdata="Sum" tindex="8" tclass="b" format="0.00" style="border-bottom:2px #000 solid;">###</td>'+
+            '<td tdata="Sum" tindex="8" tclass="b" format="0.00" style="border-bottom:2px #000 solid;">'+partsMoney.toFixed(2)+'</td>'+
             '<td colspan="2" style="border-bottom:2px #000 solid;"></td>'+
             '</tr>'+
             '<tr class="text-center">'+
@@ -637,11 +628,11 @@ export const printAccountFun=function(wtdData,listSearch,commitItem,commitItemGr
 
             '<tr class="text-center">'+
             '<td colspan="8" style="border-bottom:2px #000 solid;text-align:right;">小计(元)：</td>'+
-            '<td colspan="2" tdata="Sum" tindex="9" tclass="c" format="0.00" style="border-bottom:2px #000 solid;">###</td>'+
+            '<td colspan="2" tdata="Sum" tindex="9" tclass="c" format="0.00" style="border-bottom:2px #000 solid;">'+otherMoney.toFixed(2)+'</td>'+
             '</tr>'+
             '<tr class="text-center">'+
             '<td colspan="3">总费用：</td>'+
-            '<td colspan="7" style="text-align:left;">'+(listSearch.SUM_MONEY).toFixed(2)+'元</td>'+
+            '<td colspan="7" style="text-align:left;">'+(listSearch.SUM_MONEY).toFixed(2)+'元(工时优惠:'+(listSearch.REPAIR_ITEM_DERATE_MONEY).toFixed(2)+'元,材料优惠:'+(listSearch.REPAIR_PART_DERATE_MONEY).toFixed(2)+'元)</td>'+
             '</tr>'+
             '<tr class="text-center">'+
             '<td colspan="3" style="border-bottom:2px #000 solid;">旧件处理结果：</td>'+
@@ -657,7 +648,7 @@ export const printAccountFun=function(wtdData,listSearch,commitItem,commitItemGr
             '<td colspan="10" class="text-left" style="padding:0px 10px">3. 承修方不承担托修方自备配件质量保证责任。</td>'+
             '</tr>'+
             '<tr class="noBorder">'+
-            '<td colspan="10" class="text-left" style="padding:0px 10px">4. 企业承诺本次维修质量保证期为车辆行驶<span style="border-bottom:#000 1px solid;display:inline-block;padding:0 10px;">'+store.state.user.userInfo.params[4].PARAM_VALUE+'</span>公里或者<span style="border-bottom:#000 1px solid;display:inline-block;padding:0 10px;">'+store.state.user.userInfo.params[5].PARAM_VALUE+'}</span>日，里程和时间以先到者为准。</td>'+
+            '<td colspan="10" class="text-left" style="padding:0px 10px">4. 企业承诺本次维修质量保证期为车辆行驶<span style="border-bottom:#000 1px solid;display:inline-block;padding:0 10px;">'+store.state.user.userInfo.params[4].PARAM_VALUE+'</span>公里或者<span style="border-bottom:#000 1px solid;display:inline-block;padding:0 10px;">'+store.state.user.userInfo.params[5].PARAM_VALUE+'</span>日，里程和时间以先到者为准。</td>'+
             '</tr>'+
             '<tr class="noBorder">'+
             '<td colspan="10" class="text-left" style="padding:0px 10px">5. 企业承诺本次维修的新能源汽车专用部件<span style="border-bottom:#000 1px solid;display:inline-block;padding:0 10px;min-width:30px;">'+listSearch.ZY_PART+'</span>维修质量保证期为<span style="border-bottom:#000 1px solid;display:inline-block;padding:0 10px;min-width:30px;">'+listSearch.ZY_PART_BZQ+'</span>。</td>'+

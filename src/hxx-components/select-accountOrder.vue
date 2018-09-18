@@ -25,15 +25,19 @@
                                         <span>{{shoukuanSearch.REPAIR_PART_MONEY}}元</span>
                                         
                                     </FormItem>
+                                    <FormItem label="其他项目费用:">
+                                        <span>{{shoukuanSearch.OTHER_MONEY}}元</span>
+                                        
+                                    </FormItem>
                                     <FormItem label="项目优惠金额:">
-                                        
-                                        
-                                        <InputNumber :min="0" v-model="shoukuanSearch.REPAIR_ITEM_DERATE_MONEY"></InputNumber>
+                                        <InputNumber :min="0" v-model="shoukuanSearch.REPAIR_ITEM_DERATE_MONEY" @on-change="itemComputedFun" 
+                                            :formatter="value => `${value}元`" :parser="value => value.replace('元', '')"
+                                        ></InputNumber>
                                     </FormItem>
                                     <FormItem label="配件优惠金额:">
-                                        
-                                        
-                                        <InputNumber :min="0" v-model="shoukuanSearch.REPAIR_PART_DERATE_MONEY"></InputNumber>
+                                        <InputNumber :min="0" v-model="shoukuanSearch.REPAIR_PART_DERATE_MONEY" @on-change="partComputedFun"
+                                            :formatter="value => `${value}元`" :parser="value => value.replace('元', '')"
+                                        ></InputNumber>
                                     </FormItem>
                                     <FormItem label="合计优惠金额:">
                                         <span>{{shoukuanSearch.LESS_MONEY}}元</span>
@@ -49,9 +53,10 @@
                                         <DatePicker v-model="shoukuanSearch.OUT_DATE" type="datetime" placeholder="" ></DatePicker>
                                     </FormItem>
                                    <FormItem label="出厂里程:" prop="OUT_MILEAGE">
-                                        <!--<InputNumber :min="0" v-model="shoukuanSearch.OUT_MILEAGE"  placeholder=""></InputNumber>-->
-                                        <!--<Input type="text" v-model="shoukuanSearch.OUT_MILEAGE" placeholder="" > </Input>-->
-                                        <InputNumber :min="0" v-model="shoukuanSearch.OUT_MILEAGE"></InputNumber>
+                                        
+                                        <InputNumber :min="0" v-model="shoukuanSearch.OUT_MILEAGE" @on-change="outMileageFun"
+                                            :formatter="value => `${value}公里`" :parser="value => value.replace('公里', '')"
+                                        ></InputNumber>
                                     </FormItem>
                                     <FormItem label="旧件处理结果:" style="width:100%">
                                         <Select v-model="shoukuanSearch.OLD_PART_RESULT">
@@ -62,9 +67,10 @@
                                         <Input type="text" v-model="shoukuanSearch.ZY_PART" placeholder="" > </Input>
                                     </FormItem>
                                     <FormItem label="质量保证期:">
-                                        <!--<InputNumber :min="0" v-model="shoukuanSearch.ZY_PART_BZQ"  placeholder=""></InputNumber>-->
-                                        <!--<Input type="text" v-model="shoukuanSearch.ZY_PART_BZQ" placeholder="" > </Input>-->
-                                        <InputNumber :min="0" v-model="shoukuanSearch.ZY_PART_BZQ"></InputNumber>
+                                        
+                                        <InputNumber :min="0" v-model="shoukuanSearch.ZY_PART_BZQ" @on-change="bzqFun"
+                                            :formatter="value => `${value}公里`" :parser="value => value.replace('公里', '')"
+                                        ></InputNumber>
                                     </FormItem>
                                 </Form>
                             </Panel>
@@ -117,8 +123,10 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                 shoukuanSearch:{
                     "REPAIR_ITEM_MONEY":0,
                     "REPAIR_PART_MONEY":0,
+                    "OTHER_MONEY":0,
                     "REPAIR_ITEM_DERATE_MONEY":0,
                     "REPAIR_PART_DERATE_MONEY":0,
+
                     "LESS_MONEY":0,
                     "SUM_MONEY":0,
                     "OUT_DATE":"",
@@ -149,7 +157,6 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                 repairTypeFun:null,//维修类型
                 bandTypeFun:null,//品牌类型
                 partsType:null,//配件类型
-                wtdData:null,//企业信息
                 //初始数据值
                 listSearch:{
                     "TENANT_ID":"",
@@ -191,13 +198,13 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                     "SUM_MONEY":0,
                     "GD_TYPE":""
                 },
-                itemArr:[],
-                itemGroup:[],
+                itemArr:[],//项目数据
+                itemGroup:[],//项目套餐数据
                 itemMoney:0,
                 itemNumber:0,
-                partArr:[],
+                partArr:[],//配件数据
                 partMoney:0,
-                otherArr:{},
+                otherArr:{},//其他数据
                 otherMoney:10,
 
 
@@ -215,6 +222,7 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                         case 'REPAIR_PART_MONEY':
                         case 'REPAIR_ITEM_DERATE_MONEY':
                         case 'REPAIR_PART_DERATE_MONEY':
+                        case 'OTHER_MONEY':
                         case 'SUM_MONEY': this.listSearch[key]= 0; break
                         case 'STATUS': this.listSearch[key]= "10201001"; break
                         case 'REPAIR_TYPE': this.listSearch[key]= "10191001"; break
@@ -227,6 +235,11 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
 
                         }
                 }
+                this.itemArr=[];
+                this.itemGroup=[];
+                this.partArr=[];
+                this.otherArr=[];
+
                 for(let i in this.showAccountData){
                     this.listSearch[i]=this.showAccountData[i];
                 }
@@ -237,9 +250,11 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                 for(let i in this.showItemGroup){
                     this.itemGroup.push(this.showItemGroup[i]);
                 }
-                // for(let i in this.showAccountOther){
-                //     this.otherArr[i]=this.showAccountOther[i];
-                // }
+
+                for(let i in this.showAccountParts){
+                    this.partArr.push(this.showAccountParts[i]);
+                }
+                
                 this.otherArr=this.showAccountOther;
                 this.itemNumber=this.itemArr.length;
 
@@ -254,8 +269,7 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
             this.repairTypeFun=getDictGroup(this.$store.state.app.dict, '1019');
             this.bandTypeFun=getDictGroup(this.$store.state.app.dict, '1016');
             this.partsType=getDictGroup(this.$store.state.app.dict, '1017');
-            this.wtdData=this.$store.state.user.userInfo.tenant;
-            
+
             
         },
         methods:{
@@ -274,11 +288,13 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                         break;
                         case 'OLD_PART_RESULT':
                             this.shoukuanSearch[i]="3";
+                            this.listSearch['OLD_PART_RESULT']=this.shoukuanSearch[i];
                         break;
                         case 'REPAIR_ITEM_MONEY':
                         case 'REPAIR_PART_MONEY':
                         case 'REPAIR_ITEM_DERATE_MONEY':
                         case 'REPAIR_PART_DERATE_MONEY':
+                        case 'OTHER_MONEY':
                         case 'SUM_MONEY':
                             this.shoukuanSearch[i]=this.listSearch[i]||0;
                         break;
@@ -290,45 +306,7 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                 }
 
                 
-                for(let i in this.listSearch){
-                    switch(i){
-                        case'COME_DATE':
-                        case'OUT_DATE':
-                            this.listSearch[i]=formatDate(this.listSearch[i])+ ' '+ formatDate(this.listSearch[i], 'hh:mm:ss');
-                            console.log(this.listSearch[i]);
-                        break;
-                        case'VEHICLE_TYPE':
-                            console.log(this.listSearch[i],getName(this.carTypeFun,this.listSearch[i]));
-                            this.listSearch[i]=getName(this.carTypeFun,this.listSearch[i]);
-                        break;
-                        case'REPAIR_TYPE':
-                            this.listSearch[i]=getName(this.repairTypeFun,this.listSearch[i]);
-                        break;
-                        default : this.listSearch[i]= this.listSearch[i];
-                    };
-               }
-
-               for(let j in this.partArr){
-                   for(let i in this.partArr[j]){
-                       switch(i){
-                        case 'BRAND':
-                            this.partArr[j][i]=getName(this.bandTypeFun,this.partArr[j][i]);
-                        break;
-                        case 'PART_SOURCE':
-                            this.partArr[j][i]=getName(this.partsType,this.partArr[j][i]);
-                        break;
-                        case 'IS_SELF':
-                            if(this.partArr[j][i]){
-                                this.partArr[j][i]="是"
-                            }else{
-                                this.partArr[j][i]="否"
-                            }
-                        break;
-                        default : this.partArr[j][i]= this.partArr[j][i];
-                    };
-                   }
-                   
-               }
+                
                this.formatDataFun(true);
             console.log("转化之后的数据------",this.listSearch);
                
@@ -359,8 +337,7 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                     }
                 }).then(res => {
                     if (res.success === true) {
-                        var newArr=['10201004',this.shoukuanSearch];
-                        this.$emit('emitAccount',newArr);//重新请求数据
+                        
                         this.jiesuanButton=true;
                         this.shoukuanButton=false;
                         for(let i in this.shoukuanSearch){
@@ -372,6 +349,9 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                                 default : this.listSearch[i]= this.shoukuanSearch[i];
                             }
                         }
+
+                        var newArr=['10201004',this.listSearch];
+                        this.$emit('emitAccount',newArr);//重新请求数据
                         this.formatDataFun(true);
 
                     }else{
@@ -389,7 +369,7 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                this.showShouKuan=Math.random();
            },
            closeGetList(){
-               this.$emit('emitAccount','10201005');//重新请求数据
+               this.$emit('emitAccount',['10201005']);//重新请求数据
                this.showOnoff=false;
            },
            //数据格式转化----------
@@ -398,15 +378,51 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                var LODOP=document.getElementById('ggggg');
                     
                if(flag){
-                
-                    this.wtdData=this.$store.state.user.userInfo.tenant;
+                   var listSearch={};
+                   
+                    for(let i in this.listSearch){
+                            switch(i){
+                                case'COME_DATE':
+                                case'OUT_DATE':
+                                    listSearch[i]=formatDate(this.listSearch[i])+ ' '+ formatDate(this.listSearch[i], 'hh:mm:ss');
+                                    console.log(this.listSearch[i]);
+                                break;
+                                case'VEHICLE_TYPE':
+                                    console.log(this.listSearch[i],getName(this.carTypeFun,this.listSearch[i]));
+                                    listSearch[i]=getName(this.carTypeFun,this.listSearch[i]);
+                                break;
+                                case'REPAIR_TYPE':
+                                    listSearch[i]=getName(this.repairTypeFun,this.listSearch[i]);
+                                break;
+                                default : listSearch[i]= this.listSearch[i];
+                            };
+                    }
+
+                    var partArr=[];
+                    for(let i in this.partArr){
+                        partArr.push(this.partArr[i]);
+                    }
+
+                    for(let j in partArr){
+                        partArr[j].BRAND=getName(this.bandTypeFun,partArr[j].BRAND)||'';
+                        partArr[j].PART_SOURCE=getName(this.partsType,partArr[j].PART_SOURCE)||'';
+
+                        if(partArr[j].IS_SELF=="true"||partArr[j].IS_SELF==true){
+                            partArr[j].IS_SELF="是"
+                        }else if(partArr[j].IS_SELF=="false"||partArr[j].IS_SELF==false){
+                            partArr[j].IS_SELF="否"
+                        };
+                    }
+
+                    
+                    var wtdData=this.$store.state.user.userInfo.tenant;
                     var store=this.$store;
-                    if (this.$store.state.user.userInfo.tenant && this.$store.state.user.userInfo.tenant.businessType == '10331003') {
+                    if (this.$store.state.user.userInfo.tenant && this.$store.state.user.userInfo.tenant.businessType == ('10331003'||'10331004')) {
                     console.log('三级维修');
-                        temp=printAccountFun(this.wtdData,this.listSearch,this.itemArr,this.itemGroup,this.partArr,this.otherArr,store);
+                        temp=printAccountFun(wtdData,listSearch,this.itemArr,this.itemGroup,partArr,this.otherArr,store);
                     } else {
                     console.log('不是三级维修');
-                        temp=printAccountFun(this.wtdData,this.listSearch,this.itemArr,this.itemGroup,this.partArr,this.otherArr,store);
+                        temp=printAccountFun(wtdData,listSearch,this.itemArr,this.itemGroup,partArr,this.otherArr,store);
                     }
                     LODOP.innerHTML=temp;
                }else{
@@ -415,11 +431,67 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                }
                
            },
-           visibleChange(status){
+           //界面窗口变化
+            visibleChange(status){
                 if(status === false){
-                   this.formatDataFun(false);
+                    this.formatDataFun(false);
                 }
             },
+            //项目优惠计算----
+            itemComputedFun(value){
+                if(value>this.shoukuanSearch.REPAIR_ITEM_MONEY){
+                    this.$Modal.confirm({
+                        title:"系统提示!",
+                        content:"优惠金额过大",
+                        
+                    })
+                    this.shoukuanSearch.REPAIR_ITEM_DERATE_MONEY=0;
+                }
+
+                this.shoukuanSearch.SUM_MONEY=this.shoukuanSearch.REPAIR_ITEM_MONEY+this.shoukuanSearch.REPAIR_PART_MONEY+
+                this.shoukuanSearch.OTHER_MONEY-this.shoukuanSearch.REPAIR_ITEM_DERATE_MONEY-this.shoukuanSearch.REPAIR_PART_DERATE_MONEY;
+
+                this.shoukuanSearch.LESS_MONEY=this.shoukuanSearch.REPAIR_ITEM_DERATE_MONEY+this.shoukuanSearch.REPAIR_PART_DERATE_MONEY;
+            },
+            //配件优惠计算
+            partComputedFun(value){
+                if(value>this.shoukuanSearch.REPAIR_PART_MONEY){
+                    this.$Modal.confirm({
+                        title:"系统提示!",
+                        content:"优惠金额过大",
+                        
+                    })
+                    this.shoukuanSearch.REPAIR_PART_DERATE_MONEY=0;
+                }
+
+                this.shoukuanSearch.SUM_MONEY=this.shoukuanSearch.REPAIR_ITEM_MONEY+this.shoukuanSearch.REPAIR_PART_MONEY+
+                this.shoukuanSearch.OTHER_MONEY-this.shoukuanSearch.REPAIR_ITEM_DERATE_MONEY-this.shoukuanSearch.REPAIR_PART_DERATE_MONEY;
+
+                this.shoukuanSearch.LESS_MONEY=this.shoukuanSearch.REPAIR_ITEM_DERATE_MONEY+this.shoukuanSearch.REPAIR_PART_DERATE_MONEY;
+            },
+            //outMileageFun里程监听
+            outMileageFun(value){
+                if(value>99999999){
+                    this.$Modal.confirm({
+                        title:"系统提示!",
+                        content:"里程数最大位数为八位",
+                        
+                    })
+                    this.shoukuanSearch.OUT_MILEAGE=0;
+                }
+            },
+            //质量保证qi----------
+            bzqFun(value){
+                if(value>99999999){
+                    this.$Modal.confirm({
+                        title:"系统提示!",
+                        content:"质量保证期最大位数为八位",
+                        
+                    })
+
+                    this.shoukuanSearch.ZY_PART_BZQ=0;
+                }
+            }
 
         }
 	}

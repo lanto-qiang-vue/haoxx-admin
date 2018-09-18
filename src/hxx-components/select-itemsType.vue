@@ -21,18 +21,18 @@
                         <Option v-for="(item, index) in getCarTypeData" :key="item.cartype" :value="item.cartype">{{item.CARNAME}}</Option>
                     </Select>
                 </FormItem>
-                <FormItem >
-                    <Select :disabled="isdisabled" v-model="test2" placeholder="选择项目分类">
+                <FormItem v-if="isThreeType">
+                    <Select :disabled="isdisabled" v-model="test2" placeholder="选择项目分类" >
                         <Option v-for="(item, index) in carItemType" :key="item.TYPE_ID" :value="item.TYPE_ID">{{item.TYPE_NAME}}</Option>
                     </Select>
                 </FormItem>
-                <FormItem >
-                    <Select :disabled="isdisabled" v-model="test3" placeholder="选择发动机类型">
+                <FormItem v-if="isThreeType">
+                    <Select :disabled="isdisabled" v-model="test3" placeholder="选择发动机类型" >
                         <Option v-for="(item, index) in banJinListData" :key="item.ENGINE_TYPE" :value="item.ENGINE_TYPE">{{item.ENGINE_TYPE_NAME}}</Option>
                     </Select>
                 </FormItem>
-                <FormItem >
-                    <Select :disabled="isdisabled" v-model="test4" placeholder="选择汽车参数">
+                <FormItem v-if="isThreeType">
+                    <Select :disabled="isdisabled" v-model="test4" placeholder="选择汽车参数" >
                         <Option v-for="(item, index) in carListData" :key="item.CLASS_TYPE" :value="item.CLASS_TYPE">{{item.CLASS_NAME}}</Option>
                     </Select>
                 </FormItem>
@@ -43,7 +43,9 @@
                     <ButtonGroup size="small">
                         <Button type="primary" title="查询" @click="searchVehicle"><Icon type="ios-search" size="28"/></Button>
                         <Button type="primary" title="重置" @click="resetVehicle" style="margin-right:20px;"><Icon type="ios-undo" size="28"/></Button>
+                        
                     </ButtonGroup>
+                    <Button type="primary" @click="addItemFun" v-if="!isThreeType">新增</Button>
                 </FormItem>
            </Form>
            
@@ -165,9 +167,9 @@ import commonTable from '@/hxx-components/common-table.vue'
                                     },
                                     on: {
                                         click: (index) => {
-                                            console.log(params.index);
-                                            console.log(this.tableData[params.index]);
+                                            
                                             this.select(params.row)
+                                            this.countList(params.row.DETAIL_ID);
                                         }
                                     }
                                 }, buttonContent),
@@ -181,12 +183,19 @@ import commonTable from '@/hxx-components/common-table.vue'
                 limit: 25,
                 buttonContent:"选择",//自定义按钮内容
                 isdisabled:true,//判断下拉框是否下拉
+                isThreeType:true,//判断是不是三类------
 
             }
         },
         watch:{
             showTenanceItems(){
-                console.log("点击选择项目了");
+                console.log("点击选择项目了",this.$store.state.user.userInfo.tenant.businessType);
+                if(this.$store.state.user.userInfo.tenant.businessType=="10331003"||this.$store.state.user.userInfo.tenant.businessType=="10331004"){
+                    this.isThreeType=false;
+                }else{
+                    this.isThreeType=true;
+                }
+
                 this.showOnoff=true;
                 this.resetVehicle();//首次进来数据重置
                 this.selectData=this.initGetItem;
@@ -222,6 +231,17 @@ import commonTable from '@/hxx-components/common-table.vue'
                 if(flag) this.selectData.push(item);
                 this.$emit('sTenanceItem', this.selectData);
                 console.log('this.selectData',this.selectData)
+            },
+            countList(idx){
+                this.axios.request({
+                    url: '/tenant/basedata/repairiteminfo/saveitemId',
+                    method: 'post',
+                    data: {
+                        DETAIL_ID:idx,
+                        access_token: this.$store.state.user.token
+                    }
+                }).then(res => {
+                })
             },
             getList(){
                 this.axios.request({
@@ -296,11 +316,9 @@ import commonTable from '@/hxx-components/common-table.vue'
                 console.log(val);
                 // console.log(this.search.select1)
                 
-                
                 this.test2="";
                 this.test3="";
                 this.test4="";
-                this.test5="";
 
                 this.carItemType=[];
                 this.carListData=[];
@@ -371,6 +389,58 @@ import commonTable from '@/hxx-components/common-table.vue'
                 // console.log("重置之 后 打印",this.test1,this.test2,this.test3,this.test4,this.test5);
                 this.isdisabled=true;
             },
+            //新增项目--------
+            addItemFun(){
+                if(this.test5){
+                    this.axios.request({
+                            url: '/tenant/basedata/repairadditem/check_item',
+                            method: 'post',
+                            data: {
+                                access_token: this.$store.state.user.token
+                            }
+                        }).then(res => {
+                            if (res.success === true) {
+                                var data = res.data;
+                                if (data.length <= 0 || data == null) {
+                                    this.$Modal.confirm({
+                                        title:"系统提示!",
+                                        content:"系统提示', '暂未导入维修项目，请先行导入！",
+                                        
+                                    })
+                                    return;
+                                } else {
+
+                                    this.$Modal.confirm({
+                                        title:"系统提示!",
+                                        content:"确认新增吗?",
+                                        onOk:this.addFun,
+                                    })
+
+                                }
+                            }
+                    })
+                }else{
+                    this.$Modal.confirm({
+                        title:"系统提示!",
+                        content:"请在搜索框中添加你需要添加的项目名称",
+                        
+                    })
+                }
+            },
+            addFun(){
+                this.axios.request({
+                    url: '/tenant/basedata/repairadditem/add_item',
+                    method: 'post',
+                    data: {
+                        ITEM_NAME:this.test5,
+                        access_token: this.$store.state.user.token,
+                    }
+                }).then(res => {
+                    if (res.success === true) {
+                             this.getList();   
+                    }
+                });
+            }
             
 
         }
