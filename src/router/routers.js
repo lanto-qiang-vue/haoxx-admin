@@ -31,6 +31,17 @@ export default [
     component: () => import('@/hxx-admin/login.vue')
   },
   {
+    path: '/storeRegister',
+    name: 'storeRegister',
+    meta: {
+      hideInMenu: true,
+      title: '门店注册',
+      lgType: "1002",
+      notCache: true
+    },
+    component: () => import('@/hxx-store/storeRegister')
+  },
+  {
     path: '/',
     name: '_home',
     redirect: '/home',
@@ -49,7 +60,7 @@ export default [
       //     notCache: true
       //   },
       //   component: () => import('@/view/single-page/home')
-      // }
+      // }storeRegister
       {
         path: '/home',
         name: 'home',

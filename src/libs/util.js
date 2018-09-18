@@ -8,6 +8,7 @@ export const USERINFO_KEY = 'USERINFO'
 export const ACCESSMENU_KEY = 'ACCESSMENU'
 export const DICT_KEY = 'DICT'
 export const TENANT_KEY = 'Tenant';
+
 export const setToken = (token) => {
   // Cookies.set(TOKEN_KEY, token, {expires: config.cookieExpires || 1})
 
