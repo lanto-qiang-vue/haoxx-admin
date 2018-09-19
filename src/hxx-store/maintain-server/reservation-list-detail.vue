@@ -93,7 +93,7 @@
             ref="tablesMain"
             :columns="columns2"
             :data="commitItemGroup"
-            :disabled-hover="true"
+            @on-row-dblclick="onRowDblclick"
             stripe
             border
           ></Table>
@@ -153,6 +153,8 @@
       <!--选择项目组-->
       <select-itemPackage :showSelectItemGroup="showSelectItemGroup" @selectItemGroup="selectItemGroup" :initItemGroup="initItemGroup" class="table-modal-detail" :showTransfer='selectItemransfer1'>
       </select-itemPackage>
+      <!--项目组套餐详情!!!-->
+      <combo-detail :tshow="showItemFlag" :tid="itemDetailId"></combo-detail>
 
       <div slot="footer">
         <Button v-if="isButton" @click="handleSubmit('listSearch')" size="large" type="primary"  style="margin-right: 10px;">保存</Button>
@@ -172,15 +174,15 @@
   import selectItemsType from '@/hxx-components/select-itemsType.vue'
   import selectParts from '@/hxx-components/select-parts.vue'
   import selectPartsGroup from '@/hxx-components/select-partsGroup.vue'
+    import comboDetail from '@/hxx-components/combo-detail.vue'
 
   import selectItemPackage from '@/hxx-components/select-itemPackage.vue'
 
-  import ColumnInput from '@/hxx-components/column-input.vue'
 
 
 	export default {
 		name: "reservation-list-detail",
-    components: {selectVehicle,selectItemsType,selectParts,selectPartsGroup,selectItemPackage},
+    components: {selectVehicle,selectItemsType,selectParts,selectPartsGroup,selectItemPackage,comboDetail},
     data(){
             // 联系电话验证
             const validatePass = (rule, value, callback) => {
@@ -205,6 +207,10 @@
 
 
       return{
+
+        showItemFlag:null,//项目套餐组详情
+        itemDetailId:'',//项目套餐组id
+
         showoff:null,//选择车辆
         selectCarTransfer:true,//选择车辆是否放在body
 
@@ -365,8 +371,32 @@
           {title: '单位', key: 'UNIT', sortable: true, minWidth: 100,
             render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.UNIT))
           },
-          {title: '单价', key: 'SALES_PRICE', sortable: true, minWidth: 100},
-          {title: '小计金额', key: 'PART_MONEY', sortable: true, minWidth: 120,},
+          {title: '单价', key: 'SALES_PRICE', sortable: true, minWidth: 100,
+                render: (h, params) => {
+                        
+                        return h('div', [
+                            h('InputNumber', {
+                                props: {
+                                    min:0,
+                                    value: params.row.SALES_PRICE,
+                                    disabled:this.listDisabled,
+                                },
+                                on: {
+                                    "on-change":(val)=>{
+                                            params.row.SALES_PRICE=val;
+                                            this.commitParts[params.index]=params.row;
+                                    },
+                                
+                                    
+                                }
+                            },
+                            )
+                        ]);
+                    }
+          },
+          {title: '小计金额', key: 'PART_MONEY', sortable: true, minWidth: 120,
+                render: (h, params) => h('span', (params.row.PART_NUM*params.row.SALES_PRICE))
+            },
           {title: '优惠金额', key: 'PART_DERATE_MONEY', sortable: true, minWidth: 120,
             
 
@@ -382,7 +412,7 @@
                                     "on-change":(val)=>{
                                         
 
-
+                                        console.log(val,params.row.PART_MONEY);
                                         if(val<params.row.PART_MONEY){
                                             params.row.PART_DERATE_MONEY=val;
                                             let self=this;
@@ -397,13 +427,10 @@
                                                 content:"优惠金额过大",
                                                 
                                             })
-
-                                            params.row.PART_DERATE_MONEY=0;
                                             let self=this;
-                                            
-                                                self.commitParts[params.index]=params.row;
-                                                self.commitParts[params.index]['PART_LAST_MONEY']=params.row.SALES_PRICE*params.row.PART_NUM-val;
-                                                self.computItemMoney();
+                                            self.commitParts[params.index]['PART_DERATE_MONEY']=0;
+                                            self.commitParts[params.index]['PART_LAST_MONEY']=params.row.SALES_PRICE*params.row.PART_NUM-val;
+                                            self.computItemMoney();
                              
                                         }
                                     },
@@ -414,7 +441,9 @@
                         ]);
                     }
           },
-          {title: '优惠后金额', key: 'PART_LAST_MONEY', sortable: true, minWidth: 150,},
+          {title: '优惠后金额', key: 'PART_LAST_MONEY', sortable: true, minWidth: 150,
+                render: (h, params) => h('span', (params.row.PART_NUM*params.row.SALES_PRICE)-params.row.PART_DERATE_MONEY)
+            },
           {title: '备注', key: 'REMARK', sortable: true, minWidth: 150,
             render: (h, params) => {
                 return h('div', [
@@ -761,6 +790,56 @@
           this.isOrderSuccess=true;
           
         }
+      },
+      commitParts(obj){
+          console.log('xxxxxxxx',obj);
+        //   if(obj>parseFloat(params.row.MAX_SALES_PRICE) || initV==parseFloat(params.row.MAX_SALES_PRICE)){
+        //     this.$Modal.confirm({
+        //         title:"系统提示!",
+        //         content:"配件单价不能高于最高销售价,系统已为您自动调整为最高价！",
+                
+        //     })
+            
+            
+        //     let self=this;
+            
+        //         self.commitParts[params.index]['SALES_PRICE']=0;
+        //         self.commitParts[params.index]['SALES_PRICE']=params.row.MIN_SALES_PRICE;
+            
+            
+
+        //     console.log('进来最高价',params.row.SALES_PRICE,params.row.MAX_SALES_PRICE);
+
+        //     self.commitParts[params.index]['PART_MONEY']=params.row.PART_NUM*params.row.SALES_PRICE;
+        //     self.commitParts[params.index]['PART_LAST_MONEY']=params.row.PART_NUM*params.row.SALES_PRICE-params.row.PART_DERATE_MONEY;
+        //     self.computItemMoney();
+
+            
+        // }else 
+        // if(initV<parseFloat(params.row.MIN_SALES_PRICE) ||initV==parseFloat(params.row.MIN_SALES_PRICE)){
+        //     this.$Modal.confirm({
+        //         title:"系统提示!",
+        //         content:"配件单价不能低于最低销售价,系统已为您自动调整为最低价！",
+                
+        //     })
+            
+        //     let self=this;
+        //     self.commitParts[params.index]['SALES_PRICE']=params.row.MIN_SALES_PRICE;
+        //     console.log("self.commitParts",self.commitParts);
+        //     self.commitParts[params.index]['PART_MONEY']=params.row.PART_NUM*params.row.SALES_PRICE;
+        //     self.commitParts[params.index]['PART_LAST_MONEY']=params.row.PART_NUM*params.row.SALES_PRICE-params.row.PART_DERATE_MONEY;
+        //     self.computItemMoney();
+
+            
+        // }else{
+        //     console.log('进到没有限制价格');
+        //     params.row.SALES_PRICE=initV;
+        //     let self=this;
+        //     self.commitParts[params.index]=params.row;
+        //     self.commitParts[params.index]['PART_MONEY']=params.row.PART_NUM*params.row.SALES_PRICE;
+        //     self.commitParts[params.index]['PART_LAST_MONEY']=params.row.PART_NUM*params.row.SALES_PRICE-params.row.PART_DERATE_MONEY;
+        //     self.computItemMoney();
+        // }
       }
     },
     mounted () {
@@ -1216,18 +1295,16 @@
                   "COST_MONEY":0,
                   "IS_SEL":true
               }
-              for(let i in commitParts){
-                if(this.getParts1[j][i]){
-                  commitParts[i]=this.getParts1[j][i];
-                }else if(i=="PART_MONEY"){
-                  commitParts[i]=this.getParts1[j]["SALES_PRICE"]*(this.getParts1[j]["PART_NUM"]||1);
-                }else if(i=="PART_LAST_MONEY"){
-                  commitParts[i]=this.getParts1[j]["SALES_PRICE"]*(this.getParts1[j]["PART_NUM"]||1);
-                }
+              for(let i in this.getParts1[j]){
+                commitParts[i]=this.getParts1[j][i];
               }
-              console.log(commitParts);
+
+                commitParts['PART_MONEY']=this.getParts1[j]["SALES_PRICE"]*(this.getParts1[j]["PART_NUM"]||1);
+                commitParts['PART_LAST_MONEY']=this.getParts1[j]["SALES_PRICE"]*(this.getParts1[j]["PART_NUM"]||1)-commitParts["PART_DERATE_MONEY"];
+              console.log('最后得到的配件数据---------',commitParts);
               this.commitParts.push(commitParts);
           }
+          
 
         }
         this.computItemMoney();
@@ -1268,6 +1345,11 @@
       goOnItemGroup(){
         this.showSelectItemGroup=Math.random();
         this.initItemGroup=this.commitItemGroup;
+      },
+      //双击查看项目套餐详情------
+      onRowDblclick(val){
+          this.showItemFlag=Math.random();
+          this.itemDetailId=val.GROUP_ID;
       },
       selectItemGroup(value){
         console.log("传过来的字段值：",value);

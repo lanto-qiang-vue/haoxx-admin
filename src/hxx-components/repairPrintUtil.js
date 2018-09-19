@@ -741,6 +741,110 @@ export const printPBFun=function(tableData){
             '</div>';
             return temp;
 };
+//打印仓库盘点--------
+export const printPdd=function(wtdData,listSearch,commitParts) {
+        var partsString="";
+        for(let i in commitParts){
+            
+                partsString+='<tr>';
+                partsString+='<td>'+(parseInt(i)+1)+'</td>';
+                partsString+='<td colspan="2">'+commitParts[i].NAME+'</td>';
+                partsString+='<td>'+commitParts[i].FACTORY_NO+'</td>';
+                partsString+='<td>'+commitParts[i].UNIT+'</td>';
+                partsString+='<td>'+commitParts[i].BRAND+'</td>';
+                partsString+='<td style="text-align:right;" tclass="a">'+commitParts[i].CHECK_NUM+'</td>';
+                partsString+='<td style="text-align:right;" tclass="a">'+commitParts[i].STOCK_NUM+'</td>';
+                partsString+='<td style="text-align:right;" tclass="a">'+commitParts[i].DIFFERENCE_NUM+'</td>';
+                partsString+='<td>'+commitParts[i].REMARK+'</td>';
+                partsString+='</tr>';
+
+                    
+            
+        }
+        
+
+        var style3='<meta http-equiv="X-UA-Compatible" content="IE=Edge"><style>table{border:2px #000 solid;border-collapse: collapse;} th,td{border: 1px solid #000;} .noBorder th,.noBorder td{border:none;} .noRTLBorder th,.noRTLBorder td{border-right:none;border-top:none;border-left:none;} .noRLBorder th,.noRLBorder td{border-right:none;border-left:none;}' +
+     "th,td {padding: 2px; line-height: 16px; text-align: center; vertical-align: middle;font-size:13px; } td{text-align: left;} .text-center,.text-center th,.text-center td{text-align:center;} .text-right,.text-right th,.text-right td{text-align:right;}" +
+     ".w100{width:100px;} .w110{width:110px;} .w130{width:130px;} .w200{ width:200px;} .h30{ height:30px;line-height:25px;} .w30{width:30px;} .w70{width:70px;} .w80{width:80px;}  .w400{width:700px;} " +
+     ".text-left{text-align:left;} </style>";
+        var table =style3+
+            '<div style="padding:0 20px;">'+
+            '<table border=0 width="100%" cellspacing="0" cellpadding="0" bordercolor="#000000">'+
+            '<tr>'+
+                '<td height="50" colspan="10"><div align="center" style="font-size:24px;"><strong>仓库盘点单</strong></div></td>'+
+            '</tr>'+
+            '<tr>'+
+                '<td colspan="2">维修企业名称</td>'+
+                '<td colspan="3">'+wtdData.tenantName+'</td>'+
+                '<td colspan="2">维修企业联系人</td>'+
+                '<td colspan="3">'+wtdData.linkMan+'</td>'+
+            '</tr>'+
+            '<tr>'+
+                '<td colspan="2">维修企业地址</td>'+
+                '<td colspan="3">'+wtdData.tenantAdd+'</td>'+
+                '<td colspan="2">维修企业联系电话</td>'+
+                '<td colspan="3">'+wtdData.linkTel+'</td>'+
+            '</tr>'+
+            '<tr>'+
+                '<td colspan="2">盘点仓库</td>'+
+                '<td colspan="3">'+listSearch.STORE_NAME+'</td>'+
+                '<td colspan="2">盘点日期</td>'+
+                '<td colspan="3">'+listSearch.CHECK_DATE+'</td>'+
+            '</tr>'+
+            '<tr>'+
+                '<td colspan="2">盘点人</td>'+
+                '<td colspan="3">'+listSearch.CHECK_PERSON+'</td>'+
+                '<td colspan="2">盘点单号</td>'+
+                '<td colspan="3">'+listSearch.CHECK_NO+'</td>'+
+            '</tr>'+
+            '<tr>'+
+                '<td colspan="2">盘点类型</td>'+
+                '<td colspan="3">'+listSearch.CHECK_TYPE+'</td>'+
+                '<td colspan="2">打印日期</td>'+
+                '<td colspan="3">'+listSearch.printDate+'</td>'+
+            '</tr>'+
+            '<tr>'+
+                '<td colspan="2">备注</td>'+
+                '<td colspan="8">'+listSearch.REMARK+'</td>'+
+            '</tr>'+
+            '<tr>'+
+                '<td class="w50"><strong>序号</strong></td>'+
+                '<td colspan="2"><strong>配件名称</strong></td>'+
+                '<td><strong>原厂编号</strong></td>'+
+                '<td><strong>单位</strong></td>'+
+                '<td><strong>品牌</strong></td>'+
+                '<td style="text-align:right;"><strong>实盘数量</strong></td>'+
+                '<td style="text-align:right;"><strong>现库数量</strong></td>'+
+                '<td style="text-align:right;"><strong>差异数量</strong></td>'+
+                '<td><strong>备注</strong></td>'+
+            '</tr>'+
+            partsString+
+            // '<tpl for="parts">'+
+            //     '<tr>'+
+            //         '<td>{[xindex]}</td>'+
+            //         '<td colspan="2">{NAME}</td>'+
+            //         '<td>{FACTORY_NO}</td>'+
+            //         '<td>{UNIT:this.formatDict}</td>'+
+            //         '<td>{BRAND:this.formatDict}</td>'+
+            //         '<td style="text-align:right;" tclass="a">{CHECK_NUM}</td>'+
+            //         '<td style="text-align:right;" tclass="a">{STOCK_NUM:number("0")}</td>'+
+            //         '<td style="text-align:right;" tclass="a">{DIFFERENCE_NUM:number("0")}</td>'+
+            //         '<td>{REMARK}</td>'+
+            //     '</tr>'+
+            // '</tpl>'+
+            '<tr>'+
+                '<td colspan="6" style="text-align:right;"><strong>数量汇总：</strong></td>'+
+                '<td style="text-align:right;" tdata="Sum" tindex="7" tclass="a" format="0" >######</td>'+
+                '<td style="text-align:right;" tdata="Sum" tindex="8" tclass="a" format="0" >######</td>'+
+                '<td style="text-align:right;" tdata="Sum" tindex="9" tclass="a" format="0" >######</td>'+
+                '<td style="text-align:right;"></td>'+
+            '</tr>'+
+            '</tbody>'+
+            '</table>'+
+            '</div>';
+            return table;
+        
+    }
 
 //数据转化为中文-----
 function convertCurrency(money) {

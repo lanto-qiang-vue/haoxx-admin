@@ -9,7 +9,8 @@
             :transfer= "false"
             :footer-hide="false"
             :transition-names="['', '']">
-            <Collapse v-model="collapse1">
+            <div style="height: 100%;overflow: auto; padding-bottom: 30px;">
+                    <Collapse v-model="collapse1">
                 <Panel name="1">客户信息
                     <Form slot="content" :label-width="120" inline class="detail-form">
                         <FormItem label="客户姓名:">
@@ -53,7 +54,7 @@
                 <Panel name="3">支付方式
                     <Form slot="content" :label-width="120" inline class="detail-form" ref="shoukuanSearch" :rules="ruleValidate1">
                         <FormItem label="支付宝:">
-                            <Button  type="primary" >支付宝</Button>
+                            <Button  type="primary" @click="zfbPay">支付宝</Button>
                         </FormItem>
                         <FormItem label="微信支付:">
                             
@@ -92,11 +93,14 @@
                     </Form>
                 </Panel>
             </Collapse>
+            <select-valueCard :showoff="showCard" :showTransfer=true @selectCard="selectCard" :showCardData="showCardData"></select-valueCard>
+            </div>
+            
             <div slot="footer">
                 <Button type="primary" @click="savePay('shoukuanSearch')" style="margin-right: 10px;">收款</Button>
                 <Button @click="showShouKuan=false;" style="margin-right: 10px;">取消</Button>
             </div>
-            <select-valueCard :showoff="showCard" :showTransfer=true @selectCard="selectCard" :showCardData="showCardData"></select-valueCard>
+            
         </Modal>
 </template>
 
@@ -161,13 +165,14 @@ export default {
                     { validator: validatePass, trigger: 'change'},
                 ],
                 PAYMENT1: [
-                    { required: true, type: 'string', message: '必填',}
+                    { required: true, message: '必填',}
                     
                 ],
             },
             
             cardStateArr:[],
             payModeData:[],
+            timer:null,
         }
     },
     watch:{
@@ -197,7 +202,7 @@ export default {
                     }
                 }).then(res => {
                     if (res.success === true) {
-                        this.$Message.info('successful');
+                        
                         for(let i in res.data){
                             if(this.shoukuanSearch.hasOwnProperty(i)){
                                 this.shoukuanSearch[i]=res.data[i];
@@ -262,7 +267,7 @@ export default {
                                 }
                             }).then(res => {
                                 if (res.success === true) {
-                                    this.$Message.info('successful');
+                                    this.$Message.info('收款成功');
                                     this.titleMsg="已结清";
                                     this.showShouKuan=false;//收款界面弹出
                                     for(let i in this.buttonStateArr){
@@ -306,7 +311,7 @@ export default {
                             }
                         }).then(res => {
                             if (res.success === true) {
-                                this.$Message.info('successful');
+                                this.$Message.info('收款成功');
                                 this.titleMsg="已结清";
                                 this.showShouKuan=false;//收款界面弹出
                                 for(let i in this.buttonStateArr){
@@ -339,7 +344,7 @@ export default {
                 }
             }).then(res => {
                 if (res.success === true) {
-                    this.$Message.info('successful');
+                    
                     this.computedMoneyData=res.data;
                 }
             })
@@ -367,6 +372,114 @@ export default {
         handleReset (name) {
             this.$refs[name].resetFields();
         },
+        //支付宝支付--------
+        zfbPay(){
+            this.axios.request({
+                url: '/tenant/repair/ttrepairworkorder/pay',
+                method: 'post',
+                data: {
+                    out_trade_no: this.listSearch.REPAIR_NO,
+                    TENANT_ID: this.listSearch.TENANT_ID,
+                    total_amount: this.listSearch.SUM_MONEY,
+                    body: 100001,
+                    access_token: this.$store.state.user.token
+                }
+            }).then(res => {
+                if (res.success === true) {
+                    console.log(res.data);
+                    var returnData = res.data;
+                    var strHtml = returnData.zfHtml;//获取接口返回的代码
+                    var code = res.success;
+                    var s = ' target="_blank" ';//定义一个属性，让其在打开支付界面时，重新打开一个浏览器窗口
+                    var first = strHtml.substring(0,6);
+                    var last = strHtml.substring(6,strHtml.length);
+                    var newStr = first + s + last; 
+                    if(strHtml.indexOf('商家未签约') >= 0){
+                        this.$Modal.confirm({
+                            title:"系统提示!",
+                            content:"系统提示','商家未签约，暂不支持支付宝付款！",
+                        })
+                    }else{
+                        console.log(newStr)
+                        
+                        //将接口返回的html代码直接添加到页面上
+                        var bodyobj=document.body;
+                        var oDiv = document.createElement("div");
+                        oDiv.id="xxx"
+                        oDiv.innerHTML=newStr;
+                        var first=document.body.firstChild;
+
+                        document.body.insertBefore(oDiv,first);
+                        document.forms[0].submit();
+                        setTimeout(function(){
+                            var obj=document.getElementById('xxx');
+                            document.body.removeChild(obj);
+                        },5000);
+                        
+                        this.insertData();
+                    }
+                }
+
+                
+               
+
+
+            }) 
+        },
+        //请求参数----
+        insertData(){
+            this.axios.request({
+                url: '/tenant/repair/ttrepairworkorder/insert_data',
+                method: 'post',
+                data: {
+                    EPAIR_NO: GD1201809190016,
+                    CUSTOMER_ID: 5648,
+                    REPAIR_ITEM_MONEY: 0.01,
+                    REPAIR_PART_MONEY: 0,
+                    LESS_MONEY: 0,
+                    SUM_MONEY: 0.01,
+                    FOLLOW_PERSON: 管理员,
+                    PAYMENT1: 10101008,
+                    IS_GIVE_INVOICE: 10041002,
+                    INVOICE_NO: '',
+                    CORP_NAME: '',
+                    TAX_NO: '',
+                    REMARK: '',
+                    REPAIR_ID: 101666,
+                    access_token: this.$store.state.user.token
+                }
+            }).then(res => {
+                if (res.success === true) {
+                    if(res.data){
+                        var self=this;
+                        this.timer=setInterval(function(){
+                            self.getStatus();
+                        },2000)
+                    }
+                }
+            }) 
+        },
+        //请求状态--------
+        getStatus(){
+            this.axios.request({
+                url: '/tenant/repair/ttrepairworkorder/get_status',
+                method: 'post',
+                data: {
+                    REPAIR_NO: "GD1201809190016",
+                    access_token: this.$store.state.user.token
+                }
+            }).then(res => {
+                if (res.success === true) {
+                    if(res.data){
+                        var repairStatus = res.data[0].STATUS;
+                        if(repairStatus == '10201005' || repairStatus == 10201005){
+                            window.clearInterval(this.timer);
+                        }
+                    }
+                }
+            }) 
+        },
+
     
     }
 }
