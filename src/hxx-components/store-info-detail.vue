@@ -130,7 +130,7 @@
     <Button type="primary" :disabled="!editAble" @click="save" v-if="isAdmin ||accessBtn('save')">保存</Button>
   </div>
   <div class="footer" v-show="isRegister" style="text-align:center;">
-    <Button type="primary" @click="register">注册门店</Button>
+    <Button type="primary" :disabled="!editAble" @click="register">注册门店</Button>
     <Button type="error" @click="goback">返回列表</Button>
   </div>
 </div>

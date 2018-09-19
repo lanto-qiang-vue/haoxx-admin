@@ -1,11 +1,49 @@
 <template>
   <div style="width:100%;height:100%;">
-  <store-info-detail :data="datas" v-show="showId == 1" @save="saveStoreInfo" @register="saveRegister" @goback="goback"></store-info-detail>
-    <common-table v-show="showId == 2" v-model="tableData" :columns="columns" :showSearch="false" :showOperate="false"  :show="showTable">
+    <Modal
+      v-model="showModal1"
+      :fullscreen="true"
+      :mask-closable="false"
+      :scrollable="true"
+      :closable="false"
+      :transfer= "false"
+      :footer-hide="true"
+      :transition-names="['', '']"
+    >
+  <store-info-detail :data="datas" @save="saveStoreInfo" @register="saveRegister" @goback="goback"></store-info-detail>
+    </Modal>
+    <Modal
+      v-model="showModal2"
+      :fullscreen="true"
+      :mask-closable="false"
+      :scrollable="true"
+      :closable="false"
+      :transfer= "false"
+      :footer-hide="false"
+      :transition-names="['', '']"
+    >
+    <common-table :showPage="false" :loading="tableType" v-model="tableData" :columns="columns" @onRowDblclick="dbclick" :showSearch="false" :showOperate="false"  :show="showTable">
     </common-table>
+      <div slot="footer" style="text-align:center;">
+        <Button type="primary" @click="goback">注册门店</Button>
+        <Button @click="getList()">刷新</Button>
+      </div>
+    </Modal>
+    <Modal
+      v-model="showModal"
+      class="table-modal-detail"
+      width="90"
+      :mask-closable="false"
+      :scrollable="true"
+      :transfer= "false"
+      :footer-hide="true"
+      :transition-names="['', '']">
+      <store-info-detail :data="detail" @goback="back"></store-info-detail>
+    </Modal>
   </div>
 </template>
 <script>
+  import { mapActions } from 'vuex'
   import StoreInfoDetail from '@/hxx-components/store-info-detail.vue'
   import commonTable from '@/hxx-components/common-table.vue'
   import { getName, getDictGroup, getCreate } from '@/libs/util.js'
@@ -16,6 +54,11 @@
       return{
         datas:{},
         tableData:[],
+        showModal1:true,
+        showModal2:false,
+        tableType:false,
+        showModal:false,
+        detail:{},
         showTable:false,
         columns:[
           {title: '门店商户号', key: 'TENANT_NUM', sortable: true, minWidth: 140},
@@ -27,14 +70,53 @@
             render: (h,params) =>h('span',getName(this.statusList,params.row.STATUS))
           },
           {title: '审核状态', key: 'CHECK_STATUS', sortable: true, minWidth: 140,
-            render: (h,params) =>h('span',getName(this.checkList,params.row.CHECK_STATUS))
+            // render: (h,params) =>h('span',getName(this.checkList,params.row.CHECK_STATUS))
+            render: (h, params) => {
+              var buttonContent= getName(this.checkList,params.row.CHECK_STATUS);
+              switch(params.row.CHECK_STATUS){
+                case "10351001":
+                  var buttonStatus = "primary";
+                  break;
+                case "10351002":
+                  var buttonStatus = "success";
+                  buttonContent = "进入门店";
+                  break;
+                default:
+                  var buttonStatus = "error";
+                  break;
+              }
+              return h('div', [
+                h('Button', {
+                  props: {
+                    type: buttonStatus,
+                    size: 'large',
+                  },
+                  style: {
+                    width:"100px",
+                    textAlign: "center",
+                  },
+                  on: {
+                    click: (index) => {
+                      if(buttonStatus == 'success'){
+                        this.switchStore(params.row.TENANT_ID);
+                      }
+                    }
+                  }
+                }, buttonContent),
+              ]);
+            }
           },
       ],
         showId:1,
       }
     },
     mounted(){
-
+      if(this.$store.state.app.outStatus == 1){
+        this.showModal1 = false;
+        this.showModal2 = true;
+        this.showTable = Math.random();
+      }
+      this.getList();
     },
     computed:{
       statusList(){
@@ -45,7 +127,18 @@
       }
     },
     methods:{
+      goRegister(){
+
+      },
+      back(){
+        this.showModal = false;
+      },
+      dbclick(row){
+        this.detail = row;
+        this.showModal = true;
+      },
       getList(){
+        this.tableType = true;
         this.axios.request({
           url: '/register/tenantregister/list',
           method: 'post',
@@ -56,14 +149,15 @@
           }
         }).then(res => {
           if (res.success === true) {
+            this.tableType = false;
             this.tableData = res.data;
           }
         })
       },
       goback(){
-        this.showId = 2;
+        this.showModal1 = !this.showModal1;
+        this.showModal2 = !this.showModal2;
         this.showTable = Math.random();
-        this.getList();
       },
       getStoreInfo(){
         this.axios.request({
@@ -108,7 +202,73 @@
         })
       },
       hint(){
-        this.$Modal.success({title:'系统提示',content:'门店注册成功，请等待门店审核成功后即可登录系统管理该门店！'});
+        this.$Modal.success({title:'系统提示',content:'门店注册成功，请等待门店审核成功后即可登录系统管理该门店！',onOk:this.fllow});
+      },
+      fllow(){
+        this.getList();
+        this.showModal2 = true;
+        this.showModal1 = false;
+      },
+      switchStore(id){
+        this.$Spin.show();
+        this.axios.request({
+          url: '/register/tenantregister/changeTenant',
+          method: 'post',
+          data: {
+            tenantId: id,
+            access_token: this.$store.state.user.token
+          }
+        }).then(res => {
+          if (res.success === true) {
+            this.$store.commit('setToken', res.data)
+            let getInfo = Promise.all([ new Promise((resolve, reject) => {
+              this.axios.request({
+                url: '/tenant/common/getLoginUser',
+                method: 'post',
+                data: {
+                  access_token: this.$store.state.user.token
+                }
+              }).then(res => {
+                if (res.success === true) {
+                  this.$store.commit('setUser', res.data)
+                  resolve()
+                } else reject()
+              }).then(err => {
+                reject(err)
+              })
+            }),
+              new Promise((resolve, reject) => {
+                this.axios.request({
+                  url: '/tenant/common/getMenu',
+                  method: 'post',
+                  data: {
+                    node: 'root',
+                    access_token: this.$store.state.user.token
+                  }
+                }).then(res => {
+                  if (res.success === true) {
+                    this.$store.commit('setMenu', res.children)
+                    resolve()
+                  } else reject()
+                }).then(err => {
+                  reject(err)
+                })
+              })
+            ])
+            getInfo.then(() => {
+              let route=[]
+              this.$router.push({name: 'home'})
+              route.push({
+                name: this.$route.name,
+                path: this.$route.path,
+                meta: this.$route.meta,
+              })
+              // console.log(route)
+              this.$store.commit('setTagNavList', route)
+              this.$Spin.hide()
+            })
+          }
+        })
       }
     }
   }

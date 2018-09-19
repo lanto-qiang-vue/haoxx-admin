@@ -41,7 +41,6 @@
     placement="top" :total="total" @on-change="changePage" @on-page-size-change="changePageSize"/>
     <Button class="refresh" @click="changePage(page)"><Icon type="md-refresh" size="20"/></Button>
   </div>
-  <slot></slot>
 </div>
 </template>
 <script>
