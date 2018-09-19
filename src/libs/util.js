@@ -8,7 +8,14 @@ export const USERINFO_KEY = 'USERINFO'
 export const ACCESSMENU_KEY = 'ACCESSMENU'
 export const DICT_KEY = 'DICT'
 export const TENANT_KEY = 'Tenant';
-
+export const OUTSTATUS = 'outStatus'
+export const setOutStatus = (type) =>{
+  localStorage.setItem(OUTSTATUS,type || 0)
+}
+export const getOutStatus = () =>{
+  const outStatus = localStorage.getItem(OUTSTATUS)
+  return outStatus || 0;
+}
 export const setToken = (token) => {
   // Cookies.set(TOKEN_KEY, token, {expires: config.cookieExpires || 1})
 

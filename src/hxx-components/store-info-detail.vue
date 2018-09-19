@@ -6,7 +6,7 @@
       <Panel name="1">门店基本信息
         <Form class="common-form" ref="form" :rules="ruleValidate" :model="info" :label-width="80" slot="content">
           <FormItem prop="TENANT_NAME" label="门店名称">
-            <Input v-model="info.TENANT_NAME" :readonly="!editAble" :disabled="!isAdmin"></Input>
+            <Input v-model="info.TENANT_NAME" :readonly="!editAble" :disabled="!isAdmin && !isRegister"></Input>
             <!--<span class="formText" v-show="editAble">{{info.COMPANYCODE}}</span>-->
           </FormItem>
           <FormItem prop="TENANT_AREA_DISPLAY" label="门店所属区域">
@@ -123,11 +123,15 @@
       </Panel>
     </Collapse>
   </div>
-  <div class="footer">
+  <div class="footer" v-show="!isRegister">
     <Button v-show="!editAble" type="info" :disabled="false" @click="editAble= true"
             v-if="isAdmin ||accessBtn('save')">编辑</Button>
     <Button v-show="editAble" :disabled="false" @click="cancelEdit">取消编辑</Button>
     <Button type="primary" :disabled="!editAble" @click="save" v-if="isAdmin ||accessBtn('save')">保存</Button>
+  </div>
+  <div class="footer" v-show="isRegister" style="text-align:center;">
+    <Button type="primary" @click="register">注册门店</Button>
+    <Button type="error" @click="goback">返回列表</Button>
   </div>
 </div>
 </template>
@@ -144,7 +148,7 @@
         collapse: ['1', '2'],
         info:{
           "TENANT_ID":"",
-          "TENANT_AREA_CODE":"",
+          "TENANT_AREA_CODE":"310103",
           "TENANT_NAME":"",
           "TENANT_AREA_DISPLAY":"",
           "TENANT_ADD":"",
@@ -180,6 +184,9 @@
       },
       isAdmin(){
         return this.$store.getters.loginType=='1001'
+      },
+      isRegister(){
+      return this.$store.state.app.outStatus != 2;
       }
     },
     watch:{
@@ -191,25 +198,37 @@
       }
     },
     created(){
+      if(this.$store.state.app.outStatus != 2){this.editAble = true;}
       let rule= (this.isAdmin? []: [{ required: true, message:'必填项不能为空'}])
-      this.ruleValidate= {
-        TENANT_NAME: rule,
-        TENANT_AREA_DISPLAY:rule,
-        TENANT_ADD: rule,
-        BUSINESS_TYPE: [{ required: true, message:'必填项不能为空'}],
-        COMPANY_BUSINESS_SCOPE: rule,
-        ORG_NUMBER: rule,
-        ROAD_LICENSE: rule,
-        LICENSE_START_DATE: rule,
-        LICENSE_END_DATE: rule,
-        LEGAL_NAME: rule,
-        LEGAL_TEL: rule,
-        LINK_ZIP: rule,
-        ROAD_FILE_PATH: rule,
-        BUS_FILE_PATH: rule,
+      if(this.$store.state.app.outStatus != 2){
+        this.ruleValidate= {
+          TENANT_NAME: rule,
+          TENANT_AREA_DISPLAY:rule,
+          TENANT_ADD: rule
+        }
+      }else{
+        this.ruleValidate= {
+          TENANT_NAME: rule,
+          TENANT_AREA_DISPLAY:rule,
+          TENANT_ADD: rule,
+          BUSINESS_TYPE: [{ required: true, message:'必填项不能为空'}],
+          COMPANY_BUSINESS_SCOPE: rule,
+          ORG_NUMBER: rule,
+          ROAD_LICENSE: rule,
+          LICENSE_START_DATE: rule,
+          LICENSE_END_DATE: rule,
+          LEGAL_NAME: rule,
+          LEGAL_TEL: rule,
+          LINK_ZIP: rule,
+          ROAD_FILE_PATH: rule,
+          BUS_FILE_PATH: rule,
+        }
       }
     },
     methods:{
+		  goback(){
+		    this.$emit('goback');
+      },
       getImg( name, e){
         imgToBase64(e.target.files[0], (base64, fileName)=> {
           this.info[name]= base64
@@ -245,7 +264,26 @@
             this.$Modal.confirm({
               title: '确定保存吗？',
               onOk: () =>{
-                this.$emit('save', this.info)
+                this.$emit('save', this.info);
+              }
+            })
+          } else {
+            this.$Message.error('请输入必填项!');
+          }
+        })
+      },
+      register(){
+        this.$refs.form.validate((valid) => {
+          if (valid) {
+            if(!this.isAdmin && (!this.info.ROAD_FILE_PATH || !this.info.BUS_FILE_PATH)){
+              this.$Message.error('请上传相关证照!');
+              return
+            }
+            this.$Modal.confirm({
+              title: '系统提示',
+              content:'确认要注册吗?',
+              onOk: () =>{
+                this.$emit('register', this.info);
               }
             })
           } else {

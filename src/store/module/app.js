@@ -1,4 +1,4 @@
-import { getBreadCrumbList, setTagNavListInLocalstorage, getMenuByRouter, getTagNavListFromLocalstorage, getHomeRoute, setDict, getDict,getTenant,setTenant} from '@/libs/util'
+import { getBreadCrumbList, setTagNavListInLocalstorage, getMenuByRouter, getTagNavListFromLocalstorage, getHomeRoute, setDict, getDict,getTenant,setTenant,setOutStatus,getOutStatus} from '@/libs/util'
 import routers from '@/router/routers'
 import axios from '@/libs/api.request'
 export default {
@@ -10,6 +10,7 @@ export default {
 
     dict: getDict() || '',
     tenant: getTenant() || '',
+    outStatus: getOutStatus() || 0,
     pickingNumber: 0
   },
   getters: {
@@ -50,6 +51,10 @@ export default {
     setTenant(state,info){
        state.tenant = info
        setTenant(info)
+    },
+    setOutStatus(state,type){
+      state.outStatus = type
+      setOutStatus(type)
     },
     setPickingNumber(state,num){
       state.pickingNumber = num

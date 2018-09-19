@@ -431,6 +431,8 @@
                                             self.commitParts[params.index]['PART_DERATE_MONEY']=0;
                                             self.commitParts[params.index]['PART_LAST_MONEY']=params.row.SALES_PRICE*params.row.PART_NUM-val;
                                             self.computItemMoney();
+
+                                            
                              
                                         }
                                     },
