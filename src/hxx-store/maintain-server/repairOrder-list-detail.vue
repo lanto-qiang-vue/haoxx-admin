@@ -120,7 +120,7 @@
           ref="tablesMain"
           :columns="columns2"
           :data="commitItemGroup"
-          :disabled-hover="true"
+          @on-row-dblclick="onRowDblclick"
           stripe
           border
         ></Table>
@@ -206,6 +206,8 @@
       <select-shoukuanOrder :showSelectAccount="showShouKuan" :listSearch="listSearch" :repairPersonArr="repairPersonArr" @closeGetList="closeGetList">
 
       </select-shoukuanOrder>
+      <!--项目组套餐详情!!!-->
+      <combo-detail :tshow="showItemFlag" :tid="itemDetailId"></combo-detail>
     </div>
   
       <!--底部按钮组-->
@@ -238,11 +240,11 @@
   import ColumnInput from '@/hxx-components/column-input.vue'
   import {getLodop} from '@/hxx-components/LodopFuncs.js'
   import {printWtsFun,printPgdFun,printAccountFun} from '@/hxx-components/repairPrintUtil.js'
-
+  import comboDetail from '@/hxx-components/combo-detail.vue'
 
 	export default {
 	  name: "repairOrder-list-detail",
-    components: {selectVehicle,selectItemsType,selectParts,selectPartsGroup,selectItemPackage,selectAccountOrder,selectShoukuanOrder},
+    components: {selectVehicle,selectItemsType,selectParts,selectPartsGroup,selectItemPackage,selectAccountOrder,selectShoukuanOrder,comboDetail},
     mixins: [mixin],
     data(){
         // 联系电话验证
@@ -267,6 +269,8 @@
             };
 
       return{
+        showItemFlag:null,//项目套餐组详情
+        itemDetailId:'',//项目套餐组id
         
         showSelectAccount:null,//选择工单结算单
         showoff:null,//选择车辆
@@ -466,7 +470,68 @@
           {title: '单位', key: 'UNIT', sortable: true, minWidth: 100,
             render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.UNIT))
           },
-          {title: '单价', key: 'SALES_PRICE', sortable: true, minWidth: 100},
+          {title: '单价', key: 'SALES_PRICE', sortable: true, minWidth: 100,
+            
+                                render: (h, params) => {
+                        return h('div', [
+                            h('InputNumber', {
+                                props: {
+                                    min:0,
+                                    value: params.row.SALES_PRICE,
+                                    disabled:this.listDisabled,
+                                },
+                                on: {
+                                    "on-change":(val)=>{
+                                            console.log(val,params.row.MAX_SALES_PRICE);
+                                            if(val>=parseFloat(params.row.MAX_SALES_PRICE)){
+                                                console.log('进来最高价');
+
+                                                params.row.SALES_PRICE=params.row.MAX_SALES_PRICE;
+                                                let self=this;
+                                                this.commitParts[params.index]=params.row;
+                                                self.commitParts[params.index]['PART_MONEY']=params.row.PART_NUM*params.row.SALES_PRICE;
+                                                self.commitParts[params.index]['PART_LAST_MONEY']=params.row.PART_NUM*params.row.SALES_PRICE-params.row.PART_DERATE_MONEY;
+                                                self.computItemMoney();
+
+                                                this.$Modal.confirm({
+                                                    title:"系统提示!",
+                                                    content:"配件单价不能高于最高销售价,系统已为您自动调整为最高价！",
+                                                    
+                                                })
+                                            }else if(val<=parseFloat(params.row.MIN_SALES_PRICE)){
+                                                console.log('进来最低价');
+                                                params.row.SALES_PRICE=params.row.MIN_SALES_PRICE;
+                                                let self=this;
+                                                this.commitParts[params.index]=params.row;
+                                                self.commitParts[params.index]['PART_MONEY']=params.row.PART_NUM*params.row.SALES_PRICE;
+                                                self.commitParts[params.index]['PART_LAST_MONEY']=params.row.PART_NUM*params.row.SALES_PRICE-params.row.PART_DERATE_MONEY;
+                                                self.computItemMoney();
+
+                                                this.$Modal.confirm({
+                                                    title:"系统提示!",
+                                                    content:"配件单价不能低于最低销售价,系统已为您自动调整为最低价！",
+                                                    
+                                                })
+                                            }else{
+                                                console.log('进到没有限制价格');
+                                                params.row.SALES_PRICE=val;
+                                                let self=this;
+                                                this.commitParts[params.index]=params.row;
+                                                self.commitParts[params.index]['PART_MONEY']=params.row.PART_NUM*params.row.SALES_PRICE;
+                                                self.commitParts[params.index]['PART_LAST_MONEY']=params.row.PART_NUM*params.row.SALES_PRICE-params.row.PART_DERATE_MONEY;
+                                                self.computItemMoney();
+                                            }
+
+                                            
+                                        
+                                    },
+                                    
+                                }
+                            },
+                            )
+                        ]);
+                    }
+            },
           {title: '小计金额', key: 'PART_MONEY', sortable: true, minWidth: 120,
             render: (h, params) => h('span', params.row.SALES_PRICE*params.row.PART_NUM)
           },
@@ -576,7 +641,7 @@
                           },
                           on: {
                               click: () => {
-                                  this.deleteTenanceItem(params.index);
+                                  this.deletePartsGroup(params.index,params.row.STOCK_ID,params.row.PART_ID);
                               }
                           }
                       }, 'Delete')
@@ -757,7 +822,7 @@
                           },
                           on: {
                               click: () => {
-                                  this.deleteTenanceItem(params.index);
+                                  this.deleteItemGroup(params.index);
                               }
                           }
                       }, 'Delete')
@@ -1748,10 +1813,17 @@
             console.log(res)
             if (res.success === true) {
               this.commitOtherItem=res.data;
-              this.listSearch["OTHER_MONEY"]+=parseFloat(res.data[0]['REPAIR_MONEY1']);
-              this.listSearch["OTHER_MONEY"]+=parseFloat(res.data[0]['REPAIR_MONEY2']);
-              this.listSearch["OTHER_MONEY"]+=parseFloat(res.data[0]['REPAIR_MONEY3']);
-              this.listSearch["OTHER_MONEY"]+=parseFloat(res.data[0]['REPAIR_MONEY4']);
+              this.commitOtherItem[0]['REPAIR_MONEY1']=parseFloat(this.commitOtherItem[0]['REPAIR_MONEY1'])||0;
+              this.commitOtherItem[0]['REPAIR_MONEY2']=parseFloat(this.commitOtherItem[0]['REPAIR_MONEY2'])||0;
+
+              this.commitOtherItem[0]['REPAIR_MONEY3']=parseFloat(this.commitOtherItem[0]['REPAIR_MONEY3'])||0;
+
+              this.commitOtherItem[0]['REPAIR_MONEY4']=parseFloat(this.commitOtherItem[0]['REPAIR_MONEY4'])||0;
+              
+              this.listSearch["OTHER_MONEY"]+=parseFloat(res.data[0]['REPAIR_MONEY1'])||0;
+              this.listSearch["OTHER_MONEY"]+=parseFloat(res.data[0]['REPAIR_MONEY2'])||0;
+              this.listSearch["OTHER_MONEY"]+=parseFloat(res.data[0]['REPAIR_MONEY3'])||0;
+              this.listSearch["OTHER_MONEY"]+=parseFloat(res.data[0]['REPAIR_MONEY4'])||0;
             }
           })
       },
@@ -2008,13 +2080,13 @@
                   "EXPIRATION_DATE":'',
                   "STATUS":"",
               }
-              for(let i in commitParts){
-                if(this.getParts1[j][i]){
-                  commitParts[i]=this.getParts1[j][i];
-                }else if(i=="PART_MONEY"){
+              for(let i in this.getParts1[j]){
+                if(i=="PART_MONEY"){
                   commitParts[i]=this.getParts1[j]["SALES_PRICE"]*(this.getParts1[j]["PART_NUM"]||1);
                 }else if(i=="PART_LAST_MONEY"){
                   commitParts[i]=this.getParts1[j]["SALES_PRICE"]*(this.getParts1[j]["PART_NUM"]||1);
+                }else{
+                    commitParts[i]=this.getParts1[j][i];
                 }
               }
               this.commitParts.push(commitParts);
@@ -2059,6 +2131,11 @@
       goOnItemGroup(){
         this.showSelectItemGroup=Math.random();
         this.initItemGroup=this.commitItemGroup;
+      },
+      //双击查看项目套餐详情------
+      onRowDblclick(val){
+          this.showItemFlag=Math.random();
+          this.itemDetailId=val.GROUP_ID;
       },
       //跳转项目套餐---
       goOnItemLink(){

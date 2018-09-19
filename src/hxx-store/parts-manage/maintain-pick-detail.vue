@@ -134,7 +134,7 @@
                   :key="index" :value="item.id">{{item.code}}</Option>
               </Select>
             </FormItem>
-          <FormItem label="选择退料人:" prop="selectPerson">
+          <FormItem label="选择领料人:" prop="selectPerson">
               <Select v-model="storeObj.selectPerson" placeholder="" style="min-width: 250px;">
                 <Option v-for="(item, index) in repairPersonArr"
                   :key="index" :value="item.code">{{item.code}}</Option>

@@ -21,8 +21,8 @@
     </div>
     <div slot="operate">
       <Button type="primary" v-if="accessBtn('add')" :disabled="buttonStateArr.add"  @click="selectPick">新增</Button>
-      <Button type="primary" v-if="accessBtn('edit')" :disabled="buttonStateArr.edit" @click="editButton">修改|查看</Button>
-      <Button type="primary" v-if="accessBtn('ban')" :disabled="buttonStateArr.ban" @click="doBantitle">作废</Button>
+      <Button type="info" v-if="accessBtn('edit')" :disabled="buttonStateArr.edit" @click="editButton">修改/查看</Button>
+      <Button type="error" v-if="accessBtn('ban')" :disabled="buttonStateArr.ban" @click="doBantitle">作废</Button>
     </div>
     <!--维修领料详情-->
     <warehouse-check-detail class="table-modal-detail" :showDetail="showDetail" :detailData="detailData" @closeDetail="closeDetail"></warehouse-check-detail>

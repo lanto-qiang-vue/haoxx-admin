@@ -75,8 +75,9 @@
       this.obj = row;
       },
       add(){
+        alert(1);
         this.show = Math.random();
-  var data = {
+        var data = {
         MUST_SAFE_CORP:0,
         BUSINESS_SAFE_CORP:0,
         VEHICLE_COLOR:0,

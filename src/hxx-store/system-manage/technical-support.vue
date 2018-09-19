@@ -19,7 +19,7 @@
     </div>
     <div slot="operate">
       <Button type="primary" v-if="" @click="selectPick">新增</Button>
-      <Button type="primary" v-if="" @click="editButton">查看详情</Button>
+      <Button type="info" v-if="" @click="editButton">查看详情</Button>
     </div>
     <!--详情-->
     <technical-support-detail class="table-modal-detail" :showDetail="showDetail" :detailData="detailData" @closeDetail="closeDetail"></technical-support-detail>

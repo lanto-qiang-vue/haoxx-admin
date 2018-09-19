@@ -105,7 +105,6 @@
                  :formatter="value => `${value}`+des"
                  :parser="value => value.replace(des, '')"></InputNumber>
                 </FormItem>
-                </FormItem>
                     <FormItem label="别名1:" style="width:30%;" >
                 <Input type="text" :disabled="editType" v-model="formData.ALIAS1"> </Input>
                 </FormItem>

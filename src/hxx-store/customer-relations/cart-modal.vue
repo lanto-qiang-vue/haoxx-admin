@@ -334,9 +334,9 @@
                 }
         }).then(res => {
           if (res.success === true) {
-            
+
           }else{
-            this.$Modal.info({title:'系统提示',content:res.title+"<span style='color:red;'>请手动选取车型</span>"}); 
+            this.$Modal.info({title:'系统提示',content:res.title+"<span style='color:red;'>请手动选取车型</span>"});
           }
         })
       },
