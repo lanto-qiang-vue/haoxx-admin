@@ -240,7 +240,8 @@
             this.$store.commit('setDict', res.data.dict)
             this.$store.commit('setTenant', res.data.tenantUsers)
             this.$store.commit('setOutStatus',res.data.outStatus)
-            if (res.data.outStatus == 2) {
+              //注册过门店 2,未注册过门店 0,员工登录无状态
+            if (res.data.outStatus == 2 || type != 'tel') {
               var getInfo = Promise.all([this.getUser(res.data.tokenStr), this.getMenu(res.data.tokenStr)]);
               var name = 'home';
             } else {

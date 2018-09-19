@@ -8,6 +8,7 @@
 <script>
   import StoreInfoDetail from '@/hxx-components/store-info-detail.vue'
   import commonTable from '@/hxx-components/common-table.vue'
+  import { getName, getDictGroup, getCreate } from '@/libs/util.js'
   export default {
     name: "storeRegister",
     components: {StoreInfoDetail,commonTable},
@@ -17,11 +18,17 @@
         tableData:[],
         showTable:false,
         columns:[
-        {title: '员工姓名', key: 'USER_NAME', sortable: true, minWidth: 140},
-        {title: '职务', key: 'GROUP_NO', sortable: true, minWidth: 140,
-          render: (h,params) =>h('span',getName(this.jobtitle,params.row.PROFESSION))
-        },
-        {title: '员工电话', key: 'TEL_PHONE', sortable: true, minWidth: 140},
+          {title: '门店商户号', key: 'TENANT_NUM', sortable: true, minWidth: 140},
+          {title: '门店名称', key: 'TENANT_NAME', sortable: true, minWidth: 140},
+          {title: '门店地址', key: 'TENANT_ADD', sortable: true, minWidth: 140},
+          {title: '联系人姓名', key: 'LINK_MAN', sortable: true, minWidth: 140},
+          {title: '联系方式', key: 'LINK_TEL', sortable: true, minWidth: 140},
+          {title: '营业状态', key: 'STATUS', sortable: true, minWidth: 140,
+            render: (h,params) =>h('span',getName(this.statusList,params.row.STATUS))
+          },
+          {title: '审核状态', key: 'CHECK_STATUS', sortable: true, minWidth: 140,
+            render: (h,params) =>h('span',getName(this.checkList,params.row.CHECK_STATUS))
+          },
       ],
         showId:1,
       }
@@ -29,10 +36,34 @@
     mounted(){
 
     },
+    computed:{
+      statusList(){
+      return getDictGroup(this.$store.state.app.dict,'1034');
+      },
+      checkList(){
+      return getDictGroup(this.$store.state.app.dict,'1035');
+      }
+    },
     methods:{
+      getList(){
+        this.axios.request({
+          url: '/register/tenantregister/list',
+          method: 'post',
+          data: {
+            access_token: this.$store.state.user.token,
+            page:1,
+            limit:25
+          }
+        }).then(res => {
+          if (res.success === true) {
+            this.tableData = res.data;
+          }
+        })
+      },
       goback(){
         this.showId = 2;
         this.showTable = Math.random();
+        this.getList();
       },
       getStoreInfo(){
         this.axios.request({
