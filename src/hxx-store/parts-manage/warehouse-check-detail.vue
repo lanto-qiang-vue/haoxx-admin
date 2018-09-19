@@ -18,7 +18,7 @@
           <FormItem label="盘点仓库:" prop="STORE_ID" style="width:23%;">
               <Select v-model="listSearch.STORE_ID" placeholder="请选择..." style="min-width: 100%;" @on-change="selectStoreFun">
                 <Option v-for="(item, index) in allStore"
-                  :key="index" :value="item.id">{{item.code}}</Option>
+                  :key="index" :value="item.code">{{item.name}}</Option>
               </Select>
           </FormItem>
           <FormItem label="盘点日期:" prop="CHECK_DATE" style="width:23%;">
@@ -69,9 +69,10 @@
     
     <div slot="footer">
         <Button type="primary" @click="handleSave('listSearch')" style="margin-right: 10px;" v-show="saveFlag">保存</Button>
-        <Button type="primary" @click="handleCommit('listSearch')" style="margin-right: 10px;" v-show="saveFlag">提交</Button>
+        <Button type="info" @click="handleCommit('listSearch')" style="margin-right: 10px;" v-show="saveFlag">提交</Button>
         <Button type="primary" @click="handleOpenAllOut" style="margin-right: 10px;" v-show="noSaveFlag">盘赢盘亏处理</Button>
-        <Button type="primary" @click="" style="margin-right: 10px;">打印盘点单</Button>
+        <Button type="primary" @click="printWarehouse" style="margin-right: 10px;" v-show="printFlag" >打印盘点单</Button>
+        <Button type="default" @click="showModal=false;" style="margin-right: 10px;">返回</Button>
 
     </div>
   </Modal>
@@ -81,13 +82,13 @@
 <script>
   import { getName, getDictGroup ,getUserInfo} from '@/libs/util.js'
   import { formatDate } from '@/libs/tools.js'
-//   import selectWarehouseParts from '@/hxx-components/select-warehouseParts.vue'
+  import {printPdd} from '@/hxx-components/repairPrintUtil.js'
   import selectParts from '@/hxx-components/select-parts.vue'
-  import ColumnInput from '@/hxx-components/column-input.vue'
+  import {getLodop} from '@/hxx-components/LodopFuncs.js'
 
 export default {
 	name: "warehouse-check-detail",
-    components: {selectParts,ColumnInput},
+    components: {selectParts},
     data(){
       return{
             showModal:false,
@@ -101,8 +102,8 @@ export default {
             //维修配件
             columns: [
                 {title: '序号',  minWidth: 80,type:'index',},
-                {title: '配件名称', key: 'NAME', sortable: true, minWidth: 150},
-                {title: '原厂编号', key: 'FACTORY_NO', sortable: true, minWidth: 150,
+                {title: '配件名称', key: 'NAME', sortable: true, minWidth: 120},
+                {title: '原厂编号', key: 'FACTORY_NO', sortable: true, minWidth: 120,
                 },
                 {title: '单位', key: 'UNIT', sortable: true, minWidth: 100,
                     render: (h, params) => h('span', getName(this.getUnit, params.row.UNIT))
@@ -110,23 +111,22 @@ export default {
                 {title: '品牌', key: 'BRAND', sortable: true, minWidth: 100,
                     render: (h, params) => h('span', getName(this.getBrand, params.row.UNIT))
                 },
-                {title: '实盘数量', key: 'DIFFERENCE_NUM', sortable: true, minWidth: 120,
+                {title: '实盘数量', key: 'CHECK_NUM', sortable: true, minWidth: 120,
                     render: (h, params) => {
                         return h('div', [
                             h('InputNumber', {
                                 props: {
                                     min:0,
-                                    value: params.row.DIFFERENCE_NUM,
+                                    value: params.row.CHECK_NUM,
                                 },
                                 on: {
                                     "on-change":(val)=>{
                                         
-                                        let self=this;
-                                        clearTimeout(this.timer);
-                                        this.timer = setTimeout(function(){
-                                            self.commitParts[params.index]['DIFFERENCE_NUM']=val;
-                                            self.commitParts[params.index]['CHECK_NUM']=val-params.row.STOCK_NUM;
-                                        },1000)
+                                            params.row.CHECK_NUM=val;
+
+                                            this.commitParts[params.index]=params.row;
+                                            this.commitParts[params.index]['DIFFERENCE_NUM']=val-params.row.STOCK_NUM;
+                                        
                                     },
                                     
                                 }
@@ -137,10 +137,10 @@ export default {
                 },
                 {title: '现库数量', key: 'STOCK_NUM', sortable: true, minWidth: 120,
                 },
-                {title: '差异数量', key: 'CHECK_NUM', sortable: true, minWidth: 120,
-                    render: (h, params) => h('span', (params.row.DIFFERENCE_NUM-params.row.STOCK_NUM))
+                {title: '差异数量', key: 'DIFFERENCE_NUM', sortable: true, minWidth: 120,
+                    render: (h, params) => h('span', (params.row.CHECK_NUM-params.row.STOCK_NUM))
                 },
-                {title: '备注', key: 'REMARK', sortable: true, minWidth: 150,
+                {title: '备注', key: 'REMARK', sortable: true, minWidth: 120,
                     render: (h, params) => {
                         return h('div', [
                             h('Input', {
@@ -158,7 +158,7 @@ export default {
                         ]);
                     }
                 },
-                {title: '操作', key: '', sortable: true, minWidth: 150,fixed: 'right',
+                {title: '操作', key: '', sortable: true, minWidth: 100,fixed: 'right',
                     render: (h, params) => {
                         
                         if(this.titleMsg=='新建'){
@@ -173,7 +173,7 @@ export default {
                                             this.deletePartsGroup(params.index);
                                         }
                                     }
-                                }, 'Delete')
+                                }, '删除')
                             ]);
                         }else if(this.titleMsg=='已提交'){
                             return h('div', [
@@ -220,6 +220,7 @@ export default {
 
             saveFlag:true,
             noSaveFlag:false,
+            printFlag:false,
 
 
       }
@@ -238,24 +239,28 @@ export default {
                   this.titleMsg='新建'
                   this.saveFlag=true;
                   this.noSaveFlag=false;
+                  this.printFlag=true;
                   this.initData=this.detailData.STORE_ID;
 
               }else if(this.detailData.STATUS=='10441002'){
                   this.titleMsg='已提交'
                   this.saveFlag=false;
                   this.noSaveFlag=true;
+                  this.printFlag=true;
                   this.initData=this.detailData.STORE_ID;
 
               }else if(this.detailData.STATUS=='10441003'){
                   this.titleMsg='已盘赢盘亏处理'
                   this.saveFlag=false;
                   this.noSaveFlag=false;
+                  this.printFlag=true;
                   this.initData=this.detailData.STORE_ID;
 
               }else if(this.detailData.STATUS=='10441004'){
                   this.titleMsg='已作废'
                   this.saveFlag=false;
                   this.noSaveFlag=false;
+                  this.printFlag=true;
               }
           }else{
               this.titleMsg='新建';
@@ -264,6 +269,7 @@ export default {
               }
               this.saveFlag=true;
               this.noSaveFlag=false;
+              this.printFlag=false;
               this.initData='';
               this.commitParts=[];
 
@@ -331,9 +337,9 @@ export default {
                 if (res.success === true) {
                     this.allStore=[];
                     for(let i in res.data){
-                        var obj={code:'',id:''};
-                        obj.code=res.data[i].NAME;
-                        obj.id=res.data[i].STORE_ID;
+                        var obj={code:'',name:''};
+                        obj.name=res.data[i].NAME;
+                        obj.code=res.data[i].STORE_ID;
                         this.allStore.push(obj);
                         
                     }
@@ -391,7 +397,7 @@ export default {
                             "COST_MONEY":0,
                             "DIFFERENCE_NUM":0,
                             "IS_SEL":true,
-                            "CHECK_NUM":''
+                            "CHECK_NUM":0,
                         }
                         for(let key in partsObj){
                             if(val[i].hasOwnProperty(key)){
@@ -439,6 +445,8 @@ export default {
             }).then(res => {
                 if (res.success === true) {
                     this.$Message.info('保存成功...');
+                    this.printFlag=true;
+                    
                     for(let i in res.data){
                         this.listSearch[i]=res.data[i];
                     }
@@ -452,7 +460,7 @@ export default {
                 if (valid) {
                     if(this.commitParts.length>0){
                         for(let i in this.commitParts){
-                            if(this.commitParts[i].DIFFERENCE_NUM>=0){
+                            if(this.commitParts[i].CHECK_NUM>=0){
                                 // this.$Message.error('实盘数量...');
                             }else{
                                 this.$Message.error('实盘数量不能为空');
@@ -495,6 +503,7 @@ export default {
                     this.titleMsg='已提交';
                     this.saveFlag=false;
                     this.noSaveFlag=true;
+                    this.printFlag=true;
                 }
             })
         },
@@ -521,6 +530,7 @@ export default {
                     this.titleMsg='已盘赢盘亏处理';
                     this.saveFlag=false;
                     this.noSaveFlag=false;
+                    this.printFlag=true;
                 }
             })
         },
@@ -573,7 +583,7 @@ export default {
                                 "COST_MONEY":0,
                                 "DIFFERENCE_NUM":0,
                                 "IS_SEL":true,
-                                "CHECK_NUM":''
+                                "CHECK_NUM":0
                             }
                             for(let key in partsObj){
                                 if(val[i].hasOwnProperty(key)){
@@ -628,7 +638,7 @@ export default {
                     "COST_MONEY":0,
                     "DIFFERENCE_NUM":0,
                     "IS_SEL":true,
-                    "CHECK_NUM":''
+                    "CHECK_NUM":0
                 }
                 for(let key in partsObj){
                     if(val[i].hasOwnProperty(key)){
@@ -676,6 +686,44 @@ export default {
         //校验重置
         handleReset (name) {
             this.$refs[name].resetFields();
+        },
+        //仓库盘点单打印-------
+        printWarehouse(){
+            var wtdData=this.$store.state.user.userInfo.tenant;
+            var listSearch={};
+            for(let i in this.listSearch){
+                switch(i){
+                    case'CHECK_DATE':
+                        listSearch[i]=formatDate(this.listSearch[i])+ ' '+ formatDate(this.listSearch[i], 'hh:mm:ss');
+                    break;
+                    case'CHECK_TYPE':
+                        listSearch[i]=getName(this.getCheckType,this.listSearch[i]);
+                    break;
+                    case'STORE_NAME':
+                        listSearch[i]=getName(this.allStore,this.listSearch["STORE_ID"]);
+                    break;
+                    default : listSearch[i]= this.listSearch[i];
+                };
+            }
+            listSearch['printDate']=formatDate(new Date())+ ' '+ formatDate(new Date(), 'hh:mm:ss');
+
+            var commitParts=[];
+            for(let i in this.commitParts){
+                commitParts.push(this.commitParts[i]);
+            }
+
+            for(let i in commitParts){
+                commitParts[i].UNIT=getName(this.getUnit,commitParts[i].UNIT)||'';
+                commitParts[i].BRAND=getName(this.getBrand,commitParts[i].BRAND)||'';
+                commitParts[i].DIFFERENCE_NUM=commitParts[i].CHECK_NUM-commitParts[i].STOCK_NUM;
+            }
+
+            var temp=printPdd(wtdData,listSearch,commitParts);
+            var LODOP=getLodop();
+            LODOP.SET_PRINT_STYLEA(0, "FontSize", 20);
+            LODOP.SET_PRINT_STYLEA(0, "Alignment", 2);
+            LODOP.ADD_PRINT_TABLE(40, 0, "100%", 950, temp);
+            LODOP.PREVIEW();
         },
     }
 }
