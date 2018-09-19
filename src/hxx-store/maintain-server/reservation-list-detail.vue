@@ -395,15 +395,15 @@
                                             this.$Modal.confirm({
                                                 title:"系统提示!",
                                                 content:"优惠金额过大",
-                                                
-                                            })
 
+                                            })
+                                            alert(params.row.PART_DERATE_MONEY);
                                             params.row.PART_DERATE_MONEY=0;
-                                            let self=this;
-                                            
-                                                self.commitParts[params.index]=params.row;
-                                                self.commitParts[params.index]['PART_LAST_MONEY']=params.row.SALES_PRICE*params.row.PART_NUM-val;
-                                                self.computItemMoney();
+                                            // let self=this;
+                                            //
+                                            //     self.commitParts[params.index]=params.row;
+                                            //     self.commitParts[params.index]['PART_LAST_MONEY']=params.row.SALES_PRICE*params.row.PART_NUM-val;
+                                            //     self.computItemMoney();
                              
                                         }
                                     },

@@ -238,7 +238,8 @@
           if (res.success === true) {
             this.$store.commit('setToken', res.data.tokenStr)
             this.$store.commit('setDict', res.data.dict)
-            this.$store.commit('setTenant', res.data.tenantUsers);
+            this.$store.commit('setTenant', res.data.tenantUsers)
+            this.$store.commit('setOutStatus',res.data.outStatus)
             if (res.data.outStatus == 2) {
               var getInfo = Promise.all([this.getUser(res.data.tokenStr), this.getMenu(res.data.tokenStr)]);
               var name = 'home';
