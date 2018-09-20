@@ -8,6 +8,7 @@
         :transfer= "showTransfer"
         :footer-hide="false"
         :mask-closable="false"
+        
         class="table-modal-detail"
         :transition-names="['', '']"
     >

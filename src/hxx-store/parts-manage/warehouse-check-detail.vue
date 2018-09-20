@@ -694,7 +694,7 @@ export default {
             for(let i in this.listSearch){
                 switch(i){
                     case'CHECK_DATE':
-                        listSearch[i]=formatDate(this.listSearch[i])+ ' '+ formatDate(this.listSearch[i], 'hh:mm:ss');
+                        listSearch[i]=formatDate(this.listSearch[i]);
                     break;
                     case'CHECK_TYPE':
                         listSearch[i]=getName(this.getCheckType,this.listSearch[i]);

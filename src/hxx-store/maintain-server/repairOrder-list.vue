@@ -108,7 +108,7 @@
         page: 1,
         limit: 25,
         total: 0,
-        showTable:false,
+        showTable:Math.random(),
         showDetail: false,
         detailData: null,
         detailQuery:null,
