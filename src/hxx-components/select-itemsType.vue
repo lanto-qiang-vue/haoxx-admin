@@ -10,6 +10,7 @@
         :transfer= "showTransfer"
         :footer-hide="false"
         :transition-names="['', '']"
+        class="table-modal-detail"
     >
 
     <common-table v-model="tableData" :columns="columns" :show="showTenanceItems" :total="total" @changePage="changePage" 

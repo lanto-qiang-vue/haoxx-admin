@@ -54,7 +54,6 @@
   import { getName, getDictGroup ,getUserInfo} from '@/libs/util.js'
   import { formatDate } from '@/libs/tools.js'
   import commonTable from '@/hxx-components/common-table.vue'
-
 export default {
 	name: "query-Inventory-detail",
     components: {commonTable},

@@ -273,7 +273,7 @@ export const printWtsFun=function(wtdData,listSearch,commitItem,commitParts,comm
 };
 
 //打印派工单-----------
-export const printPgdFun=function(wtdData,listSearch,commitItem,commitParts) {
+export const printPgdFun=function(wtdData,listSearch,commitItem,commitParts,itemGroupDetail) {
         var tenantInfo = '<tr class="noBorder">' +
             '<td colspan="8">承修方(盖章）: '+wtdData.tenantName+'</td>'+
             '</tr>'+
@@ -304,6 +304,16 @@ export const printPgdFun=function(wtdData,listSearch,commitItem,commitParts) {
                 itemString+='</tr>';
 
                
+        }
+        for(let i in itemGroupDetail){
+                itemString+='<tr class="noRLBorder text-center">';
+                itemString+='<td>'+(parseInt(i)+1)+'</td>';
+                itemString+='<td colspan="3">'+itemGroupDetail[i].NAME+'</td>';
+                itemString+='<td>'+itemGroupDetail[i].REPAIR_TIME+'</td>';
+                itemString+='<td colspan="1" tclass="b"></td>';
+                itemString+='<td colspan="1" tclass="b">'+(itemGroupDetail[i].REMARK||'')+'</td>';
+                itemString+='<td colspan="1" tclass="b">'+(itemGroupDetail[i].WORK_CLASS_NAME||'')+'</td>';
+                itemString+='</tr>';
         }
 
         for(let i in commitParts){
@@ -406,7 +416,7 @@ export const printPgdFun=function(wtdData,listSearch,commitItem,commitParts) {
 };
 
 //打印结算单--------
-export const printAccountFun=function(wtdData,listSearch,commitItem,commitItemGroup,commitParts,commitOtherItem,store){
+export const printAccountFun=function(wtdData,listSearch,commitItem,commitItemGroup,commitParts,commitOtherItem,store,styleFlag){
 
 
   console.log(wtdData,listSearch,commitItem,commitItemGroup,commitParts,commitOtherItem,store);
@@ -470,14 +480,17 @@ export const printAccountFun=function(wtdData,listSearch,commitItem,commitItemGr
     otherMoney+=parseFloat(commitOtherItem[0]['REPAIR_MONEY'+(parseInt(i)+1)]);
 
   }
-
-
-
-  var style3='<meta http-equiv="X-UA-Compatible" content="IE=Edge"><style>table{border:2px #000 solid;border-collapse: collapse;} th,td{border: 1px solid #000;} .noBorder th,.noBorder td{border:none;} .noRTLBorder th,.noRTLBorder td{border-right:none;border-top:none;border-left:none;} .noRLBorder th,.noRLBorder td{border-right:none;border-left:none;}' +
+  var style3='';
+  if(styleFlag){
+      style3='<meta http-equiv="X-UA-Compatible" content="IE=Edge"><style>table{border:2px #000 solid;border-collapse: collapse;} th,td{border: 1px solid #000;} .noBorder th,.noBorder td{border:none;} .noRTLBorder th,.noRTLBorder td{border-right:none;border-top:none;border-left:none;} .noRLBorder th,.noRLBorder td{border-right:none;border-left:none;}' +
      "th,td {padding: 2px; line-height: 16px; text-align: center; vertical-align: middle;font-size:13px; } td{text-align: left;} .text-center,.text-center th,.text-center td{text-align:center;} .text-right,.text-right th,.text-right td{text-align:right;}" +
      ".w100{width:100px;} .w110{width:110px;} .w130{width:130px;} .w200{ width:200px;} .h30{ height:30px;line-height:25px;} .w30{width:30px;} .w70{width:70px;} .w80{width:80px;}  .w400{width:700px;} " +
      ".text-left{text-align:left;} </style>";
-  var temp=style3+'<div style="padding:0 30px;">'+
+  }
+
+  
+
+  var temp='<div style="padding:0 30px;" id="print_style">'+style3+
             '<table border=0 width="100%" cellspacing="0" cellpadding="0" bordercolor="#000000">'+
             '<tdead>'+
             '<tr class="noBorder">'+
@@ -651,7 +664,7 @@ export const printAccountFun=function(wtdData,listSearch,commitItem,commitItemGr
             '<td colspan="10" class="text-left" style="padding:0px 10px">4. 企业承诺本次维修质量保证期为车辆行驶<span style="border-bottom:#000 1px solid;display:inline-block;padding:0 10px;">'+store.state.user.userInfo.params[4].PARAM_VALUE+'</span>公里或者<span style="border-bottom:#000 1px solid;display:inline-block;padding:0 10px;">'+store.state.user.userInfo.params[5].PARAM_VALUE+'</span>日，里程和时间以先到者为准。</td>'+
             '</tr>'+
             '<tr class="noBorder">'+
-            '<td colspan="10" class="text-left" style="padding:0px 10px">5. 企业承诺本次维修的新能源汽车专用部件<span style="border-bottom:#000 1px solid;display:inline-block;padding:0 10px;min-width:30px;">'+listSearch.ZY_PART+'</span>维修质量保证期为<span style="border-bottom:#000 1px solid;display:inline-block;padding:0 10px;min-width:30px;">'+listSearch.ZY_PART_BZQ+'</span>。</td>'+
+            '<td colspan="10" class="text-left" style="padding:0px 10px">5. 企业承诺本次维修的新能源汽车专用部件<span style="border-bottom:#000 1px solid;display:inline-block;padding:0 10px;min-width:30px;">'+listSearch.ZY_PART+'</span>维修质量保证期为<span style="border-bottom:#000 1px solid;display:inline-block;padding:0 10px;min-width:30px;">'+listSearch.ZY_PART_BZQ+'</span>公里。</td>'+
             '</tr>'+
             '<tr class="noBorder">'+
             '<td colspan="10" class="text-left" style="padding:0px 10px">6. 请扫描二维码或登录上海汽修平台，对本次维修服务进行评价。</td>'+

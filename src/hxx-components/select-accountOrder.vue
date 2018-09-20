@@ -9,6 +9,7 @@
         :transfer= "true"
         :footer-hide="false"
         class="table-modal-detail"
+        :mask-closable="false"
         :transition-names="['', '']"
     >
         <div style="height: 100%;overflow: auto; padding-bottom: 30px;">
@@ -31,12 +32,12 @@
                                     </FormItem>
                                     <FormItem label="项目优惠金额:">
                                         <InputNumber :min="0" v-model="shoukuanSearch.REPAIR_ITEM_DERATE_MONEY" @on-change="itemComputedFun" 
-                                            :formatter="value => `${value}元`" :parser="value => value.replace('元', '')"
+                                            :formatter="value => `${value}元`" :parser="value => value.replace('元', '')" :disabled="jiesuanButton"
                                         ></InputNumber>
                                     </FormItem>
                                     <FormItem label="配件优惠金额:">
                                         <InputNumber :min="0" v-model="shoukuanSearch.REPAIR_PART_DERATE_MONEY" @on-change="partComputedFun"
-                                            :formatter="value => `${value}元`" :parser="value => value.replace('元', '')"
+                                            :formatter="value => `${value}元`" :parser="value => value.replace('元', '')" :disabled="jiesuanButton"
                                         ></InputNumber>
                                     </FormItem>
                                     <FormItem label="合计优惠金额:">
@@ -50,25 +51,25 @@
                             <Panel name="2">其他信息
                                 <Form slot="content" :label-width="120" class="common-form" ref="shoukuanSearch" :rules="ruleValidate"  :model="shoukuanSearch">
                                     <FormItem label="出厂日期:" prop="OUT_DATE">
-                                        <DatePicker v-model="shoukuanSearch.OUT_DATE" type="datetime" placeholder="" ></DatePicker>
+                                        <DatePicker v-model="shoukuanSearch.OUT_DATE" type="datetime" placeholder="" :disabled="jiesuanButton"></DatePicker>
                                     </FormItem>
                                    <FormItem label="出厂里程:" prop="OUT_MILEAGE">
                                         
                                         <InputNumber :min="0" v-model="shoukuanSearch.OUT_MILEAGE" @on-change="outMileageFun"
-                                            :formatter="value => `${value}公里`" :parser="value => value.replace('公里', '')"
+                                            :formatter="value => `${value}公里`" :parser="value => value.replace('公里', '')" :disabled="jiesuanButton"
                                         ></InputNumber>
                                     </FormItem>
-                                    <FormItem label="旧件处理结果:" style="width:100%">
-                                        <Select v-model="shoukuanSearch.OLD_PART_RESULT">
+                                    <FormItem label="旧件处理结果:">
+                                        <Select v-model="shoukuanSearch.OLD_PART_RESULT" :disabled="jiesuanButton">
                                             <Option v-for="(item, index) in partsArr" :value="item.code" :key="item.code">{{ item.name }}</Option>
                                         </Select>
                                     </FormItem>
                                     <FormItem label="新能源专用部件:">
-                                        <Input type="text" v-model="shoukuanSearch.ZY_PART" placeholder="" > </Input>
+                                        <Input type="text" v-model="shoukuanSearch.ZY_PART" placeholder="" :disabled="jiesuanButton"> </Input>
                                     </FormItem>
                                     <FormItem label="质量保证期:">
                                         
-                                        <InputNumber :min="0" v-model="shoukuanSearch.ZY_PART_BZQ" @on-change="bzqFun"
+                                        <InputNumber :min="0" v-model="shoukuanSearch.ZY_PART_BZQ" @on-change="bzqFun" :disabled="jiesuanButton"
                                             :formatter="value => `${value}公里`" :parser="value => value.replace('公里', '')"
                                         ></InputNumber>
                                     </FormItem>
@@ -200,12 +201,8 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                 },
                 itemArr:[],//项目数据
                 itemGroup:[],//项目套餐数据
-                itemMoney:0,
-                itemNumber:0,
                 partArr:[],//配件数据
-                partMoney:0,
                 otherArr:{},//其他数据
-                otherMoney:10,
 
 
             }
@@ -243,6 +240,7 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                 for(let i in this.showAccountData){
                     this.listSearch[i]=this.showAccountData[i];
                 }
+                this.listSearch["COLLECT_NO"]="***********";
 
                 for(let i in this.showAccountItem){
                     this.itemArr.push(this.showAccountItem[i]);
@@ -254,10 +252,7 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                 for(let i in this.showAccountParts){
                     this.partArr.push(this.showAccountParts[i]);
                 }
-                
                 this.otherArr=this.showAccountOther;
-                this.itemNumber=this.itemArr.length;
-
                 this.showOnoff=true;
                 this.readInData();
                 this.jiesuanButton=false;
@@ -304,12 +299,8 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                         default : this.shoukuanSearch[i]= this.listSearch[i];
                     };
                 }
-
-                
-                
-               this.formatDataFun(true);
-            console.log("转化之后的数据------",this.listSearch);
-               
+                this.formatDataFun(true);
+            
             },
             //保存数据----
             saveAccountFun(name){
@@ -340,19 +331,8 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                         
                         this.jiesuanButton=true;
                         this.shoukuanButton=false;
-                        for(let i in this.shoukuanSearch){
-                            switch(i){
-                                case'OUT_DATE':
-                                    this.listSearch[i]=formatDate(this.shoukuanSearch[i]);
-                                break;
-                                
-                                default : this.listSearch[i]= this.shoukuanSearch[i];
-                            }
-                        }
-
-                        var newArr=['10201004',this.listSearch];
-                        this.$emit('emitAccount',newArr);//重新请求数据
-                        this.formatDataFun(true);
+                        this.getAccountFun();
+                        
 
                     }else{
                         this.$Modal.confirm({
@@ -361,6 +341,36 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                             
                             
                         })
+                    }
+                })
+           },
+           //get结算数据------
+           getAccountFun(){
+               this.axios.request({
+                    url: '/tenant/repair/ttrepairworkorder/getAccounts',
+                    method: 'post',
+                    data: {
+                        repairId: this.listSearch["REPAIR_ID"],
+                        page: 1,
+                        start: 0,
+                        limit: 25,
+                        access_token: this.$store.state.user.token
+                    }
+                }).then(res => {
+                    if (res.success === true) {
+                        if(res.data.length>0){
+                            for(let i in res.data){
+                                for(let j in res.data[i]){
+                                    this.listSearch[j]=res.data[i][j];
+                                }
+                            }
+
+
+                            var newArr=['10201004',this.listSearch];
+                            this.$emit('emitAccount',newArr);//重新请求数据
+                            this.formatDataFun(true);
+                        }
+                        
                     }
                 })
            },
@@ -531,25 +541,43 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
             z-index: 4;
         }
     }
-.print_style table{border:2px #000 solid;border-collapse: collapse; display: block;} 
-.print_style th,.print_style td{border: 1px solid #000;} 
-.print_style .noBorder th,.print_style .noBorder td{border:none;} 
-.print_style .noRTLBorder th,.print_style .noRTLBorder td{border-right:none;border-top:none;border-left:none;} 
-.print_style .noRLBorder th,.print_style .noRLBorder td{border-right:none;border-left:none;}
-.print_style th,.print_style td {padding: 2px; line-height: 16px; text-align: center; vertical-align: middle;font-size:12px; } 
-.print_style td{text-align: left;} 
-.print_style .text-center,.print_style .text-center th,.print_style .text-center td{text-align:center;} 
-.print_style .text-right,.print_style .text-right th,.print_style .text-right td{text-align:right;}
-.print_style .w100{width:100px;} 
-.print_style .w110{width:110px;} 
-.print_style .w130{width:130px;} 
-.print_style .w200{ width:200px;} 
-.print_style .h30{ height:30px;line-height:25px;} 
-.print_style .w30{width:30px;} 
-.print_style .w70{width:70px;} 
-.print_style .w80{width:80px;} 
-.print_style .w400{width:700px;}
-.print_style .text-left{text-align:left;}
+/*#print_style table{border:2px #000 solid;border-collapse: collapse; display: block;} 
+#print_style th,#print_style td{border: 1px solid #000;} 
+#print_style .noBorder th,#print_style .noBorder td{border:none;} 
+#print_style .noRTLBorder th,#print_style .noRTLBorder td{border-right:none;border-top:none;border-left:none;} 
+#print_style .noRLBorder th,#print_style .noRLBorder td{border-right:none;border-left:none;}
+#print_style th,#print_style td {padding: 2px; line-height: 16px; text-align: center; vertical-align: middle;font-size:12px; } 
+#print_style td{text-align: left;} 
+#print_style .text-center,#print_style .text-center th,#print_style .text-center td{text-align:center;} 
+#print_style .text-right,#print_style .text-right th,#print_style .text-right td{text-align:right;}
+#print_style .w100{width:100px;} 
+#print_style .w110{width:110px;} 
+#print_style .w130{width:130px;} 
+#print_style .w200{ width:200px;} 
+#print_style .h30{ height:30px;line-height:25px;} 
+#print_style .w30{width:30px;} 
+#print_style .w70{width:70px;} 
+#print_style .w80{width:80px;} 
+#print_style .w400{width:700px;}
+#print_style .text-left{text-align:left;}*/
+
+/*table{border:2px #000 solid;border-collapse: collapse;} 
+th,td{border: 1px solid #000;} 
+.noBorder th,.noBorder td{border:none;} 
+.noRTLBorder th,.noRTLBorder td{border-right:none;border-top:none;border-left:none;} 
+.noRLBorder th,.noRLBorder td{border-right:none;border-left:none;}
+th,td {padding: 2px; line-height: 16px; text-align: center; vertical-align: middle;font-size:13px; } 
+td{text-align: left;} .text-center,.text-center th,.text-center td{text-align:center;} 
+.text-right,.text-right th,.text-right td{text-align:right;}
+.w100{width:100px;} 
+.w110{width:110px;} 
+.w130{width:130px;} 
+.w200{ width:200px;} 
+.h30{ height:30px;line-height:25px;} 
+.w30{width:30px;} 
+.w70{width:70px;} 
+.w80{width:80px;}
+.text-left{text-align:left;} */
 </style>
 
 

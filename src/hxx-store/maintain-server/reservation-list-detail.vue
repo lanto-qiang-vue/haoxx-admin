@@ -254,10 +254,6 @@
                                     "on-change":(val)=>{
                                         if(val<params.row.ITEM_MONEY){
                                             params.row.ITEM_DERATE_MONEY=val;
-                                            let self=this;
-                                            this.commitItem[params.index]=params.row;
-                                            self.commitItem[params.index]['ITEM_LAST_MONEY']=params.row.REPAIR_TIME*this.work_price+params.row.PAINT_NUM*this.paint_price-val;
-                                            self.computItemMoney();
                                         }else{
                                             this.$Modal.confirm({
                                                 title:"系统提示!",
@@ -265,13 +261,10 @@
                                                 
                                             })
                                             params.row.ITEM_DERATE_MONEY=0;
-                                            let self=this;
-                                            this.commitItem[params.index]=params.row;
-                                            self.commitItem[params.index]['ITEM_LAST_MONEY']=params.row.REPAIR_TIME*this.work_price+params.row.PAINT_NUM*this.paint_price-val;
-                                            self.computItemMoney();
                                         }
-                                        
-
+                                        this.commitItem[params.index]=params.row;
+                                        this.commitItem[params.index]['ITEM_LAST_MONEY']=params.row.REPAIR_TIME*this.work_price+params.row.PAINT_NUM*this.paint_price-val;
+                                        this.computItemMoney();
                                     
                                     },
                                     
@@ -317,7 +310,7 @@
                                   this.deleteTenanceItem(params.index);
                               }
                           }
-                      }, 'Delete')
+                      }, '删除')
                   ]);
                 }else if(this.titleMsg=='已预约'){
                   return h('div', [
@@ -339,7 +332,6 @@
           {title: '配件编号', key: 'PART_NO', sortable: true, minWidth: 140,},
           {title: '配件名称', key: 'NAME', sortable: true, minWidth: 150},
           {title: '数量', key: 'PART_NUM', sortable: true, minWidth: 100,
-            
               render: (h, params) => {
                         return h('div', [
                             h('InputNumber', {
@@ -357,9 +349,6 @@
                                             self.commitParts[params.index]['PART_MONEY']=params.row.SALES_PRICE*val;
                                             self.commitParts[params.index]['PART_LAST_MONEY']=params.row.SALES_PRICE*val-params.row.PART_DERATE_MONEY;
                                             self.computItemMoney();
-                                  
-                                        
-                                        
                                     },
                                     
                                 }
@@ -383,8 +372,37 @@
                                 },
                                 on: {
                                     "on-change":(val)=>{
-                                            params.row.SALES_PRICE=val;
-                                            this.commitParts[params.index]=params.row;
+                                              if(val>parseFloat(params.row.MAX_SALES_PRICE) || val==parseFloat(params.row.MAX_SALES_PRICE)){
+                                                this.$Modal.confirm({
+                                                    title:"系统提示!",
+                                                    content:"配件单价不能高于最高销售价,系统已为您自动调整为最高价！",
+                                                    
+                                                })
+                                                this.commitParts[params.index].SALES_PRICE=Math.random();
+                                                
+                                                params.row.SALES_PRICE=params.row.MAX_SALES_PRICE;
+                                                
+
+                                            }else if(val<parseFloat(params.row.MIN_SALES_PRICE) ||val==parseFloat(params.row.MIN_SALES_PRICE)){
+                                                this.$Modal.confirm({
+                                                    title:"系统提示!",
+                                                    content:"配件单价不能低于最低销售价,系统已为您自动调整为最低价！",
+                                                    
+                                                })
+                                                
+                                                this.commitParts[params.index].SALES_PRICE=Math.random();
+                                                params.row.SALES_PRICE=params.row.MIN_SALES_PRICE;
+                                                
+                                                
+                                            }else{
+                                                params.row.SALES_PRICE=val;
+                                                
+                                            }
+                                                this.commitParts[params.index]=params.row;
+                                                this.commitParts[params.index]['PART_MONEY']=params.row.PART_NUM*params.row.SALES_PRICE;
+                                                this.commitParts[params.index]['PART_LAST_MONEY']=params.row.PART_NUM*params.row.SALES_PRICE-params.row.PART_DERATE_MONEY;
+                                                this.computItemMoney();
+
                                     },
                                 
                                     
@@ -410,31 +428,21 @@
                                 },
                                 on: {
                                     "on-change":(val)=>{
-                                        
-
-                                        console.log(val,params.row.PART_MONEY);
                                         if(val<params.row.PART_MONEY){
                                             params.row.PART_DERATE_MONEY=val;
-                                            let self=this;
-                                            
-                                            self.commitParts[params.index]=params.row;
-                                            self.commitParts[params.index]['PART_LAST_MONEY']=params.row.SALES_PRICE*params.row.PART_NUM-val;
-                                            self.computItemMoney();
-                                       
                                         }else{
                                             this.$Modal.confirm({
                                                 title:"系统提示!",
                                                 content:"优惠金额过大",
                                                 
                                             })
-                                            let self=this;
-                                            self.commitParts[params.index]['PART_DERATE_MONEY']=0;
-                                            self.commitParts[params.index]['PART_LAST_MONEY']=params.row.SALES_PRICE*params.row.PART_NUM-val;
-                                            self.computItemMoney();
-
-                                            
-                             
+                                            params.row.PART_DERATE_MONEY=0;
                                         }
+                                        
+                                            
+                                            this.commitParts[params.index]=params.row;
+                                            this.commitParts[params.index]['PART_LAST_MONEY']=params.row.SALES_PRICE*params.row.PART_NUM-val;
+                                            this.computItemMoney();
                                     },
                                     
                                 }
@@ -481,7 +489,7 @@
                                   this.deletePartsGroup(params.index,params.row.STOCK_ID,params.row.PART_ID);
                               }
                           }
-                      }, 'Delete')
+                      }, '删除')
                   ]);
                 }else if(this.titleMsg=='已预约'){
                   return h('div', [
@@ -514,24 +522,10 @@
                                 },
                                 on: {
                                     "on-change":(val)=>{
-                                            if(val>params.row.ITEM_DERATE_MONEY){
-                                                params.row.SALES_PRICE=val;
-                                                this.commitItemGroup[params.index]=params.row;
-                                                this.computItemMoney();
-                                            }else{
-                                                this.$Modal.confirm({
-                                                    title:"系统提示!",
-                                                    content:"优惠金额过大",
-                                                    
-                                                })
-                                                params.row.ITEM_DERATE_MONEY=0;
-                                                params.row.SALES_PRICE=val;
-                                                this.commitItemGroup[params.index]=params.row;
-                                                this.computItemMoney();
-                                            }
+                                        params.row.SALES_PRICE=val;
+                                        this.commitItemGroup[params.index]=params.row;
+                                        this.computItemMoney();
                                             
-                                       
-
                                     },
                                     
                                 }
@@ -556,29 +550,17 @@
 
                                         if(val<params.row.SALES_PRICE){
                                             params.row.ITEM_DERATE_MONEY=val;
-                                            let self=this;
-                                            self.commitItemGroup[params.index]=params.row;
-                                            self.commitItemGroup[params.index]['ITEM_LAST_MONEY']=parseInt(params.row.SALES_PRICE)-val;
-
-                                            console.log(self.commitItemGroup[params.index]['ITEM_LAST_MONEY']);
-                                            self.computItemMoney();
                                         }else{
                                             this.$Modal.confirm({
                                                 title:"系统提示!",
                                                 content:"优惠金额过大",
                                                 
                                             })
-
-
                                             params.row.ITEM_DERATE_MONEY=0;
-                                            let self=this;
-                                            self.commitItemGroup[params.index]=params.row;
-                                            self.commitItemGroup[params.index]['ITEM_LAST_MONEY']=parseInt(params.row.SALES_PRICE)-val;
-
-                                            console.log(self.commitItemGroup[params.index]['ITEM_LAST_MONEY']);
-                                            self.computItemMoney();
                                         }
-                                        
+                                        this.commitItemGroup[params.index]=params.row;
+                                        this.commitItemGroup[params.index]['ITEM_LAST_MONEY']=parseInt(params.row.SALES_PRICE)-val;
+                                        this.computItemMoney();
 
                                     },
                                     
@@ -629,7 +611,7 @@
                                   this.deleteItemGroup(params.index);
                               }
                           }
-                      }, 'Delete')
+                      }, '删除')
                   ]);
                 }else if(this.titleMsg=='已预约'){
                   return h('div', [
@@ -795,53 +777,7 @@
       },
       commitParts(obj){
           console.log('xxxxxxxx',obj);
-        //   if(obj>parseFloat(params.row.MAX_SALES_PRICE) || initV==parseFloat(params.row.MAX_SALES_PRICE)){
-        //     this.$Modal.confirm({
-        //         title:"系统提示!",
-        //         content:"配件单价不能高于最高销售价,系统已为您自动调整为最高价！",
-                
-        //     })
-            
-            
-        //     let self=this;
-            
-        //         self.commitParts[params.index]['SALES_PRICE']=0;
-        //         self.commitParts[params.index]['SALES_PRICE']=params.row.MIN_SALES_PRICE;
-            
-            
-
-        //     console.log('进来最高价',params.row.SALES_PRICE,params.row.MAX_SALES_PRICE);
-
-        //     self.commitParts[params.index]['PART_MONEY']=params.row.PART_NUM*params.row.SALES_PRICE;
-        //     self.commitParts[params.index]['PART_LAST_MONEY']=params.row.PART_NUM*params.row.SALES_PRICE-params.row.PART_DERATE_MONEY;
-        //     self.computItemMoney();
-
-            
-        // }else 
-        // if(initV<parseFloat(params.row.MIN_SALES_PRICE) ||initV==parseFloat(params.row.MIN_SALES_PRICE)){
-        //     this.$Modal.confirm({
-        //         title:"系统提示!",
-        //         content:"配件单价不能低于最低销售价,系统已为您自动调整为最低价！",
-                
-        //     })
-            
-        //     let self=this;
-        //     self.commitParts[params.index]['SALES_PRICE']=params.row.MIN_SALES_PRICE;
-        //     console.log("self.commitParts",self.commitParts);
-        //     self.commitParts[params.index]['PART_MONEY']=params.row.PART_NUM*params.row.SALES_PRICE;
-        //     self.commitParts[params.index]['PART_LAST_MONEY']=params.row.PART_NUM*params.row.SALES_PRICE-params.row.PART_DERATE_MONEY;
-        //     self.computItemMoney();
-
-            
-        // }else{
-        //     console.log('进到没有限制价格');
-        //     params.row.SALES_PRICE=initV;
-        //     let self=this;
-        //     self.commitParts[params.index]=params.row;
-        //     self.commitParts[params.index]['PART_MONEY']=params.row.PART_NUM*params.row.SALES_PRICE;
-        //     self.commitParts[params.index]['PART_LAST_MONEY']=params.row.PART_NUM*params.row.SALES_PRICE-params.row.PART_DERATE_MONEY;
-        //     self.computItemMoney();
-        // }
+        
       }
     },
     mounted () {
