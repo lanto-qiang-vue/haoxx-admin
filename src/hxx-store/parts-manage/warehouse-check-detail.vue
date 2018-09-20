@@ -1,4 +1,4 @@
-<!--仓库盘点详情-->
+<!--仓库盘点详情页 2018-09-20 测试  -->
 <template>
   <Modal
     v-model="showModal"
