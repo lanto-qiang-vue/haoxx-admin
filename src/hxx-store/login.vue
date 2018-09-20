@@ -195,6 +195,8 @@
                 }
               }).then(res => {
                 if (res.success === true) {
+                  var getInfo = Promise.all([this.getRegister(res.data.tokenStr)]);
+                  this.$store.commit('setMenu',[]);
                   this.$Modal.success({title:'系统提示!',content:'恭喜你,注册成功',onOk:this.setInfo});
                 }
               })
@@ -206,10 +208,6 @@
       },
       setInfo(){
         //设置信息....
-        this.$store.commit('setToken','123333333333333333333333');
-        this.$store.commit('setUser',{"user":{"userId":10685,"userCode":"18358330864","lgType":"1002","userName":"18358330864"}});
-        this.$store.commit('setMenu',[]);
-        this.$store.commit('setDict',[]);
         this.$router.push({name:'storeRegister'});
       },
       handleSubmit(type) {

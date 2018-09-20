@@ -154,20 +154,19 @@
     
     <div slot="footer">
         <Button @click="saveData('listSearch');" size="large" type="primary"  style="margin-right: 10px;">保存</Button>
-        
+
 
     </div>
-    
 
-    
+
+
   </Modal>
 </template>
 
 <script>
-
   import { getName, getDictGroup } from '@/libs/util.js'
 	export default {
-		name: "select-addParts",
+		    name: "select-addParts",
         props:['showSelectAddParts','initPartsGroup','editdata'],
         components: {},
         data(){

@@ -10,7 +10,7 @@
       :footer-hide="true"
       :transition-names="['', '']"
     >
-  <store-info-detail :data="datas" @save="saveStoreInfo" @register="saveRegister" @goback="goback"></store-info-detail>
+  <store-info-detail :data="datas" @save="saveStoreInfo" @register="saveRegister" :type="1" @goback="goback"></store-info-detail>
     </Modal>
     <Modal
       v-model="showModal2"
@@ -38,7 +38,7 @@
       :transfer= "false"
       :footer-hide="true"
       :transition-names="['', '']">
-      <store-info-detail :data="detail" @goback="back"></store-info-detail>
+      <store-info-detail :data="detail" :type="1" @goback="back"></store-info-detail>
     </Modal>
   </div>
 </template>
@@ -114,9 +114,8 @@
       if(this.$store.state.app.outStatus == 1){
         this.showModal1 = false;
         this.showModal2 = true;
-        this.showTable = Math.random();
       }
-      this.getList();
+      if(this.$store.state.app.outStatus != 0)this.getList();
     },
     computed:{
       statusList(){
@@ -138,6 +137,7 @@
         this.showModal = true;
       },
       getList(){
+        this.showTable = Math.random();
         this.tableType = true;
         this.axios.request({
           url: '/register/tenantregister/list',
@@ -188,6 +188,7 @@
         })
       },
       saveRegister(data){
+        this.$Spin.show();
         this.axios.request({
           url: '/register/tenantregister/save',
           method: 'post',
@@ -202,6 +203,7 @@
         })
       },
       hint(){
+        this.$Spin.hide();
         this.$Modal.success({title:'系统提示',content:'门店注册成功，请等待门店审核成功后即可登录系统管理该门店！',onOk:this.fllow});
       },
       fllow(){

@@ -166,6 +166,15 @@
                 	  callback();
                 }
             };
+      const servicePass = (rule, value, callback) => {
+        var p1 = /\d?[A-Z]+\d?/
+        if (p1.test(value) && value.length == 17) {
+          this.checkCart(value);
+          callback();
+        } else {
+          callback(new Error('请输入正确的车架号'));
+        }
+      }
 			return{
         hidetype:1,
         vehicleShow:false,
@@ -200,15 +209,15 @@
 				},
 				ruleValidate:{
 					 PLATE_NUM:[{required: true, message: '车牌号必填', trigger: 'blur' },
-					 { type:'string',pattern:/^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-Z0-9]{4}[A-Z0-9挂学警港澳]{1,2}$/, message:'请输入正确的车牌号码', trigger:'change'}
+					 { type:'string',pattern:/^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-Z0-9]{4}[A-Z0-9挂学警港澳]{1,2}$/, message:'请输入正确的车牌号码', trigger:'change,blur'}
 					 ],
-					 VIN_NO:[{required: true, message: '车架号必填', trigger: 'blur' },
+					 VIN_NO:[{required: true, message: '车架号必填', trigger: 'blur,change' },
 					 	{ validator: validatePass, trigger: 'change' },
-					 	{ validator: validatePass, trigger: 'blur' }
+             {validator: servicePass, trigger: 'blur'}
 					 ],
-					 VEHICLE_MODEL:[{required: true, message: '请点击选取车型', trigger: 'blur'}],
-           CUSTOMER_CODE:[{required: true, message: '请点击搜索图标选取客户', trigger: 'blur'}],
-           CUSTOMER_NAME:[{required: true, message: '客户名称必选', trigger: 'blur'}],
+					 VEHICLE_MODEL:[{required: true, message: '请点击选取车型', trigger: 'blur,change'}],
+           CUSTOMER_CODE:[{required: true, message: '请点击搜索图标选取客户', trigger: 'blur,change'}],
+           CUSTOMER_NAME:[{required: true, message: '客户名称必选', trigger: 'blur,change'}],
 				},
 				must:[],
 				business:[],
@@ -264,6 +273,25 @@
 		methods:{
 			vehicleChange(){
         this.vehicleShow = true;
+      },
+      checkCart(val) {
+        //能否根据车架号获取到车型...
+        this.axios.request({
+          url: '/tenant/basedata/ttvehiclefile/get_vehicle_model',
+          method: 'post',
+          data: {
+            access_token: this.$store.state.user.token,
+            vin: val,
+          }
+        }).then(res => {
+          if (res.success === true) {
+            this.formData.VEHICLE_MODEL = res.data.MODEL_NAME;
+            this.formData.TID = res.data.TID;
+            // console.log("车型:"+this.formData.VEHICLE_MODEL + "车型ID:" + this.formData.TID);
+          } else {
+            this.$Modal.info({title: '系统提示', content: res.title + "<span style='color:red;'>请手动选取车型</span>"});
+          }
+        })
       },
 			getInsure(){
 		  this.axios.request({

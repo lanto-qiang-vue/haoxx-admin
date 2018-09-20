@@ -142,7 +142,9 @@
           {title: '状态', key: 'STATUS', sortable: true, minWidth: 100,
           render: (h, params) => h('span', getName(this.statuslist, params.row.STATUS))
           },
-          {title: '创建人', key: 'CREATER', sortable: true, minWidth: 100},
+          {title: '创建人', key: 'CREATER', sortable: true, minWidth: 100,
+          render: (h, params) => h('span',getCreate(this.$store.state.app.tenant,params.row.CREATER))
+          },
           {title: '创建时间', key: 'CREATE_TIME', sortable: true, minWidth: 100
           },
         ],

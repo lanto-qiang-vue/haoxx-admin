@@ -132,7 +132,7 @@
     import cartModal from '@/hxx-store/customer-relations/cart-modal.vue'
 	export default {
 		name: "customer-list-detail",
-    components: {commonTable,vehicleAdd,cartModal},
+    components:{commonTable,vehicleAdd,cartModal},
     data(){
       return {
         cleartype:false,

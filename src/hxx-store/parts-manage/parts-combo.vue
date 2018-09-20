@@ -89,9 +89,7 @@
       <Button type="primary" @click="addpost('list')">保存</Button>
       </div>
     </Modal>
-    <!--  -->
     <select-parts-group @selectPartsGroup="getParts" :initPartsGroup="initParts" :showSelectPartsGroup="selectShow"></select-parts-group>
-    <!--  -->
   </common-table>
 </template>
 <script>
@@ -164,9 +162,13 @@
                     }
           },
           {title: '配件分类', key: 'TYPE_NAME', sortable: true, minWidth: 120},
-          {title: '品牌', key: 'BRAND', sortable: true, minWidth: 120},
+          {title: '品牌', key: 'BRAND', sortable: true, minWidth: 120,
+            render:(h,params) => h('span',getName(this.brandList,params.row.BRAND))
+          },
           {title: '规格', key: 'FORMAT', sortable: true, minWidth: 120},
-          {title: '包装', key: 'UNIT', sortable: true, minWidth: 120},
+          {title: '包装', key: 'UNIT', sortable: true, minWidth: 120,
+            render: (h,params) => h('span',getName(this.unitList,params.row.UNIT))
+          },
           {title: '销售价(元)', key: 'SALES_PRICE', sortable: true, minWidth: 140},
           {title: '原厂编号', key: 'FACTORY_NO', sortable: true, minWidth: 120},
           {title: '操作', sortable: true, minWidth: 120,fixed: 'right',
@@ -349,7 +351,13 @@
 		  },
 		  statusList(){
 		  return getDictGroup(this.$store.state.app.dict,'1001');
-		  }
+		  },
+       unitList(){
+		    return getDictGroup(this.$store.state.app.dict,'1015');
+       },
+       brandList(){
+		    return getDictGroup(this.$store.state.app.dict,'1016');
+       }
 		 },
 		 mounted(){
 		 	this.getList();

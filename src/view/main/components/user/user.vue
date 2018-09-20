@@ -9,7 +9,7 @@
         <DropdownMenu slot="list">
           <div class="store-block">
             <div class="title">
-              <Button type="primary" custom-icon="fa fa-plus" style="margin-right: 10px">注册新门店</Button>
+              <Button type="primary" custom-icon="fa fa-plus" @click="linkTo"  style="margin-right: 10px">注册新门店</Button>
               <Button  custom-icon="fa fa-refresh" @click="getStoreList">刷新</Button>
             </div>
             <Table :columns="columns" :data="data" size="small" stripe border :loading="loading" ></Table>
@@ -110,6 +110,9 @@ export default {
           break
         }
       }
+    },
+    linkTo(){
+      this.$router.push('/storeRegister');
     },
     getStoreList(){
       this.loading=true

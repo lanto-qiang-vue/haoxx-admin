@@ -150,16 +150,17 @@
 						data: []
 					}
 				}
+				var indexList = [];
 				for (let key in typeList){
 					for(let i in this.tableData){
 						if(this.tableData[i].TYPE== key && this.tableData[i].PARAM_NAME.indexOf(this.keyword) > -1){
 							typeList[key].data.push(this.tableData[i])
 						}
 					}
-					this.collapse.push(String(index))
+					indexList.push(String(index))
 					index++
 				}
-				// this.datas= typeList
+				if(this.collapse.length == 0) this.collapse = indexList;
 				return typeList;
 			},
 		},

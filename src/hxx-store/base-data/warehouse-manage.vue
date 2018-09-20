@@ -78,10 +78,11 @@ import { getName, getDictGroup, getCreate } from '@/libs/util.js'
 			tableData:[],
 			clearType:false,
 			showTable:false,
+      IS_DEFAULT:false,
 			formData:{
 			NAME:'',
 			ADDRESS:'',
-			IS_DEFAULT:false,
+			IS_DEFAULT:'',
 			REMARK:'',
 			},
 			list:'',
@@ -133,7 +134,9 @@ import { getName, getDictGroup, getCreate } from '@/libs/util.js'
 	     visibleChange(){
 	     	this.clearsection();
 	     },
-		 addcancle(){},
+		 addcancle(){
+		   this.showModal = false;
+     },
 		 addpost(name){
 		this.$refs[name].validate((valid) => {
                     if (valid) {

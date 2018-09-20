@@ -141,7 +141,7 @@
   import mixin from '@/hxx-components/mixin'
 	export default {
 		name: "store-info-detail",
-    props: ['data', 'show'],
+    props: ['data', 'show','type'],
     mixins: [mixin],
     data(){
 		  return{
@@ -186,7 +186,7 @@
         return this.$store.getters.loginType=='1001'
       },
       isRegister(){
-      return this.$store.state.app.outStatus != 2;
+       return this.type == 1;
       }
     },
     watch:{
@@ -198,9 +198,9 @@
       }
     },
     created(){
-      if(this.$store.state.app.outStatus != 2){this.editAble = true;}
+      if(this.type == 1){this.editAble = true;}
       let rule= (this.isAdmin? []: [{ required: true, message:'必填项不能为空'}])
-      if(this.$store.state.app.outStatus != 2){
+      if(this.type == 1){
         this.ruleValidate= {
           TENANT_NAME: rule,
           TENANT_AREA_DISPLAY:rule,
