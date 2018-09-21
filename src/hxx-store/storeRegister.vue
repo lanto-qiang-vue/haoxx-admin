@@ -8,13 +8,31 @@
       :closable="false"
       :transfer= "false"
       :footer-hide="true"
-      :transition-names="['', '']"
-    >
+      :transition-names="['', '']">
+      <div slot="header" style="height:40px;">
+        <div class="user-avator-dropdown" style="float:right;margin-top:-10px;">
+          <Dropdown trigger="click" @on-click="handle">
+            <div class="login-user">
+              <p style="line-height:50px;height:30px;">{{loginName}}</p>
+              <span>注册门店</span>
+            </div>
+            <div class="head" style="padding-top:10px;">
+              <Avatar  icon="ios-person" size="large" class="avatar"/>
+            </div>
+            <!--<Icon :size="18" type="md-arrow-dropdown"></Icon>-->
+            <DropdownMenu slot="list">
+              <DropdownItem name="logout" style="width: 250px">退出登录</DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+        </div>
+      </div>
+      <div style="height:10px;"></div>
   <store-info-detail :data="datas" @save="saveStoreInfo" @register="saveRegister" :type="1" @goback="goback"></store-info-detail>
     </Modal>
     <Modal
       v-model="showModal2"
       :fullscreen="true"
+      style="min-width:600px;"
       :mask-closable="false"
       :scrollable="true"
       :closable="false"
@@ -22,6 +40,23 @@
       :footer-hide="false"
       :transition-names="['', '']"
     >
+      <div slot="header" style="height:40px;border:none;">
+        <div class="user-avator-dropdown" style="float:right;margin-top:-10px;">
+          <Dropdown trigger="click" @on-click="handle">
+            <div class="login-user">
+              <p style="line-height:50px;height:30px;">{{loginName}}</p>
+              <span>注册门店</span>
+            </div>
+            <div class="head" style="padding-top:10px;">
+              <Avatar icon="ios-person" size="large" class="avatar"/>
+            </div>
+            <DropdownMenu slot="list">
+              <DropdownItem name="logout" style="width: 250px">退出登录</DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+        </div>
+      </div>
+    <div style="height:10px;"></div>
     <common-table :showPage="false" :loading="tableType" v-model="tableData" :columns="columns" @onRowDblclick="dbclick" :showSearch="false" :showOperate="false"  :show="showTable">
     </common-table>
       <div slot="footer" style="text-align:center;">
@@ -123,12 +158,21 @@
       },
       checkList(){
       return getDictGroup(this.$store.state.app.dict,'1035');
+      },
+      loginName(){
+        return  this.$store.state.user.userInfo.user.userName;
       }
     },
     methods:{
-      goRegister(){
+      ...mapActions([
+        'handleLogOut',
+        'getPickingNumber'
+      ]),
+handle(){
+  this.handleLogOut().then(() => {
 
-      },
+  })
+},
       back(){
         this.showModal = false;
       },
@@ -275,7 +319,75 @@
     }
   }
 </script>
+<style scoped lang="less">
+  .user-avator-dropdown{
+    cursor: pointer;
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 0;
+    .switch-store{
+      display: inline-block;
+      width: 60px;
+      text-align: center;
+      border-left: 1px solid #F0F0F0;
+      border-right: 1px solid #F0F0F0;
+      .store-block{
+        width: 420px;
+        text-align: left;
+        .title{
+          padding: 0 10px;
+          overflow: hidden;
+          margin-bottom: 5px;
+          .ivu-btn{
+            /*vertical-align: top;*/
+            float: left;
+          }
+        }
 
-<style scoped>
-
+      }
+    }
+    .login-user{
+      display: inline-block;
+      height: 64px;
+      text-align: right;
+      vertical-align: middle;
+      padding-left: 5px;
+      padding-right: 5px;
+      border-right: 1px solid #F0F0F0;
+      p{
+        line-height: 34px;
+        font-size: 16px;
+        vertical-align: top;
+      }
+      p.on{
+        line-height: 64px;
+      }
+      span{
+        vertical-align: top;
+        line-height: 24px;
+        font-size: 13px;
+        color: #2D8cF0;
+      }
+    }
+    .head{
+      padding: 0 10px;
+      height: 64px;
+      display: inline-block;
+      vertical-align: top;
+      .avatar{
+        background-color: #2D8cF0;
+        vertical-align: middle;
+      }
+    }
+    .switch-store:hover, .login-user:hover, .head:hover{
+      background-color: #F0F0F0;
+    }
+  }
+</style>
+<style lang="less">
+  .store-block{
+    .ivu-table{
+      line-height: 40px;
+    }
+  }
 </style>

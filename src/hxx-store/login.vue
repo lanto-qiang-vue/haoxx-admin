@@ -196,6 +196,8 @@
               }).then(res => {
                 if (res.success === true) {
                   var getInfo = Promise.all([this.getRegister(res.data.tokenStr)]);
+                  this.$store.commit('setToken', res.data.tokenStr)
+                  this.$store.commit('setDict', res.data.dict)
                   this.$store.commit('setMenu',[]);
                   this.$Modal.success({title:'系统提示!',content:'恭喜你,注册成功',onOk:this.setInfo});
                 }

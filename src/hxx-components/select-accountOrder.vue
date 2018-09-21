@@ -449,12 +449,13 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
             },
             //项目优惠计算----
             itemComputedFun(value){
+              alert(value);
                 if(value>this.shoukuanSearch.REPAIR_ITEM_MONEY){
-                    this.$Modal.confirm({
-                        title:"系统提示!",
-                        content:"优惠金额过大",
-                        
-                    })
+                    // this.$Modal.confirm({
+                    //     title:"系统提示!",
+                    //     content:"优惠金额过大2",
+                    //
+                    // })
                     this.shoukuanSearch.REPAIR_ITEM_DERATE_MONEY=0;
                 }
 
