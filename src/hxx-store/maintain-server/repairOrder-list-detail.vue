@@ -390,23 +390,28 @@
                                     "on-change":(val)=>{
                                         if(val<params.row.ITEM_MONEY){
                                             params.row.ITEM_DERATE_MONEY=val;
-                                            let self=this;
-                                            this.commitItem[params.index]=params.row;
-                                            self.commitItem[params.index]['ITEM_LAST_MONEY']=params.row.REPAIR_TIME*this.work_price+params.row.PAINT_NUM*this.paint_price-val;
-                                            self.computItemMoney();
+                                            
                                         }else{
                                             this.$Modal.confirm({
                                                 title:"系统提示!",
                                                 content:"优惠金额过大",
                                                 
                                             })
-                                            params.row.ITEM_DERATE_MONEY=0;
-                                            let self=this;
-                                            this.commitItem[params.index]=params.row;
-                                            self.commitItem[params.index]['ITEM_LAST_MONEY']=params.row.REPAIR_TIME*this.work_price+params.row.PAINT_NUM*this.paint_price-val;
-                                            self.computItemMoney();
+                                            params.row.ITEM_DERATE_MONEY=val;
+                                            var self=this;
+                                            setTimeout(function() {
+                                                params.row.ITEM_DERATE_MONEY=0;
+                                                self.commitItem[params.index]=params.row;
+                                                self.commitItem[params.index]['ITEM_LAST_MONEY']=params.row.REPAIR_TIME*self.work_price+params.row.PAINT_NUM*self.paint_price-params.row.ITEM_DERATE_MONEY;
+                                                self.computItemMoney();
+                                            }, 20);
+                                            
+                                            
+                                            
                                         }
-                                        
+                                        this.commitItem[params.index]=params.row;
+                                        this.commitItem[params.index]['ITEM_LAST_MONEY']=params.row.REPAIR_TIME*this.work_price+params.row.PAINT_NUM*this.paint_price-params.row.ITEM_DERATE_MONEY;
+                                        this.computItemMoney();
 
                                     
                                     },
@@ -613,6 +618,7 @@
                                 },
                                 on: {
                                     "on-change":(val)=>{
+                                        console.log(val,params.row.PART_MONEY);
                                         if(val<params.row.PART_MONEY){
                                             params.row.PART_DERATE_MONEY=val;
                                         }else{
@@ -621,10 +627,17 @@
                                                 content:"优惠金额过大",
                                                 
                                             })
-                                            params.row.PART_DERATE_MONEY=0;
+                                            params.row.PART_DERATE_MONEY=val;
+                                            var self=this;
+                                            setTimeout(function(){
+                                                params.row.PART_DERATE_MONEY=0;
+                                                self.commitParts[params.index]=params.row;
+                                                self.commitParts[params.index]['PART_LAST_MONEY']=params.row.SALES_PRICE*params.row.PART_NUM-params.row.PART_DERATE_MONEY;
+                                                self.computItemMoney();
+                                            },20);
                                         }
                                             this.commitParts[params.index]=params.row;
-                                            this.commitParts[params.index]['PART_LAST_MONEY']=params.row.SALES_PRICE*params.row.PART_NUM-val;
+                                            this.commitParts[params.index]['PART_LAST_MONEY']=params.row.SALES_PRICE*params.row.PART_NUM-params.row.PART_DERATE_MONEY;
                                             this.computItemMoney();
                                     },
                                     
@@ -769,12 +782,19 @@
                                                 
                                             })
 
-                                            params.row.ITEM_DERATE_MONEY=0;
+                                            params.row.ITEM_DERATE_MONEY=val;
+                                            var self=this;
+                                            setTimeout(function() {
+                                                params.row.ITEM_DERATE_MONEY=0;
+                                                self.commitItemGroup[params.index]=params.row;
+                                                self.commitItemGroup[params.index]['ITEM_LAST_MONEY']=parseInt(params.row.SALES_PRICE)-params.row.ITEM_DERATE_MONEY;
+                                                self.computItemMoney();
+                                            }, 10);
                                             
                                         }
 
                                             this.commitItemGroup[params.index]=params.row;
-                                            this.commitItemGroup[params.index]['ITEM_LAST_MONEY']=parseInt(params.row.SALES_PRICE)-val;
+                                            this.commitItemGroup[params.index]['ITEM_LAST_MONEY']=parseInt(params.row.SALES_PRICE)-params.row.ITEM_DERATE_MONEY;
                                             this.computItemMoney();
                                         
 
@@ -1126,7 +1146,7 @@
             "REPAIR_PART_MONEY":0,
             "OTHER_MONEY":0,
             "SUM_MONEY":0,
-            "GD_TYPE":""
+            "GD_TYPE":"10181001"
         },
         //规则验证-------
         ruleValidate: {
@@ -1273,6 +1293,7 @@
               case 'PLAN_END_DATE':this.listSearch[key]= new Date();break
               case 'VEHICLE_TYPE':this.listSearch[key]= "10521001";break
               case 'VEHICLE_TYPE_CODE':this.listSearch[key]= "轿车-排量<1.6升-A";break
+              case 'GD_TYPE':this.listSearch[key]= "10181001";break
               default : this.listSearch[key]= ''
 
             }
@@ -2372,7 +2393,7 @@
                 break;
                 case'VEHICLE_COLOR':
                     console.log(this.carColorData,this.listSearch[i]);
-                    listSearch[i]=getName(this.carColorData,this.listSearch[i]);
+                    listSearch[i]=getName(this.carColorData,this.listSearch[i])||'';
                 break;
                 case'PLAN_END_DATE':
                     listSearch[i]=formatDate(this.listSearch[i])+ ' '+ formatDate(this.listSearch[i], 'hh:mm:ss');
@@ -2385,7 +2406,7 @@
             commitParts.push(this.commitParts[i]);
         };
         for(let i in commitParts){
-            commitParts[i].UNIT=getName(this.partsUnit,commitParts[i].UNIT);
+            commitParts[i].UNIT=getName(this.partsUnit,commitParts[i].UNIT)||'';
         }
 
 

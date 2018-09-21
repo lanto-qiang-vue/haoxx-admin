@@ -133,7 +133,7 @@
       //重置搜索框数据
       
       
-
+      this.showTable= Math.random();
       this.searchSelectOption= getDictGroup(this.$store.state.app.dict, '1018');
       this.searchSelectOption1.push({
           "code":"",
@@ -157,7 +157,7 @@
 
 
       this.getList()
-      this.showTable= Math.random()
+      
 
             
     },

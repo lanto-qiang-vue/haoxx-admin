@@ -31,7 +31,7 @@
                                         
                                     </FormItem>
                                     <FormItem label="项目优惠金额:">
-                                        <InputNumber :min="0" v-model="shoukuanSearch.REPAIR_ITEM_DERATE_MONEY" @on-change="itemComputedFun" 
+                                        <InputNumber v-model="shoukuanSearch.REPAIR_ITEM_DERATE_MONEY" @on-change="itemComputedFun" 
                                             :formatter="value => `${value}元`" :parser="value => value.replace('元', '')" :disabled="jiesuanButton"
                                         ></InputNumber>
                                     </FormItem>
@@ -240,8 +240,8 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                 for(let i in this.showAccountData){
                     this.listSearch[i]=this.showAccountData[i];
                 }
-                this.listSearch["COLLECT_NO"]="***********";
-
+                this.listSearch["COLLECT_NO"]="##########";
+                this.listSearch["OUT_DATE"]='';
                 for(let i in this.showAccountItem){
                     this.itemArr.push(this.showAccountItem[i]);
                 }
@@ -449,16 +449,23 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
             },
             //项目优惠计算----
             itemComputedFun(value){
-              alert(value);
                 if(value>this.shoukuanSearch.REPAIR_ITEM_MONEY){
-                    // this.$Modal.confirm({
-                    //     title:"系统提示!",
-                    //     content:"优惠金额过大2",
-                    //
-                    // })
-                    this.shoukuanSearch.REPAIR_ITEM_DERATE_MONEY=0;
+                    this.$Modal.confirm({
+                        title:"系统提示!",
+                        content:"优惠金额过大",
+                        onOk:this.itemComputedReset,
+                        onCancel:this.itemComputedReset,
+                    })
+                    
                 }
 
+                this.shoukuanSearch.SUM_MONEY=this.shoukuanSearch.REPAIR_ITEM_MONEY+this.shoukuanSearch.REPAIR_PART_MONEY+
+                this.shoukuanSearch.OTHER_MONEY-this.shoukuanSearch.REPAIR_ITEM_DERATE_MONEY-this.shoukuanSearch.REPAIR_PART_DERATE_MONEY;
+
+                this.shoukuanSearch.LESS_MONEY=this.shoukuanSearch.REPAIR_ITEM_DERATE_MONEY+this.shoukuanSearch.REPAIR_PART_DERATE_MONEY;
+            },
+            itemComputedReset(){
+                this.shoukuanSearch.REPAIR_ITEM_DERATE_MONEY=0;
                 this.shoukuanSearch.SUM_MONEY=this.shoukuanSearch.REPAIR_ITEM_MONEY+this.shoukuanSearch.REPAIR_PART_MONEY+
                 this.shoukuanSearch.OTHER_MONEY-this.shoukuanSearch.REPAIR_ITEM_DERATE_MONEY-this.shoukuanSearch.REPAIR_PART_DERATE_MONEY;
 
@@ -470,11 +477,18 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                     this.$Modal.confirm({
                         title:"系统提示!",
                         content:"优惠金额过大",
-                        
+                        onOk:this.partComputedReset,
+                        onCancel:this.partComputedReset,
                     })
-                    this.shoukuanSearch.REPAIR_PART_DERATE_MONEY=0;
                 }
 
+                this.shoukuanSearch.SUM_MONEY=this.shoukuanSearch.REPAIR_ITEM_MONEY+this.shoukuanSearch.REPAIR_PART_MONEY+
+                this.shoukuanSearch.OTHER_MONEY-this.shoukuanSearch.REPAIR_ITEM_DERATE_MONEY-this.shoukuanSearch.REPAIR_PART_DERATE_MONEY;
+
+                this.shoukuanSearch.LESS_MONEY=this.shoukuanSearch.REPAIR_ITEM_DERATE_MONEY+this.shoukuanSearch.REPAIR_PART_DERATE_MONEY;
+            },
+            partComputedReset(){
+                this.shoukuanSearch.REPAIR_PART_DERATE_MONEY=0;
                 this.shoukuanSearch.SUM_MONEY=this.shoukuanSearch.REPAIR_ITEM_MONEY+this.shoukuanSearch.REPAIR_PART_MONEY+
                 this.shoukuanSearch.OTHER_MONEY-this.shoukuanSearch.REPAIR_ITEM_DERATE_MONEY-this.shoukuanSearch.REPAIR_PART_DERATE_MONEY;
 
