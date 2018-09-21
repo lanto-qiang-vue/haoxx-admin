@@ -20,7 +20,7 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="primary" v-if="accessBtn('getpart')"  @click="selectPick">领料/退料</Button>
+      <Button type="primary" v-if="accessBtn('getpart')" :disabled='!detailData'  @click="selectPick">领料/退料</Button>
     </div>
     <!--维修领料详情-->
     <maintain-pick-detail class="table-modal-detail" :showDetail="showDetail" :detailData="detailData" @closeDetail="closeDetail"></maintain-pick-detail>

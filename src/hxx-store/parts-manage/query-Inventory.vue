@@ -20,7 +20,7 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="primary" v-if="accessBtn('outdetail')"  @click="selectPick">出入库明细</Button>
+      <Button type="primary" v-if="accessBtn('outdetail')" :disabled='!detailData' @click="selectPick">出入库明细</Button>
     </div>
     <!--维修领料详情-->
     <query-Inventory-detail class="table-modal-detail" :showDetail="showDetail" :detailData="detailData" @closeDetail="closeDetail"></query-Inventory-detail>

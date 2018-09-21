@@ -435,6 +435,7 @@ export const printAccountFun=function(wtdData,listSearch,commitItem,commitItemGr
       itemString+='<td colspan="2" tclass="a">'+commitItem[i].ITEM_MONEY+'</td>';
       itemString+='</tr>';
 
+      console.log("parseFloat(commitItem[i].ITEM_MONEY)",parseFloat(commitItem[i].ITEM_MONEY),commitItem[i].ITEM_MONEY);
       itemMoney+=parseFloat(commitItem[i].ITEM_MONEY);
 
 
@@ -497,8 +498,8 @@ export const printAccountFun=function(wtdData,listSearch,commitItem,commitItemGr
             '<td colspan="10" style="text-align:center;"><b style="line-height:30px;font-size:18px;">机动车维修费用结算清单</b></td>'+
             '</tr>'+
             '<tr class="noBorder">'+
-            '<td colspan="3"></td>'+
-            '<td colspan="7" style="text-align:right;">结算清单编号：'+listSearch.COLLECT_NO+'</td>'+
+            
+            '<td colspan="10" style="text-align:right;" class="w400">结算清单编号：'+listSearch.COLLECT_NO+'</td>'+
             '</tr>'+
             '</thead>'+
             '<tbody>'+

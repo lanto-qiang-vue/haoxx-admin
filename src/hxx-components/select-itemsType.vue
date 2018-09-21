@@ -200,7 +200,7 @@ import commonTable from '@/hxx-components/common-table.vue'
                 this.showOnoff=true;
                 this.resetVehicle();//首次进来数据重置
                 this.selectData=this.initGetItem;
-
+                this.test2='1';
                 this.getList();
                 this.getCarType();
                 this.getBanJinList();
