@@ -76,13 +76,15 @@
             <div slot="content" style="height: 500px;">
                 <common-table v-model="tableData" :columns="columns1" :total="total" :clearSelect="clearTableSelect"
                 @changePage="changePage" @changePageSize="changePageSize" @onRowClick="onRowClick"
-                @onRowDblclick="onRowDblclick" :show="showTable" :page="page" :showSearch=false >
+                 :show="showTable" :page="page" :showSearch=false >
                         <div slot="operate">
                             <Button type="primary" v-if="accessBtn('add')" @click="showDetail1=Math.random();tableDetailData=null;">新增</Button>
                             <Button type="info" v-if="accessBtn('edit')" @click="showDetail1=Math.random();" :disabled="editFlag">修改/查看</Button>
                             <Button type="error" v-if="accessBtn('del')"  @click="delTableData" :disabled="delFlag">作废</Button>
                         </div>
                 </common-table>
+
+
             </div>
         </Panel>
       </Collapse>
@@ -92,7 +94,7 @@
       <!--选择车型-->
       <select-vehicle :showoff="showoff" @selectCar="selectCar" :showTransfer='selectCarTransfer' class="table-modal-detail">
       </select-vehicle>
-      <policy-detail-edit :showDetail="showDetail1" @policyFun="policyFun" :tableDetailData="tableDetailData"></policy-detail-edit>
+      <policy-detail-edit :showDetail="showDetail1" @policyFun="policyFun" :tableDetailData="tableDetailData" @closeStatus="closeStatus"></policy-detail-edit>
       <div slot="footer">
         <Button v-if="isButton" @click="handleSubmit('listSearch')" size="large" type="primary"  style="margin-right: 10px;">保存</Button>
         <Button  size="large" type="default" style="margin-right: 10px;" @click="showModal=false;">返回</Button>
@@ -131,7 +133,9 @@
             //维修配件
             columns1: [
                 {title: '保单号', key: 'GUAR_NO', sortable: true, minWidth: 140,},
-                {title: '保单类型', key: 'TYPE', sortable: true, minWidth: 120},
+                {title: '保单类型', key: 'TYPE', sortable: true, minWidth: 120,
+                    render: (h, params) => h('span', getName(this.searchOrderType,params.row.TYPE))
+                },
                 {title: '保险公司', key: 'CORP_NAME', sortable: true, minWidth: 150,
                     
                 },
@@ -218,8 +222,13 @@
     watch:{
       showDetail(){
         console.log('进来的参数：',this.detailData,);
-        this.showModal=true
+        this.showModal=true;
         this.showTable= Math.random();
+
+        //状态按钮归零-----------
+        this.editFlag=true;
+        this.delFlag=true;
+
         //判断进来的参数是否存在---------------------
         if(this.detailData){
               this.listSearch= this.detailData;
@@ -255,12 +264,20 @@
             //新建功能表------
             this.tableData=[];
             this.isButton=true;
+
+            
         }
         
       }
     },
     mounted () {
       this.getEmployeeList();
+    },
+    computed:{
+        searchOrderType(){
+            return getDictGroup(this.$store.state.app.dict, '1021');//保单类型
+        },
+
     },
     methods:{
         //得到主修人数据------
@@ -363,8 +380,11 @@
                 this.getList();
         },
         changePage(page){
+            if(this.detailData){
                 this.page= page
                 this.getList()
+            }
+                
         },
         changePageSize(size){
                 this.limit= size
@@ -372,19 +392,16 @@
         },
         //数据获取
         onRowClick( row, index){
+            console.log('单击数据：',row,index);
             this.tableDetailData=row;
             this.tableIndex=index;
             this.editFlag=false;
             this.delFlag=false;
 
         },
-        onRowDblclick( row, index){
-            this.tableDetailData=row
-            console.log('row：',row);
-            this.showDetail1=Math.random()
-        },
         closeDetail(){
             this.tableDetailData=null;
+            this.tableIndex=null;
             this.clearTableSelect= Math.random();
             this.editFlag=true;
             this.delFlag=true;
@@ -410,14 +427,21 @@
                 "UPDATE_TIME":'',
                 "id":'',
             };
-
             for(let i in val){
                 oldValue[i]=val[i];
             }
             oldValue['BUY_DATE']=formatDate(oldValue['BUY_DATE']);
             oldValue['START_DATE']=formatDate(oldValue['START_DATE']);
             oldValue['END_DATE']=formatDate(oldValue['END_DATE']);
-            this.tableData.push(oldValue);
+
+            if(this.tableDetailData){
+                this.tableData[this.tableIndex]=oldValue;
+            }else{
+                this.tableData.push(oldValue);
+            }
+            
+
+            
             //关闭清除状态
             this.computedMoney();
 
@@ -443,55 +467,15 @@
             this.listSearch.SUM_MONEY+=this.listSearch.VEHICLE_TAX;
 
         },
+        //监听新增窗口数据变化
+        closeStatus(){
+            this.closeDetail();
+        },
 
     }
 }
 </script>
 
 <style scoped lang="less">
-  .titleMsg{
-    font-size: 18px;
-    color: red;
-    text-align: right;
-    padding-right: 30px;
-  }
-  .search-block{
-    display: inline-block;
-    width: 200px;
-    margin-right: 10px;
-  }
-  .r-list-search{
-    width: 100%;
-    padding: 20px 0;
-    text-align: center;
-
-  }
-  .r-list-choose-parts{
-    width: 100%;
-    padding: 20px 0;
-    text-align: center;
-  }
-  .r-list-money{
-    width: 100%;
-    font-size: 18px;
-    text-align: center;
-    margin:20px 0;
-    margin-bottom: 50px;
-    span{
-      color:red;
-
-    }
-    .r-list-money-reset{
-      font-size: 22px;
-    }
-  }
-  .r-list-chekbox{
-    width: 100%;
-    overflow: hidden;
-    font-size: 18px;
-    padding: 5px 10px;
-    div{
-      float:right;
-    }
-  }
+  
 </style>

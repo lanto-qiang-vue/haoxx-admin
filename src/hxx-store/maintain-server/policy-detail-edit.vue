@@ -174,6 +174,8 @@
                     //初始化主修人数据
                     if(!val){
                       this.listSearch.INSURER_ID=this.companyOption[0].INSURER_ID;
+                    }else{
+                        this.listSearch.INSURER_ID=val;
                     }
                 }
             })
@@ -181,7 +183,7 @@
        //窗口动态监测
        visibleChange(status){
             if(status === false){
-                
+                this.$emit('closeStatus');
             }
        },
        //保存数据-----

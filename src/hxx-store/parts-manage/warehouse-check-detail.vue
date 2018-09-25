@@ -118,6 +118,7 @@ export default {
                                 props: {
                                     min:0,
                                     value: params.row.CHECK_NUM,
+                                    
                                 },
                                 on: {
                                     "on-change":(val)=>{
