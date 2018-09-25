@@ -296,7 +296,7 @@
                 ]);
             }
           },
-          {title: '操作', key: '', sortable: true, minWidth: 100, fixed: 'right',
+          {title: '操作', key: '', sortable: true, width: 100, fixed: 'right',
             render: (h, params) => {
                 if(this.titleMsg=='新建'){
                   return h('div', [
@@ -378,9 +378,17 @@
                                                     content:"配件单价不能高于最高销售价,系统已为您自动调整为最高价！",
                                                     
                                                 })
-                                                this.commitParts[params.index].SALES_PRICE=Math.random();
                                                 
-                                                params.row.SALES_PRICE=params.row.MAX_SALES_PRICE;
+                                                
+                                                params.row.SALES_PRICE=val;
+                                                var self=this;
+                                                setTimeout(function() {
+                                                    params.row.SALES_PRICE=params.row.MAX_SALES_PRICE;
+                                                    self.commitParts[params.index]=params.row;
+                                                    self.commitParts[params.index]['PART_MONEY']=params.row.PART_NUM*params.row.SALES_PRICE;
+                                                    self.commitParts[params.index]['PART_LAST_MONEY']=params.row.PART_NUM*params.row.SALES_PRICE-params.row.PART_DERATE_MONEY;
+                                                    self.computItemMoney();
+                                                }, 10);
                                                 
 
                                             }else if(val<parseFloat(params.row.MIN_SALES_PRICE) ||val==parseFloat(params.row.MIN_SALES_PRICE)){
@@ -389,9 +397,16 @@
                                                     content:"配件单价不能低于最低销售价,系统已为您自动调整为最低价！",
                                                     
                                                 })
-                                                
-                                                this.commitParts[params.index].SALES_PRICE=Math.random();
-                                                params.row.SALES_PRICE=params.row.MIN_SALES_PRICE;
+
+                                                params.row.SALES_PRICE=val;
+                                                var self=this;
+                                                setTimeout(function() {
+                                                    params.row.SALES_PRICE=params.row.MIN_SALES_PRICE;
+                                                    self.commitParts[params.index]=params.row;
+                                                    self.commitParts[params.index]['PART_MONEY']=params.row.PART_NUM*params.row.SALES_PRICE;
+                                                    self.commitParts[params.index]['PART_LAST_MONEY']=params.row.PART_NUM*params.row.SALES_PRICE-params.row.PART_DERATE_MONEY;
+                                                    self.computItemMoney();
+                                                }, 10);
                                                 
                                                 
                                             }else{
@@ -436,7 +451,15 @@
                                                 content:"优惠金额过大",
                                                 
                                             })
-                                            params.row.PART_DERATE_MONEY=0;
+                                            
+                                            params.row.PART_DERATE_MONEY=val;
+                                            var self=this;
+                                            setTimeout(function() {
+                                                params.row.PART_DERATE_MONEY=0;
+                                                self.commitParts[params.index]=params.row;
+                                                self.commitParts[params.index]['PART_LAST_MONEY']=params.row.SALES_PRICE*params.row.PART_NUM-params.row.PART_DERATE_MONEY;
+                                                self.computItemMoney();
+                                            }, 10);
                                         }
                                         
                                             
@@ -474,7 +497,7 @@
                 ]);
             }
           },
-          {title: '操作', key: '', sortable: true, minWidth: 100,fixed: 'right',
+          {title: '操作', key: '', sortable: true, width: 100,fixed: 'right',
             render: (h, params) => {
 
                 if(this.titleMsg=='新建'){
@@ -556,7 +579,14 @@
                                                 content:"优惠金额过大",
                                                 
                                             })
-                                            params.row.ITEM_DERATE_MONEY=0;
+                                            params.row.ITEM_DERATE_MONEY=val;
+                                            var self=this;
+                                            setTimeout(function() {
+                                                params.row.ITEM_DERATE_MONEY=0;
+                                                self.commitItemGroup[params.index]=params.row;
+                                                self.commitItemGroup[params.index]['ITEM_LAST_MONEY']=parseInt(params.row.SALES_PRICE)-params.row.ITEM_DERATE_MONEY;
+                                                self.computItemMoney();
+                                            }, 10);
                                         }
                                         this.commitItemGroup[params.index]=params.row;
                                         this.commitItemGroup[params.index]['ITEM_LAST_MONEY']=parseInt(params.row.SALES_PRICE)-val;
@@ -596,7 +626,7 @@
             }
 
           },
-          {title: '操作', key: '', sortable: true, minWidth: 100,fixed: 'right',
+          {title: '操作', key: '', sortable: true, width: 100,fixed: 'right',
             render: (h, params) => {
 
                 if(this.titleMsg=='新建'){

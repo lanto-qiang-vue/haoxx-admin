@@ -476,7 +476,7 @@
                 ]);
             }
           },
-          {title: '操作', key: '', sortable: true, minWidth: 100, fixed: 'right',
+          {title: '操作', key: '', sortable: true, width: 100, fixed: 'right',
             render: (h, params) => {
                 if(this.titleMsg=='新建未派工'){
                   return h('div', [
@@ -696,7 +696,7 @@
                         ]);
                     }
           },
-          {title: '操作', key: '', sortable: true, minWidth: 100,fixed: 'right',
+          {title: '操作', key: '', sortable: true, width: 100,fixed: 'right',
             render: (h, params) => {
                 if(this.titleMsg=='新建未派工'){
                   return h('div', [
@@ -863,7 +863,7 @@
                 ]);
             }
           },
-          {title: '操作', key: '', sortable: true, minWidth: 100,fixed: 'right',
+          {title: '操作', key: '', sortable: true, width: 100,fixed: 'right',
             render: (h, params) => {
                 if(this.titleMsg=='新建未派工'){
                   return h('div', [

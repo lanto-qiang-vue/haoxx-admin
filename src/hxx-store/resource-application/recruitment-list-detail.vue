@@ -51,9 +51,9 @@ export default {
                 "PostName":""
             },
             ruleValidate: {
-                name:[{required: true, message: ''}],
-                PostName:[{required: true, message: ''}],
-                num:[{required: true, message: ''}],
+                name:[{required: true, message: '请填写信息'}],
+                PostName:[{required: true, message: '请填写信息'}],
+                num:[{required: true, message: '请填写信息'}],
                 
             },
             page: 1,

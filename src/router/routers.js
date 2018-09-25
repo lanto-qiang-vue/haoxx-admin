@@ -818,8 +818,10 @@ export default [
         },
         component: () => import('@/hxx-admin/store-manager/store-info-list.vue')
       },
+      
     ]
   },
+  
   {
     path: '/401',
     name: 'error_401',
