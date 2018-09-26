@@ -825,15 +825,48 @@ export default [
           icon: 'md-funnel',
           title: '区域选择组件',
           lgType: "1001",
-          access: '100203',
+          access: '100101',
         },
         component: () => import('@/hxx-admin/store-manager/select-area.vue')
       },
+      {
+        path: '/store-check',
+        name: 'store-check',
+        meta: {
+          icon: 'md-funnel',
+          title: '门店审核',
+          lgType: "1001",
+          access: '100102',
+        },
+        component: () => import('@/hxx-admin/store-manager/store-check.vue')
+      },
+      {
+        path: '/import-store',
+        name: 'import-store',
+        meta: {
+          icon: 'md-funnel',
+          title: '批量导入门店',
+          lgType: "1001",
+          access: '100103',
+        },
+        component: () => import('@/hxx-admin/store-manager/import-store.vue')
+      },
+      {
+        path: '/sms-inform',
+        name: 'sms-inform',
+        meta: {
+          icon: 'md-funnel',
+          title: '短信通知',
+          lgType: "1001",
+          access: '100104',
+        },
+        component: () => import('@/hxx-admin/store-manager/sms-inform.vue')
+      }
     ]
   },
   {
-    path: '/jcsj',
-    name: 'jcsj',
+    path: '/basic-data',
+    name: 'basic-data',
     meta: {
       icon: 'logo-buffer',
       title: '基础数据',
@@ -843,15 +876,15 @@ export default [
     component: Main,
     children:[
       {
-        path: '/base',
-        name: 'base',
+        path: '/area-manage',
+        name: 'area-manage',
         meta: {
           icon: 'md-funnel',
-          title: 'base',
+          title: '行政区域管理',
           lgType: "1001",
-          access: '100203',
+          access: '100202',
         },
-        component: () => import('@/hxx-admin/jcsj/base.vue')
+        component: () => import('@/hxx-admin/basic-data/area-manage.vue')
       },
     ]
   },

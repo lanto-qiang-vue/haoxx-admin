@@ -67,6 +67,10 @@
           <FormItem prop="TENANT_NUM" label="门店商户号">
             <Input v-model="info.TENANT_NUM" :readonly="!editAble" :disabled="!isAdmin"></Input>
           </FormItem>
+          <div></div>
+          <FormItem prop="TENANT_NUM" label="其它说明" v-if="isCheck">
+            <Input type="textarea" v-model="info.REMARK" :readonly="true"></Input>
+          </FormItem>
         </Form>
       </Panel>
       <Panel name="2">证照上传
@@ -123,7 +127,7 @@
       </Panel>
     </Collapse>
   </div>
-  <div class="footer" v-show="!isRegister">
+  <div class="footer" v-show="!isRegister&&!isCheck">
     <Button v-show="!editAble" type="info" :disabled="false" @click="editAble= true"
             v-if="isAdmin ||accessBtn('save')">编辑</Button>
     <Button v-show="editAble" :disabled="false" @click="cancelEdit">取消编辑</Button>
@@ -168,7 +172,8 @@
           "TENANT_NUM":"",
           "ROAD_FILE_PATH":"",
           "BUS_FILE_PATH":"",
-          "TENANT_FILE_PATH":""
+          "TENANT_FILE_PATH":"",
+          "REMARK":"",
         },
 
         ruleValidate:{},
@@ -187,6 +192,9 @@
       },
       isRegister(){
        return this.type == 1;
+      },
+      isCheck(){
+        return this.type == 2;
       }
     },
     watch:{

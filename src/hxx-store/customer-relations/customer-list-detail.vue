@@ -296,7 +296,7 @@
       // console.log(this.$store.state.app.tenant);
       //专员组
       var group = this.$store.state.app.tenant;
-               this.attachGroup.push({"USER_ID":0,"USER_CODE":"","USER_NAME":"==请选择=="});
+      this.attachGroup.push({"USER_ID":0,"USER_CODE":"","USER_NAME":"==请选择=="});
       for(var i=0;i<group.length;i++){
       this.attachGroup.push(group[i]);
       }

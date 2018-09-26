@@ -54,13 +54,7 @@
           search(keyword){
             this.data = [];
             if(keyword == "" || keyword == " "){
-                // this.children = this.area;
-              var data = {};
-              for(var i in this.area){
-                // if()
-              }
-              //快速遍历...
-              // var store =
+                this.children = this.area;
             }else{
               this.children = [];
               this.data = [];
@@ -77,7 +71,6 @@
             }
             var data = this.areaFormat(0,{title:'中华人民共和国'},keyword);
             data['expand'] = true;
-            alert(1);
             this.data.push(data);
           },
           filterSearch(search,store = []){
