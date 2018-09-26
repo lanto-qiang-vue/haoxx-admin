@@ -1,21 +1,18 @@
 <!--保险公司页面 2018-09-25-->
 <template>
-  <div>   
-aaaaa
-  </div>
- 
+  <div>qqq</div>
 </template>
 <script>
-  
+
 export default {
 		name: "insurance-company",
     data(){
 		  return{
-        
-        
+
+
       }
     },
-    
+
 	}
 </script>
 

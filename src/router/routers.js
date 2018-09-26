@@ -818,22 +818,12 @@ export default [
         },
         component: () => import('@/hxx-admin/store-manager/store-info-list.vue')
       },
-      {
-        path: '/select-area',
-        name: 'select-area',
-        meta: {
-          icon: 'md-funnel',
-          title: '区域选择组件',
-          lgType: "1001",
-          access: '100203',
-        },
-        component: () => import('@/hxx-admin/store-manager/select-area.vue')
-      },
+
     ]
   },
   {
-    path: '/jcsj',
-    name: 'jcsj',
+    path: '/store-jcsj',
+    name: 'store-jcsj',
     meta: {
       icon: 'logo-buffer',
       title: '基础数据',
@@ -842,17 +832,7 @@ export default [
     },
     component: Main,
     children:[
-      {
-        path: '/base',
-        name: 'base',
-        meta: {
-          icon: 'md-funnel',
-          title: 'base',
-          lgType: "1001",
-          access: '100203',
-        },
-        component: () => import('@/hxx-admin/jcsj/base.vue')
-      },
+
     ]
   },
   {
