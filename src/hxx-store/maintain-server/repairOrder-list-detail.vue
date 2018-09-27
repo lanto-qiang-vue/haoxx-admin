@@ -44,7 +44,9 @@
               </Select>
           </FormItem>
           <FormItem label="送修里程:" prop="MILEAGE">
-              <InputNumber :min="0" v-model="listSearch.MILEAGE" placeholder="最大不超过八位数"></InputNumber>
+              <InputNumber :min="0" v-model="listSearch.MILEAGE" placeholder="最大不超过八位数"
+                :formatter="value => `${value}公里`" :parser="value => value.replace('公里', '')"
+              ></InputNumber>
           </FormItem>
           <FormItem label="主修人:" >
               <Select v-model="listSearch.REPAIR_PERSON" placeholder="">

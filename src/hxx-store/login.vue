@@ -412,5 +412,6 @@
       float: none;
       display: inline-block;
     }
+    
   }
 </style>

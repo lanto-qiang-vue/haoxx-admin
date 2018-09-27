@@ -50,7 +50,9 @@
                 <Input type="text"   v-model="listSearch.TELPHONE" > </Input>
             </FormItem>
             <FormItem label="当前里程:" prop="MILEAGE">
-                <InputNumber :min="0" v-model="listSearch.MILEAGE" placeholder="最大不超过八位数"></InputNumber>
+                <InputNumber :min="0" v-model="listSearch.MILEAGE" placeholder="最大不超过八位数" 
+                    :formatter="value => `${value}公里`" :parser="value => value.replace('公里', '')"
+                ></InputNumber>
             </FormItem>
         </Form>
         <Form ref="formInline"  slot="content" :label-width="80">
@@ -249,9 +251,15 @@
                                     min:0,
                                     value: params.row.ITEM_DERATE_MONEY,
                                     disabled:this.listDisabled,
+                                    
                                 },
-                                on: {
+                            on: {
+                                // "click":()=>{
+                                //     console.log('sfsfs');
+                                //     this.$refs.input.focus();
+                                // },
                                     "on-change":(val)=>{
+                                        
                                         if(val<params.row.ITEM_MONEY){
                                             params.row.ITEM_DERATE_MONEY=val;
                                         }else{
@@ -267,6 +275,9 @@
                                         this.computItemMoney();
                                     
                                     },
+                                    // "on-blur":(val)=>{
+                                    //     console.log('预约单数据',val);
+                                    // }
                                     
                                 }
                             },

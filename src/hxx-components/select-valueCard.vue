@@ -82,8 +82,8 @@ import { getName, getDictGroup } from '@/libs/util.js'
                     method: 'post',
                     data: {
                         KEYWORD: this.search.input,
-                        MEMBER_TYPE_eq: this.showCardData.MEMBER_TYPE||'',
-                        MEMBER_CARD_STATUS_eq: this.showCardData.MEMBER_CARD_STATUS||'',
+                        MEMBER_TYPE_eq: '10401002',
+                        MEMBER_CARD_STATUS_eq: '10491001',
                         page: this.page,
                         limit: this.limit,
                         access_token: this.$store.state.user.token
