@@ -20,6 +20,7 @@
         data:[],
         kdata:{},
         children:[],
+        store:{},
         keyword:"",
       }
     },
@@ -41,6 +42,7 @@
         }).then(res => {
           if (res.success === true) {
             this.area = res.data;
+            this.store = res.data;
           }
         })
       },
@@ -48,33 +50,27 @@
         this.search(key);
       },
       search(keyword){
+        //数据过滤...
+        this.filterData();
         //递归时间复杂度n^2;利用数组规律性进行处理时间复杂度n
           var da = this.fastFormat(0,1,{title:'中华人民共和国',children:[]});
           console.log(da.children[0].children.length);
           this.data = [da];
       },
       fastFormat(i = 0,level = 1,data,pid = 0){
-        for(var a = i;a <15;a++){
-          console.log(a);
-          console.log(JSON.stringify(data));
-          console.log("========开始=========");
-          console.log(JSON.stringify(this.area[a]));
-          this.area[a].title = this.area[a].text;
+        for(var a = i;a <this.area.length;a++){
           if(this.area[a].parentId == 0){
-            console.log(JSON.stringify(this.area[a]));
-            console.log("========什么鬼=========");
-             data.children.push(this.area[a]);
+            data.children.push({"title":this.area[a].text,"id":this.area[a].id,"parentId":this.area[a].parentId});
              pid = this.area[a].id;
              level = 2;
              continue;
           }
           if(this.area[a].parentId == pid && level == 2){
             var flag = data.children[data.children.length - 1]['children'] ? true : false;
-            console.log(this.area[a].title);
             if(!flag) {
               data.children[data.children.length - 1]['children'] = [];
             }
-            data.children[data.children.length - 1]['children'].push(this.area[a]);
+            data.children[data.children.length - 1]['children'].push({"title":this.area[a].text,"id":this.area[a].id,"parentId":this.area[a].parentId});
             pid = this.area[a].id;
             level = 3;
             continue;
@@ -84,31 +80,20 @@
             if(!flag){
               data.children[data.children.length - 1]['children'][data.children[data.children.length - 1]['children'].length -1]['children']= [];
             }
-            data.children[data.children.length - 1]['children'][data.children[data.children.length - 1]['children'].length -1]['children'].push(this.area[a]);
-            this.area[a].title;
-            continue;
+            // {"title":this.highLight(this.area[a].text,this.keyword),"id":this.area[a].id,"parentId":this.area[a].parentId,render:this.renderTree}
+           if(this.area[a].text.indexOf(this.keyword) > -1) data.children[data.children.length - 1]['children'][data.children[data.children.length - 1]['children'].length -1]['children'].push({"title":this.area[a].text,"id":this.area[a].id,"parentId":this.area[a].parentId});
+            if(a<this.area.length - 2 && this.area[a+1].parentId == data.children[data.children.length - 1].id){
+              this.fastFormat(a,2,data,data.children[data.children.length - 1].id);
+              break;
+            }
           }
-          // this.fastFormat(a,2,data,data.children[data.children.length - 1].id);
-          // break;
         }
+        data['expand'] = true;
         return data;
       },
-      // areaFormat(parentId,store,keyword = ""){
-      //   store.children = [];
-      //   for(var i in this.children){
-      //     if(this.children[i].parentId == parentId){
-      //       if(keyword == "" || keyword == " "){
-      //         this.children[i].title = this.children[i].text;
-      //       }else{
-      //         this.children[i].title = this.highLight(this.children[i].text, keyword);
-      //         this.children[i].render = this.renderTree;
-      //       }
-      //       store.children.push(this.children[i]);
-      //       this.areaFormat(this.children[i].id,store.children[store.children.length - 1],keyword);
-      //     }
-      //   }
-      //   return store;
-      // },
+      filterData(){
+        var data
+      },
       renderTree(h, { root, node, data }){
         return h('span', {
           class: {'ivu-tree-title': true},
