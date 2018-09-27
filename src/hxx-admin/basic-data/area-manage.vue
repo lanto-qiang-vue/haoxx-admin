@@ -49,6 +49,7 @@
       },
       search(keyword){
         //递归时间复杂度n^2;利用数组规律性进行处理时间复杂度n
+        console.log('dadadadda',this.area);
           var da = this.fastFormat(0,1,{title:'中华人民共和国',children:[]});
           console.log(da.children[0].children.length);
           this.data = [da];
@@ -58,7 +59,7 @@
           console.log(a);
           console.log(JSON.stringify(data));
           console.log("========开始=========");
-          console.log(JSON.stringify(this.area[a]));
+          console.log("最开始之前的值",JSON.stringify(this.area[a-1]));
           this.area[a].title = this.area[a].text;
           if(this.area[a].parentId == 0){
             console.log(JSON.stringify(this.area[a]));
@@ -85,7 +86,7 @@
               data.children[data.children.length - 1]['children'][data.children[data.children.length - 1]['children'].length -1]['children']= [];
             }
             data.children[data.children.length - 1]['children'][data.children[data.children.length - 1]['children'].length -1]['children'].push(this.area[a]);
-            this.area[a].title;
+            
             continue;
           }
           // this.fastFormat(a,2,data,data.children[data.children.length - 1].id);

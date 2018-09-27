@@ -98,7 +98,7 @@
 
 <script>
 
-  import { getName, getDictGroup } from '@/libs/util.js'
+  import { getName, getDictGroup ,getUserInfo} from '@/libs/util.js'
   import { formatDate } from '@/libs/tools.js'
   import vehicleModel from '@/hxx-components/vehicle-model.vue'
 	export default {
@@ -133,7 +133,7 @@
                 listSearch:{
                     "VEHICLE_ID":"",
                     "TID":"",
-                    "PLATE_NUM":"",
+                    "PLATE_NUM":"沪A",
                     "VEHICLE_COLOR":"",
                     "ENGINE_NO":"",
                     "VIN_NO":"",
@@ -150,7 +150,7 @@
                 initList:{
                     "VEHICLE_ID":"",
                     "TID":"",
-                    "PLATE_NUM":"",
+                    "PLATE_NUM":"沪A",
                     "VEHICLE_COLOR":"",
                     "ENGINE_NO":"",
                     "VIN_NO":"",
@@ -166,7 +166,7 @@
                 },
                 ruleValidate:{
 					 PLATE_NUM:[{required: true, message: '车牌号必填', trigger: 'blur' },
-					 { type:'string',pattern:/^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-Z0-9]{4}[A-Z0-9挂学警港澳]{2}$/, message:'请输入正确的车牌号码', trigger:'change'}
+					 { type:'string',pattern:/^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-Z0-9]{4}[A-Z0-9挂学警港澳]{1,2}$/, message:'请输入正确的车牌号码', trigger:'change'}
 					 ],
 					 VIN_NO:[{required: true, message: '车架号必填', trigger: 'blur' },
 					 	{ validator: validatePass, trigger: 'change' },
@@ -182,7 +182,12 @@
                 this.$refs['listSearch'].resetFields();
                 this.showOnoff=true;
                 for(let i in this.listSearch){
-                    this.listSearch[i]=this.initList[i];
+                    if(i=='PLATE_NUM'){
+                        this.listSearch[i]=getUserInfo(this.$store.state.user.userInfo.params, 'P1003');
+                    }else{
+                        this.listSearch[i]=this.initList[i];
+                    }
+                    
                 }
 
             }

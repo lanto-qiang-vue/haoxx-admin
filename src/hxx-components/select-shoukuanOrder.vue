@@ -34,7 +34,7 @@
                     </Form>
                 </Panel>
                 <Panel name="2">结算信息
-                    <Form slot="content" :label-width="120" inline class="detail-form">
+                    <Form slot="content" :label-width="120" inline class="detail-form" ref="shoukuanSearch" :rules="ruleValidate1" :model="shoukuanSearch">
                         <FormItem label="维修项目费用:">
                             <span>{{shoukuanSearch.REPAIR_ITEM_MONEY}}元</span>
                         </FormItem>
@@ -54,7 +54,7 @@
                         <FormItem label="合计应收金额:">
                             <span>{{shoukuanSearch.SUM_MONEY}}元</span>
                         </FormItem>
-                        <FormItem label="收款人:">
+                        <FormItem label="收款人:" prop="FOLLOW_PERSON">
                             <Select v-model="shoukuanSearch.FOLLOW_PERSON" placeholder="" style="min-width: 250px;">
                                 <Option v-for="(item, index) in repairPersonArr"
                                 :key="index" :value="item.code">{{item.code}}</Option>
@@ -183,6 +183,9 @@ export default {
             },//提交收款工单数据-----------
             ruleValidate1: {
                 PAYMENT1: [
+                    { required: true, message: '必填',}
+                ],
+                FOLLOW_PERSON: [
                     { required: true, message: '必填',}
                 ],
             },
