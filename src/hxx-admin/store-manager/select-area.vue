@@ -54,6 +54,7 @@
           search(keyword){
             this.data = [];
             if(keyword == "" || keyword == " "){
+
                 this.children = this.area;
             }else{
               this.children = [];
