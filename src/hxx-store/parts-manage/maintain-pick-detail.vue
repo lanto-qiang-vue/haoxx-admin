@@ -76,6 +76,7 @@
                     ref="tablesMain"
                     :columns="columns2"
                     :data="commitItemGroup"
+                    @on-row-dblclick="onRowDblclick"
                     stripe
                     border
                     ></Table>
@@ -146,7 +147,8 @@
         </div>
     </Modal>
   </div>
-    
+    <!--项目组套餐详情!!!-->
+      <combo-detail :tshow="showItemFlag" :tid="itemDetailId"></combo-detail>
   <!--底部按钮组-->
     <div slot="footer">
         <Button type="primary" @click="receiveFun" style="margin-right: 10px;">领料出库</Button>
@@ -159,14 +161,15 @@
 <script>
   import { getName, getDictGroup ,getUserInfo} from '@/libs/util.js'
   import { formatDate } from '@/libs/tools.js'
-  import ColumnInput from '@/hxx-components/column-input.vue'
-
+  import comboDetail from '@/hxx-components/combo-detail.vue'
 
 	export default {
 	name: "maintain-pick-detail",
-    components: {ColumnInput},
+    components: {comboDetail},
     data(){
       return{
+          showItemFlag:null,//项目套餐组详情
+        itemDetailId:'',//项目套餐组id
         showReceive:false,//领料弹框
         showRejected:false,//退料弹框
         showModal: false,//本界面是否显示判断
@@ -657,6 +660,11 @@
         handleReset (name) {
             this.$refs[name].resetFields();
         },
+        //双击查看项目套餐详情------
+      onRowDblclick(val){
+          this.showItemFlag=Math.random();
+          this.itemDetailId=val.GROUP_ID;
+      },
        
                
     }
