@@ -245,27 +245,49 @@ import commonTable from '@/hxx-components/common-table.vue'
                 })
             },
             getList(){
-                this.axios.request({
-                    url: '/tenant/basedata/repairiteminfo/infolist1',
-                    method: 'post',
-                    data: {
-                        cartype_eq: this.test1||'',
-                        TYPE_ID_eq: this.test2||'',
-                        ENGINE_TYPE_eq: this.test3||'',
-                        CLASS_TYPE_eq: this.test4||'',
-                        KEYWORD: this.test5||'',
-                        page: this.page,
-                        limit: this.limit,
-                        access_token: this.$store.state.user.token
-                    }
-                }).then(res => {
-                    if (res.success === true) {
-                        console.log("得到列表数据",res);
-                        this.tableData= res.data
-                        this.total= res.total
+                if(this.$store.state.user.userInfo.tenant.businessType=="10331003"||this.$store.state.user.userInfo.tenant.businessType=="10331004"){
+                     this.axios.request({
+                            url: '/tenant/basedata/repairiteminfo/infolist11',
+                            method: 'post',
+                            data: {
+                                cartype_eq: this.test1||'',
+                                KEYWORD: this.test5||'',
+                                page: this.page,
+                                limit: this.limit,
+                                access_token: this.$store.state.user.token
+                            }
+                        }).then(res => {
+                            if (res.success === true) {
+                                console.log("得到列表数据",res);
+                                this.tableData= res.data
+                                this.total= res.total
 
-                    }
-              })
+                            }
+                    })
+                }else{
+                     this.axios.request({
+                            url: '/tenant/basedata/repairiteminfo/infolist1',
+                            method: 'post',
+                            data: {
+                                cartype_eq: this.test1||'',
+                                TYPE_ID_eq: this.test2||'',
+                                ENGINE_TYPE_eq: this.test3||'',
+                                CLASS_TYPE_eq: this.test4||'',
+                                KEYWORD: this.test5||'',
+                                page: this.page,
+                                limit: this.limit,
+                                access_token: this.$store.state.user.token
+                            }
+                        }).then(res => {
+                            if (res.success === true) {
+                                console.log("得到列表数据",res);
+                                this.tableData= res.data
+                                this.total= res.total
+
+                            }
+                    })
+                }
+               
             },
             getCarType(){
                 this.axios.request({
@@ -377,8 +399,22 @@ import commonTable from '@/hxx-components/common-table.vue'
             },
             searchVehicle(){
                 
-                this.page=1;
-                this.getList();
+                if(this.$store.state.user.userInfo.tenant.businessType=="10331003"||this.$store.state.user.userInfo.tenant.businessType=="10331004"){
+                    this.page=1;
+                            this.getList();
+                }else{
+                        if(this.test1){
+                            this.page=1;
+                            this.getList();
+                        }else{
+                            this.$Modal.confirm({
+                                title:"系统提示!",
+                                content:"未选择车辆类型",
+                                
+                            })
+                        }
+                }
+                
             },
             resetVehicle(){
                 // console.log("重置之前先打印",this.test1,this.test2,this.test3,this.test4,this.test5);

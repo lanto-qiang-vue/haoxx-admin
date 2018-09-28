@@ -10,6 +10,7 @@
         :mask-closable="false"
         :transition-names="['', '']"
         :footer-hide="false"
+        class="table-modal-detail"
     >
     <common-table v-model="tableData" :columns="columns" :show="showSelectItemGroup" :total="total" @changePage="changePage" 
         @changePageSize="changePageSize" @onRowClick="onRowClick" :showOperate=false>

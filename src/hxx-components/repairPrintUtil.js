@@ -307,7 +307,7 @@ export const printPgdFun=function(wtdData,listSearch,commitItem,commitParts,item
         }
         for(let i in itemGroupDetail){
                 itemString+='<tr class="noRLBorder text-center">';
-                itemString+='<td>'+(parseInt(i)+1)+'</td>';
+                itemString+='<td>'+(parseInt(i)+1+commitItem.length)+'</td>';
                 itemString+='<td colspan="3">'+itemGroupDetail[i].NAME+'</td>';
                 itemString+='<td>'+itemGroupDetail[i].REPAIR_TIME+'</td>';
                 itemString+='<td colspan="1" tclass="b"></td>';

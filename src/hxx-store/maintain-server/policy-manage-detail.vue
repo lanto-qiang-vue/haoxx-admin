@@ -78,7 +78,7 @@
                 @changePage="changePage" @changePageSize="changePageSize" @onRowClick="onRowClick"
                  :show="showTable" :page="page" :showSearch=false >
                         <div slot="operate">
-                            <Button type="primary" v-if="accessBtn('add')" @click="showDetail1=Math.random();tableDetailData=null;">新增</Button>
+                            <Button type="primary" v-if="accessBtn('add')" @click="showDetail1=Math.random();tableDetailData=null;" :disabled="!isButton">新增</Button>
                             <Button type="info" v-if="accessBtn('edit')" @click="showDetail1=Math.random();" :disabled="editFlag">修改/查看</Button>
                             <Button type="error" v-if="accessBtn('del')"  @click="delTableData" :disabled="delFlag">作废</Button>
                         </div>
