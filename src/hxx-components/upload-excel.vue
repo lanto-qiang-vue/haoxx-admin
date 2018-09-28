@@ -17,8 +17,8 @@
           :action="baseUrl + actionUrl">
           <div style="padding: 20px 0">
             <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
-            <p class="ftext">1、点击当前区域，找到您所要导入的Excel文件,请确保文件按照模板中导入说明的要求填写。</p>
-            <p class="ftext">2、选择好文件后, 点“确定”按钮完成导入</p>
+            <div style="clear:both;"></div>
+            <p v-for="item in description">{{item.des}}</p>
           </div>
         </Upload>
         <div>{{filename}}</div>
@@ -74,12 +74,22 @@
         type: String, default() {
           return '客户档案导入'
         }
+      },
+      description:{
+        type:Array,
+        default(){
+          return [{des:'1、点击当前区域，找到您所要导入的Excel文件,请确保文件按照模板中导入说明的要求填写。'},{des:'2、选择好文件后, 点“确定”按钮完成导入'}];
+        }
       }
     },
     watch: {
       type() {
-        this.filename = "请选择文件";
-        this.show = true
+        if(this.type != false) {
+          this.filename = "请选择文件";
+          this.show = true
+        }else{
+          this.show = false;
+        }
       }
     },
     methods: {
@@ -93,12 +103,14 @@
           this.$Message.error('请选择文件');
           return;
         }
+        this.$Spin.show();
         this.$refs.upload.post(this.file);
       },
       uploadClose() {
         this.show = false
       },
       uploadSuccess(res) {
+        this.$Spin.hide();
         this.$emit(this.success, res);
       },
       down() {

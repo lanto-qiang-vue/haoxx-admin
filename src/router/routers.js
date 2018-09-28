@@ -886,6 +886,17 @@ export default [
         },
         component: () => import('@/hxx-admin/basic-data/area-manage.vue')
       },
+      {
+        path: '/insurance-companyManage',
+        name: 'insurance-companyManage',
+        meta: {
+          icon: 'md-funnel',
+          title: '保险公司',
+          lgType: "1001",
+          access: '100203',
+        },
+        component: () => import('@/hxx-admin/basic-data/insurance-companyManage.vue')
+      }
     ]
   },
   {
