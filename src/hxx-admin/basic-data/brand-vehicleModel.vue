@@ -3,7 +3,7 @@
   <Split v-model="split" :min="0.1" :max="0.5" class="split">
     <div slot="left" class="split-pane">
       <Input v-model="treeKEYWORD" placeholder="品牌/厂商/车型名称..." icon="md-refresh"
-             class="tree-input" @on-click="render=false;getTree()" @on-change="queryTree" clearable></Input>
+             class="tree-input" @on-change="selectKeyword"></Input>
       <div v-show="isShow">
         <Tree :data="treeData" class="vehicle-tree" @on-select-change="select" @on-toggle-expand="qh1"></Tree>
       </div>
@@ -119,18 +119,25 @@
         }).then(res => {
           if (res.success === true) {
             this.treeDefault = res.data;
-            this.search();
+            this.filterCompnay();
           }
         })
       },
-      queryTree() {
-        this.search();
+      selectKeyword(){
+        // this.search();
+        let self= this
+        clearTimeout(this.timer);
+        this.timer = setTimeout(function(){
+          self.search();
+        },500)
       },
       search() {
-        let data = this.filterCompnay();
+        this.filterCompnay();
       },
       filterCompnay() {
+        console.log("====开始======");
         let data = {};
+        let mydata = [];
         console.log(JSON.stringify(data));
         for (let i in this.treeDefault) {
           let parentId = this.treeDefault[i].parentId;
@@ -161,9 +168,9 @@
                   parentId: this.treeDefault[i].parentId
                 });
               } else {
-                if (this.treeDefault[i].text.indexOf(this.treeKEYWORD) > -1){
+                if (this.treeDefault[i].text.indexOf(this.treeKEYWORD.toLocaleUpperCase()) > -1){
                   data[parentId].push({
-                    title: this.highLight(this.treeDefault[i].text, this.treeKEYWORD),
+                    title: this.highLight(this.treeDefault[i].text, this.treeKEYWORD.toLocaleUpperCase()),
                     id: this.treeDefault[i].id,
                     parentId: this.treeDefault[i].parentId,
                     render:this.renderTree
@@ -178,14 +185,47 @@
         for (let i in newData) {
           //三次过滤...
           let store = data[newData[i].id];
+          let st  = [];
+          let stflag = false;
           for (let a in store) {
-            store[a]['children'] = data[store[a].id];
+            if(data[store[a].id].length > 0){
+              stflag = true;
+              if(store[a].title.indexOf(this.treeKEYWORD.toLocaleUpperCase()) > - 1 && this.treeKEYWORD != "" && this.treeKEYWORD != " "){
+                st.push({
+                  title: this.highLight(store[a].title, this.treeKEYWORD.toLocaleUpperCase()),
+                  id: store[a].id,
+                  parentId: store[a].parentId,
+                  render:this.renderTree,
+                  children:data[store[a].id],
+                })
+              }
+              else{
+                st.push({title:store[a].title,children:data[store[a].id],id:store[a].id});
+              }
+            }else{
+              if(store[a].title.indexOf(this.treeKEYWORD.toLocaleUpperCase()) > - 1 && this.treeKEYWORD != "" && this.treeKEYWORD != " "){
+                st.push({
+                  title: this.highLight(store[a].title, this.treeKEYWORD.toLocaleUpperCase()),
+                  id: store[a].id,
+                  parentId: store[a].parentId,
+                  render:this.renderTree,
+                  children:[],
+                })
+              }
+            }
           }
-          newData[i]['children'] = store;
+
+          if(stflag){
+            mydata.push({title:newData[i].title,id:newData[i].id,children:st})
+          }else{
+
+          }
         }
-        let tree = {title: '所有厂家/品牌/车系', id: 0, children: newData, expand: true};
-        this.treeData = [];
-        this.treeData.push(tree);
+        console.log(JSON.stringify(mydata));
+        console.log("====结束======");
+        let tree = {title: '所有厂家/品牌/车系', id: 0, children: mydata, expand: true};
+        // this.treeData = [];
+        this.treeData = [tree];
         // console.log(JSON.stringify(data[124856]));
       },
       renderTree(h, {root, node, data}) {
