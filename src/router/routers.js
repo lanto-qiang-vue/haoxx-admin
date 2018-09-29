@@ -808,8 +808,8 @@ export default [
     component: Main,
     children:[
       {
-        path: '/manage-store-info',
-        name: 'manage-store-info',
+        path: '/store-info-list',
+        name: 'store-info-list',
         meta: {
           icon: 'md-funnel',
           title: '门店信息',
@@ -817,17 +817,6 @@ export default [
           access: '100101',
         },
         component: () => import('@/hxx-admin/store-manager/store-info-list.vue')
-      },
-      {
-        path: '/select-area',
-        name: 'select-area',
-        meta: {
-          icon: 'md-funnel',
-          title: '区域选择组件',
-          lgType: "1001",
-          access: '100101',
-        },
-        component: () => import('@/hxx-admin/store-manager/select-area.vue')
       },
       {
         path: '/store-check',
@@ -886,17 +875,29 @@ export default [
         },
         component: () => import('@/hxx-admin/basic-data/area-manage.vue')
       },
-      // {
-      //   path: '/insurance-companyManage',
-      //   name: 'insurance-companyManage',
-      //   meta: {
-      //     icon: 'md-funnel',
-      //     title: '保险公司',
-      //     lgType: "1001",
-      //     access: '100203',
-      //   },
-      //   component: () => import('@/hxx-admin/basic-data/insurance-companyManage.vue')
-      // }
+
+      {
+        path: '/insurance-companyManage',
+        name: 'insurance-companyManage',
+        meta: {
+          icon: 'md-funnel',
+          title: '保险公司',
+          lgType: "1001",
+          access: '100203',
+        },
+        component: () => import('@/hxx-admin/basic-data/insurance-companyManage.vue')
+      },
+      {
+        path: '/brand-vehicleModel',
+        name: 'brand-vehicleModel',
+        meta: {
+          icon: 'md-funnel',
+          title: '品牌车型',
+          lgType: "1001",
+          access: '100205',
+        },
+        component: () => import('@/hxx-admin/basic-data/brand-vehicleModel.vue')
+      }
     ]
   },
   {

@@ -128,9 +128,9 @@
       },
     },
     mounted(){
-      console.log('mounted')
-      this.getList()
+      // console.log('mounted')
       this.showTable= true
+      this.getList()
     },
     methods:{
       getList(){
