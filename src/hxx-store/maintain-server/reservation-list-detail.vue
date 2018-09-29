@@ -433,7 +433,7 @@
                     }
           },
           {title: '优惠后金额', key: 'PART_LAST_MONEY', sortable: true, minWidth: 150,
-                render: (h, params) => h('span', (params.row.PART_NUM*params.row.SALES_PRICE)-params.row.PART_DERATE_MONEY)
+                // render: (h, params) => h('span', (params.row.PART_NUM*params.row.SALES_PRICE)-params.row.PART_DERATE_MONEY)
             },
           {title: '备注', key: 'REMARK', sortable: true, minWidth: 150,
             render: (h, params) => {
@@ -505,6 +505,7 @@
                                     "on-change":(val)=>{
                                         params.row.SALES_PRICE=val;
                                         this.commitItemGroup[params.index]=params.row;
+                                        this.commitItemGroup[params.index]['ITEM_LAST_MONEY']=params.row.SALES_PRICE-params.row.ITEM_DERATE_MONEY;
                                         this.computItemMoney();
                                             
                                     },
@@ -533,7 +534,7 @@
                                     "change":(val)=>{
                                                 params.row.ITEM_DERATE_MONEY=val;
                                                 this.commitItemGroup[params.index]=params.row;
-                                                this.commitItemGroup[params.index]['ITEM_LAST_MONEY']=parseInt(params.row.SALES_PRICE)-params.row.ITEM_DERATE_MONEY;
+                                                this.commitItemGroup[params.index]['ITEM_LAST_MONEY']=params.row.SALES_PRICE-params.row.ITEM_DERATE_MONEY;
                                                 this.computItemMoney();
                                         
                                     },
@@ -544,7 +545,7 @@
 
           },
           {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 150,
-            render: (h, params) => h('span', params.row.SALES_PRICE-params.row.ITEM_DERATE_MONEY)
+            // render: (h, params) => h('span', params.row.SALES_PRICE-params.row.ITEM_DERATE_MONEY)
           },
           {title: '备注', key: 'REMARK', sortable: true, minWidth: 150,
             render: (h, params) => {
@@ -981,15 +982,14 @@
               "IS_SEL":true,
               "REMARK":""
             }
-            for(let i in listItemsModel){
-              if(val[j][i]){
+            for(let i in val[j]){
+              
                 listItemsModel[i]=val[j][i];
-              }else if(i=="ITEM_MONEY"){
-                listItemsModel[i]=val[j]["REPAIR_TIME"]*this.work_price+val[j]["PAINT_NUM"]*this.paint_price;
-              }else if(i=="ITEM_LAST_MONEY"){
-                listItemsModel[i]=parseInt(val[j]["REPAIR_TIME"]*this.work_price)+parseInt(val[j]["PAINT_NUM"]*this.paint_price);
-              }
+              
             }
+            listItemsModel["ITEM_MONEY"]=listItemsModel["REPAIR_TIME"]*this.work_price+listItemsModel["PAINT_NUM"]*this.paint_price;
+            listItemsModel[i]=listItemsModel["ITEM_MONEY"]-listItemsModel["ITEM_DERATE_MONEY"];
+
             this.commitItem.push(listItemsModel);
           }
           this.computItemMoney();
@@ -1210,7 +1210,7 @@
               }
 
                 commitParts['PART_MONEY']=this.getParts1[j]["SALES_PRICE"]*(this.getParts1[j]["PART_NUM"]||1);
-                commitParts['PART_LAST_MONEY']=this.getParts1[j]["SALES_PRICE"]*(this.getParts1[j]["PART_NUM"]||1)-commitParts["PART_DERATE_MONEY"];
+                commitParts['PART_LAST_MONEY']=commitParts['PART_MONEY']-commitParts["PART_DERATE_MONEY"];
               console.log('最后得到的配件数据---------',commitParts);
               this.commitParts.push(commitParts);
           }

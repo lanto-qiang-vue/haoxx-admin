@@ -312,6 +312,7 @@
                                             params.row.ITEM_DERATE_MONEY=0;
                                             this.commitItem[params.index]=params.row;
                                             this.commitItem[params.index]['ITEM_MONEY']=val*this.work_price+params.row.PAINT_NUM*this.paint_price;
+                                            this.commitItem[params.index]['ITEM_LAST_MONEY']=this.commitItem[params.index]['ITEM_MONEY']-params.row.ITEM_DERATE_MONEY;
                                             this.computItemMoney();
                                     },
                                     
@@ -340,6 +341,7 @@
                                             params.row.ITEM_DERATE_MONEY=0;
                                             this.commitItem[params.index]=params.row;
                                             this.commitItem[params.index]['ITEM_MONEY']=val;
+                                            this.commitItem[params.index]['ITEM_LAST_MONEY']=this.commitItem[params.index]['ITEM_MONEY']-params.row.ITEM_DERATE_MONEY;
                                             this.computItemMoney('flag');
                                     },
                                     
@@ -367,6 +369,7 @@
                                             params.row.ITEM_DERATE_MONEY=0;
                                             this.commitItem[params.index]=params.row;
                                             this.commitItem[params.index]['ITEM_MONEY']=val*this.paint_price+params.row.PAINT_NUM*this.work_price;
+                                            this.commitItem[params.index]['ITEM_LAST_MONEY']=this.commitItem[params.index]['ITEM_MONEY']-params.row.ITEM_DERATE_MONEY;
                                             this.computItemMoney();
                                     },
                                     
@@ -377,7 +380,6 @@
                     }
          },
           {title: '小计金额', key: 'ITEM_MONEY', sortable: true, minWidth: 120,
-            // render: (h, params) => h('span', (params.row.REPAIR_TIME*this.work_price+params.row.PAINT_NUM*this.paint_price))
           },
           {title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 120,
                     render: (h, params) => {
@@ -398,6 +400,7 @@
                                             params.row.ITEM_DERATE_MONEY=val;
                                             this.commitItem[params.index]=params.row;
                                             this.commitItem[params.index]['ITEM_LAST_MONEY']=params.row.REPAIR_TIME*this.work_price+params.row.PAINT_NUM*this.paint_price-val;
+                                            console.log(this.commitItem[params.index]['ITEM_LAST_MONEY']);
                                             this.computItemMoney();
                                         
                                     },
@@ -407,7 +410,7 @@
                     }
           },
           {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 130,
-            render: (h, params) => h('span', (params.row.ITEM_MONEY-params.row.ITEM_DERATE_MONEY))
+            // render: (h, params) => h('span', (params.row.ITEM_MONEY-params.row.ITEM_DERATE_MONEY))
           },
           {title: '车间班组', key: 'WORK_CLASS_ID', sortable: true, minWidth: 150,
             render: (h, params) => {
@@ -610,7 +613,7 @@
                     }
           },
           {title: '优惠后金额', key: 'PART_LAST_MONEY', sortable: true, minWidth: 150,
-            render: (h, params) => h('span', params.row.SALES_PRICE*params.row.PART_NUM-params.row.PART_DERATE_MONEY)
+            // render: (h, params) => h('span', params.row.SALES_PRICE*params.row.PART_NUM-params.row.PART_DERATE_MONEY)
           },
           
           {title: '备注', key: 'REMARK', sortable: true, minWidth: 150,
@@ -711,6 +714,7 @@
                                             
                                                 params.row.SALES_PRICE=val;
                                                 this.commitItemGroup[params.index]=params.row;
+                                                this.commitItemGroup[params.index]['ITEM_LAST_MONEY']=params.row.SALES_PRICE-params.row.ITEM_DERATE_MONEY;
                                                 this.computItemMoney();
 
                                     },
@@ -738,7 +742,7 @@
                                     "change":(val)=>{
                                                 params.row.ITEM_DERATE_MONEY=val;
                                                 this.commitItemGroup[params.index]=params.row;
-                                                this.commitItemGroup[params.index]['ITEM_LAST_MONEY']=parseInt(params.row.SALES_PRICE)-params.row.ITEM_DERATE_MONEY;
+                                                this.commitItemGroup[params.index]['ITEM_LAST_MONEY']=params.row.SALES_PRICE-params.row.ITEM_DERATE_MONEY;
                                                 this.computItemMoney();
                                         
                                     },
@@ -749,7 +753,7 @@
             
           },
           {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 130,
-            render: (h, params) => h('span', params.row.SALES_PRICE-params.row.ITEM_DERATE_MONEY)
+            // render: (h, params) => h('span', params.row.SALES_PRICE-params.row.ITEM_DERATE_MONEY)
           },
           {title: '车间班组', key: 'WORK_CLASS_ID', sortable: true, minWidth: 150,
             render: (h, params) => {
@@ -1937,18 +1941,12 @@
               "WORK_CLASS_ID":'',
               "WORK_CLASS_NAME":"",
             }
-            for(let i in listItemsModel){
-              if(this.getItem[j][i]){
+            for(let i in this.getItem[j]){
                 listItemsModel[i]=this.getItem[j][i];
-              }else if(i=="ITEM_MONEY"){
-                
-                listItemsModel[i]=this.getItem[j]["REPAIR_TIME"]*this.work_price+this.getItem[j]["PAINT_NUM"]*this.paint_price+(this.getItem[j]["REPAIR_MONEY"]||0);
-                console.log(listItemsModel[i],this.getItem[j]["REPAIR_TIME"],this.work_price,this.getItem[j]["PAINT_NUM"],this.paint_price,(this.getItem[j]["REPAIR_MONEY"])||0);
-              }else if(i=="ITEM_LAST_MONEY"){
-                listItemsModel[i]=this.getItem[j]["REPAIR_TIME"]*this.work_price+this.getItem[j]["PAINT_NUM"]*this.paint_price+this.getItem[j]["REPAIR_MONEY"]-this.getItem[j]["ITEM_DERATE_MONEY"];
-              }
-              
             }
+            listItemsModel["ITEM_MONEY"]=listItemsModel["REPAIR_TIME"]*this.work_price+listItemsModel["PAINT_NUM"]*this.paint_price+listItemsModel["REPAIR_MONEY"];
+            listItemsModel["ITEM_LAST_MONEY"]=listItemsModel["REPAIR_TIME"]*this.work_price+listItemsModel["PAINT_NUM"]*this.paint_price+listItemsModel["REPAIR_MONEY"]-listItemsModel["ITEM_DERATE_MONEY"];
+            console.log('xxxxxx',listItemsModel);
             this.commitItem.push(listItemsModel);
           }
           this.computItemMoney();
@@ -1961,7 +1959,7 @@
 
       //获取选择配件数据
       selectPartsItem(val){
-        console.log("选择配件数据",val);
+        console.log("xxxxxxxx选择配件数据",val);
         this.getParts=val;
         this.commitParts=[];
         
@@ -2008,8 +2006,12 @@
                   commitParts[i]=this.getParts[j][i];
                 }else if(i=="PART_MONEY"){
                   commitParts[i]=this.getParts[j]["SALES_PRICE"]*(this.getParts[j]["PART_NUM"]||1);
+
+                  console.log('计算第一次的数据',commitParts[i]);
                 }else if(i=="PART_LAST_MONEY"){
                   commitParts[i]=this.getParts[j]["SALES_PRICE"]*(this.getParts[j]["PART_NUM"]||1);
+
+                  console.log(commitParts[i]);
                 }
               }
               this.commitParts.push(commitParts);
@@ -2065,17 +2067,20 @@
                   commitParts[i]=this.getParts1[j][i];
                 }else if(i=="PART_MONEY"){
                   commitParts[i]=this.getParts1[j]["SALES_PRICE"]*(this.getParts1[j]["PART_NUM"]||1);
+                  console.log(commitParts[i]);
                 }else if(i=="PART_LAST_MONEY"){
                   commitParts[i]=this.getParts1[j]["SALES_PRICE"]*(this.getParts1[j]["PART_NUM"]||1);
+                  console.log(commitParts[i]);
                 }
               }
               this.commitParts.push(commitParts);
           }
 
         }
+        console.log('xxxxxxxxxxxxxxxxxxxx',this.computItemMoney);
         this.computItemMoney();
       },
-      //获取选择配件档案数据----
+      //获取选择配件档案数据----配件用的是这个
       selectPartsGroup(val){
         console.log("选择配件数据组",val);
         this.getParts1=val;
@@ -2123,14 +2128,10 @@
                   "STATUS":"",
               }
               for(let i in this.getParts1[j]){
-                if(i=="PART_MONEY"){
-                  commitParts[i]=this.getParts1[j]["SALES_PRICE"]*(this.getParts1[j]["PART_NUM"]||1);
-                }else if(i=="PART_LAST_MONEY"){
-                  commitParts[i]=this.getParts1[j]["SALES_PRICE"]*(this.getParts1[j]["PART_NUM"]||1);
-                }else{
-                    commitParts[i]=this.getParts1[j][i];
-                }
+                commitParts[i]=this.getParts1[j][i];
               }
+              commitParts["PART_MONEY"]=this.getParts1[j]["SALES_PRICE"]*(this.getParts1[j]["PART_NUM"]||1);
+              commitParts["PART_LAST_MONEY"]=this.getParts1[j]["SALES_PRICE"]*(this.getParts1[j]["PART_NUM"]||1)-commitParts["PART_DERATE_MONEY"];
               this.commitParts.push(commitParts);
           
 
@@ -2226,13 +2227,11 @@
                 "WORK_CLASS_NAME":"",
 
             }
-            for(let i in commitItemGroup){
-              if(this.getItemGroup[j][i]){
+            for(let i in this.getItemGroup[j]){
                 commitItemGroup[i]=this.getItemGroup[j][i];
-              }else if(i=="ITEM_LAST_MONEY"){
-                commitItemGroup[i]=this.getItemGroup[j]["SALES_PRICE"];
-              }
             }
+            
+            commitItemGroup["ITEM_LAST_MONEY"]=commitItemGroup["SALES_PRICE"]-commitItemGroup["ITEM_DERATE_MONEY"];
             this.commitItemGroup.push(commitItemGroup);
           }
 

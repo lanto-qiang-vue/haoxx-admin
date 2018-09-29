@@ -109,17 +109,32 @@
 			},
 			update(row,up){
 			row.PARAM_VALUE = up;
-			///tenant/sys/params/save
-		  this.axios.request({
-          url: '/tenant/sys/params/save',
-          method: 'post',
-          data: {access_token: this.$store.state.user.token,
-                 data:JSON.stringify(row)
-                }
-        }).then(res => {
-          if (res.success === true) {
-          }
-        })
+				///tenant/sys/params/save
+				this.axios.request({
+				url: '/tenant/sys/params/save',
+				method: 'post',
+				data: {access_token: this.$store.state.user.token,
+						data:JSON.stringify(row)
+						}
+				}).then(res => {
+				if (res.success === true) {
+						this.axios.request({
+							url: '/tenant/common/getLoginUser',
+							method: 'post',
+							data: {
+							access_token: this.$store.state.user.token
+							}
+						}).then(res => {
+							if (res.success === true) {
+								
+								this.$store.commit('setUser', res.data)
+							
+							}
+						})
+
+
+				}
+				})
 			},
 			getList(){
 		  this.axios.request({

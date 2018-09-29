@@ -875,6 +875,7 @@ export default [
         },
         component: () => import('@/hxx-admin/basic-data/area-manage.vue')
       },
+
       {
         path: '/insurance-companyManage',
         name: 'insurance-companyManage',
