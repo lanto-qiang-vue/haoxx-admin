@@ -270,6 +270,7 @@
             }
           }).then(res => {
             if (res.success === true) {
+              console.log("登录时请求的数据",res.data);
               this.$store.commit('setUser', res.data)
               resolve()
             } else reject()

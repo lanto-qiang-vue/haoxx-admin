@@ -14,8 +14,8 @@
     >
         <div style="height: 100%;overflow: auto; padding-bottom: 30px;">
              <div class="demo-split">
-                <Split v-model="splitNum">
-                    <div slot="left" class="demo-split-pane">
+                <Split v-model="splitNum" :min="0.3" :max="0.7">
+                    <div slot="left">
                         <Collapse v-model="collapse1">
                             <Panel name="1">结算信息
                                 <Form slot="content" :label-width="120" class="common-form">
@@ -78,7 +78,7 @@
                         </Collapse>
 
                     </div>
-                    <div slot="right" class="demo-split-pane">
+                    <div slot="right">
                         <Collapse v-model="collapse">
                             <Panel name="1">结算单预览
                                 <div slot="content" style="width: 700px;" id="ggggg">
