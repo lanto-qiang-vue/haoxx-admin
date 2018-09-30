@@ -622,7 +622,7 @@ export default [
 
     ]
   },
-    {
+  {
     path: '/base-data',
     name: 'base-data',
     meta: {
@@ -898,6 +898,30 @@ export default [
         },
         component: () => import('@/hxx-admin/basic-data/brand-vehicleModel.vue')
       }
+    ]
+  },
+  {
+    path: '/resources-manage',
+    name: 'resources-manage',
+    meta: {
+      icon: 'logo-buffer',
+      title: '资源申请',
+      lgType: "1001",
+      access: '1003',
+    },
+    component: Main,
+    children:[
+      {
+        path: '/technical-supportM',
+        name: 'technical-supportM',
+        meta: {
+          icon: 'md-funnel',
+          title: '技术支持',
+          lgType: "1001",
+          access: '100301',
+        },
+        component: () => import('@/hxx-admin/resources-manage/technical-supportM.vue')
+      },
     ]
   },
   {

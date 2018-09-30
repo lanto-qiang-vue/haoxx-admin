@@ -3,7 +3,7 @@
 
     <div class="login-header">
       <!--href="index" target="_blank"-->
-      <a class="header-name" >
+      <a class="header-name" @click="goOnHome">
         <div style="line-height:40px;">好修修智慧门店系统</div>
         <span>Automobile maintenance management system</span>
       </a>
@@ -34,8 +34,11 @@
                         <div class="login-rember-left">
                           <Checkbox v-model="single">记住密码</Checkbox>
                         </div>
-                        <div class="login-rember-right" title="请联系客服">
-                          <span>忘记密码?</span>
+                        <div class="login-rember-right" style="cursor: pointer;">
+                          <!--<span>忘记密码?</span>-->
+                            <Tooltip content="请联系客服">
+                              忘记密码?
+                            </Tooltip>
                         </div>
 
                     </div>
@@ -137,7 +140,10 @@ export default {
           reject(err)
         })
       })
-    }
+    },
+    goOnHome(){
+      this.$router.push({path:'/login'});
+    },
   }
 }
 </script>
@@ -151,7 +157,7 @@ export default {
     position: relative;
     .login-header{
           margin: 0 auto;
-          width: 100%;
+          width: 1000px;
           padding-top: 20px;
           padding-bottom: 20px;
           .header-name{
@@ -193,7 +199,7 @@ export default {
       background: #055fe8;
       margin-top: 90px;
       .login-wrap{
-        width: 100%;
+        width: 1000px;
         height:500px;
         margin:0 auto;
         background: url('../assets/images/hxx-admin/login_bg.png') no-repeat;
