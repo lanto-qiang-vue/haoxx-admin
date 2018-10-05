@@ -658,8 +658,8 @@
                 return date && date.valueOf() < Date.now() - 86400000;
             }
         },
-        work_price:null,//工时单价---------
-        paint_price:null,//油漆面单价-------
+        // work_price:null,//工时单价---------
+        // paint_price:null,//油漆面单价-------
       }
     },
     props:['showDetail', 'detailData'],
@@ -756,8 +756,16 @@
     mounted () {
       this.searchSelectOption= getDictGroup(this.$store.state.app.dict, '1019');
       this.searchSelectOption1= getDictGroup(this.$store.state.app.dict, '1041');
-      this.work_price=getUserInfo(this.$store.state.user.userInfo.params, 'P1001');
-      this.paint_price=getUserInfo(this.$store.state.user.userInfo.params, 'P1002');
+      // this.work_price=getUserInfo(this.$store.state.user.userInfo.params, 'P1001');
+      // this.paint_price=getUserInfo(this.$store.state.user.userInfo.params, 'P1002');
+    },
+    computed: {
+        work_price(){
+            return parseFloat(getUserInfo(this.$store.state.user.userInfo.params, 'P1001'));
+        },
+        paint_price(){
+            return parseFloat(getUserInfo(this.$store.state.user.userInfo.params, 'P1002'));
+        },
     },
     methods:{
       //监听界面变化--------
@@ -983,13 +991,10 @@
               "REMARK":""
             }
             for(let i in val[j]){
-              
                 listItemsModel[i]=val[j][i];
-              
             }
             listItemsModel["ITEM_MONEY"]=listItemsModel["REPAIR_TIME"]*this.work_price+listItemsModel["PAINT_NUM"]*this.paint_price;
-            listItemsModel[i]=listItemsModel["ITEM_MONEY"]-listItemsModel["ITEM_DERATE_MONEY"];
-
+            listItemsModel["ITEM_LAST_MONEY"]=listItemsModel["ITEM_MONEY"]-listItemsModel["ITEM_DERATE_MONEY"];
             this.commitItem.push(listItemsModel);
           }
           this.computItemMoney();

@@ -1181,8 +1181,8 @@
 
         wtdData:null,//委托单服务-------
 
-        work_price:null,//工时单价---------
-        paint_price:null,//油漆面单价-------
+        // work_price:null,//工时单价---------
+        // paint_price:null,//油漆面单价-------
         itemGroupDetail:[],//维修项目套餐详情
       }
     },
@@ -1392,10 +1392,16 @@
     mounted () {
         this.wtdData=this.$store.state.user.userInfo.tenant;
       //获取单价------
-      this.work_price=parseFloat(getUserInfo(this.$store.state.user.userInfo.params, 'P1001'));
-      this.paint_price=parseFloat(getUserInfo(this.$store.state.user.userInfo.params, 'P1002'));
+    //   this.work_price=parseFloat(getUserInfo(this.$store.state.user.userInfo.params, 'P1001'));
+    //   this.paint_price=parseFloat(getUserInfo(this.$store.state.user.userInfo.params, 'P1002'));
     },
     computed: {
+        work_price(){
+            return parseFloat(getUserInfo(this.$store.state.user.userInfo.params, 'P1001'));
+        },
+        paint_price(){
+            return parseFloat(getUserInfo(this.$store.state.user.userInfo.params, 'P1002'));
+        },
         //车辆颜色------
         carColorData(){
             return getDictGroup(this.$store.state.app.dict, '1013');
@@ -2333,6 +2339,7 @@
         
         console.log("打印维修委托数据---",this.listSearch);
         var listSearch={};
+        var store=this.$store;
         for(let i in this.listSearch){
             switch(i){
                 case'COME_DATE':
@@ -2361,7 +2368,7 @@
 
 
         var LODOP=getLodop();
-        var temp=printWtsFun(this.wtdData,listSearch,this.commitItem,commitParts,this.commitOtherItem);
+        var temp=printWtsFun(this.wtdData,listSearch,this.commitItem,this.commitItemGroup,commitParts,this.commitOtherItem,store);
         LODOP.PRINT_INITA(1,1,770,660,"测试预览功能");
         LODOP.SET_SHOW_MODE("SKIN_TYPE",'1');
         LODOP.ADD_PRINT_TEXT(30, 0, "100%", 20, "车 辆 维 修 委 托 单");

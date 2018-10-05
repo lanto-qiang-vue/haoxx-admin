@@ -1,7 +1,7 @@
 //2018-09-12
 // import store from '../store/index.js'
 //打印委托单-----------
-export const printWtsFun=function(wtdData,listSearch,commitItem,commitParts,commitOtherItem){
+export const printWtsFun=function(wtdData,listSearch,commitItem,commitItemGroup,commitParts,commitOtherItem,store){
     var itemString='';
     var partsString='';
     var otherString='';
@@ -10,12 +10,25 @@ export const printWtsFun=function(wtdData,listSearch,commitItem,commitParts,comm
             itemString+='<td>'+(parseInt(i)+1)+'</td>';
             itemString+='<td colspan="2">'+commitItem[i].NAME+'</td>';
             itemString+='<td tclass="a">'+commitItem[i].REPAIR_TIME+'</td>';
-            itemString+='<td tclass="a">'+commitItem[i].ITEM_MONEY+'</td>';
+            itemString+='<td tclass="a">'+store.state.user.userInfo.params[0].PARAM_VALUE+'</td>';
             itemString+='<td tclass="a">'+commitItem[i].ITEM_MONEY+'</td>';
             itemString+='<td tclass="a">'+commitItem[i].ITEM_DERATE_MONEY+'</td>';
             itemString+='<td>'+(commitItem[i].REMARK||'')+'</td>';
             itemString+='</tr>';
     }
+
+    for(let i in commitItemGroup){
+
+      itemString+='<tr class="noRLBorder text-center">';
+      itemString+='<td>'+(parseInt(i)+1+commitItem.length)+'</td>';
+      itemString+='<td colspan="2">'+commitItemGroup[i].GROUP_NAME+'</td>';
+      itemString+='<td tclass="a">-</td>';
+      itemString+='<td tclass="a">-</td>';
+      itemString+='<td tclass="a">'+commitItemGroup[i].SALES_PRICE+'</td>';
+      itemString+='<td tclass="a">-</td>';
+      itemString+='<td>-</td>';
+      itemString+='</tr>';
+  }
 
     for(let i in commitParts){
             partsString+='<tr class="noRLBorder text-center">';
