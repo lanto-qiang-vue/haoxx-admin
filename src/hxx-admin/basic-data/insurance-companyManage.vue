@@ -7,7 +7,7 @@
         <Input v-model="search.keyword" placeholder="公司编号/有效无效..."></Input>
       </div>
       <div class="search-block">
-        <Select v-model="search.status">
+        <Select v-model="search.status" placeholder="请选择状态...">
           <Option v-for="(item, index) in statusList"
                   :key="index" :value="item.code">{{item.name}}
           </Option>
@@ -77,6 +77,7 @@
 </template>
 <script>
   import commonTable from '@/hxx-components/common-table.vue'
+  import env from '_conf/url'
   import {getName, getDictGroup, getCreate} from '@/libs/util.js'
 
   export default {
@@ -222,10 +223,10 @@
           method: 'post',
           data: {
             access_token: this.$store.state.user.token,
-            limit: 25,
-            page: 1,
+            limit: this.limit,
+            page: this.page,
             KEYWORD: this.search.keyword,
-            STATUS_eq: this.search.status
+            STATUS_eq: this.search.status || '',
           }
         }).then(res => {
           if (res.success === true) {
@@ -247,6 +248,7 @@
       },
       clear() {
         this.search.keyword = '';
+        this.search.status = '';
       },
       clearsection() {
         this.list = '';
@@ -256,6 +258,7 @@
     mounted() {
       this.showTable = Math.random();
       this.search.status = this.statusList[0].code;
+      this.base
       this.getList();
     },
     computed: {
