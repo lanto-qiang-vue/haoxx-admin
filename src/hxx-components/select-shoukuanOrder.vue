@@ -451,57 +451,61 @@ export default {
         },
         //支付宝支付--------
         zfbPay(){
-            this.axios.request({
-                url: '/tenant/repair/ttrepairworkorder/pay',
-                method: 'post',
-                data: {
-                    out_trade_no: this.listSearch.REPAIR_NO,
-                    TENANT_ID: this.listSearch.TENANT_ID,
-                    total_amount: this.listSearch.SUM_MONEY,
-                    body: 100001,
-                    access_token: this.$store.state.user.token
-                }
-            }).then(res => {
-                if (res.success === true) {
-                    console.log(res.data);
-                    var returnData = res.data;
-                    var strHtml = returnData.zfHtml;//获取接口返回的代码
-                    var code = res.success;
-                    var s = ' target="_blank" ';//定义一个属性，让其在打开支付界面时，重新打开一个浏览器窗口
-                    var first = strHtml.substring(0,6);
-                    var last = strHtml.substring(6,strHtml.length);
-                    var newStr = first + s + last; 
-                    if(strHtml.indexOf('商家未签约') >= 0){
-                        this.$Modal.confirm({
-                            title:"系统提示!",
-                            content:"系统提示','商家未签约，暂不支持支付宝付款！",
-                        })
-                    }else{
-                        console.log(newStr)
-                        
-                        //将接口返回的html代码直接添加到页面上
-                        var bodyobj=document.body;
-                        var oDiv = document.createElement("div");
-                        oDiv.id="xxx"
-                        oDiv.innerHTML=newStr;
-                        var first=document.body.firstChild;
-
-                        document.body.insertBefore(oDiv,first);
-                        document.forms[0].submit();
-                        setTimeout(function(){
-                            var obj=document.getElementById('xxx');
-                            document.body.removeChild(obj);
-                        },500);
-                        
-                        this.insertData();
+            if(this.shoukuanSearch.SUM_MONEY>0&&this.shoukuanSearch.SUM_MONEY<=99999999){
+                this.axios.request({
+                    url: '/tenant/repair/ttrepairworkorder/pay',
+                    method: 'post',
+                    data: {
+                        out_trade_no: this.listSearch.REPAIR_NO,
+                        TENANT_ID: this.listSearch.TENANT_ID,
+                        total_amount: this.listSearch.SUM_MONEY,
+                        body: 100001,
+                        access_token: this.$store.state.user.token
                     }
-                }
+                }).then(res => {
+                    if (res.success === true) {
+                        console.log(res.data);
+                        var returnData = res.data;
+                        var strHtml = returnData.zfHtml;//获取接口返回的代码
+                        var code = res.success;
+                        var s = ' target="_blank" ';//定义一个属性，让其在打开支付界面时，重新打开一个浏览器窗口
+                        var first = strHtml.substring(0,6);
+                        var last = strHtml.substring(6,strHtml.length);
+                        var newStr = first + s + last; 
+                        if(strHtml.indexOf('商家未签约') >= 0){
+                            this.$Modal.confirm({
+                                title:"系统提示!",
+                                content:"系统提示','商家未签约，暂不支持支付宝付款！",
+                            })
+                        }else{
+                            console.log(newStr)
+                            
+                            //将接口返回的html代码直接添加到页面上
+                            var bodyobj=document.body;
+                            var oDiv = document.createElement("div");
+                            oDiv.id="xxx"
+                            oDiv.innerHTML=newStr;
+                            var first=document.body.firstChild;
 
-                
-               
+                            document.body.insertBefore(oDiv,first);
+                            document.forms[0].submit();
+                            setTimeout(function(){
+                                var obj=document.getElementById('xxx');
+                                document.body.removeChild(obj);
+                            },500);
+                            
+                            this.insertData();
+                        }
+                    }
+                }) 
+            }else{
+                this.$Modal.confirm({
+                    title:"系统提示!",
+                    content:'使用支付宝支付金额不能小于或等于0元且长度不超过八位,请重新确认支付金额是否正确！',
+                    
+                })
+            }
 
-
-            }) 
         },
         //请求参数----
         insertData(){

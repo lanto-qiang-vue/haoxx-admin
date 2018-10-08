@@ -1,8 +1,8 @@
-<!--后台管理页面 技术支持  cx-2018-09-30 -->
+<!--后台管理 人员招聘 2018-10-08 -->
 <template>
   <common-table v-model="tableData" :columns="columns" :total="total" :clearSelect="clearTableSelect"
                 @changePage="changePage" @changePageSize="changePageSize" @onRowClick="onRowClick"
-                @onRowDblclick="onRowDblclick" :show="showTable" :page="page">
+                 :show="showTable" :page="page">
     <div slot="search">
       <Form ref="search" :rules="ruleValidate"  :model="search" :label-width="85" inline>
           <FormItem label="创建时间:" style="width: 100%; margin-right: 10px;">
@@ -18,60 +18,48 @@
       
     </div>
     <div slot="operate">
-      <Button type="primary" v-if="" @click="selectPick">新增</Button>
-      <Button type="info" v-if="" @click="editButton">查看详情</Button>
+      <Button type="primary" v-if="" @click="auditFun" :disabled="buttonState.audit">审核</Button>
+      <Button type="primary" v-if="" @click="releaseFun" :disabled="buttonState.release">发布</Button>
+      <Button type="primary" v-if="" @click="showDetail=Math.random()" :disabled='!detailData'>详情</Button>
     </div>
     <!--详情-->
-    <!--<technical-support-detail class="table-modal-detail" :showDetail="showDetail" :detailData="detailData" @closeDetail="closeDetail"></technical-support-detail>-->
-
+    <person-recruit-detail class="table-modal-detail" :showDetail="showDetail" :detailData="detailData" @closeDetail="closeDetail"></person-recruit-detail>
   </common-table>
 </template>
 <script>
-  import commonTable from '@/hxx-components/common-table.vue'
-  import { getName, getDictGroup ,getCreate} from '@/libs/util.js'
-//   import mixin from '@/hxx-components/mixin'
-  import { formatDate } from '@/libs/tools.js'
-//   import technicalSupportDetail from './technical-support-detail.vue'
+import commonTable from '@/hxx-components/common-table.vue'
+import { formatDate } from '@/libs/tools.js'
+import personRecruitDetail from './person-recruit-detail.vue'
 export default {
-	name: "technical-supportM",
-    components: {commonTable},
-    // mixins: [mixin],
+	name: "person-recruit",
+    components: {commonTable,personRecruitDetail},
     data(){
 		return{
             columns: [
-                {title: '序号',  minWidth: 80,
+                {title: '序号',  minWidth: 60,
                     render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
                 },
-                {title: '建档人', key: 'cREATER', sortable: true, minWidth: 120,
+                {title: '申请门店', key: 'tENANT_NAME', sortable: true, minWidth: 150,
                 },
-                {title: '申请人', key: 'aPPLY_PERSON', sortable: true, minWidth: 120,
+                {title: '申请时间', key: 'cREATE_TIME', sortable: true, minWidth: 150,
+                    render: (h, params) => h('span', params.row.cREATE_TIME.substr(0, 19))
+                },
+                {title: '岗位', key: 'name', sortable: true, minWidth: 150},
+                {title: '工作职责', key: 'postName', sortable: true, minWidth: 120,
                     
                 },
-                {title: '车型信息', key: 'mODEL_NAME', sortable: true, minWidth: 200},
-                {title: '故障呈现', key: 'fAULT_INFO', sortable: true, minWidth: 120,
+                {title: '人数', key: 'num', sortable: true, minWidth: 120,
                     
                 },
-                {title: '故障类型', key: 'fAULT_TYPE', sortable: true, minWidth: 120,
-                    
-                },
-                
-                {title: '备注', key: 'rEMARK', sortable: true, minWidth: 120,
-                    
-                },
-                {title: '技术答复', key: 'fAULT_ANSWER', sortable: true, minWidth: 120,
-                },
-                {title: '答复时间', key: 'aNSWER_TIME', sortable: true, minWidth: 168,
-                    render: (h, params) => h('span', params.row.aNSWER_TIME.substr(0, 19))
-                },
-                {title: '状态', key: 'sTATE', sortable: true, minWidth: 100,
+                {title: '状态', key: 'state', sortable: true, minWidth: 100,
                     render: (h, params) => {
                         var STATE='';
-                        if (params.row.sTATE == "1") {
+                        if (params.row.state == "1") {
                             STATE= "申请中";
-                        } else if (params.row.sTATE == "2") {
+                        } else if (params.row.state == "2") {
                             STATE= "处理中";
-                        }else if (params.row.sTATE == "3") {
-                            STATE= "已回复";
+                        }else if (params.row.state == "3") {
+                            STATE= "已发布";
                         } else {
                             STATE= "";
                         }
@@ -92,6 +80,10 @@ export default {
             showDetail: false,
             detailData: null,
             clearTableSelect: null,
+            buttonState:{
+                audit:true,
+                release:true,
+            }
             
       }
     },
@@ -109,7 +101,7 @@ export default {
             this.search.ACCOUNT_TIME_gte=formatDate(this.search.ACCOUNT_TIME_gte);
             this.search.ACCOUNT_TIME_lte=formatDate(this.search.ACCOUNT_TIME_lte);
             this.axios.request({
-                url: '/manage/support/technical_support/technicalList',
+                url: '/manage/support/person_recruit/recruitList',
                 method: 'post',
                 data: {
                     BeginTime: this.search.ACCOUNT_TIME_gte,
@@ -126,12 +118,15 @@ export default {
                 }
             })
             this.detailData = null;
+            this.buttonState.audit=true;
+            this.buttonState.release=true;
         },
         clear(){
             for(var i in this.search){
                 this.search[i]= ''
             }
-            
+            this.buttonState.audit=true;
+            this.buttonState.release=true;
             this.page=1;
             this.getList();
         },
@@ -146,35 +141,72 @@ export default {
 
         onRowClick(row, index){
             console.log(row);
-            this.detailData=row
-        },
-        onRowDblclick( row, index){
             this.detailData=row;
-            this.showDetail=Math.random();
+            if(row.state==1){
+                this.buttonState.audit=false;
+                this.buttonState.release=true;
+            }else if(row.state==2){
+                this.buttonState.audit=true;
+                this.buttonState.release=false;
+            }else if(row.state==3){
+                this.buttonState.audit=true;
+                this.buttonState.release=true;
+            }
         },
+        
         closeDetail(){
             this.detailData= null;
             this.clearTableSelect= Math.random();
-            this.reset();
+            this.buttonState.audit=true;
+            this.buttonState.release=true;
         },
-        //新增按钮
-        selectPick(){
-            this.detailData=null;
-            this.showDetail=Math.random();
+        //审核按钮
+        auditFun(){
+            this.$Modal.confirm({
+                  title:"系统提示!",
+                  content:"确定要审核吗？",
+                  onOk:this.auditFuntion,
+                  
+            })
         },
-        //编辑按钮
-        editButton(){
-            if(this.detailData){
-                this.showDetail=Math.random();
-            }else{
-                this.$Message.info('请选择一条数据');
-            }
+        auditFuntion(){
+            this.axios.request({
+                url: '/manage/support/person_recruit/update_examine',
+                method: 'post',
+                data: {
+                    ids: this.detailData.id,
+                    access_token: this.$store.state.user.token
+                }
+            }).then(res => {
+                if (res.success === true) {
+                    this.getList();
+                }
+            })
         },
-        //重置数据-----
-        reset(){
-            this.getList();
+        //发布按钮
+        releaseFun(){
+            this.$Modal.confirm({
+                  title:"系统提示!",
+                  content:"确定要发布吗？",
+                  onOk:this.releaseFunction,
+                  
+            })
         },
-
+        releaseFunction(){
+            this.axios.request({
+                url: '/manage/support/person_recruit/update_rele',
+                method: 'post',
+                data: {
+                    ids: this.detailData.id,
+                    access_token: this.$store.state.user.token
+                }
+            }).then(res => {
+                if (res.success === true) {
+                    this.getList();
+                }
+            })
+        },
+       
     }
 }
 </script>

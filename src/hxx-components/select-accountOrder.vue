@@ -459,17 +459,18 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                     
                 }
 
-                this.shoukuanSearch.SUM_MONEY=this.shoukuanSearch.REPAIR_ITEM_MONEY+this.shoukuanSearch.REPAIR_PART_MONEY+
-                this.shoukuanSearch.OTHER_MONEY-this.shoukuanSearch.REPAIR_ITEM_DERATE_MONEY-this.shoukuanSearch.REPAIR_PART_DERATE_MONEY;
+                this.shoukuanSearch.REPAIR_ITEM_DERATE_MONEY=parseFloat(value.toFixed(2));
+                this.shoukuanSearch.SUM_MONEY=(parseFloat(this.shoukuanSearch.REPAIR_ITEM_MONEY)+parseFloat(this.shoukuanSearch.REPAIR_PART_MONEY)+
+                parseFloat(this.shoukuanSearch.OTHER_MONEY)-parseFloat(this.shoukuanSearch.REPAIR_ITEM_DERATE_MONEY)-parseFloat(this.shoukuanSearch.REPAIR_PART_DERATE_MONEY)).toFixed(2);
 
-                this.shoukuanSearch.LESS_MONEY=this.shoukuanSearch.REPAIR_ITEM_DERATE_MONEY+this.shoukuanSearch.REPAIR_PART_DERATE_MONEY;
+                this.shoukuanSearch.LESS_MONEY=(parseFloat(this.shoukuanSearch.REPAIR_ITEM_DERATE_MONEY)+parseFloat(this.shoukuanSearch.REPAIR_PART_DERATE_MONEY)).toFixed(2);
             },
             itemComputedReset(){
                 this.shoukuanSearch.REPAIR_ITEM_DERATE_MONEY=0;
-                this.shoukuanSearch.SUM_MONEY=this.shoukuanSearch.REPAIR_ITEM_MONEY+this.shoukuanSearch.REPAIR_PART_MONEY+
-                this.shoukuanSearch.OTHER_MONEY-this.shoukuanSearch.REPAIR_ITEM_DERATE_MONEY-this.shoukuanSearch.REPAIR_PART_DERATE_MONEY;
+                this.shoukuanSearch.SUM_MONEY=(parseFloat(this.shoukuanSearch.REPAIR_ITEM_MONEY)+parseFloat(this.shoukuanSearch.REPAIR_PART_MONEY)+
+                parseFloat(this.shoukuanSearch.OTHER_MONEY)-parseFloat(this.shoukuanSearch.REPAIR_ITEM_DERATE_MONEY)-parseFloat(this.shoukuanSearch.REPAIR_PART_DERATE_MONEY)).toFixed(2);
 
-                this.shoukuanSearch.LESS_MONEY=this.shoukuanSearch.REPAIR_ITEM_DERATE_MONEY+this.shoukuanSearch.REPAIR_PART_DERATE_MONEY;
+                this.shoukuanSearch.LESS_MONEY=(parseFloat(this.shoukuanSearch.REPAIR_ITEM_DERATE_MONEY)+parseFloat(this.shoukuanSearch.REPAIR_PART_DERATE_MONEY)).toFixed(2);
             },
             //配件优惠计算
             partComputedFun(value){
@@ -481,18 +482,18 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                         onCancel:this.partComputedReset,
                     })
                 }
+                this.shoukuanSearch.REPAIR_PART_DERATE_MONEY=parseFloat(value.toFixed(2));
+                this.shoukuanSearch.SUM_MONEY=(parseFloat(this.shoukuanSearch.REPAIR_ITEM_MONEY)+parseFloat(this.shoukuanSearch.REPAIR_PART_MONEY)+
+                parseFloat(this.shoukuanSearch.OTHER_MONEY)-parseFloat(this.shoukuanSearch.REPAIR_ITEM_DERATE_MONEY)-parseFloat(this.shoukuanSearch.REPAIR_PART_DERATE_MONEY)).toFixed(2);
 
-                this.shoukuanSearch.SUM_MONEY=this.shoukuanSearch.REPAIR_ITEM_MONEY+this.shoukuanSearch.REPAIR_PART_MONEY+
-                this.shoukuanSearch.OTHER_MONEY-this.shoukuanSearch.REPAIR_ITEM_DERATE_MONEY-this.shoukuanSearch.REPAIR_PART_DERATE_MONEY;
-
-                this.shoukuanSearch.LESS_MONEY=this.shoukuanSearch.REPAIR_ITEM_DERATE_MONEY+this.shoukuanSearch.REPAIR_PART_DERATE_MONEY;
+                this.shoukuanSearch.LESS_MONEY=(parseFloat(this.shoukuanSearch.REPAIR_ITEM_DERATE_MONEY)+parseFloat(this.shoukuanSearch.REPAIR_PART_DERATE_MONEY)).toFixed(2);
             },
             partComputedReset(){
                 this.shoukuanSearch.REPAIR_PART_DERATE_MONEY=0;
-                this.shoukuanSearch.SUM_MONEY=this.shoukuanSearch.REPAIR_ITEM_MONEY+this.shoukuanSearch.REPAIR_PART_MONEY+
-                this.shoukuanSearch.OTHER_MONEY-this.shoukuanSearch.REPAIR_ITEM_DERATE_MONEY-this.shoukuanSearch.REPAIR_PART_DERATE_MONEY;
+                this.shoukuanSearch.SUM_MONEY=(parseFloat(this.shoukuanSearch.REPAIR_ITEM_MONEY)+parseFloat(this.shoukuanSearch.REPAIR_PART_MONEY)+
+                parseFloat(this.shoukuanSearch.OTHER_MONEY)-parseFloat(this.shoukuanSearch.REPAIR_ITEM_DERATE_MONEY)-parseFloat(this.shoukuanSearch.REPAIR_PART_DERATE_MONEY)).toFixed(2);
 
-                this.shoukuanSearch.LESS_MONEY=this.shoukuanSearch.REPAIR_ITEM_DERATE_MONEY+this.shoukuanSearch.REPAIR_PART_DERATE_MONEY;
+                this.shoukuanSearch.LESS_MONEY=(parseFloat(this.shoukuanSearch.REPAIR_ITEM_DERATE_MONEY)+parseFloat(this.shoukuanSearch.REPAIR_PART_DERATE_MONEY)).toFixed(2);
             },
             //outMileageFun里程监听
             outMileageFun(value){
