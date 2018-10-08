@@ -110,80 +110,45 @@ export default [
   //     }
   //   ]
   // },
-  {
-    path: '/components',
-    name: 'components',
-    meta: {
-      icon: 'logo-buffer',
-      title: '测试'
-    },
-    component: Main,
-    children: [
+  // {
+  //   path: '/components',
+  //   name: 'components',
+  //   meta: {
+  //     icon: 'logo-buffer',
+  //     title: '测试'
+  //   },
+  //   component: Main,
+  //   children: [
+  // //     {
+  // //       path: 'count_to_page',
+  // //       name: 'count_to_page',
+  // //       meta: {
+  // //         icon: 'md-trending-up',
+  // //         title: '数字渐变'
+  // //       },
+  // //       component: () => import('@/view/components/count-to/count-to.vue')
+  // //     },
   //     {
-  //       path: 'count_to_page',
-  //       name: 'count_to_page',
+  //       path: 'tables_page',
+  //       name: 'tables_page',
   //       meta: {
-  //         icon: 'md-trending-up',
-  //         title: '数字渐变'
+  //         icon: 'md-grid',
+  //         title: '多功能表格'
   //       },
-  //       component: () => import('@/view/components/count-to/count-to.vue')
-  //     },
-      {
-        path: 'tables_page',
-        name: 'tables_page',
-        meta: {
-          icon: 'md-grid',
-          title: '多功能表格'
-        },
-        component: () => import('@/view/components/tables/tables.vue')
-      },
-      {
-        path: 'test',
-        name: 'test',
-        meta: {
-          icon: 'md-funnel',
-          title: '测试',
-        },
-        component: () => import('@/hxx-store/test.vue')
-      },
-  //     {
-  //       path: 'split_pane_page',
-  //       name: 'split_pane_page',
-  //       meta: {
-  //         icon: 'md-pause',
-  //         title: '分割窗口'
-  //       },
-  //       component: () => import('@/view/components/split-pane/split-pane.vue')
+  //       component: () => import('@/view/components/tables/tables.vue')
   //     },
   //     {
-  //       path: 'markdown_page',
-  //       name: 'markdown_page',
+  //       path: 'test',
+  //       name: 'test',
   //       meta: {
-  //         icon: 'logo-markdown',
-  //         title: 'Markdown编辑器'
+  //         icon: 'md-funnel',
+  //         title: '测试',
   //       },
-  //       component: () => import('@/view/components/markdown/markdown.vue')
+  //       component: () => import('@/hxx-store/test.vue')
   //     },
-  //     {
-  //       path: 'editor_page',
-  //       name: 'editor_page',
-  //       meta: {
-  //         icon: 'ios-create',
-  //         title: '富文本编辑器'
-  //       },
-  //       component: () => import('@/view/components/editor/editor.vue')
-  //     },
-  //     {
-  //       path: 'icons_page',
-  //       name: 'icons_page',
-  //       meta: {
-  //         icon: '_bear',
-  //         title: '自定义图标'
-  //       },
-  //       component: () => import('@/view/components/icons/icons.vue')
-  //     }
-    ]
-  },
+  //
+  //   ]
+  // },
   // {
   //   path: '/update',
   //   name: 'update',
@@ -897,6 +862,17 @@ export default [
           access: '100205',
         },
         component: () => import('@/hxx-admin/basic-data/brand-vehicleModel.vue')
+      },
+      {
+        path: '/maintenance-classify',
+        name: 'maintenance-classify',
+        meta: {
+          icon: 'md-funnel',
+          title: '维修项目分类',
+          lgType: "1001",
+          access: '100207',
+        },
+        component: () => import('@/hxx-admin/basic-data/maintenance-classify.vue')
       }
     ]
   },

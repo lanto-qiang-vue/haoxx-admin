@@ -21,9 +21,9 @@
           </ButtonGroup>
         </div>
         <div slot="operate">
-          <Button type="primary" @click="impor()">导入标准库</Button>
+          <Button type="primary" @click="impor()" v-if="accessBtn('export')">导入标准库</Button>
           <Button type="primary" :disabled="isdisabled" @click="add()">新增</Button>
-          <Button type="info" :disabled="cando" @click="edit()">修改</Button>
+          <Button type="info" :disabled="cando" @click="edit()" v-if="accessBtn('edit')">修改</Button>
         </div>
       </common-table>
       <!-- 导入标准库使用 -->
@@ -141,6 +141,7 @@
             </Form>
           </Panel>
         </Collapse>
+        <div style="height:60px;"></div>
         <div slot="footer">
           <Button @click="addcancle()">取消</Button>
           <Button type="primary" @click="addpost('list')">保存</Button>
@@ -153,10 +154,11 @@
 <script>
   import {getName, getDictGroup, getCreate} from '@/libs/util.js'
   import commonTable from '@/hxx-components/common-table.vue'
-
+  import mixin from '@/hxx-components/mixin'
   export default {
     name: 'repair-items',
     components: {commonTable},
+    mixins: [mixin],
     data() {
       return {
         title: '',

@@ -10,7 +10,12 @@
             <!--<span class="formText" v-show="editAble">{{info.COMPANYCODE}}</span>-->
           </FormItem>
           <FormItem prop="TENANT_AREA_DISPLAY" label="门店所属区域">
-            <Input v-model="info.TENANT_AREA_DISPLAY" :readonly="!editAble"></Input>
+            <Dropdown trigger="click" style="width: 100%" id="select-type" placement="bottom-start">
+              <Input v-model="info.TENANT_AREA_DISPLAY" :readonly="true"></Input>
+              <DropdownMenu slot="list" v-if="editAble">
+              <select-area @changeRow="changeRow"></select-area>
+              </DropdownMenu>
+            </Dropdown>
           </FormItem>
           <FormItem prop="TENANT_ADD" label="门店地址">
             <Input v-model="info.TENANT_ADD" :readonly="!editAble"></Input>
@@ -69,7 +74,7 @@
           </FormItem>
           <div></div>
           <FormItem prop="TENANT_NUM" label="其它说明" v-if="isCheck">
-            <Input type="textarea" v-model="info.REMARK" :readonly="true"></Input>
+            <Input type="textarea" v-model="info.REMARK"></Input>
           </FormItem>
         </Form>
       </Panel>
@@ -126,6 +131,7 @@
         </div>
       </Panel>
     </Collapse>
+    <div style="height:60px;"></div>
   </div>
   <div class="footer" v-show="!isRegister&&!isCheck">
     <Button v-show="!editAble" type="info" :disabled="false" @click="editAble= true"
@@ -142,17 +148,19 @@
 
 <script>
   import { getName, getDictGroup, imgToBase64 } from '@/libs/util.js'
-  import mixin from '@/hxx-components/mixin'
+  import mixin from '@/hxx-components/mixin';
+  import selectArea from '@/hxx-components/select-area.vue';
 	export default {
 		name: "store-info-detail",
-    props: ['data', 'show','type'],
+    props: ['data', 'show','type','getType'],
+    components:{selectArea},
     mixins: [mixin],
     data(){
 		  return{
         collapse: ['1', '2'],
         info:{
           "TENANT_ID":"",
-          "TENANT_AREA_CODE":"310103",
+          "TENANT_AREA_CODE":"",
           "TENANT_NAME":"",
           "TENANT_AREA_DISPLAY":"",
           "TENANT_ADD":"",
@@ -176,7 +184,8 @@
           "REMARK":"",
         },
 
-        ruleValidate:{},
+        ruleValidate:{
+        },
         editAble: false
       }
     },
@@ -203,16 +212,41 @@
       },
       show(val){
         val? document.querySelector("#store-info-detail .info").scrollTop= 0: ''
+      },
+      'info.REMARK'(){
+        this.$emit('getRemark',this.info.REMARK);
       }
     },
     created(){
       if(this.type == 1){this.editAble = true;}
       let rule= (this.isAdmin? []: [{ required: true, message:'必填项不能为空'}])
+      const validateEMAIL = (rule, value, callback) => {
+        var reg = /^([0-9A-Za-z\-_\.]+)@([0-9a-z]+\.[a-z]{2,3}(\.[a-z]{2})?)$/g;
+        if (value != '' && !reg.test(value)) {
+          callback(new Error('邮箱格式不正确'));
+        }else{
+          callback();
+        }
+      };
+      const validateLink = (rule, value, callback) => {
+        var reg = /^\d{6}$/g;
+        if (value != '' && !reg.test(value)) {
+          callback(new Error('邮政编码不正确'));
+        }else{
+          callback();
+        }
+      };
       if(this.type == 1){
         this.ruleValidate= {
           TENANT_NAME: rule,
           TENANT_AREA_DISPLAY:rule,
-          TENANT_ADD: rule
+          TENANT_ADD: rule,
+          EMAIL:[
+            { validator: validateEMAIL, trigger: 'change,blur' },
+          ],
+          LINK_ZIP:[
+            {validator:validateLink,trigger:'change,blur'}
+          ]
         }
       }else{
         this.ruleValidate= {
@@ -230,10 +264,21 @@
           LINK_ZIP: rule,
           ROAD_FILE_PATH: rule,
           BUS_FILE_PATH: rule,
+          EMAIL:[
+            { validator: validateEMAIL, trigger: 'change,blur' },
+          ],
+          LINK_ZIP:[
+            {validator:validateLink,trigger:'change,blur'}
+          ]
         }
       }
     },
     methods:{
+      changeRow(row){
+        // console.log(JSON.stringify(row));
+        this.info.TENANT_AREA_DISPLAY = row.title;
+        this.info.TENANT_AREA_CODE = row.id;
+      },
 		  goback(){
 		    this.$emit('goback');
       },

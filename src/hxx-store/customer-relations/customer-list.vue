@@ -14,11 +14,11 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="primary" @click="add()">新增</Button>
-      <Button type="info" :disabled="cando" @click="edit()">编辑/查看</Button>
-      <Button type="error" :disabled="cando" @click="remove()">作废</Button>
-      <Button type="success" @click="lead()">导入</Button>
-      <Button type="primary" @click="expor()">导出</Button>
+      <Button type="primary" @click="add()" v-if="accessBtn('add')">新增</Button>
+      <Button type="info" :disabled="cando" @click="edit()" v-if="accessBtn('edit')">编辑/查看</Button>
+      <Button type="error" :disabled="cando" @click="remove()" v-if="accessBtn('del')">作废</Button>
+      <Button type="success" @click="lead()" v-if="accessBtn('import')">导入</Button>
+      <Button type="primary" @click="expor()" v-if="accessBtn('export')">导出</Button>
     </div>
     <!-- 添加查询修改-->
     <!-- class="table-modal-detail" -->
@@ -33,9 +33,11 @@
     import uploadExcel from '@/hxx-components/upload-excel.vue'
     import customerListDetail from '@/hxx-store/customer-relations/customer-list-detail.vue'
     import env from '_conf/url'
+    import mixin from '@/hxx-components/mixin'
   export default {
     name: "customer-list",
     components: {commonTable,uploadExcel,customerListDetail},
+    mixins: [mixin],
     data(){
       return{
         columns: [

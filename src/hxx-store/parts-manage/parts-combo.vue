@@ -16,15 +16,15 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="primary" @click="add()">新增</Button>
-      <Button type="info" :disabled="cando" @click="edit()">编辑/查看</Button>
-      <Button type="error" :disabled="cando" @click="confirm()">作废</Button>
+      <Button type="primary" @click="add()" v-if="accessBtn('add')">新增</Button>
+      <Button type="info" :disabled="cando" @click="edit()" v-if="accessBtn('edit')">编辑/查看</Button>
+      <Button type="error" :disabled="cando" @click="confirm()" v-if="accessBtn('cancel')">作废</Button>
     </div>
     <!-- 配件套餐新增 -->
             <Modal  
     v-model="showModal"
     class="table-modal-detail"
-    title="维修项目套餐"
+    title="配件套餐"
     width="90"
     :mask-closable="false"
     @on-visible-change="visibleChange"
@@ -78,7 +78,7 @@
                 备注描述:
                 <div slot="content">
                 <Form slot="content"  ref="lists" class="common-form">
-                <Input type="textarea" v-model="formData.REMARK" placeholder="请输入备注信息..."> </Input>
+                <Input type="textarea" v-model="formData.GROUP_INFO" placeholder="请输入备注信息..."> </Input>
                 </Form>
                 </div>
               </Panel>
@@ -96,9 +96,11 @@
 	import commonTable from '@/hxx-components/common-table.vue'
 	import { getName, getDictGroup, getCreate } from '@/libs/util.js'
   import selectPartsGroup from '@/hxx-components/select-partsGroup.vue'
+  import mixin from '@/hxx-components/mixin'
 	export default{
 		'name':'parts-combo',
 		components:{commonTable,selectPartsGroup},
+    mixins: [mixin],
 		 data(){
 		 	return {
 		 		list:'',
@@ -124,6 +126,7 @@
           GROUP_NAME:'',
           SALES_PRICE:0,
           STATUS:'',
+          GROUP_INFO:'',
         },
 		  columns: [
           {title: '配件套餐编号', key: 'GROUP_NO', sortable: true, minWidth: 120},
@@ -230,6 +233,7 @@
 		 	add(){
         this.$refs['list'].resetFields();
         this.formData.STATUS = this.statusList[0].code;
+        this.formData.GROUP_INFO = '';
         this.initParts = [];
 		 		this.showModal = true;
 		 	},
@@ -321,7 +325,7 @@
         ///tenant/basedata/partgroup/save
         var items = [];
       for(var i in this.initParts){
-        items.push({PART_ID:this.initParts[i].PART_ID,PART_NUM:this.initParts[i].PART_NUM});
+        items.push({PART_ID:this.initParts[i].PART_ID,PART_NUM:this.initParts[i].PART_NUM || 1});
       }
     this.axios.request({
           url: '/tenant/basedata/partgroup/save',

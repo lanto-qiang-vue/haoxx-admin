@@ -5,6 +5,7 @@
     @on-visible-change="visibleChange"
     title="维修记录"
     width="80"
+    :mask-closable="false"
     :scrollable="true"
     :transfer= "true"
     :footer-hide="false"
@@ -92,6 +93,7 @@
           ref="tablesMain"
           :columns="columns2"
           :data="projectcombo"
+          @on-row-dblclick="dbclick"
           stripe
           border
         ></Table>
@@ -119,11 +121,11 @@
           <span>{{base.REPAIR_ITEM_DERATE_MONEY}}</span>
            - 配件优惠金额：
           <span>{{base.REPAIR_PART_DERATE_MONEY}}</span>
-          </InputNumber>= 合计应收金额：
+          = 合计应收金额：
           <span class="r-list-money-reset">{{base.SUM_MONEY}}元</span>
       </p>
     </div>
-
+    <combo-detail :tshow="tcshow" :tid="tcid"></combo-detail>
     <div slot="footer" style="text-align: center; font-size: 18px;">
     <Button type="primary" @click="showModal = false">返回</Button>
     </div>
@@ -135,13 +137,15 @@
   import { getName, getDictGroup ,getUserInfo} from '@/libs/util.js'
   import { formatDate } from '@/libs/tools.js'
   import commonModal6 from '@/hxx-components/common-modal6.vue'
-
+  import comboDetail from '@/hxx-components/combo-detail.vue'
 	export default {
 		name: "service-record",
-    components: {commonModal6},
+    components: {commonModal6,comboDetail},
     data(){
       return{
         parts:'',
+        tcshow:false,
+        tcid:'',
         partsobj:[],
         combo:[],
         projectcombo:[],
@@ -208,6 +212,10 @@
 
     },
     methods:{
+		  dbclick(row){
+        this.tcshow = Math.random();
+        this.tcid = row.GROUP_ID;
+      },
       isSelf(type){
       if(type){
         return '是';

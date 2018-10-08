@@ -85,8 +85,12 @@
                   data: this.form
                 }).then(res => {
                   if (res.success === true) {
-                    this.showModal= false
-                    this.$Message.success('修改成功');
+                    if(res.data){
+                      this.showModal= false
+                      this.$Message.success('修改成功');
+                    }else{
+                      this.$Message.error('旧密码错误');
+                    }
                   }
                 })
               }

@@ -16,9 +16,9 @@
       </ButtonGroup>
           </div>
               <div slot="operate">
-      <Button type="primary" @click="add()">新增</Button>
-      <Button type="info" :disabled="cando"   @click="edit()">修改</Button>
-      <Button type="error" :disabled="cando" @click="remove()">废除</Button>
+      <Button type="primary" @click="add()" v-if="accessBtn('add')">新增</Button>
+      <Button type="info" :disabled="cando"   @click="edit()" v-if="accessBtn('edit')">修改</Button>
+      <Button type="error" :disabled="cando" @click="remove()" v-if="accessBtn('cancel')">废除</Button>
     </div>
       <select-add-parts @refresh="refresh" @clearsection="clearsection" :editdata="list" :showSelectAddParts="addshow"></select-add-parts>
     </common-table>
@@ -29,9 +29,11 @@
 import { getName, getDictGroup, getCreate } from '@/libs/util.js'
 import commonTable from '@/hxx-components/common-table.vue'
 import selectAddParts from '@/hxx-components/select-addParts.vue'
+import mixin from '@/hxx-components/mixin'
 	export default{
 		name:'parts-record',
 		components:{commonTable,selectAddParts},
+    mixins: [mixin],
 		data(){
 			return{
 			  split:0.2,

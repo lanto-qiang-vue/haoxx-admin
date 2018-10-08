@@ -152,7 +152,7 @@
 	</Modal>
 </template>
 <script>
-	    import { getName, getDictGroup, getCreate } from '@/libs/util.js'
+	    import { getName, getDictGroup, getCreate,getUserInfo} from '@/libs/util.js'
       import vehicleModel from '@/hxx-components/vehicle-model.vue'
 	export default{
 		name:'vehicle-add',
@@ -243,6 +243,7 @@
            	this.formData.CUSTOMER_ID = name;
            },
            row(obj){
+             let params = getUserInfo(this.$store.state.user.userInfo.params,"P1003");
       this.formData.REMARK = obj.REMARK;
       this.formData.MUST_SAFE_CORP = obj.MUST_SAFE_CORP ? obj.MUST_SAFE_CORP : 0;
 			this.formData.BUSINESS_SAFE_CORP = obj.BUSINESS_SAFE_CORP ? obj.BUSINESS_SAFE_CORP : 0;
@@ -253,7 +254,7 @@
 			this.formData.NEXT_REPAIR_MILEAGE = obj.NEXT_REPAIR_MILEAGE ? parseFloat(obj.NEXT_REPAIR_MILEAGE) : 0;
 			this.formData.VEHICLE_ID= obj.VEHICLE_ID;
 			this.formData.REGULAR_REPAIR = obj.REGULAR_REPAIR ? parseFloat(obj.REGULAR_REPAIR) : 0;
-			this.formData.PLATE_NUM = obj.PLATE_NUM;
+			this.formData.PLATE_NUM = obj.PLATE_NUM || params;
 			this.formData.VIN_NO = obj.VIN_NO;
 			this.formData.VEHICLE_MODEL = obj.VEHICLE_MODEL;
 			this.formData.BUY_DATE = obj.BUY_DATE;
