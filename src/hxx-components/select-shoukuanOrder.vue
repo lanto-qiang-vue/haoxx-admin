@@ -176,7 +176,7 @@ export default {
                 'REPAIR_ITEM_DERATE_MONEY':0,
                 "REPAIR_PART_MONEY":0,
                 "REPAIR_PART_DERATE_MONEY":0,
-                "FOLLOW_PERSON":"管理员",
+                "FOLLOW_PERSON":"",
                 "PAYMENT1":"",
                 "IS_GIVE_INVOICE":"10041002",
                 "REPAIR_ID":"",
@@ -231,7 +231,7 @@ export default {
                         this.shoukuanSearch[i]=0;
                     break;
                     case "FOLLOW_PERSON":
-                        this.shoukuanSearch[i]="管理员";
+                        this.shoukuanSearch[i]="";
                     break;
                     case "IS_GIVE_INVOICE":
                         this.shoukuanSearch[i]="10041002";
@@ -501,7 +501,7 @@ export default {
             }else{
                 this.$Modal.confirm({
                     title:"系统提示!",
-                    content:'使用支付宝支付金额不能小于或等于0元且长度不超过八位,请重新确认支付金额是否正确！',
+                    content:'使用支付宝支付金额不能小于或等于0元,请重新确认支付金额是否正确！',
                     
                 })
             }
