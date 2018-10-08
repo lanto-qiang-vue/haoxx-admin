@@ -1,13 +1,13 @@
 <template>
   <div class="user-avator-dropdown">
     <div class="switch-store" v-if="this.$store.state.user.userInfo.isManage">
-      <Dropdown trigger="click" placement="bottom-end"
+      <Dropdown trigger="custom" :visible="visible" @on-clickoutside="mdshow" placement="bottom-end"
                 @on-click="openSwitchStore" @on-visible-change="dropdownVisible">
         <Tooltip content="点击切换门店" placement="bottom" :disabled="disabledDropdown" style="width: 60px">
-          <Icon custom="fa fa-exchange" :size="24"></Icon>
+          <Icon custom="fa fa-exchange" @click="mdshow" :size="24"></Icon>
         </Tooltip>
         <DropdownMenu slot="list">
-          <div class="store-block" style="height:500px;overflow: scroll;">
+          <div class="store-block">
             <div class="title">
               <Button type="primary" custom-icon="fa fa-plus" @click="linkTo"  style="margin-right: 10px">注册新门店</Button>
               <Button  custom-icon="fa fa-refresh" @click="getStoreList">刷新</Button>
@@ -47,6 +47,7 @@ export default {
   data(){
     return{
       disabledDropdown: false,
+      visible:false,
       columns:[
         {title: '序号',  minWidth: 60, type: 'index'},
         {title: '门店商户号', key: 'TENANT_NUM', minWidth: 100},
@@ -110,6 +111,9 @@ export default {
           break
         }
       }
+    },
+    mdshow(){
+      this.visible = !this.visible;
     },
     linkTo(){
       this.$router.push('/storeRegister');
@@ -193,7 +197,8 @@ export default {
             })
             // console.log(route)
             this.$store.commit('setTagNavList', route)
-            this.$Spin.hide()
+            this.$Spin.hide();
+            this.visible = !this.visible;
           })
         }
       })
@@ -223,6 +228,8 @@ export default {
     border-left: 1px solid #F0F0F0;
     border-right: 1px solid #F0F0F0;
     .store-block{
+      height:500px;
+      overflow-y: scroll;
       width: 420px;
       text-align: left;
       .title{
