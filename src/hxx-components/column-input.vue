@@ -90,7 +90,8 @@
         
       },
       blurFun(){
-
+          this.val=parseFloat((this.val).toFixed(2));
+          this.newVal=parseFloat((this.newVal).toFixed(2));
           if(this.allType){
                 let self=this;
                 setTimeout(function(){

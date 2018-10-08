@@ -898,6 +898,28 @@ export default [
         },
         component: () => import('@/hxx-admin/resources-manage/technical-supportM.vue')
       },
+      {
+        path: '/person-recruit',
+        name: 'person-recruit',
+        meta: {
+          icon: 'md-funnel',
+          title: '人员招聘',
+          lgType: "1001",
+          access: '100302',
+        },
+        component: () => import('@/hxx-admin/resources-manage/person-recruit.vue')
+      },
+      {
+        path: '/person-train',
+        name: 'person-train',
+        meta: {
+          icon: 'md-funnel',
+          title: '人员培训',
+          lgType: "1001",
+          access: '100303',
+        },
+        component: () => import('@/hxx-admin/resources-manage/person-train.vue')
+      },
     ]
   },
   {
