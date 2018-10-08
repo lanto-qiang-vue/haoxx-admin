@@ -265,8 +265,10 @@
           ROAD_FILE_PATH: rule,
           BUS_FILE_PATH: rule,
           EMAIL:[
-            { validator: validateEMAIL, trigger: 'change' },
-            { validator: validateEMAIL, trigger: 'blur' },
+            { validator: validateEMAIL, trigger: 'change,blur' },
+          ],
+          LINK_ZIP:[
+            {validator:validateLink,trigger:'change,blur'}
           ]
         }
       }

@@ -7,7 +7,7 @@
           <Icon custom="fa fa-exchange" :size="24"></Icon>
         </Tooltip>
         <DropdownMenu slot="list">
-          <div class="store-block">
+          <div class="store-block" style="height:500px;overflow: scroll;">
             <div class="title">
               <Button type="primary" custom-icon="fa fa-plus" @click="linkTo"  style="margin-right: 10px">注册新门店</Button>
               <Button  custom-icon="fa fa-refresh" @click="getStoreList">刷新</Button>

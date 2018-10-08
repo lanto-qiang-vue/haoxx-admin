@@ -78,7 +78,7 @@
                 备注描述:
                 <div slot="content">
                 <Form slot="content"  ref="lists" class="common-form">
-                <Input type="textarea" v-model="formData.REMARK" placeholder="请输入备注信息..."> </Input>
+                <Input type="textarea" v-model="formData.GROUP_INFO" placeholder="请输入备注信息..."> </Input>
                 </Form>
                 </div>
               </Panel>
@@ -126,6 +126,7 @@
           GROUP_NAME:'',
           SALES_PRICE:0,
           STATUS:'',
+          GROUP_INFO:'',
         },
 		  columns: [
           {title: '配件套餐编号', key: 'GROUP_NO', sortable: true, minWidth: 120},
@@ -232,6 +233,7 @@
 		 	add(){
         this.$refs['list'].resetFields();
         this.formData.STATUS = this.statusList[0].code;
+        this.formData.GROUP_INFO = '';
         this.initParts = [];
 		 		this.showModal = true;
 		 	},
