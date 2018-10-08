@@ -16,10 +16,10 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="primary" @click="add()">新增</Button>
-      <Button type="info" :disabled="cando" @click="edit()">修改</Button>
-      <Button type="error" :disabled="cando" @click="remove()">作废</Button>
-      <Button type="success" :disabled="cando" @click="reset()">重置密码</Button>
+      <Button type="primary" @click="add()" v-if="accessBtn('add')">新增</Button>
+      <Button type="info" :disabled="cando" @click="edit()" v-if="accessBtn('edit')">修改</Button>
+      <Button type="error" :disabled="cando" @click="remove()" v-if="accessBtn('delete')">作废</Button>
+      <Button type="success" :disabled="cando" @click="reset()" v-if="accessBtn('reset_pass')">重置密码</Button>
     </div>
     <Modal
     v-model="setPasswordModal"
@@ -100,7 +100,6 @@
                 <FormItem label="所属部门:" style="width:90%;" prop="DEPT" >
                 <Input v-model="formData.DEPT" type="text"> </Input>
                 </FormItem>
-                </FormItem>
                 <FormItem label="账号状态:" style="width:90%;" prop="STATUS">
                 <Select v-model="formData.STATUS">
           		<Option v-for="(item, index) in statusList"
@@ -127,9 +126,11 @@
 <script>
 import commonTable from '@/hxx-components/common-table.vue'
 import { getName, getDictGroup, getCreate } from '@/libs/util.js'
+import mixin from '@/hxx-components/mixin'
 	export default{
 		name:'staff-manage',
 		components:{commonTable},
+    mixins: [mixin],
 		data(){
 			const validatePWD = (rule, value, callback) => {
                 if (value != '' && value.length >= 6 && value.length <= 18) {

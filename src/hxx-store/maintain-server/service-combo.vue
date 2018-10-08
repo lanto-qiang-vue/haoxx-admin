@@ -16,8 +16,8 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="primary" @click="add()">新增</Button>
-      <Button type="info" :disabled="cando" @click="edit()">修改</Button>
+      <Button type="primary" @click="add()"  v-if="accessBtn('add')">新增</Button>
+      <Button type="info" :disabled="cando" v-if="accessBtn('edit')" @click="edit()">修改</Button>
     </div>
         <Modal  
     v-model="showModal"
@@ -100,9 +100,11 @@
     import commonTable from '@/hxx-components/common-table.vue'
     import selectItem from '@/hxx-components/select-item.vue'
     import { getName, getDictGroup, getCreate } from '@/libs/util.js'
-	export default{
+    import mixin from '@/hxx-components/mixin'
+	  export default{
 		name:'service-combo',
 		components:{commonTable,selectItem},
+    mixins: [mixin],
 		data(){
 		return{
 		value1:'1',

@@ -897,6 +897,17 @@ export default [
           access: '100205',
         },
         component: () => import('@/hxx-admin/basic-data/brand-vehicleModel.vue')
+      },
+      {
+        path: '/maintenance-classify',
+        name: 'maintenance-classify',
+        meta: {
+          icon: 'md-funnel',
+          title: '维修项目分类',
+          lgType: "1001",
+          access: '100207',
+        },
+        component: () => import('@/hxx-admin/basic-data/maintenance-classify.vue')
       }
     ]
   },

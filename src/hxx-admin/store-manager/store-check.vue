@@ -21,7 +21,7 @@
     <Modal v-model="showModal" title="门店注册信息" :width="90" :transfer="false"
            class="table-modal-detail store-modal" :transition-names="['', '']">
       <div style="height: 100%">
-        <store-info-detail :data="detailData" :type="2"></store-info-detail>
+        <store-info-detail :data="detailData" :type="2"  @getRemark="getRemark"></store-info-detail>
       </div>
       <div slot="footer" style="text-align:center;">
         <Button type="primary" @click="OK" >审核通过</Button>
@@ -83,6 +83,9 @@
       },
       saveNo(){
         this.save({TENANT_ID:this.obj.TENANT_ID,REMARK:this.obj.REMARK ? this.obj.REMARK : "",CHECK_STATUS:"10351003"});
+      },
+      getRemark(data){
+        this.obj.REMARK = data;
       },
       save(data){
         this.axios.request({
@@ -148,6 +151,7 @@
       },
       clear(){
         this.search.keyword = '';
+        this.search.status = 0;
       },
       clearsection(){
         this.list = '';

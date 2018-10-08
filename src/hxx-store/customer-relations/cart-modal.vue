@@ -199,7 +199,7 @@
   </Modal>
 </template>
 <script>
-  import {getName, getDictGroup, getCreate} from '@/libs/util.js'
+  import {getName, getDictGroup, getCreate,getUserInfo} from '@/libs/util.js'
   import selectCustomer from '@/hxx-components/select-customer.vue'
   import commonTable from '@/hxx-components/common-table.vue'
   import vehicleModel from '@/hxx-components/vehicle-model.vue'
@@ -327,6 +327,7 @@
     props: ['show', 'row', 'info', 'hidetype'],
     watch: {
       show() {
+        // console.log(JSON.stringify(this.$store.state.user.userInfo.params));
         this.$refs['formData'].resetFields();
         this.showModal = true;
         //切换到第一个标签
@@ -347,6 +348,8 @@
         //修改初始赋值
         var obj = this.info;
         this.formData = obj;
+        let params = getUserInfo(this.$store.state.user.userInfo.params,"P1003");
+        this.formData.PLATE_NUM = this.formData.PLATE_NUM || params;
         this.formData.VEHICLE_COLOR = parseInt(obj.VEHICLE_COLOR) == 0 ? 0 : obj.VEHICLE_COLOR;
         this.formData.COME_MILEAGE = obj.COME_MILEAGE ? parseFloat(obj.COME_MILEAGE) : 0;
         this.formData.REPAIR_MILEAGE = obj.REPAIR_MILEAGE ? parseFloat(obj.REPAIR_MILEAGE) : 0;

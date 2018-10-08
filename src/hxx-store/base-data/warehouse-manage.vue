@@ -10,9 +10,9 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="primary" @click="add()">新增</Button>
-      <Button type="info" :disabled="cando" @click="edit()">修改</Button>
-      <Button type="error" :disabled="cando" @click="remove()">作废</Button>
+      <Button type="primary" @click="add()" v-if="accessBtn('add')">新增</Button>
+      <Button type="info" :disabled="cando" @click="edit()" v-if="accessBtn('edit')">修改</Button>
+      <Button type="error" :disabled="cando" @click="remove()" v-if="accessBtn('cancel')">作废</Button>
     </div>
             <Modal  
     v-model="showModal"
@@ -64,9 +64,11 @@
 <script>
 import commonTable from '@/hxx-components/common-table.vue'
 import { getName, getDictGroup, getCreate } from '@/libs/util.js'
+import mixin from '@/hxx-components/mixin'
 	export default{
 		name:'warehouse-manage',
 		components:{commonTable},
+    mixins: [mixin],
 		data(){
 			return {
 		    value1:'1',

@@ -16,8 +16,8 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="primary" @click="add()">新增</Button>
-      <Button type="info" :disabled="cando" @click="edit()">编辑/查看</Button>
+      <Button type="primary" @click="add()" v-if="accessBtn('add')">新增</Button>
+      <Button type="info" :disabled="cando" @click="edit()" v-if="accessBtn('edit')">编辑/查看</Button>
       <!--<Button type="error" :disabled="cando" @click="remove()">作废</Button>-->
     </div>
   <cart-modal class="table-modal-detail" @clearsection="clearsection" :info="info" :hidetype="hidetype" @refresh="refresh" :show="show"></cart-modal>
@@ -27,9 +27,11 @@
 	  import commonTable from '@/hxx-components/common-table.vue'
     import cartModal from '@/hxx-store/customer-relations/cart-modal.vue'
     import { getName, getDictGroup, getCreate } from '@/libs/util.js'
+    import mixin from '@/hxx-components/mixin'
 	export default{
 		name:'cart-list',
 		components:{commonTable,cartModal},
+    mixins: [mixin],
 		data(){
 			return {
         cleartype:false,
