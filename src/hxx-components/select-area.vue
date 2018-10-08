@@ -54,8 +54,12 @@
         this.show = Math.random();
       },
       selectChangeTree(row){
-        // console.log(JSON.stringify(row));
-        if(row[0].level == 3){
+        let flag1 = row[0] ? true : false;
+        let flag2 = row ? true : false;
+        if(flag2 && row.level == 3){
+          this.$emit('changeRow',{title:row.title.replace(/<\/?[^>]*>/g,''),id:row.id});
+        }
+        if(flag1 && row[0].level == 3){
           this.$emit('changeRow',{title:row[0].title,id:row[0].id});
         }
       },
@@ -84,7 +88,6 @@
         this.search(key);
       },
       search(keyword) {
-        //递归时间复杂度n^2;利用数组规律性进行处理时间复杂度n
         let da = this.fastFormat(0, 1, {title: '中华人民共和国', children: []});
         if(this.keyword == "" || this.keyword == " "){
           da['expand'] = true;
@@ -93,7 +96,9 @@
         }
         let formData = this.filterData(da);
         formData['expand'] = true;
-        this.data = [formData];
+        this.data = [];
+        this.data.push(formData);
+        // this.data = [formData];
       },
       fastFormat(i = 0, level = 1, data, pid = 0) {
         for (var a = i; a < this.area.length; a++) {
@@ -133,6 +138,7 @@
                 "title": this.highLight(this.area[a].text, this.keyword),
                 "id": this.area[a].id,
                 "parentId": this.area[a].parentId,
+                "level":3,
                 render: this.renderTree
               });
             } else {
@@ -163,6 +169,7 @@
               "id": data.children[i].id,
               "parentId": data.children[i].parentId,
               render: this.renderTree,
+              "level":data.children[i].level,
               "children": []
             });
           }else{
@@ -170,6 +177,7 @@
               "title": this.highLight(data.children[i].title, this.keyword),
               "id": data.children[i].id,
               "parentId": data.children[i].parentId,
+              "level":data.children[i].level,
               render: this.renderTree,
               "children": store
             });
@@ -186,6 +194,7 @@
               "title": this.highLight(data[a].title, this.keyword),
               "id": data[a].id,
               "parentId": data[a].parentId,
+              "level":data[a].level,
               render: this.renderTree,
               "children": []
             });
@@ -194,6 +203,7 @@
               "title": this.highLight(data[a].title, this.keyword),
               "id": data[a].id,
               "parentId": data[a].parentId,
+              "level":data[a].level,
               render: this.renderTree,
               "children": data[a].children
             });
@@ -206,8 +216,11 @@
         return h('span', {
           class: {'ivu-tree-title': true},
           domProps: {
-            innerHTML: data.title
-          }
+            innerHTML: data.title,
+          },
+          on: {
+            click: () => {this.selectChangeTree(data,root, node)}
+          },
         })
       },
       highLight(text, words, tag) {
