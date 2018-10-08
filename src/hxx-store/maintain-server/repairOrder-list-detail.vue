@@ -574,44 +574,67 @@
           {title: '优惠金额', key: 'PART_DERATE_MONEY', sortable: true, minWidth: 120,
             
                     render: (h, params) => {
-                        return h('div', [
-                            h('InputNumber', {
+                        return h('div',[
+                             h(columnInput, {
                                 props: {
+                                    params:params,
+                                    type:"number",
+                                    contentData:params.row.PART_MONEY,
                                     min:0,
-                                    value: params.row.PART_DERATE_MONEY,
                                     disabled:!this.isOrderSuccess,
-                                },
-                                on: {
-                                    "on-change":(val)=>{
-                                        console.log(val,params.row.PART_MONEY);
-                                        if(val<params.row.PART_MONEY){
-                                            params.row.PART_DERATE_MONEY=parseFloat(val.toFixed(2));
-                                            console.log('params.row.PART_DERATE_MONEY',params.row.PART_DERATE_MONEY);
-                                        }else{
-                                            this.$Modal.confirm({
-                                                title:"系统提示!",
-                                                content:"优惠金额过大",
-                                                
-                                            })
-                                            params.row.PART_DERATE_MONEY=val;
-                                            var self=this;
-                                            setTimeout(function(){
-                                                params.row.PART_DERATE_MONEY=0;
-                                                self.commitParts[params.index]=params.row;
-                                                self.commitParts[params.index]['PART_LAST_MONEY']=(params.row.SALES_PRICE*params.row.PART_NUM-params.row.PART_DERATE_MONEY).toFixed(2);
-                                                self.computItemMoney();
-                                            },20);
-                                        }
-
-                                            this.commitParts[params.index]=params.row;
-                                            this.commitParts[params.index]['PART_LAST_MONEY']=(params.row.SALES_PRICE*params.row.PART_NUM-params.row.PART_DERATE_MONEY).toFixed(2);
-                                            this.computItemMoney();
-                                    },
                                     
+                                },
+                            on: {
+                                    "change":(val)=>{
+                                            
+                                            params.row.PART_DERATE_MONEY=val;
+                                            this.commitParts[params.index]=params.row;
+                                            this.commitParts[params.index]['PART_LAST_MONEY']=(params.row.SALES_PRICE*params.row.PART_NUM-val).toFixed(2);
+                                            this.computItemMoney();
+                                        
+                                    },
                                 }
-                            },
-                            )
+                            })
                         ]);
+
+                        // return h('div', [
+                        //     h('InputNumber', {
+                        //         props: {
+                        //             min:0,
+                        //             value: params.row.PART_DERATE_MONEY,
+                        //             disabled:!this.isOrderSuccess,
+                        //         },
+                        //         on: {
+                        //             "on-change":(val)=>{
+                        //                 console.log(val,params.row.PART_MONEY);
+                        //                 if(val<params.row.PART_MONEY){
+                        //                     params.row.PART_DERATE_MONEY=parseFloat(val.toFixed(2));
+                        //                     console.log('params.row.PART_DERATE_MONEY',params.row.PART_DERATE_MONEY);
+                        //                 }else{
+                        //                     this.$Modal.confirm({
+                        //                         title:"系统提示!",
+                        //                         content:"优惠金额过大",
+                                                
+                        //                     })
+                        //                     params.row.PART_DERATE_MONEY=val;
+                        //                     var self=this;
+                        //                     setTimeout(function(){
+                        //                         params.row.PART_DERATE_MONEY=0;
+                        //                         self.commitParts[params.index]=params.row;
+                        //                         self.commitParts[params.index]['PART_LAST_MONEY']=(params.row.SALES_PRICE*params.row.PART_NUM-params.row.PART_DERATE_MONEY).toFixed(2);
+                        //                         self.computItemMoney();
+                        //                     },20);
+                        //                 }
+
+                        //                     this.commitParts[params.index]=params.row;
+                        //                     this.commitParts[params.index]['PART_LAST_MONEY']=(params.row.SALES_PRICE*params.row.PART_NUM-params.row.PART_DERATE_MONEY).toFixed(2);
+                        //                     this.computItemMoney();
+                        //             },
+                                    
+                        //         }
+                        //     },
+                        //     )
+                        // ]);
                     }
           },
           {title: '优惠后金额', key: 'PART_LAST_MONEY', sortable: true, minWidth: 150,
