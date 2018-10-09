@@ -80,7 +80,7 @@
           </FormItem>
           
        </Form>
-       <Form ref="formInline"  slot="content" :label-width="80">
+       <Form ref="formInline"  slot="content" :label-width="110">
           <FormItem label="故障描述:">
               <Input type="textarea" v-model="listSearch.FAULT_DESC" placeholder="请输入故障描述"> </Input>
           </FormItem>
