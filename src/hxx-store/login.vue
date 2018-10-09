@@ -20,7 +20,7 @@
               <div class="form-con">
                 <Form :model="form" @keydown.enter.native="handleSubmit">
                   <FormItem prop="userName">
-                    <Input v-model="form.userName" placeholder="请输入用户名">
+                    <Input v-model="form.userName" maxlength="11" placeholder="请输入用户名">
                                         <span slot="prepend">
           <Icon :size="16" type="ios-person"></Icon>
         </span>
@@ -34,7 +34,7 @@
                     </Input>
                   </FormItem>
                   <FormItem>
-                    <Checkbox v-model="single" style="padding-left:35px;">记住账号</Checkbox>
+                    <Checkbox v-model="single" style="padding-left:35px;" v-if="jzzz">记住账号</Checkbox>
                     <div style="float:right;padding-right:20px;"><a href="javascript:void(0);"
                                                                     @click="register">新用户注册</a></div>
                   </FormItem>
@@ -69,7 +69,7 @@
                     </Input>
                   </FormItem>
                   <div style="margin-top:-10px;padding-bottom:10px;">
-                    <Checkbox v-model="single" style="padding-left:35px;">记住账号</Checkbox>
+                    <Checkbox v-model="single" style="padding-left:35px;" v-if="jzzz">记住账号</Checkbox>
                   </div>
                   </FormItem>
                   <FormItem>
@@ -137,13 +137,13 @@
       return {
         description: '获取',
         form: {
-          userName: '13888888888',
-          password: '123456'
+          userName: '',
+          password: ''
         },
         form2: {
-          tenantId: 'T00001',
-          userCode: 'zzz',
-          password: '123456'
+          tenantId: '',
+          userCode: '',
+          password: ''
         },
         form3: {
           phone: '',
@@ -154,6 +154,7 @@
         single: false,
         isShow: 1,
         timing: '',
+        jzzz:false,
         time: 60,
         flag: true,//防止定时器多次触发
         rules: {
