@@ -314,13 +314,18 @@
           let len = this.importData.length;
           let data = this.importData;
           let ids = "";
-          let synbol = ",";
+          let  cstart = this.limit2 * (this.page - 1);
           for(let i in data){
-            ids += data[i].nodeId + synbol;
+            ids += data[i].nodeId + ',';
+            let mydata = this.storeData[this.storeKey];
+            for(let d = cstart;d<len;d++){
+             if(mydata[d].nodeId == data[i].nodeId){
+               mydata.splice(d,1);
+             }
+            }
           }
           this.doImport(ids);
           //剔除导入数据....
-          this.storeData[this.storeKey].splice(this.limit2 * this.page,len);
           this.store2 = this.storeData[this.storeKey];
           this.page2 = 1;
           this.paging(this.store2);
