@@ -106,24 +106,24 @@
                <DatePicker type="date" v-model="formData.YEAR_CHECK_DATE" placeholder=""  format="yyyy-MM-dd" style="min-width: 100%;"></DatePicker>
                </Col>
           </FormItem>
-          <FormItem label="交强险到期日:" style="width:30%;" prop="phone">
+          <FormItem label="交强险到期日:" v-show="xhide" style="width:30%;" prop="phone">
                              <Col span="11" style="width:100%;">
                <DatePicker type="date" placeholder="" v-model="formData.MUST_SAFE_VALIDITY"  format="yyyy-MM-dd" style="min-width: 100%;"></DatePicker>
                </Col>
           </FormItem>
-          <FormItem label="商业险到期日:" style="width:30%;">
+          <FormItem label="商业险到期日:" v-show="xhide" style="width:30%;">
                              <Col span="11" style="width:100%;">
                <DatePicker type="date" v-model="formData.BUSINESS_SAFE_VALIDITY" placeholder=""  format="yyyy-MM-dd" style="min-width: 100%;"></DatePicker>
                </Col>
           </FormItem>
           <!-- 6 -->
-                        <FormItem label="交强险保险公司:" style="width:30%;" >
+                        <FormItem label="交强险保险公司:" v-show="xhide" style="width:30%;" >
                  <Select  placeholder="" v-model="formData.MUST_SAFE_CORP" style="min-width: 100%;">
                 <Option v-for="(item, index) in must"
                   :key="index" :value="item.INSURER_ID">{{item.CORP_NAME}}</Option>
                 </Select>
           </FormItem>
-          <FormItem label="商业险保险公司:" style="width:30%;">
+          <FormItem label="商业险保险公司:" v-show="xhide" style="width:30%;">
                  <Select  placeholder="" v-model="formData.BUSINESS_SAFE_CORP" style="min-width: 100%;">
                 <Option v-for="(item, index) in business"
                   :key="index" :value="item.INSURER_ID">{{item.CORP_NAME}}</Option>
@@ -179,6 +179,7 @@
         hidetype:1,
         vehicleShow:false,
         showModal:false,
+        xhide:false,
 				formData:{
 				MUST_SAFE_CORP:0,
 				BUSINESS_SAFE_CORP:0,

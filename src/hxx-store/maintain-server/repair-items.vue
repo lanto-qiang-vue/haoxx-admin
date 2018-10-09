@@ -43,8 +43,8 @@
             <Spin size="large" fix v-if="spinShow"></Spin>
           </div>
           <div slot="right" style="height:100%;">
-            <common-table :columns="columns1" :showSearch="false" :showOperate="false" :showPage="false"
-                          v-model="initParts" :show="ishow">
+            <common-table :columns="columns1" :showSearch="false" :showOperate="false"
+                          v-model="initParts" :show="ishow" :total="total2" :page="page2"  @changePageSize="changePageSize2" @changePage="changePage2" @changeSelect="changeSelect">
             </common-table>
           </div>
         </Split>
@@ -164,9 +164,13 @@
         title: '',
         clearType: false,
         value1: '1',
+        storeData:{},
+        storeKey:0,
+        store2:[],
         des: '元',
         value2: '2',
         description: '标准金额',
+        importData:[],
         number: 0,
         ishow: false,
         customModal: false,
@@ -217,6 +221,10 @@
         ],
         columns1: [
           {type: 'selection', width: 60, align: 'center'},
+          {
+            title: '序号', minWidth: 80,
+            render: (h, params) => h('span', (this.page2 - 1) * this.limit2 + params.index + 1)
+          },
           {title: '项目名称', key: 'nodeName', sortable: true, minWidth: 120},
           {title: '项目编号', key: 'itemNo', sortable: true, minWidth: 120},
           {
@@ -233,6 +241,9 @@
         page: 1,
         limit: 25,
         total: 0,
+        page2:1,
+        limit2:25,
+        total2:0,
         KEYWORD: '',
         TYPE: '全部',
         show: false,
@@ -293,19 +304,105 @@
       }
     },
     methods: {
+      changeSelect(row){
+      this.importData = row;
+      },
+      toimport(){
+      if(this.importData.length > 0){
+        let flag = this.importData[0].level ? true : false;
+        if(!flag){
+          let data = this.importData;
+          let ids = "";
+          for(var i in data){
+            console.log(i);
+            ids += data[i].nodeId + ',';
+            for(var d=0;d<this.storeData[this.storeKey].length;d++){
+              // console.log("左边"+this.storeData[this.storeKey][d].nodeId + "右边" + data[i].nodeId);
+              if(this.storeData[this.storeKey][d].nodeId == data[i].nodeId){
+                  this.storeData[this.storeKey].splice(d,1);
+              }
+            }
+          }
+          this.doImport(ids);
+          //剔除导入数据....
+          this.store2 = this.storeData[this.storeKey];
+          this.page2 = 1;
+          this.paging(this.store2);
+        }else{
+          let children = this.find3(this.importData,[])
+          console.log(JSON.stringify(children));
+          let ids = "";
+          for(let i in children){
+            let data = this.storeData[children[i]];
+            for(let a in data){
+              ids += data[a].nodeId + ',';
+            }
+          }
+          this.doImport(ids);
+          this.showModal = false;
+        }
+      }
+      },
+      find3(data,da){
+        for(let i in data){
+          if(data[i].level == 3){
+            da.push(data[i].nodeId);
+          }else{
+            let flag = data[i].children ? true : false;
+            if(flag){
+              this.find3(data[i].children,da)
+            }
+          }
+        }
+        return da;
+      },
+      doImport(ids){
+        this.axios.request({
+          url: '/tenant/basedata/repairproject/import',
+          method: 'post',
+          data: {
+            access_token: this.$store.state.user.token,
+            ids:ids
+          },
+        }).then(res => {
+          if (res.success === true) {
+            this.$Message.success('导入成功');
+          }
+        })
+      },
       getdata(row) {
         if (!row[0]) {
           return;
         }
-        var store = row[0].store;
-        // var data = this.getchildren(store,[]);
-        this.initParts = store;
+        if(row[0].level == 3){
+          var store = this.storeData[row[0].nodeId];
+          this.storeKey = row[0].nodeId;
+        }else{
+          var store = row[0].children;
+        }
+        this.store2 = store;
+        this.paging(store);
       },
-      // getchildren(data,da){
-      //   for(var a = 0;a<data.store.length;a++){
-      //     this.getchildren(data.store[i],da)
-      //   }
-      // },
+      changePageSize2(size){
+        this.limit2 = size;
+        this.paging(this.store2);
+      },
+      changePage2(page){
+        this.page2 = page;
+        this.paging(this.store2);
+      },
+      paging(store){
+        //正常分页...
+        let total = store.length;
+        this.total2 = total;
+        let start = (this.page2 - 1) * this.limit2;
+        let end  = start + this.limit2;
+        end = (end > total) ? total : end;
+        this.initParts = [];
+        for(let i = start;i<end;i++){
+          this.initParts.push(store[i]);
+        }
+      },
       visibleChange() {
         this.clearsection();
       },
@@ -317,6 +414,7 @@
         this.showModal = false;
       },
       getTree() {
+        this.initParts = [];
         this.axios.request({
           url: '/tenant/basedata/repairproject/get_infoitem_tree',
           method: 'post',
@@ -427,16 +525,17 @@
       },
       machine2(data, da, level = 1) {
         da['title'] = data.nodeName;
+        da['nodeName'] = data.nodeName;
         da['nodeId'] = data.nodeId ? data.nodeId : 0;
         da['expand'] = false;
         da['level'] = level;
-        var flag = data.children ? true : false;
-        if (flag) {
-          da['store'] = data.children;
+        let flag = data.children ? true : false;
+        if(flag && level == 3){
+        this.storeData[data.nodeId] = data.children;
         }
         if (level < 3) {
           da['children'] = [];
-          var flag = data.children ? true : false;
+          let flag = data.children ? true : false;
           if (flag) {
             for (var i = 0; i < data.children.length; i++) {
               da['children'][i] = {};
@@ -482,6 +581,7 @@
           }
         })
         this.showModal = true;
+        this.initParts = [];
       },
       add() {
         this.title = "自定义新增";
@@ -555,9 +655,11 @@
       },
       changePage(page) {
         this.page = page;
+        this.getList();
       },
       changePageSize(size) {
         this.limit = size;
+        this.getList();
       },
     },
   }

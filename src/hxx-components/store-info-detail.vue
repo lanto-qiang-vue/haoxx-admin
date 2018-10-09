@@ -73,7 +73,7 @@
             <Input v-model="info.TENANT_NUM" :readonly="!editAble" :disabled="!isAdmin"></Input>
           </FormItem>
           <div></div>
-          <FormItem prop="TENANT_NUM" label="其它说明" v-if="isCheck">
+          <FormItem prop="TENANT_NUM" label="其它说明" v-if="isCheck || type == 1">
             <Input type="textarea" v-model="info.REMARK"></Input>
           </FormItem>
         </Form>
@@ -140,7 +140,7 @@
     <Button type="primary" :disabled="!editAble" @click="save" v-if="isAdmin ||accessBtn('save')">保存</Button>
   </div>
   <div class="footer" v-show="isRegister" style="text-align:center;">
-    <Button type="primary" :disabled="!editAble" @click="register">注册门店</Button>
+    <Button type="primary" :disabled="!editAble" @click="register">{{buttonName}}</Button>
     <Button type="error" @click="goback">返回列表</Button>
   </div>
 </div>
@@ -158,6 +158,7 @@
     data(){
 		  return{
         collapse: ['1', '2'],
+        buttonName:'注册门店',
         info:{
           "TENANT_ID":"",
           "TENANT_AREA_CODE":"",
@@ -304,8 +305,22 @@
           for (let key in this.info){
             this.info[key]= this.data[key]
           }
+          //审核状态如果有...
+          let flag = this.data['CHECK_STATUS'] ? true : false;
+          if(flag){
+            this.info['CHECK_STATUS'] = this.data['CHECK_STATUS'];
+            // console.log(this.info['CHECK_STATUS']);
+            if(this.info['CHECK_STATUS'] == '10351003'){
+              this.editAble = true;
+              this.buttonName = "再次提交";
+            }else{
+              this.buttonName = "注册门店";
+              this.editAble = false;
+            }
+          }else{
+            this.buttonName = "注册门店";
+          }
         }
-        this.editAble= false
       },
       save(){
         this.$refs.form.validate((valid) => {

@@ -757,6 +757,17 @@ export default [
         },
         component: () => import('@/hxx-store/system-manage/operation-log.vue')
       },
+      {
+        path: '/health-file',
+        name: '/health-file',
+        meta: {
+          icon: 'md-funnel',
+          title: '上传电子健康档案',
+          lgType: "1002",
+          access: '100706',
+        },
+        component: () => import('@/hxx-store/system-manage/health-file.vue')
+      },
     ]
   },
 

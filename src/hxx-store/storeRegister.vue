@@ -13,7 +13,7 @@
         <div class="user-avator-dropdown" style="float:right;margin-top:-10px;">
           <Dropdown trigger="click" @on-click="handle">
             <div class="login-user">
-              <p style="line-height:50px;height:30px;">{{loginName}}</p>
+              <p style="line-height:40px;height:30px;">{{loginName}}</p>
               <span>注册门店</span>
             </div>
             <div class="head" style="padding-top:10px;">
@@ -44,7 +44,7 @@
         <div class="user-avator-dropdown" style="float:right;margin-top:-10px;">
           <Dropdown trigger="click" @on-click="handle">
             <div class="login-user">
-              <p style="line-height:50px;height:30px;">{{loginName}}</p>
+              <p style="line-height:40px;height:30px;">{{loginName}}</p>
               <span>注册门店</span>
             </div>
             <div class="head" style="padding-top:10px;">
@@ -57,7 +57,7 @@
         </div>
       </div>
     <div style="height:10px;"></div>
-    <common-table :showPage="false" :loading="tableType" v-model="tableData" :columns="columns" @onRowDblclick="dbclick" :showSearch="false" :showOperate="false"  :show="showTable">
+    <common-table :showPage="false" :loading="tableType" v-model="tableData" :columns="columns"  @onRowDblclick="dbclick" :showSearch="false" :showOperate="false"  :show="showTable">
     </common-table>
       <div slot="footer" style="text-align:center;">
         <Button type="primary" @click="goback">注册门店</Button>
@@ -73,7 +73,7 @@
       :transfer= "false"
       :footer-hide="true"
       :transition-names="['', '']">
-      <store-info-detail :data="detail" :type="1" @goback="back"></store-info-detail>
+      <store-info-detail :data="detail" @register="saveRegister" :type="1" @goback="back"></store-info-detail>
     </Modal>
   </div>
 </template>
@@ -242,6 +242,7 @@ handle(){
           }
         }).then(res => {
           if (res.success === true) {
+            this.showModal = false;
             setTimeout(this.hint,1000);
           }
         })
