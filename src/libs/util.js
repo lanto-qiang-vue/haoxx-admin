@@ -9,8 +9,16 @@ export const ACCESSMENU_KEY = 'ACCESSMENU'
 export const DICT_KEY = 'DICT'
 export const TENANT_KEY = 'Tenant';
 export const OUTSTATUS = 'outStatus'
+export const ACCOUNT = 'account';
 export const setOutStatus = (type) =>{
   localStorage.setItem(OUTSTATUS,type || 0)
+}
+export const setAccount = (info) =>{
+  localStorage.setItem(ACCOUNT,info || {})
+}
+export const getAccount = () =>{
+  const account = localStorage.getItem(ACCOUNT)
+  return account || {};
 }
 export const getOutStatus = () =>{
   const outStatus = localStorage.getItem(OUTSTATUS)
