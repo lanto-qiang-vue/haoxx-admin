@@ -221,7 +221,7 @@
       if(this.type == 1){this.editAble = true;}
       let rule= (this.isAdmin? []: [{ required: true, message:'必填项不能为空'}])
       const validateEMAIL = (rule, value, callback) => {
-        var reg = /^([0-9A-Za-z\-_\.]+)@([0-9a-z]+\.[a-z]{2,3}(\.[a-z]{2})?)$/g;
+        var reg = /^\w+\@+[0-9a-zA-Z]+\.(com|com.cn|edu|hk|cn|net)$/;
         if (value != '' && !reg.test(value)) {
           callback(new Error('邮箱格式不正确'));
         }else{

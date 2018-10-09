@@ -276,6 +276,9 @@
         this.vehicleShow = true;
       },
       checkCart(val) {
+        if(this.formData.VEHICLE_MODEL != ""){
+          return false;
+        }
         //能否根据车架号获取到车型...
         this.axios.request({
           url: '/tenant/basedata/ttvehiclefile/get_vehicle_model',

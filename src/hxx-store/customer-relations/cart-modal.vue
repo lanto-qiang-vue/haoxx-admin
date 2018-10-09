@@ -361,6 +361,9 @@
     methods: {
       checkCart(val) {
         //能否根据车架号获取到车型...
+        if(this.formData.VEHICLE_MODEL != ""){
+          return false;
+        }
         this.axios.request({
           url: '/tenant/basedata/ttvehiclefile/get_vehicle_model',
           method: 'post',
