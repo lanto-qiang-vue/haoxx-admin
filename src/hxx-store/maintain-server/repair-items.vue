@@ -311,17 +311,16 @@
       if(this.importData.length > 0){
         let flag = this.importData[0].level ? true : false;
         if(!flag){
-          let len = this.importData.length;
           let data = this.importData;
           let ids = "";
-          let  cstart = this.limit2 * (this.page - 1);
-          for(let i in data){
+          for(var i in data){
+            console.log(i);
             ids += data[i].nodeId + ',';
-            let mydata = this.storeData[this.storeKey];
-            for(let d = cstart;d<len;d++){
-             if(mydata[d].nodeId == data[i].nodeId){
-               mydata.splice(d,1);
-             }
+            for(var d=0;d<this.storeData[this.storeKey].length;d++){
+              // console.log("左边"+this.storeData[this.storeKey][d].nodeId + "右边" + data[i].nodeId);
+              if(this.storeData[this.storeKey][d].nodeId == data[i].nodeId){
+                  this.storeData[this.storeKey].splice(d,1);
+              }
             }
           }
           this.doImport(ids);
