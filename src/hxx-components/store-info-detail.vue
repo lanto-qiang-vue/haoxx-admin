@@ -309,12 +309,13 @@
           let flag = this.data['CHECK_STATUS'] ? true : false;
           if(flag){
             this.info['CHECK_STATUS'] = this.data['CHECK_STATUS'];
-            console.log(this.info['CHECK_STATUS']);
+            // console.log(this.info['CHECK_STATUS']);
             if(this.info['CHECK_STATUS'] == '10351003'){
               this.editAble = true;
               this.buttonName = "再次提交";
             }else{
               this.buttonName = "注册门店";
+              this.editAble = false;
             }
           }else{
             this.buttonName = "注册门店";

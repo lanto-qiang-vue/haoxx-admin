@@ -44,7 +44,7 @@
         <div class="user-avator-dropdown" style="float:right;margin-top:-10px;">
           <Dropdown trigger="click" @on-click="handle">
             <div class="login-user">
-              <p style="line-height:50px;height:30px;">{{loginName}}</p>
+              <p style="line-height:40px;height:30px;">{{loginName}}</p>
               <span>注册门店</span>
             </div>
             <div class="head" style="padding-top:10px;">
