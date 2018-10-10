@@ -60,7 +60,11 @@
                 }
         }).then(res => {
           if (res.success === true) {
-          this.tcinfo = res.data;
+            if(res.data&&JSON.stringify(res.data[0]) != "{}"){
+              this.tcinfo = res.data;
+                     
+              }
+              
           }});
 			}
 		},

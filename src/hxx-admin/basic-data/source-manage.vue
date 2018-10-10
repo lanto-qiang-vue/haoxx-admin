@@ -1,31 +1,30 @@
 <!--数据元管理 2018-10-09-->
 <template>
 
-            <Split v-model="splitNum" class="split" :min="0.3" :max="0.7">
-                <div slot="left" class="split-pane" >
-                        <Button type="primary" icon="md-add"></Button>
-                        <div class="search-block">
-                            
-                            <Input v-model="search.input" placeholder="类型编号/名称/数据元名称.." >
-                                <Icon type="ios-search" slot="suffix" />
-                            </Input>
-                        </div>
-                        <Table :columns="columns" :data="tableData" border></Table>
+    <Split v-model="splitNum" class="split" :min="0.3" :max="0.7">
+        <div slot="left" class="split-pane" >
+            <div class="operate" >
+                <Button type="primary" icon="md-add" @click="addNewType"></Button>
+                <div class="search-block">
+                    <Input v-model="search.input" placeholder="类型编号/名称/数据元名称.." >
+                        <Icon type="ios-search" slot="suffix" @click="searchFun" style="cursor:pointer;"/>
+                    </Input>
                 </div>
-                <div slot="right" class="split-pane" >
-                <Button type="primary" icon="md-add"></Button>
-                    <div class="search-block">
-                        <Input v-model="search.input" placeholder="类型编号/名称/数据元名称..">
-                            <Icon type="ios-search" slot="suffix" />
-                        </Input>
-                    </div>
-                    <Table :columns="columns1" :data="tableData1" border></Table>
-                </div>
-            </Split>
-        </div>        
+            </div>
+                <Table :columns="columns" :data="tableData" border :highlight-row="true" @on-current-change="onCurrentChange"></Table>
+        </div>
 
-    
-      
+        <div slot="right" class="split-pane" >
+            
+            <div class="operate" >
+                <Button type="primary">新增</Button>
+                <Button type="error" @click="deleteCode" :disabled="!deleteCodeId">删除</Button>
+                <Button type="info">刷新</Button>
+            </div>
+            <Table :columns="columns1" :data="tableData1" border @on-select="selectCode" @on-select-all="selectAllCode"></Table>
+        </div>
+        
+    </Split>
 
 </template>
 <script>
@@ -76,7 +75,7 @@
                 clearTableSelect: null,
                 isOrderSuccess:true,//判断是不是预约成功
                 firstFlag:true,
-                    
+                deleteCodeId:'',
             }
         },
         mounted () {
@@ -117,34 +116,48 @@
 
                         this.getCodeList(res.data[0]['TYPE']);
                         this.firstFlag=false;
+                        this.tableData[0]._highlight = true;
                     }
                     
                 }
                 })
-
-                this.detailData= null
-                this.isOrderSuccess=true;
             },
             getCodeList(id){
                 this.axios.request({
-                url: '/manage/basedata/dbcode/codeList',
-                method: 'post',
-                data: {
-                    type: id,
-                    page: 1,
-                    start: 0,
-                    limit: 25,
-                    access_token: this.$store.state.user.token
-                }
+                    url: '/manage/basedata/dbcode/codeList',
+                    method: 'post',
+                    data: {
+                        type: id,
+                        page: 1,
+                        start: 0,
+                        limit: 25,
+                        access_token: this.$store.state.user.token
+                    }
                 }).then(res => {
-                if (res.success === true) {
-                    this.tableData1= res.data
-                    
-                }
+                    if (res.success === true) {
+                        this.tableData1= res.data;
+                    }
                 })
-
-                this.detailData= null
-                this.isOrderSuccess=true;
+            },
+            //搜索框搜索数据
+            searchFun(){
+                this.firstFlag=true;
+                this.getList();
+            },
+            //新增数据类型----
+            addNewType(){
+                this.axios.request({
+                    url: '/manage/basedata/dbcode/addNewType',
+                    method: 'post',
+                    data: {
+                        access_token: this.$store.state.user.token
+                    }
+                }).then(res => {
+                    if (res.success === true) {
+                        this.tableData.unshift(res.data);
+                        this.getCodeList(res.data.TYPE);
+                    }
+                })
             },
             changePage(page){
                     this.page= page
@@ -174,6 +187,55 @@
                 this.isOrderSuccess=true;
                 this.clearTableSelect= Math.random()
             },
+            onCurrentChange(currentRow, oldCurrentRow){
+                console.log('发生改变',currentRow, oldCurrentRow);
+                this.getCodeList(currentRow.TYPE);
+            },
+            //新增数据元-------
+            addNewCode(){
+                this.axios.request({
+                    url: '/manage/basedata/dbcode/addNewCode',
+                    method: 'post',
+                    data: {
+                        type: 1055,
+                        typeName: '',
+                        access_token: this.$store.state.user.token
+                    }
+                }).then(res => {
+                    if (res.success === true) {
+                        
+                    }
+                })
+            },
+            //删除数据元------
+            deleteCode(){
+                this.axios.request({
+                    url: '/manage/basedata/dbcode/deleteCode',
+                    method: 'post',
+                    data: {
+                        ids: this.deleteCodeId,
+                        access_token: this.$store.state.user.token
+                    }
+                }).then(res => {
+                    if (res.success === true) {
+                        
+                    }
+                })
+            },
+            selectCode(selection,row){
+                this.deleteCodeId='';
+                for(let i in selection){
+                    this.deleteCodeId+=selection[i]['CODE_ID']+','
+                }
+                console.log(this.deleteCodeId);
+            },
+            selectAllCode(selection){
+                console.log('选择全部',selection);
+                this.deleteCodeId='';
+                for(let i in this.selection){
+                    this.deleteCodeId=this.deleteCodeId+this.selection[i]['CODE_ID']+','
+                }
+            },
         },
 
     }
@@ -182,7 +244,7 @@
 <style lang="less" scoped>
     .search-block{
         display: inline-block;
-        width: 200px;
+        width: 70%;
         margin-left: 10px;
         overflow: hidden;
     }
@@ -216,4 +278,13 @@
   }
 }
 
+  .operate{
+    margin-bottom: 10px;
+    padding: 15px 15px 10px 15px;
+    border: 1px solid #dcdee2;
+    border-radius: 3px;
+  }
+  .operate button{
+    margin: 0 5px 5px 0;
+  }
 </style>
