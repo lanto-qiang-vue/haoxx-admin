@@ -218,7 +218,7 @@
           <Button v-if="accessBtn('submit')" :disabled="buttonStateArr.dopay" @click="handleCommit('listSearch')" type="info"  >派工</Button>
           <Button v-if="accessBtn('finish')" :disabled="buttonStateArr.finish" @click="handleFinish" type="warning"  >完工</Button>
           <Button v-if="accessBtn('doaccount')" :disabled="buttonStateArr.doaccount" @click="handleAccount" type="warning"  >结算</Button>
-          <Button v-if="accessBtn('shoukuan')" :disabled="buttonStateArr.shoukuan" @click="showShouKuan=Math.random()" type="warning"  >收款</Button>
+          <Button v-if="accessBtn('dopay')" :disabled="buttonStateArr.shoukuan" @click="showShouKuan=Math.random()" type="warning"  >收款</Button>
           <Button v-if="accessBtn('printWts')" :disabled="buttonStateArr.printWts" @click="printWTS" type="success">打印委托书</Button>
           <Button v-if="accessBtn('printPgd')" :disabled="buttonStateArr.printPgd" @click="printPgdButton" type="success">打印派工单</Button>
           <Button v-if="accessBtn('printAccount')" :disabled="buttonStateArr.printAccount" @click="printAccountButton" type="success">打印结算单</Button>
@@ -904,9 +904,12 @@
                                     min:0,
                                     value: moneNum,
                                     disabled:!this.isOrderSuccess,
+                                    formatter:value => `${value}`,
+                                    parser:value => value.replace('', 0)
                                 },
                                 on: {
                                     "on-change":(val)=>{
+                                        console.log('其他费用数据----',val);
                                         params.row.REPAIR_MONEY1=parseFloat(val.toFixed(2));
                                         this.commitOtherItem[params.index]=params.row;
                                         this.computItemMoney();
@@ -948,6 +951,8 @@
                                     min:0,
                                     value: moneNum,
                                     disabled:!this.isOrderSuccess,
+                                    formatter:value => `${value}`,
+                                    parser:value => value.replace('', 0)
                                 },
                                 on: {
                                     "on-change":(val)=>{
@@ -992,6 +997,8 @@
                                     min:0,
                                     value: moneNum,
                                     disabled:!this.isOrderSuccess,
+                                    formatter:value => `${value}`,
+                                    parser:value => value.replace('', 0)
                                 },
                                 on: {
                                     "on-change":(val)=>{
@@ -1037,6 +1044,8 @@
                                     min:0,
                                     value: moneNum,
                                     disabled:!this.isOrderSuccess,
+                                    formatter:value => `${value}`,
+                                    parser:value => value.replace('', 0)
                                 },
                                 on: {
                                     "on-change":(val)=>{
@@ -2478,10 +2487,13 @@
                 }
         }).then(res => {
           if (res.success === true) {
-            for(let i in res.data){
-                console.log(res.data[i]);
-                this.itemGroupDetail.push(res.data[i]);
-            }
+              if(res.data&&JSON.stringify(res.data[0]) != "{}"){
+                     for(let i in res.data){
+                        console.log(res.data[i]);
+                        this.itemGroupDetail.push(res.data[i]);
+                    }
+              }
+            
           }});
     },
     //打印派工单部分---------
