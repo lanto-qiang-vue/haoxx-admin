@@ -15,7 +15,7 @@
       <div class="login-con">
         <Card icon="log-in">
           <!-- 企业商户登录 1 -->
-          <Tabs v-if="isShow == 1" value="name1">
+          <Tabs v-if="isShow == 1"  v-model="indexName">
             <TabPane label="企业登录" name="name1">
               <div class="form-con">
                 <Form :model="form" @keydown.enter.native="handleSubmit">
@@ -55,7 +55,7 @@
                     </Input>
                   </FormItem>
                   <FormItem prop="userName">
-                    <Input v-model="form2.userCode" placeholder="请输入短信验证码">
+                    <Input v-model="form2.userCode" placeholder="请输入账号">
                                         <span slot="prepend">
           <Icon :size="16" type="ios-person"></Icon>
         </span>
@@ -136,6 +136,7 @@
     data() {
       return {
         description: '获取',
+        indexName:'name1',
         form: {
           userName: '',
           password: ''
@@ -171,16 +172,23 @@
       }
     },
     mounted() {
-    let account = JSON.parse(getAccount());
-    // console.log(account['telphone']);
+
+    },
+    created(){
+      let account = JSON.parse(getAccount());
+      // console.log(account['telphone']);
       if(account.telphone){
         this.form.userName = account.telphone;
         this.form.password = account.telpass;
         this.single = true;
       }
-      // if(account){
-      //
-      // }
+      if(account.tenantId){
+        this.form2.tenantId = account.tenantId;
+        this.form2.userCode = account.userCode;
+        this.form2.password = account.password;
+        this.single = true;
+        this.indexName = 'name2';
+      }
     },
     methods: {
       ...mapActions([
@@ -255,6 +263,8 @@
               var getInfo = Promise.all([this.getUser(res.data.tokenStr), this.getMenu(res.data.tokenStr)]);
               if(this.single){
                 this.$store.commit('setAccount',JSON.stringify(data));
+              }else{
+                this.$store.commit('setAccount',JSON.stringify({}));
               }
               var name = 'home';
             } else {
