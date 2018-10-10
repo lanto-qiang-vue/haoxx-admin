@@ -99,7 +99,7 @@
                   <FormItem label="邮箱:" style="width:30%;">
               <Input type="text" v-model="formData.EMAIL"  style="min-width: 100%;"> </Input>
           </FormItem>
-                  <FormItem label="开票税号:" style="width:30%;">
+                  <FormItem label="开票税号:" v-show="xhide" style="width:30%;">
               <Input type="text" v-model="formData.TAX_NO"  style="min-width: 100%;"> </Input>
           </FormItem>
     </Form>
@@ -131,6 +131,7 @@ import commonTable from '@/hxx-components/common-table.vue'
                 showModal:false,
                 // collapse: ['1','2'],
                 sexGroup:[],
+                xhide:false,
                 resourceGroup:[],
                 levelGroup:[],
                 typeGroup:[],

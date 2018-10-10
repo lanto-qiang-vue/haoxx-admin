@@ -84,7 +84,7 @@
                   <FormItem label="邮箱:" style="width:30%;">
               <Input type="text" v-model="formData.email"  style="min-width: 100%;"> </Input>
           </FormItem>
-                  <FormItem label="开票税号:" style="width:30%;">
+                  <FormItem label="开票税号:" v-show="xhide" style="width:30%;">
               <Input type="text" v-model="formData.snumber"  style="min-width: 100%;"> </Input>
           </FormItem>
     </Form>
@@ -138,6 +138,7 @@
         cleartype:false,
         hidetype:1,
         showModal:false,
+        xhide:false,
         showLook:false,
         indexName:'m1',
         collapse:'1',
