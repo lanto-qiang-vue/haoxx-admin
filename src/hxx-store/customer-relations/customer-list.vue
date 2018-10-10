@@ -211,7 +211,7 @@
     },
     expor(){
       //导出Excel文件
-      window.location.href = "http://hxx.test.hoxiuxiu.com/tenant/basedata/ttcustomerfile/doExport?KEYWORD="+this.search.input+"&PLATE_NUM="+this.search.number+"&access_token="+this.$store.state.user.token;
+      window.location.href = this.baseUrl+"tenant/basedata/ttcustomerfile/doExport?KEYWORD="+this.search.input+"&PLATE_NUM="+this.search.number+"&access_token="+this.$store.state.user.token;
     },
     double(row,index){
      this.showDetail = Math.random();
