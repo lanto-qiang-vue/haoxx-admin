@@ -377,3 +377,9 @@
     }
   }
 </script>
+<style lang="less">
+  .ivu-transfer-list{
+    width:40%;
+    height:400px;
+  }
+</style>
