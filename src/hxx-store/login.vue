@@ -48,7 +48,7 @@
               <div class="form-con">
                 <Form :model="form2">
                   <FormItem prop="userName">
-                    <Input v-model="form2.tenantId" placeholder="请输入手机号码">
+                    <Input v-model="form2.tenantId" placeholder="请输入商户号">
                                         <span slot="prepend">
           <Icon :size="16" type="ios-person"></Icon>
         </span>

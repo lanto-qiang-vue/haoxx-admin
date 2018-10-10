@@ -13,7 +13,7 @@
         data(){
           return{
             uploadShow:false,
-            description:[{des:'1、点击“浏览”按钮，找到您所要导入的Excel文件,”'},{des:'2、选择好文件后, 点“确定”按钮完成导入。'}],
+            description:[{des:'1、点击当前区域，找到您所要导入的Excel文件,”'},{des:'2、选择好文件后, 点“确定”按钮完成导入。'}],
           }
         },
         methods:{
