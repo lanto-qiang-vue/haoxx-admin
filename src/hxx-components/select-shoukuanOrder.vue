@@ -200,6 +200,7 @@ export default {
             payModeData:[],
             timer:null,
             disFlag:false,
+            accountNum:0,//统计定时轮询次数
         }
     },
     watch:{
@@ -327,7 +328,8 @@ export default {
                                             if (res.success === true) {
                                                 this.$Message.info('收款成功');
                                                 this.showShouKuan=false;//收款界面弹出
-
+                                                this.accountNum=0;
+                                                window.clearInterval(this.timer);
                                                 this.getAccountData(this.shoukuanSearch["REPAIR_ID"]);
                                                 this.$emit('closeGetList');
                                             }else{
@@ -382,7 +384,8 @@ export default {
                             if (res.success === true) {
                                 this.$Message.info('收款成功');
                                 this.showShouKuan=false;//收款界面弹出
-                                
+                                this.accountNum=0;
+                                window.clearInterval(this.timer);
                                 this.getAccountData(this.shoukuanSearch["REPAIR_ID"]);
                                 this.$emit('closeGetList');
                             }else{
@@ -534,6 +537,8 @@ export default {
                 if (res.success === true) {
                     if(res.data){
                         var self=this;
+                        this.accountNum=0;
+                        window.clearInterval(this.timer);
                         this.timer=setInterval(function(){
                             self.getStatus();
                         },2000);
@@ -543,11 +548,17 @@ export default {
         },
         //请求状态--------
         getStatus(){
+            console.log(this.listSearch.REPAIR_NO);
+            this.accountNum++;
+            if(this.accountNum>=50){
+                this.accountNum=0;
+                window.clearInterval(this.timer);
+            }
             this.axios.request({
                 url: '/tenant/repair/ttrepairworkorder/get_status',
                 method: 'post',
                 data: {
-                    REPAIR_NO: "GD1201809190016",
+                    REPAIR_NO: this.listSearch.REPAIR_NO,
                     access_token: this.$store.state.user.token
                 }
             }).then(res => {
