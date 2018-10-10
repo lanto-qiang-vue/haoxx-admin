@@ -9,7 +9,7 @@
     components: {StoreInfoDetail},
     data(){
       return{
-        datas:{}
+        datas:{},
       }
 		},
     mounted(){
@@ -25,7 +25,8 @@
           }
         }).then(res => {
           if (res.success === true) {
-            this.datas= res.data
+            // console.log(JSON.stringify(res.data));
+            this.datas= res.data;
           }
         })
       },

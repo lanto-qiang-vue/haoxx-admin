@@ -1,4 +1,3 @@
-<!--门店信息详情-->
 <template>
 <div id="store-info-detail">
   <div class="info">
@@ -209,6 +208,7 @@
     },
     watch:{
 		  data(datas){
+		    console.log(JSON.stringify(datas));
        this.cancelEdit()
       },
       show(val){
@@ -302,9 +302,11 @@
       cancelEdit(){
         this.$refs.form.resetFields()
         if(this.data){
+          console.log('start')
           for (let key in this.info){
             this.info[key]= this.data[key]
           }
+          console.log('finished')
           //审核状态如果有...
           let flag = this.data['CHECK_STATUS'] ? true : false;
           if(flag){
@@ -320,6 +322,7 @@
           }else{
             this.buttonName = "注册门店";
           }
+          console.log('all-finished')
         }
       },
       save(){

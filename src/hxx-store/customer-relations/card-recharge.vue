@@ -144,7 +144,7 @@
     this.formData.CUSTOMER_ID = row.CUSTOMER_ID;
     },
     onSelect(){
-      alert(1);
+      // alert(1);
     },
     save(name){
               this.$refs[name].validate((valid) => {

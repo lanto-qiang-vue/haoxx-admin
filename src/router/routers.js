@@ -886,6 +886,17 @@ export default [
         component: () => import('@/hxx-admin/basic-data/maintenance-classify.vue')
       },
       {
+        path: '/oneTwo-maintain',
+        name: 'oneTwo-maintain',
+        meta: {
+          icon: 'md-funnel',
+          title: '一二类维修项目',
+          lgType: "1001",
+          access: '100204',
+        },
+        component: () => import('@/hxx-admin/basic-data/oneTwo-maintain.vue')
+      },
+      {
         path: '/source-manage',
         name: 'source-manage',
         meta: {

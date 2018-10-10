@@ -68,7 +68,7 @@ import { getName, getDictGroup, getCreate } from '@/libs/util.js'
 				  method: 'post',
 				  data: {access_token: this.$store.state.user.token,
 				         limit:25,
-				         page:1,
+				         page:this.page,
 				         KEYWORD:this.search.keyword,
 				         CREATE_TIME_gte:start,
 				         CREATE_TIME_lte:end,

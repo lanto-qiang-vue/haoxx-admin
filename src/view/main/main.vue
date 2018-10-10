@@ -91,7 +91,7 @@ export default {
       return this.$store.state.app.local
     },
     isShow(){
-      alert(this.$store.state.app.outStatus);
+      // alert(this.$store.state.app.outStatus);
       return this.$store.state.app.outStatus
     }
   },

@@ -395,7 +395,8 @@ export const getBtns = (access, menu) => {
     let btnAction = ''
     for (let i in menu) {
       if (menu[i].id == access) {
-        btnAction = menu[i].btnAction
+        // console.log('btnAction', menu[i].btnAction)
+        btnAction = menu[i].btnAction|| ''
         break
       } else if (menu[i].children) {
         btnAction = getBtns(access, menu[i].children)
