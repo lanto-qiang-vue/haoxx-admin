@@ -490,7 +490,6 @@
           if (res.success === true) {
             this.total = res.total;
             this.tableData = res.data;
-            this.selection();
           }
         })
       }, changePageSize(size) {

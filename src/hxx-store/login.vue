@@ -1,5 +1,5 @@
 <template>
-  <div style="width:100%;height:100%;">
+  <div style="width:100%;height:100%;overflow:auto;">
     <div style="height:70px;width:1200px;margin:0 auto;">
       <div style="width:960px;height:100%;margin:0 auto;">
         <div style="height:100%;float:left;padding-top:20px;">
@@ -122,6 +122,13 @@
           </div>
           <!-- 注册结束 -->
         </Card>
+        <div style="position: relative;">
+        <img src="../assets/images/hxx-ercode.png" style="width: 140%;position: relative;left: -35px;">
+        <div style="width:100%;position:absolute;overflow: hidden;top: 60px;text-align: center;font-size: 14px;line-height: 20px;color: white;">
+          <div style="display: inline-block;margin-right: 15px;width: 28%;"><img src="../assets/images/IOS.png" style="width: 100%;"><span>苹果用户</span></div>
+          <div style="display: inline-block;;margin-left: 15px;width: 28%;"><img src="../assets/images/android.png" style="width: 100%;"><span>安卓用户</span></div>
+        </div>
+        </div>
       </div>
     </div>
     <div class="footer-right"> © 2018 Copyright 上海衡益网络技术有限公司 沪ICP备18016827号-1</div>
@@ -391,14 +398,17 @@
   .login {
     width: 100%;
     height: 82vh;
+    min-height: 600px;
+    background-size: 100% 100%;
     background-image: url('../assets/images/banner-loginbg.png');
     background-size: cover;
+    margin:0 auto;
     background-position: center;
     position: relative;
     &-con {
       position: absolute;
       right: 250px;
-      top: 50%;
+      top: 68%;
       transform: translateY(-60%);
       width: 300px;
       &-header {
