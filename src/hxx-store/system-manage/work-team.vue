@@ -173,7 +173,7 @@
         }).then(res => {
           if (res.success === true) {
             var data = res.data;
-            // this.data1 = [];
+            this.data1 = [];
             for (var i in data) {
               this.data1.push({"key": data[i].USER_ID, "label": data[i].USER_NAME});
             }
