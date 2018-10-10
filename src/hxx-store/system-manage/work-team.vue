@@ -14,7 +14,7 @@
       <common-table v-model="tableData" :columns="columns" @changePageSize="changePageSize" :showSearch="false"
                     @changePage="changePage" :total="total" :showOperate="type == 2" :show="showTable" :page="page">
         <div slot="operate">
-          <Button type="primary" @click="setMember">设置班组成员</Button>
+          <Button type="primary" @click="setMember" v-if="accessBtn('set_person')">设置班组成员</Button>
         </div>
         <Modal
           v-model="showModal"
