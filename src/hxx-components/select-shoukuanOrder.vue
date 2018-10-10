@@ -25,7 +25,7 @@
                         <FormItem label="更换储值卡:" v-if="disFlag">
                             <Button type="primary" @click="showCard=Math.random();">更换</Button>
                         </FormItem>
-                        <FormItem label="余额:">
+                        <FormItem label="余额:" v-if="disFlag">
                             <span>{{shoukuanSearch.SURPLUS_MONEY}}元</span>
                         </FormItem>
                         <FormItem label="储值卡状态:" v-if="disFlag">
