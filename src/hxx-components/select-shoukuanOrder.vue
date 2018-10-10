@@ -18,17 +18,17 @@
                         <FormItem label="客户姓名:">
                             <span>{{shoukuanSearch.CUSTOMER_NAME}}</span>
                         </FormItem>
-                        <FormItem label="储值卡号:">
+                        <FormItem label="储值卡号:" v-if="disFlag">
                             <span>{{shoukuanData.MEMBER_CARD_NO}}</span>
                             
                         </FormItem>
-                        <FormItem label="更换储值卡:">
+                        <FormItem label="更换储值卡:" v-if="disFlag">
                             <Button type="primary" @click="showCard=Math.random();">更换</Button>
                         </FormItem>
                         <FormItem label="余额:">
                             <span>{{shoukuanSearch.SURPLUS_MONEY}}元</span>
                         </FormItem>
-                        <FormItem label="储值卡状态:">
+                        <FormItem label="储值卡状态:" v-if="disFlag">
                             <span>{{shoukuanData.MEMBER_CARD_STATUS}}</span>
                         </FormItem>
                     </Form>
@@ -87,7 +87,7 @@
                         </FormItem>
                     </Form>
                 </Panel>
-                <Panel name="4">是否开据发票
+                <Panel name="4" v-if="disFlag">是否开据发票
                     <Form slot="content" :label-width="120" class="detail-form" >
                         <FormItem label="">
                             <Checkbox v-model="single" @on-change="isGiveInvoiceFun">是否开据发票</Checkbox>
@@ -199,18 +199,20 @@ export default {
             
             payModeData:[],
             timer:null,
+            disFlag:false,
+            accountNum:0,//统计定时轮询次数
         }
     },
     watch:{
         showSelectAccount(){
             this.showShouKuan=true;
             this.handleReset("shoukuanSearch");
-            this.handleReset("isInvoice");
+            // this.handleReset("isInvoice");
             //取付款方式的值集合-------
             this.payModeData=getDictGroup(this.$store.state.app.dict, '1010');
             var arr=[];
             for(let i in this.payModeData){
-                if(this.payModeData[i].order==7||this.payModeData[i].order==8){
+                if(this.payModeData[i].order==7||this.payModeData[i].order==8||this.payModeData[i].order==4){
                     
                 }else{
                     arr.push(this.payModeData[i]);
@@ -326,7 +328,8 @@ export default {
                                             if (res.success === true) {
                                                 this.$Message.info('收款成功');
                                                 this.showShouKuan=false;//收款界面弹出
-
+                                                this.accountNum=0;
+                                                window.clearInterval(this.timer);
                                                 this.getAccountData(this.shoukuanSearch["REPAIR_ID"]);
                                                 this.$emit('closeGetList');
                                             }else{
@@ -381,7 +384,8 @@ export default {
                             if (res.success === true) {
                                 this.$Message.info('收款成功');
                                 this.showShouKuan=false;//收款界面弹出
-                                
+                                this.accountNum=0;
+                                window.clearInterval(this.timer);
                                 this.getAccountData(this.shoukuanSearch["REPAIR_ID"]);
                                 this.$emit('closeGetList');
                             }else{
@@ -533,6 +537,8 @@ export default {
                 if (res.success === true) {
                     if(res.data){
                         var self=this;
+                        this.accountNum=0;
+                        window.clearInterval(this.timer);
                         this.timer=setInterval(function(){
                             self.getStatus();
                         },2000);
@@ -542,11 +548,17 @@ export default {
         },
         //请求状态--------
         getStatus(){
+            console.log(this.listSearch.REPAIR_NO);
+            this.accountNum++;
+            if(this.accountNum>=50){
+                this.accountNum=0;
+                window.clearInterval(this.timer);
+            }
             this.axios.request({
                 url: '/tenant/repair/ttrepairworkorder/get_status',
                 method: 'post',
                 data: {
-                    REPAIR_NO: "GD1201809190016",
+                    REPAIR_NO: this.listSearch.REPAIR_NO,
                     access_token: this.$store.state.user.token
                 }
             }).then(res => {

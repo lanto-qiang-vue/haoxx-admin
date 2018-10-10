@@ -20,9 +20,9 @@
       }
     },
     computed:{
-		  inputType(){
-		    return this.type=='number'?'text': this.type
-      }
+        inputType(){
+            return this.type=='number'?'text': this.type
+        }
     },
     mounted(){
 		  console.log(this.params,this.params.column,this.params.column.key);

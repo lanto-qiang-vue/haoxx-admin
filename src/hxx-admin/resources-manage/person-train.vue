@@ -2,7 +2,7 @@
 <template>
   <common-table v-model="tableData" :columns="columns" :total="total" :clearSelect="clearTableSelect"
                 @changePage="changePage" @changePageSize="changePageSize" @onRowClick="onRowClick"
-                @onRowDblclick="onRowDblclick" :show="showTable" :page="page">
+                 :show="showTable" :page="page">
     <div slot="search">
       <Form ref="search" :rules="ruleValidate"  :model="search" :label-width="85" inline>
           <FormItem label="创建时间:" style="width: 100%; margin-right: 10px;">
@@ -13,19 +13,14 @@
                 <Button type="primary" @click="clear()"><Icon type="ios-undo" size="24"/></Button>
               </ButtonGroup>
           </FormItem>
-          
        </Form>
-      
     </div>
     <div slot="operate">
       <Button type="primary" v-if="" @click="addPerson">新增</Button>
-      <Button type="primary" v-if="" :disabled='!detailData' @click="editButton">结束培训</Button>
-      <Button type="primary" v-if="" :disabled='buttonFlag' @click="">查看明细</Button>
+      <Button type="primary" v-if="" :disabled='endButton' @click="endButtonFun">结束培训</Button>
+      <Button type="primary" v-if="" :disabled='!detailData' @click="detailButton">查看明细</Button>
       <Button type="primary" v-if="" :disabled='!detailData' @click="editButton">详细</Button>
     </div>
-    <!--详情-->
-    <!--<person-training-detail class="table-modal-detail" :showDetail="showDetail" :detailData="detailData" @closeDetail="closeDetail"></person-training-detail>-->
-
       <!--  新增按钮数据  -->
         <Modal
             v-model="showAdd"
@@ -36,8 +31,7 @@
             :transfer= "false"
             :footer-hide="false"
             :transition-names="['', '']"
-            class="table-modal-detail"
-        >
+            class="table-modal-detail">
             <div style="height: 100%;overflow: auto;">
                 <Form :label-width="100" inline class="detail-form" ref="newAddData" :rules="ruleValidate"  :model="newAddData">
                     <FormItem label="培训内容:"  style="width:45%;" prop="TrainingContent">
@@ -62,14 +56,102 @@
                     
                 </Form>
             </div>
-            
-
             <div slot="footer">
-                <Button type="primary" @click="" style="margin-right: 10px;">保存</Button>
+                <Button type="primary" @click="saveAddData('newAddData')" style="margin-right: 10px;">保存</Button>
             </div>
             
         </Modal>
 
+        <!--查看明细-->
+        <Modal
+            v-model="showNewDetail"
+            title="申请明细"
+            @on-visible-change="detailVisibleChange"
+            width="90"
+            :scrollable="true"
+            :transfer= "false"
+            :footer-hide="false"
+            :transition-names="['', '']"
+            class="table-modal-detail">
+            <div style="height: 100%;overflow: auto;">
+                <Table
+                    :data="checkDetailData"
+                    :columns="columnsD"
+                    stripe
+                    border
+                >
+                </Table>
+            </div>
+            <div slot="footer">
+                <Button type="primary" @click="checkOutFun" style="margin-right: 10px;">返回</Button>
+            </div>
+            
+        </Modal>
+
+    <!--  详细 页面数据  -->
+        <Modal
+            v-model="showDetail"
+            title="人员培训信息"
+            width="90"
+            @on-visible-change="editVisibleChange"
+            :scrollable="true"
+            :transfer= "false"
+            :footer-hide="false"
+            :transition-names="['', '']"
+            class="table-modal-detail">
+            <div style="height: 100%;overflow: auto;">
+                <Form :label-width="100" inline class="detail-form">
+                    <FormItem label="培训内容:"  style="width:45%;" >
+                        <Input type="textarea" :rows="4"  v-model="showDetailData.trainingContent" placeholder="" disabled>
+                        </Input>
+                    </FormItem>
+                    <FormItem label="培训地点:"  style="width:45%;" >
+                        <Input type="textarea" :rows="4"  v-model="showDetailData.place" disabled placeholder="">
+                        </Input>
+                    
+                    </FormItem>
+                    <FormItem label="培训时间:"  style="width:45%;" >
+                        <Input type="text"  v-model="showDetailData.time"  placeholder="" disabled>
+                        </Input>
+                    </FormItem>
+                    <FormItem label="培训费用:" style="width:45%;" >
+                        
+                        <Input type="text"  v-model="showDetailData.cost" disabled placeholder="">
+                        </Input>
+                  
+                    </FormItem>
+                    <FormItem label="发布人:" style="width:45%;" >
+                        
+                        <Input type="text"  v-model="showDetailData.cREATER" disabled placeholder="">
+                        </Input>
+                        
+                    </FormItem>
+                    <FormItem label="审核人:" style="width:45%;" >
+                        
+                        <Input type="text"  v-model="showDetailData.userStatusModification" disabled placeholder="">
+                        </Input>
+                      
+                    </FormItem>
+                    <FormItem label="更改时间:" style="width:45%;" >
+                        
+                        <Input type="text"  v-model="showDetailData.uPDATE_TIME" disabled placeholder="">
+                        </Input>
+                        
+                    </FormItem>
+                    <FormItem label="申请人数:" style="width:45%;" >
+                        
+                        <Input type="text"  v-model="showDetailData.num" disabled placeholder="">
+                        </Input>
+                        
+                    </FormItem>
+                    
+                </Form>
+            </div>
+            <div slot="footer">
+                <Button type="primary" @click="outDetail" style="margin-right: 10px;">返回</Button>
+            </div>
+            
+        </Modal>
   </common-table>
 
 
@@ -78,15 +160,12 @@
 
 </template>
 <script>
-  import commonTable from '@/hxx-components/common-table.vue'
-  import { getName, getDictGroup ,getCreate} from '@/libs/util.js'
-  import mixin from '@/hxx-components/mixin'
-  import { formatDate } from '@/libs/tools.js'
-//   import personTrainingDetail from './person-training-detail.vue'
+import commonTable from '@/hxx-components/common-table.vue'
+import { formatDate } from '@/libs/tools.js'
 export default {
 	name: "person-train",
     components: {commonTable},
-    mixins: [mixin],
+
     data(){
 		return{
             columns: [
@@ -100,7 +179,6 @@ export default {
                 },
                 {title: '培训地点', key: 'place', sortable: true, minWidth: 150},
                 {title: '培训费用', key: 'cost', sortable: true, minWidth: 120,
-                    
                 },
                 {title: '发布人', key: 'cREATER', sortable: true, minWidth: 120,
                     
@@ -153,8 +231,36 @@ export default {
             showDetail: false,
             detailData: null,
             clearTableSelect: null,
-            buttonFlag:true,
-            
+
+            endButton:true,//结束按钮状态
+            showNewDetail:false,//申请明细框
+            columnsD:[
+                {title: '序号',  minWidth: 60,
+                    type: 'index'
+                },
+                {title: '申请人', key: 'cREATER', sortable: true, minWidth: 200,
+                },
+
+                {title: '申请时间', key: 'cREATE_TIME', sortable: true, minWidth: 200,
+                    render: (h, params) => h('span', params.row.cREATE_TIME.substr(0, 19))
+                },
+
+            ],
+            checkDetailData:[],
+            showDetailData:{
+                cREATER:"",
+                cREATE_TIME:"",
+                cost:"",
+                error:"",
+                id:"",
+                num:"",
+                place:"",
+                state:"",
+                time:"",
+                trainingContent:"",
+                uPDATE_TIME:"",
+                userStatusModification:"",
+            },//详细页面数据
       }
     },
     computed:{
@@ -188,6 +294,7 @@ export default {
                 }
             })
             this.detailData = null;
+            this.endButton=true;
         },
         clear(){
             for(var i in this.search){
@@ -196,6 +303,7 @@ export default {
             
             this.page=1;
             this.getList();
+            
         },
         changePage(page){
             this.page= page
@@ -208,23 +316,16 @@ export default {
 
         onRowClick(row, index){
             console.log(row);
-            this.detailData=row
-            if(this.detailData.isjoin=="0"){
-                this.buttonFlag=true;
+            this.detailData=row;
+            if(this.detailData.state=='2'){
+                this.endButton=true;
             }else{
-                if(this.detailData.state=='2'){
-                    this.buttonFlag=true;
-                    
-                }else{
-                    this.buttonFlag=false;
-                }
+                this.endButton=false;
             }
             
+            
         },
-        onRowDblclick( row, index){
-            this.detailData=row;
-            this.showDetail=Math.random();
-        },
+
         closeDetail(){
             this.detailData= null;
             this.clearTableSelect= Math.random();
@@ -233,7 +334,6 @@ export default {
         //新增按钮---------界面数据---
         addPerson(){
             this.showAdd=true;
-            
             for(let i in this.newAddData){
                 if(i=="Cost"){
                     this.newAddData[i]=0;
@@ -241,39 +341,116 @@ export default {
                     this.newAddData[i]="";
                 }
             }
-            
-            
         },
         addVisibleChange(status){
             if(status === false){
                 this.$refs['newAddData'].resetFields();
+                this.getList();
             }
         },
-        saveOrSubmit(){
+        //保存新增数据----
+        saveAddData(name){
+            this.$refs[name].validate((valid) => {
+                if (valid) {
+                    this.$Modal.confirm({
+                        title:"系统提示!",
+                        content:"确定要保存吗？",
+                        onOk:this.saveAddFun,
+                        
+                    })
+                }
+            })
+            
+            
+        },
+        saveAddFun(){
             this.axios.request({
-                url: '/tenant/support/tenant_techtrain/examine_tech',
+                url: '/manage/support/tech_train/save',
+                method: 'post',
+                data: {
+                    data: JSON.stringify(this.newAddData),
+                    access_token: this.$store.state.user.token
+                }
+            }).then(res => {
+                if (res.success === true) {
+                    this.showAdd=false;
+                    for(let i in this.newAddData){
+                        if(i=="Cost"){
+                            this.newAddData[i]=0;
+                        }else{
+                            this.newAddData[i]="";
+                        }
+                    }
+                    this.getList();
+                }
+            })
+        },
+        //结束培训按钮-----------
+        endButtonFun(){
+            this.$Modal.confirm({
+                title:"系统提示!",
+                content:"确定要结束吗？",
+                onOk:this.endFun,
+                
+            })
+        },
+        endFun(){
+            this.axios.request({
+                url: '/manage/support/tech_train/update_pass',
                 method: 'post',
                 data: {
                 
                     ids: this.detailData.id,
                     access_token: this.$store.state.user.token
                 }
-                }).then(res => {
+            }).then(res => {
                 if (res.success === true) {
-                    this.$Message.info('申请成功');
-                    this.detailData=null;
                     this.getList();
-                    this.buttonFlag=true;
+                    
                 }
             })
-            
         },
-        //编辑按钮
+        //查看明细按钮-------
+        detailButton(){
+            this.showNewDetail=true;
+            this.axios.request({
+                url: '/manage/support/tech_train/checkDetail',
+                method: 'post',
+                data: {
+                    id: this.detailData.id,
+                    page: 1,
+                    start: 0,
+                    limit: 25,
+                    access_token: this.$store.state.user.token
+                }
+            }).then(res => {
+                if (res.success === true) {
+                    this.checkDetailData=res.data;
+                }
+            })
+        },
+        checkOutFun(){
+            this.showNewDetail=false;
+        },
+        detailVisibleChange(status){
+            if(status === false){
+                this.getList();
+            }
+        },
+        //详细按钮----------
         editButton(){
-            if(this.detailData){
-                this.showDetail=Math.random();
-            }else{
-                this.$Message.info('请选择一条数据');
+            for(let i in this.detailData){
+                this.showDetailData[i]=this.detailData[i];
+            }
+            this.showDetail=true;
+            console.log('aa',this.showDetailData);
+        },
+        outDetail(){
+            this.showDetail=false;
+        },
+        editVisibleChange(status){
+            if(status === false){
+                this.getList();
             }
         },
         //重置数据-----

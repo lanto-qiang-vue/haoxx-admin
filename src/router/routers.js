@@ -884,6 +884,17 @@ export default [
           access: '100207',
         },
         component: () => import('@/hxx-admin/basic-data/maintenance-classify.vue')
+      },
+      {
+        path: '/source-manage',
+        name: 'source-manage',
+        meta: {
+          icon: 'md-funnel',
+          title: '数据元管理',
+          lgType: "1001",
+          access: '100201',
+        },
+        component: () => import('@/hxx-admin/basic-data/source-manage.vue')
       }
     ]
   },
@@ -930,6 +941,41 @@ export default [
           access: '100303',
         },
         component: () => import('@/hxx-admin/resources-manage/person-train.vue')
+      },
+      // {
+      //   path: '/user-management',
+      //   name: 'user-management',
+      //   meta: {
+      //     icon: 'md-funnel',
+      //     title: '用户管理',
+      //     lgType: "1001",
+      //     access: '100401',
+      //   },
+      //   component: () => import('@/hxx-admin/stystem-management/user-management.vue')
+      // },
+    ]
+  },
+  {
+    path: '/stystem-management',
+    name: 'stystem-management',
+    meta: {
+      icon: 'logo-buffer',
+      title: '系统管理',
+      lgType: "1001",
+      access: '1004',
+    },
+    component: Main,
+    children:[
+      {
+        path: '/user-management',
+        name: 'user-management',
+        meta: {
+          icon: 'md-funnel',
+          title: '用户管理',
+          lgType: "1001",
+          access: '100401',
+        },
+        component: () => import('@/hxx-admin/stystem-management/user-management.vue')
       },
     ]
   },
