@@ -190,28 +190,23 @@
       this.etype = Math.random();
     },
     esuccess(res){
-      //Excel成功上传回调
-      var title = "导入错误信息";
-      var content = "";
-      if(res.data === true){
-        title = "提示信息";
-        content = "批量导入成功";
-        this.getList();
-                 this.$Modal.success({
-                            title: title,
-                            content: content
-                        });
-      return;
-      }
-      //有错误集合展示
-      if(res.data.errorList.length > 0){
-           res.data.errorList.filter(function(item){
-            content += '<p>'+ '第' + item.rowNum + '行,'+ item.errorMsg + '</p>';
-           });
-           this.$Modal.error({
-                            title: title,
-                            content: content
-                        });
+      if(res.success == true){
+        let flag = res.data.errorList ? true : false;
+        if(flag && res.data.errorList.length > 0){
+          let content = "";
+          let data = res.data.errorList;
+          for(let i in data){
+            content += "<div>第"+data[i].rowNum+ "行" + data[i].errorMsg +"</div> ";
+          }
+          this.$Modal.error({title:'导入错误提示',content:content,width:600});
+        }else{
+          this.$Message.success('批量导入成功');
+          this.uploadShow = false;
+          this.getTree();
+          this.getList();
+        }
+      }else{
+        this.$Modal.error({title:'系统提示',content:res.Exception.message});
       }
     },
     expor(){

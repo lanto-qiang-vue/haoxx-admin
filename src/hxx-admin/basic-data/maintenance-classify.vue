@@ -98,11 +98,11 @@
       },
       del() {
         this.axios.request({
-          url: '/manage/basedata/tb_insurer/delete',
+          url: '/manage/basedata/tbrepairitemtype/delete',
           method: 'post',
           data: {
             access_token: this.$store.state.user.token,
-            ids: this.list.INSURER_ID,
+            ids:this.list.TYPE_ID,
           }
         }).then(res => {
           if (res.success === true) {
@@ -142,8 +142,24 @@
           }
         }).then(res => {
           if (res.success === true) {
+            if(this.formData.TYPE_ID){
+              for(let i in this.tableData){
+                if(this.tableData[i].TYPE_ID == this.formData.TYPE_ID){
+                  let data = [];
+                  for(let i in this.tableData){
+                    if(this.tableData[i].TYPE_ID == this.formData.TYPE_ID){
+                      data.push(res.data);
+                    }else{
+                      data.push(this.tableData[i]);
+                    }
+                  }
+                  this.tableData = data;
+                }
+              }
+            }else{
+              this.tableData.unshift(res.data);
+            }
             this.showModal = false;
-            this.getList();
           }
         })
       },
