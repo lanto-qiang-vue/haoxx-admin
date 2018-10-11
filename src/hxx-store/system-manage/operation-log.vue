@@ -2,7 +2,7 @@
   <common-table v-model="tableData" :columns="columns" @changePageSize="changePageSize" @changePage="changePage" :total="total"  :show="showTable" :page="page">
     <div slot="search"  >
       <div class="search-block">
-        <Input v-model="search.keyword"  placeholder="仓库编号/名称..."></Input>
+        <Input v-model="search.keyword"  placeholder="业务名称/操作名称..."></Input>
       </div>
       <div class="search-block"style="width:250px;">
         <DatePicker v-model="search.start" format="yyyy-MM-dd" type="date" placeholder="开始时间" style="width: 120px;"></DatePicker>

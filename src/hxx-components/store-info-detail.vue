@@ -12,7 +12,7 @@
             <Dropdown trigger="click" style="width: 100%" id="select-type" placement="bottom-start">
               <Input v-model="info.TENANT_AREA_DISPLAY" :readonly="true"></Input>
               <DropdownMenu slot="list" v-if="editAble">
-              <select-area @changeRow="changeRow"></select-area>
+              <select-area @changeRow="changeRow" :interface="interface"></select-area>
               </DropdownMenu>
             </Dropdown>
           </FormItem>
@@ -151,12 +151,20 @@
   import selectArea from '@/hxx-components/select-area.vue';
 	export default {
 		name: "store-info-detail",
-    props: ['data', 'show','type','getType'],
+    props: ['data', 'show','type','getType','locale'],
+    // props:{
+		//   data:{},
+    //   show:{},
+    //   type:{},
+    //   getType:{},
+    //   locale:{default(){ return 'index';}},
+    // },
     components:{selectArea},
     mixins: [mixin],
     data(){
 		  return{
         collapse: ['1', '2'],
+        interface:'/register/tenantregister/regionList',
         buttonName:'注册门店',
         info:{
           "TENANT_ID":"",
@@ -208,7 +216,6 @@
     },
     watch:{
 		  data(datas){
-		    console.log(JSON.stringify(datas));
        this.cancelEdit()
       },
       show(val){
@@ -216,9 +223,10 @@
       },
       'info.REMARK'(){
         this.$emit('getRemark',this.info.REMARK);
-      }
+      },
     },
     created(){
+		  if(this.locale == 'admin') this.interface = '/manage/info/tenantinfo/regionList';
       if(this.type == 1){this.editAble = true;}
       let rule= (this.isAdmin? []: [{ required: true, message:'必填项不能为空'}])
       const validateEMAIL = (rule, value, callback) => {

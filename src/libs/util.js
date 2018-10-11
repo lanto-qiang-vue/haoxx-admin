@@ -9,7 +9,17 @@ export const ACCESSMENU_KEY = 'ACCESSMENU'
 export const DICT_KEY = 'DICT'
 export const TENANT_KEY = 'Tenant';
 export const OUTSTATUS = 'outStatus'
+//存储前台账号等信息....
 export const ACCOUNT = 'account';
+//存储后台登陆信息...
+export const ADMIN = 'admin';
+export const setAdmin = (info) =>{
+  localStorage.setItem(ADMIN,info || {})
+}
+export const getAdmin = () => {
+  const admin = localStorage.getItem(ADMIN)
+  return admin || {}
+}
 export const setOutStatus = (type) =>{
   localStorage.setItem(OUTSTATUS,type || 0)
 }

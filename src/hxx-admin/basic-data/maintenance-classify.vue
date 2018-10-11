@@ -72,6 +72,9 @@
           TYPE_NAME: [{required: true, message: '类型名称必填'}],
         },
         columns: [
+          {title: '序号',  minWidth: 70,
+            render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
+          },
           {title: '项目分类编号', key: 'TYPE_CODE', sortable: true, minWidth: 140},
           {title: '项目分类名称', key: 'TYPE_NAME', sortable: true, minWidth: 140},
           {title: '备注', key: 'REMARK', sortable: true, minWidth: 140}

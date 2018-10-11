@@ -60,22 +60,26 @@
 </template>
 
 <script>
-// import LoginForm from '_c/login-form'
+import { getAdmin} from '@/libs/util.js'
 import { mapActions } from 'vuex'
 export default {
   data () {
     return {
       form: {
-        userName: 'sa',
-        password: '123456'
+        userName: '',
+        password: ''
       },
       single: false
-
     }
   },
-  // components: {
-  //   LoginForm
-  // },
+  created(){
+    let data = JSON.parse(getAdmin());
+    if(data.userName){
+      this.single = true;
+      this.form.userName = data.userName;
+      this.form.password = data.password;
+    }
+  },
   methods: {
     ...mapActions([
       'handleLogin',
@@ -98,6 +102,11 @@ export default {
           this.$store.commit('setDict', res.data.dict)
           let getInfo = Promise.all([this.getUser(res.data.tokenStr), this.getMenu(res.data.tokenStr)])
           getInfo.then(() => {
+            if(this.single){
+              this.$store.commit('setAdmin',JSON.stringify(this.form));
+            }else{
+              this.$store.commit('setAdmin',JSON.stringify({}));
+            }
             this.$router.push({name: 'admin-home'})
             this.$Message.success('登录成功')
           })
