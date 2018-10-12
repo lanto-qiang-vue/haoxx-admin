@@ -1,10 +1,10 @@
 <!--数据元管理 2018-10-09-->
 <template>
-
-    <Split v-model="splitNum" class="split" :min="0.3" :max="0.7">
+    <div style="width: 100%;height: 100%">
+        <Split v-model="splitNum" class="split" :min="0.3" :max="0.7">
         <div slot="left" class="split-pane" ref="commonTable">
             <div class="operate" >
-                <Button type="primary" icon="md-add" @click="addNewType"></Button>
+                <Button type="primary" icon="md-add" @click="showModal=true;"></Button>
                 <div class="search-block">
                     <Input v-model="search.input" placeholder="类型编号/名称/数据元名称.." >
                         <Icon type="ios-search" slot="suffix" @click="searchFun" style="cursor:pointer;"/>
@@ -24,15 +24,47 @@
             <Table :columns="columns1" :data="tableData1" border @on-select="selectCode" @on-select-all="selectAllCode"></Table>
         </div>
         
+        
     </Split>
+        <Modal
+            v-model="showModal"
+            title="基本信息"
+            :width="400"
+            @on-visible-change="visibleChange"
+            :scrollable="true"
+            :transfer= "true"
+            :footer-hide="false"
+            
+            :mask-closable="false"
+            :transition-names="['', '']">
+            <Form :label-width="110" ref="listSearch" :rules="ruleValidate"  :model="listSearch">
+                <FormItem label="类型名称:" prop="typeName">
+                    <Input type="text" v-model="listSearch.typeName" placeholder=""> </Input>
+                </FormItem>
+                <FormItem label="数据元名称:" prop="codeName">
+                    <Input type="text" v-model="listSearch.codeName" placeholder=""> </Input>
+                </FormItem>
+            </Form>
+            <!--底部按钮组-->
+            <div slot="footer" >
+                <Button @click="showModal=false;">取消</Button>
+                <Button type="primary" @click="handleSubmit('listSearch')">提交</Button>
+                
+            </div>
+        </Modal>
+    
+    </div>
+    
 
+    
 </template>
 <script>
+  import sourceManageDetail from './source-manage-detail.vue'
     import commonTable from '@/hxx-components/common-table.vue'
   import { getName, getDictGroup } from '@/libs/util.js'
     export default {
         name: "source-manage",
-        components: {commonTable, },
+        components: {commonTable, sourceManageDetail},
         data(){
             return{
                 splitNum:0.3,
@@ -55,7 +87,7 @@
                     {title: '数据元', key: 'CODE_ID', minWidth: 110,
                         
                     },
-                    {title: '数据元名称', key: 'TYPE_NAME', minWidth: 120},
+                    {title: '数据元名称', key: 'CODE_DESC', minWidth: 120},
                     {title: '排序值', key: 'NUM',  minWidth: 80},
                     {title: '状态', key: 'STATUS',  minWidth: 80,
                         render: (h, params) => h('span', getName(this.statusList, params.row.STATUS))
@@ -68,7 +100,7 @@
                 tableData1:[],
                 page: 1,
                 limit: 25,
-                total: 0,
+                
                 showTable:false,
                 showDetail: false,
                 detailData: null,
@@ -78,13 +110,30 @@
                 deleteCodeId:'',
                 windowInnerHeight: window.innerHeight,
                 tableHeight: 500,
+                timer:null,//定时开关
+                showModal:false,//新增按钮框的界面----
+
+                listSearch:{
+                    typeName:'',
+                    codeName:''
+                },
+                ruleValidate:{
+                    typeName: [
+                        { required: true,  message: '请填写', trigger: 'change' }
+                    ],
+                    codeName: [
+                        { required: true,  message: '请填写', trigger: 'change' }
+                    ],
+                },
+
+                temTypeData:null,
+                temCodeData:null,
                 
             }
         },
         mounted () {
             this.getList();
             let self= this
-            // self.resize(1000)
             this.resize(500)
             window.onresize = function(){
                 if(window.innerHeight!= self.windowInnerHeight)
@@ -95,62 +144,44 @@
 			statusList(){
 				return getDictGroup(this.$store.state.app.dict,'1001');
 			},
-			sexList(){
-				return getDictGroup(this.$store.state.app.dict,'1003');
-			},
-			classList(){
-				return getDictGroup(this.$store.state.app.dict,'1012');
-			},
-			defaultList(){
-				return getDictGroup(this.$store.state.app.dict,'1004');
-			}
 		},
         methods:{
+            //缩放表格------
             resize(time){
                 let self= this
                 let commonTable=this.$refs.commonTable
-                console.log("origin.common-table", commonTable.offsetHeight)
                 if(commonTable.offsetHeight) {
                     clearTimeout(this.timer);
                     this.timer = setTimeout(function () {
                         self.windowInnerHeight= window.innerHeight
                         self.tableHeight = commonTable.offsetHeight - 20 -
-                        // commonTable.querySelector(".table-search").offsetHeight -
                         commonTable.querySelector(".operate").offsetHeight - 10;
-                        // commonTable.querySelector(".table-bottom").offsetHeight;
-                        // commonTable.style.opacity = 1
-
-                        // console.log(".common-table", commonTable.offsetHeight)
-                        // console.log(".table-search", commonTable.querySelector(".table-search").offsetHeight)
-                        // console.log(".operate", commonTable.querySelector(".operate").offsetHeight)
-                        // console.log(".table-bottom", commonTable.querySelector(".table-bottom").offsetHeight)
                     }, time);
                 }
             },
             //获取当前页面数据------
 		    getList(){
                 this.axios.request({
-                url: '/manage/basedata/dbcode/typeList',
-                method: 'post',
-                data: {
-                    keyWord: this.search.input,
-                    page: 1,
-                    start: 0,
-                    limit: 25,
-                    access_token: this.$store.state.user.token
-                }
-                }).then(res => {
-                if (res.success === true) {
-                    this.tableData= res.data
-                    this.total= res.total
-                    if(this.firstFlag){
-
-                        this.getCodeList(res.data[0]['TYPE']);
-                        this.firstFlag=false;
-                        this.tableData[0]._highlight = true;
+                    url: '/manage/basedata/dbcode/typeList',
+                    method: 'post',
+                    data: {
+                        keyWord: this.search.input,
+                        page: 1,
+                        start: 0,
+                        limit: 25,
+                        access_token: this.$store.state.user.token
                     }
-                    
-                }
+                }).then(res => {
+                    if (res.success === true) {
+                        this.tableData= res.data
+                        
+                        if(this.firstFlag){
+                            this.getCodeList(res.data[0]['TYPE']);
+                            this.firstFlag=false;
+                            this.tableData[0]._highlight = true;
+                        }
+                        
+                    }
                 })
             },
             getCodeList(id){
@@ -167,6 +198,9 @@
                 }).then(res => {
                     if (res.success === true) {
                         this.tableData1= res.data;
+                        this.temCodeData=res.data[0];
+                        // this.updateType();
+                        // this.updateCode();
                     }
                 })
             },
@@ -187,6 +221,63 @@
                     if (res.success === true) {
                         this.tableData.unshift(res.data);
                         this.getCodeList(res.data.TYPE);
+                        this.temTypeData=res.data;
+                        
+                    }
+                })
+            },
+            //保存按钮-----------
+            handleSubmit (name) {
+                this.$refs[name].validate((valid) => {
+                    if (valid) {
+                        this.addNewType();
+                    }
+                });
+            },
+            //弹出层状态变化--------
+            visibleChange(status){
+                if(status === false){
+                    this.$refs['listSearch'].resetFields();
+                    console.log(this.listSearch);
+                }
+            },
+            //更新数据类型
+            updateType(){
+                this.axios.request({
+                    url: '/manage/basedata/dbcode/updateType',
+                    method: 'post',
+                    data: {
+                        type:this.temTypeData['TYPE'],
+                        name:this.listSearch.typeName,
+                        access_token: this.$store.state.user.token
+                    }
+                }).then(res => {
+                    if (res.success === true) {
+                        
+                    }
+                })
+            },
+            //更新数据元
+            updateCode(){
+                var commitdata={};
+                for(let i in this.temCodeData){
+                    commitdata[i]=this.temCodeData[i];
+                }
+                commitdata['CODE_DESC']=this.listSearch.codeName;
+
+                this.axios.request({
+                    url: '/manage/basedata/dbcode/updateCode',
+                    method: 'post',
+                    data: {
+                        codeBak:commitdata['CODE_ID_BAK'],
+                        type:commitdata['TYPE'],
+                        data:JSON.stringify(commitdata),
+                        
+                        access_token: this.$store.state.user.token
+                    }
+                }).then(res => {
+                    if (res.success === true) {
+                        
                     }
                 })
             },
