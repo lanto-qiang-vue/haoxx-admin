@@ -26,6 +26,9 @@
         ],
       }
     },
+    props:{
+      interface:{default(){return '/register/tenantregister/regionList'}}
+  },
     mounted() {
       this.baseUrl = env;
       this.getList();
@@ -71,7 +74,7 @@
       },
       getList() {
         this.axios.request({
-          url: '/register/tenantregister/regionList',
+          url:this.interface,
           method: 'post',
           data: {
             access_token: this.$store.state.user.token,

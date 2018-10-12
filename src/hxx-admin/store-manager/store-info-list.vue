@@ -53,7 +53,7 @@
   <Modal v-model="showStoreModal" title="门店注册信息" :width="90" footer-hide :transfer="false"
          class="table-modal-detail store-modal" :transition-names="['', '']">
     <div style="height: 100%">
-      <store-info-detail :data="detailData" :show="showStoreModal" @save="saveStoreInfo"></store-info-detail>
+      <store-info-detail :data="detailData" :locale="'admin'" :show="showStoreModal" @save="saveStoreInfo"></store-info-detail>
     </div>
   </Modal>
 </common-table>
