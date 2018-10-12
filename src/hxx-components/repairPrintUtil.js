@@ -193,7 +193,7 @@ export const printWtsFun=function(wtdData,listSearch,commitItem,commitItemGroup,
             '<tr class="noRLBorder text-center">'+
             '<td colspan="3">合计：</td>'+
             '<td  tdata="Sum" tindex="4" tclass="a" format="0.00" >######</td>'+
-            '<td  tdata="Average" tindex="5" tclass="a" format="0.00" >######</td>'+
+            '<td  tdata="Sum" tindex="5" tclass="a" format="0.00" >######</td>'+
             '<td  tdata="Sum" tindex="6" tclass="a" format="0.00" >######</td>'+
             '<td  tdata="Sum" tindex="7" tclass="a" format="0.00" >######</td>'+
             '<td></td>'+
@@ -227,8 +227,8 @@ export const printWtsFun=function(wtdData,listSearch,commitItem,commitItemGroup,
             partsString+
             '<tr class="noRLBorder text-center">'+
             '<td colspan="4">合计：</td>'+
-            '<td tdata="SubCount" tindex="5" tclass="b" format="#">###</td>'+
-            '<td tdata="Average" tindex="6" tclass="b" format="0.00">######</td>'+
+            '<td tdata="Sum" tindex="5" tclass="b" format="#">###</td>'+
+            '<td tdata="Sum" tindex="6" tclass="b" format="0.00">######</td>'+
             '<td tdata="Sum" tindex="7" tclass="b" format="0.00">######</td>'+
             '<td tdata="Sum" tindex="8" tclass="b" format="0.00">######</td>'+
             '</tr>'+

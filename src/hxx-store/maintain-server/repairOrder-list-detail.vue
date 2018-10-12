@@ -1219,6 +1219,13 @@
         // work_price:null,//工时单价---------
         // paint_price:null,//油漆面单价-------
         itemGroupDetail:[],//维修项目套餐详情
+        
+        printFlag1:false,//打印监控----
+        printFlag2:false,
+        printFlag3:false,
+        printFlag4:false,
+        printTime:null,//打印定时器-----
+
       }
     },
     props:['showDetail', 'detailData','detailQuery'],
@@ -1325,6 +1332,10 @@
               this.getItemGroupFun(this.listSearch["REPAIR_ID"]);
               this.getPartsFun(this.listSearch["REPAIR_ID"]);
               this.getOtherFun(this.listSearch["REPAIR_ID"]);
+              this.printFlag1=false;
+              this.printFlag2=false;
+              this.printFlag3=false;
+              this.printFlag4=false;
 
               //判断维修项目套餐是否显示---------------------------
               if("10041002"==this.detailData['IS_ITEM_GROUP']){
@@ -1806,7 +1817,7 @@
             if (res.success === true) {
               
               this.sTenanceItem1(res.data);
-
+              this.printFlag1=true;
             }
           })
       },
@@ -1831,6 +1842,7 @@
                         this.getItemDetail(this.commitItemGroup[i]['GROUP_ID']);
                     }
                 }
+                this.printFlag2=true;
             }
           })
       },
@@ -1857,6 +1869,7 @@
                         this.listSearch["REPAIR_PART_MONEY"]+=res.data[i]['PART_MONEY'];
                     }
               }
+              this.printFlag3=true;
               
               
             }
@@ -1909,7 +1922,7 @@
                         },
                     ];
                 }
-              
+                this.printFlag4=true;
             }
           })
       },
@@ -2431,46 +2444,52 @@
     },
     //打印测试部分-----------
     printWTS(){
-        
+        clearTimeout(this.printTime);
         console.log("打印维修委托数据---",this.listSearch);
-        var listSearch={};
-        var store=this.$store;
-        for(let i in this.listSearch){
-            switch(i){
-                case'COME_DATE':
-                case'OUT_DATE':
-                    listSearch[i]=formatDate(this.listSearch[i])+ ' '+ formatDate(this.listSearch[i], 'hh:mm:ss');
-                break;
-                case'VEHICLE_COLOR':
-                    console.log(this.carColorData,this.listSearch[i]);
-                    listSearch[i]=getName(this.carColorData,this.listSearch[i])||'';
-                break;
-                case'PLAN_END_DATE':
-                    listSearch[i]=formatDate(this.listSearch[i])+ ' '+ formatDate(this.listSearch[i], 'hh:mm:ss');
-                break;
-                default : listSearch[i]= this.listSearch[i];
-            };
-        };
-        var commitParts=[];
-        for(let i in this.commitParts){
-            commitParts.push(this.commitParts[i]);
-        };
-        for(let i in commitParts){
-            commitParts[i].UNIT=getName(this.partsUnit,commitParts[i].UNIT)||'';
+        if(this.printFlag1&&this.printFlag2&&this.printFlag3&&this.printFlag4){
+                    var listSearch={};
+                    var store=this.$store;
+                    for(let i in this.listSearch){
+                        switch(i){
+                            case'COME_DATE':
+                            case'OUT_DATE':
+                                listSearch[i]=formatDate(this.listSearch[i])+ ' '+ formatDate(this.listSearch[i], 'hh:mm:ss');
+                            break;
+                            case'VEHICLE_COLOR':
+                                console.log(this.carColorData,this.listSearch[i]);
+                                listSearch[i]=getName(this.carColorData,this.listSearch[i])||'';
+                            break;
+                            case'PLAN_END_DATE':
+                                listSearch[i]=formatDate(this.listSearch[i])+ ' '+ formatDate(this.listSearch[i], 'hh:mm:ss');
+                            break;
+                            default : listSearch[i]= this.listSearch[i];
+                        };
+                    };
+                    var commitParts=[];
+                    for(let i in this.commitParts){
+                        commitParts.push(this.commitParts[i]);
+                    };
+                    for(let i in commitParts){
+                        commitParts[i].UNIT=getName(this.partsUnit,commitParts[i].UNIT)||'';
+                    }
+                    var LODOP=getLodop();
+                    var temp=printWtsFun(this.wtdData,listSearch,this.commitItem,this.commitItemGroup,commitParts,this.commitOtherItem,store);
+                    LODOP.PRINT_INITA(1,1,770,660,"测试预览功能");
+                    LODOP.SET_SHOW_MODE("SKIN_TYPE",'1');
+                    LODOP.ADD_PRINT_TEXT(30, 0, "100%", 20, "车 辆 维 修 委 托 单");
+                    LODOP.SET_PRINT_STYLEA(0, "FontSize", 18);
+                    LODOP.SET_PRINT_STYLEA(0, "Alignment", 2);
+                    LODOP.ADD_PRINT_TABLE(70, 0, "100%", 980, temp);
+                    LODOP.PREVIEW();
+
+        }else{
+            let self=this;
+            this.printTime=setTimeout(function(){
+                self.printWTS();
+            },300)
         }
-
-
-
-
-        var LODOP=getLodop();
-        var temp=printWtsFun(this.wtdData,listSearch,this.commitItem,this.commitItemGroup,commitParts,this.commitOtherItem,store);
-        LODOP.PRINT_INITA(1,1,770,660,"测试预览功能");
-        LODOP.SET_SHOW_MODE("SKIN_TYPE",'1');
-        LODOP.ADD_PRINT_TEXT(30, 0, "100%", 20, "车 辆 维 修 委 托 单");
-        LODOP.SET_PRINT_STYLEA(0, "FontSize", 18);
-        LODOP.SET_PRINT_STYLEA(0, "Alignment", 2);
-        LODOP.ADD_PRINT_TABLE(70, 0, "100%", 980, temp);
-        LODOP.PREVIEW();
+        
+        
     
 
     },
@@ -2499,85 +2518,109 @@
     //打印派工单部分---------
     printPgdButton(){
         
-        var listSearch={};
-        for(let i in this.listSearch){
-            switch(i){
-                case'COME_DATE':
-                case'OUT_DATE':
-                    listSearch[i]=formatDate(this.listSearch[i])+ ' '+ formatDate(this.listSearch[i], 'hh:mm:ss');
-                break;
-                case'PLAN_END_DATE':
-                    listSearch[i]=formatDate(this.listSearch[i])+ ' '+ formatDate(this.listSearch[i], 'hh:mm:ss');
-                break;
-                default : listSearch[i]= this.listSearch[i];
+        
+
+        clearTimeout(this.printTime);
+        console.log('打印派工单部分');
+        if(this.printFlag1&&this.printFlag2&&this.printFlag3&&this.printFlag4){
+            var listSearch={};
+            for(let i in this.listSearch){
+                switch(i){
+                    case'COME_DATE':
+                    case'OUT_DATE':
+                        listSearch[i]=formatDate(this.listSearch[i])+ ' '+ formatDate(this.listSearch[i], 'hh:mm:ss');
+                    break;
+                    case'PLAN_END_DATE':
+                        listSearch[i]=formatDate(this.listSearch[i])+ ' '+ formatDate(this.listSearch[i], 'hh:mm:ss');
+                    break;
+                    default : listSearch[i]= this.listSearch[i];
+                };
             };
-        };
-        
-        
+            
+            
 
-        
+            
 
-        var LODOP=getLodop();
-        var temp=printPgdFun(this.wtdData,listSearch,this.commitItem,this.commitParts,this.itemGroupDetail);
-        LODOP.ADD_PRINT_TEXT(60, 0, "100%", 20, "车 辆 维 修 派 工 单");
-        LODOP.SET_PRINT_STYLEA(0, "FontSize", 20);
-        LODOP.SET_PRINT_STYLEA(0, "Alignment", 2);
-        LODOP.ADD_PRINT_TABLE(90, 0, "100%", 950, temp);
-        LODOP.PREVIEW();
+            var LODOP=getLodop();
+            var temp=printPgdFun(this.wtdData,listSearch,this.commitItem,this.commitParts,this.itemGroupDetail);
+            LODOP.ADD_PRINT_TEXT(60, 0, "100%", 20, "车 辆 维 修 派 工 单");
+            LODOP.SET_PRINT_STYLEA(0, "FontSize", 20);
+            LODOP.SET_PRINT_STYLEA(0, "Alignment", 2);
+            LODOP.ADD_PRINT_TABLE(90, 0, "100%", 950, temp);
+            LODOP.PREVIEW();
+
+        }else{
+            let self=this;
+            this.printTime=setTimeout(function(){
+                self.printPgdButton();
+            },300)
+        }
     },
     //打印结算单部分-------------------
     printAccountButton(){
-        var temp=null;
         
-        var store=this.$store;
 
-        var listSearch={};
-        for(let i in this.listSearch){
-            switch(i){
-                case'COME_DATE':
-                case'OUT_DATE':
-                    listSearch[i]=formatDate(this.listSearch[i])+ ' '+ formatDate(this.listSearch[i], 'hh:mm:ss');
-                break;
-                case'VEHICLE_TYPE':
-                    
-                    listSearch[i]=getName(this.vehicleTypeArr,this.listSearch[i]);
-                break;
-                case'REPAIR_TYPE':
-                    listSearch[i]=getName(this.repairTypeArr,this.listSearch[i]);
-                break;
-                default : listSearch[i]= this.listSearch[i];
+        clearTimeout(this.printTime);
+        console.log('打印结算单部分');
+        if(this.printFlag1&&this.printFlag2&&this.printFlag3&&this.printFlag4){
+            var temp=null;
+        
+            var store=this.$store;
+
+            var listSearch={};
+            for(let i in this.listSearch){
+                switch(i){
+                    case'COME_DATE':
+                    case'OUT_DATE':
+                        listSearch[i]=formatDate(this.listSearch[i])+ ' '+ formatDate(this.listSearch[i], 'hh:mm:ss');
+                    break;
+                    case'VEHICLE_TYPE':
+                        
+                        listSearch[i]=getName(this.vehicleTypeArr,this.listSearch[i]);
+                    break;
+                    case'REPAIR_TYPE':
+                        listSearch[i]=getName(this.repairTypeArr,this.listSearch[i]);
+                    break;
+                    default : listSearch[i]= this.listSearch[i];
+                };
+            
             };
-         
-        };
-        var commitParts=[];
-        for(let i in this.commitParts){
-            commitParts.push(this.commitParts[i]);
-        }
-        for(let j in commitParts){
-            commitParts[j].BRAND=getName(this.bandTypeFun,commitParts[j].BRAND)||'';
-            commitParts[j].PART_SOURCE=getName(this.partsTypeFun,commitParts[j].PART_SOURCE)||'';
+            var commitParts=[];
+            for(let i in this.commitParts){
+                commitParts.push(this.commitParts[i]);
+            }
+            for(let j in commitParts){
+                commitParts[j].BRAND=getName(this.bandTypeFun,commitParts[j].BRAND)||'';
+                commitParts[j].PART_SOURCE=getName(this.partsTypeFun,commitParts[j].PART_SOURCE)||'';
 
-            if(commitParts[j].IS_SELF=="true"||commitParts[j].IS_SELF==true){
-                commitParts[j].IS_SELF="是"
-            }else if(commitParts[j].IS_SELF=="false"||commitParts[j].IS_SELF==false){
-                commitParts[j].IS_SELF="否"
+                if(commitParts[j].IS_SELF=="true"||commitParts[j].IS_SELF==true){
+                    commitParts[j].IS_SELF="是"
+                }else if(commitParts[j].IS_SELF=="false"||commitParts[j].IS_SELF==false){
+                    commitParts[j].IS_SELF="否"
+                };
             };
-        };
 
 
 
-        if (this.$store.state.user.userInfo.tenant && this.$store.state.user.userInfo.tenant.businessType == '10331003') {
-            console.log('三级维修');
-            temp=printAccountFun(this.wtdData,listSearch,this.commitItem,this.commitItemGroup,commitParts,this.commitOtherItem,store,'styleFlag');
-        } else {
-            console.log('不是三级维修');
-            temp=printAccountFun(this.wtdData,listSearch,this.commitItem,this.commitItemGroup,commitParts,this.commitOtherItem,store,'styleFlag');
+            if (this.$store.state.user.userInfo.tenant && this.$store.state.user.userInfo.tenant.businessType == '10331003') {
+                console.log('三级维修');
+                temp=printAccountFun(this.wtdData,listSearch,this.commitItem,this.commitItemGroup,commitParts,this.commitOtherItem,store,'styleFlag');
+            } else {
+                console.log('不是三级维修');
+                temp=printAccountFun(this.wtdData,listSearch,this.commitItem,this.commitItemGroup,commitParts,this.commitOtherItem,store,'styleFlag');
+            }
+            var LODOP=getLodop();
+            LODOP.SET_PRINT_STYLEA(0, "Alignment", 2);
+            LODOP.ADD_PRINT_TABLE(50, 0, "100%", 1000, temp);
+            //LODOP.SET_PRINT_STYLEA(0,"Offset2Top",-60); //设置次页偏移把区域向上扩 
+            LODOP.PREVIEW();
+
+        }else{
+            let self=this;
+            this.printTime=setTimeout(function(){
+                self.printAccountButton();
+            },300)
         }
-        var LODOP=getLodop();
-        LODOP.SET_PRINT_STYLEA(0, "Alignment", 2);
-        LODOP.ADD_PRINT_TABLE(50, 0, "100%", 1000, temp);
-        //LODOP.SET_PRINT_STYLEA(0,"Offset2Top",-60); //设置次页偏移把区域向上扩 
-        LODOP.PREVIEW();
     },
     //计算金额统计数据--------
     emitComputedMoney(value){

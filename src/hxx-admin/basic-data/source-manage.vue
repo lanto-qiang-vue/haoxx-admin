@@ -2,7 +2,7 @@
 <template>
 
     <Split v-model="splitNum" class="split" :min="0.3" :max="0.7">
-        <div slot="left" class="split-pane" >
+        <div slot="left" class="split-pane" ref="commonTable">
             <div class="operate" >
                 <Button type="primary" icon="md-add" @click="addNewType"></Button>
                 <div class="search-block">
@@ -11,7 +11,7 @@
                     </Input>
                 </div>
             </div>
-                <Table :columns="columns" :data="tableData" border :highlight-row="true" @on-current-change="onCurrentChange"></Table>
+                <Table :columns="columns" :data="tableData" border :highlight-row="true" @on-current-change="onCurrentChange" :height="tableHeight"></Table>
         </div>
 
         <div slot="right" class="split-pane" >
@@ -76,10 +76,20 @@
                 isOrderSuccess:true,//判断是不是预约成功
                 firstFlag:true,
                 deleteCodeId:'',
+                windowInnerHeight: window.innerHeight,
+                tableHeight: 500,
+                
             }
         },
         mounted () {
             this.getList();
+            let self= this
+            // self.resize(1000)
+            this.resize(500)
+            window.onresize = function(){
+                if(window.innerHeight!= self.windowInnerHeight)
+                self.resize(200)
+            }
         },
         computed:{
 			statusList(){
@@ -96,6 +106,27 @@
 			}
 		},
         methods:{
+            resize(time){
+                let self= this
+                let commonTable=this.$refs.commonTable
+                console.log("origin.common-table", commonTable.offsetHeight)
+                if(commonTable.offsetHeight) {
+                    clearTimeout(this.timer);
+                    this.timer = setTimeout(function () {
+                        self.windowInnerHeight= window.innerHeight
+                        self.tableHeight = commonTable.offsetHeight - 20 -
+                        // commonTable.querySelector(".table-search").offsetHeight -
+                        commonTable.querySelector(".operate").offsetHeight - 10;
+                        // commonTable.querySelector(".table-bottom").offsetHeight;
+                        // commonTable.style.opacity = 1
+
+                        // console.log(".common-table", commonTable.offsetHeight)
+                        // console.log(".table-search", commonTable.querySelector(".table-search").offsetHeight)
+                        // console.log(".operate", commonTable.querySelector(".operate").offsetHeight)
+                        // console.log(".table-bottom", commonTable.querySelector(".table-bottom").offsetHeight)
+                    }, time);
+                }
+            },
             //获取当前页面数据------
 		    getList(){
                 this.axios.request({
@@ -245,7 +276,7 @@
     .search-block{
         display: inline-block;
         width: 70%;
-        margin-left: 10px;
+        /*margin-left: 10px;*/
         overflow: hidden;
     }
     .demo-split{
