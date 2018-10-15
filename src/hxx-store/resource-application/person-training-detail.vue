@@ -74,7 +74,7 @@ export default {
               this.buttonFlag=false;
               this.saveFlag=true;
               this.listSearch['trainingContent']=this.detailData.trainingContent;
-              this.listSearch['time']=this.detailData.time;
+              this.listSearch['time']=this.detailData.time.substr(0, 16);
               this.listSearch['cost']=this.detailData.cost;
               this.listSearch['place']=this.detailData.place;
           }else{

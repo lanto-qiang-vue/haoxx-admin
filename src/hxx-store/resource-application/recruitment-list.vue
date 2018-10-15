@@ -47,7 +47,9 @@ export default {
                 {title: '岗位职责', key: 'postName', sortable: true, minWidth: 150,
                     
                 },
-                {title: '申请时间', key: 'cREATE_TIME', sortable: true, minWidth: 150},
+                {title: '申请时间', key: 'cREATE_TIME', sortable: true, minWidth: 150,
+                    render: (h, params) => h('span', params.row.cREATE_TIME.substr(0, 16))
+                },
                 {title: '人数', key: 'num', sortable: true, minWidth: 120,
                     
                 },
