@@ -907,17 +907,17 @@ export default [
         },
         component: () => import('@/hxx-admin/basic-data/three-maintain.vue')
       },
-      // {
-      //   path: '/my-tree',
-      //   name: 'my-tree',
-      //   meta: {
-      //     icon: 'md-funnel',
-      //     title: '我的树',
-      //     lgType: "1001",
-      //     access: '100405',
-      //   },
-      //   component: () => import('@/hxx-admin/basic-data/my-tree.vue')
-      // },
+      {
+        path: '/my-tree',
+        name: 'my-tree',
+        meta: {
+          icon: 'md-funnel',
+          title: '我的树',
+          lgType: "1001",
+          access: '100405',
+        },
+        component: () => import('@/hxx-admin/basic-data/my-tree.vue')
+      },
       {
         path: '/source-manage',
         name: 'source-manage',

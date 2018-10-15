@@ -593,6 +593,7 @@
           this.selectType = data.type;
           this.selectId = data.id;
         }
+        this.page = 1;
         this.getList();
       },
       highLight(text, words, tag) {
