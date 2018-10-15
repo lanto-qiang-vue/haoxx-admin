@@ -41,7 +41,7 @@
                     <FormItem label="培训时间:"  style="width:45%;" prop="Time">
                         <!--<Input type="text"  v-model="newAddData.Time" placeholder="">
                         </Input>-->
-                        <DatePicker type="date" placeholder="" v-model="newAddData.Time"></DatePicker>
+                        <DatePicker type="datetime" placeholder="" v-model="newAddData.Time" format="yyyy-MM-dd HH:mm" ></DatePicker>
                     </FormItem>
                     <FormItem label="培训地点:"  style="width:45%;" prop="place">
                         <Input type="text"  v-model="newAddData.place" placeholder="">
@@ -169,13 +169,13 @@ export default {
     data(){
 		return{
             columns: [
-                {title: '序号',  minWidth: 60,
+                {title: '序号',  minWidth: 80,
                     render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
                 },
                 {title: '培训内容', key: 'trainingContent', sortable: true, minWidth: 150,
                 },
                 {title: '培训时间', key: 'time', sortable: true, minWidth: 150,
-                    render: (h, params) => h('span', params.row.time.substr(0, 19))
+                    render: (h, params) => h('span', params.row.time.substr(0, 16))
                 },
                 {title: '培训地点', key: 'place', sortable: true, minWidth: 150},
                 {title: '培训费用', key: 'cost', sortable: true, minWidth: 120,
@@ -235,7 +235,7 @@ export default {
             endButton:true,//结束按钮状态
             showNewDetail:false,//申请明细框
             columnsD:[
-                {title: '序号',  minWidth: 60,
+                {title: '序号',  minWidth: 80,
                     type: 'index'
                 },
                 {title: '申请人', key: 'cREATER', sortable: true, minWidth: 200,
@@ -364,6 +364,7 @@ export default {
             
         },
         saveAddFun(){
+            this.newAddData.Time=formatDate(this.newAddData.Time)+ ' '+ formatDate(this.newAddData.Time, 'hh:mm:ss');
             this.axios.request({
                 url: '/manage/support/tech_train/save',
                 method: 'post',
@@ -442,8 +443,9 @@ export default {
             for(let i in this.detailData){
                 this.showDetailData[i]=this.detailData[i];
             }
+            this.showDetailData['time']=this.detailData['time'].substr(0, 16);
             this.showDetail=true;
-            console.log('aa',this.showDetailData);
+            
         },
         outDetail(){
             this.showDetail=false;

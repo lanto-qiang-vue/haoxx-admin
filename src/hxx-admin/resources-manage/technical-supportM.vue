@@ -324,6 +324,7 @@ export default {
         finishVisibleChange(status){
             if(status === false){
                 this.getList();
+                this.FAULT_ANSWER='';
             }
         },
         //编辑按钮

@@ -45,7 +45,7 @@ export default {
                 {title: '培训内容', key: 'trainingContent', sortable: true, minWidth: 150,
                 },
                 {title: '培训时间', key: 'time', sortable: true, minWidth: 150,
-                    
+                    render: (h, params) => h('span', params.row.time.substr(0, 16))
                 },
                 {title: '培训地点', key: 'place', sortable: true, minWidth: 150},
                 {title: '培训费用', key: 'cost', sortable: true, minWidth: 120,
