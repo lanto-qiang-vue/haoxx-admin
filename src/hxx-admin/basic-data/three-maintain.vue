@@ -35,7 +35,7 @@
     <Modal
       v-model="showModal"
       class="table-modal-detail"
-      title="保险公司"
+      title="维修项目导入"
       width="90"
       :mask-closable="false"
       @on-visible-change="visibleChange"
@@ -47,14 +47,15 @@
         <Panel name="1">
           基本信息
           <div slot="content">
-            <Button type="primary">展开全部</Button>
-            <Tree :data="treeData" show-checkbox></Tree>
+            <Button type="primary" @click="showAll">展开全部</Button>
+            <Tree :data="treeData" show-checkbox ref="myTree"></Tree>
           </div>
         </Panel>
       </Collapse>
+      <div style="height:60px;"></div>
       <div slot="footer">
         <Button @click="addcancle()">取消</Button>
-        <Button type="primary" @click="addpost('formData')">导入</Button>
+        <Button type="primary" @click="xImport">{{buttonName}}</Button>
       </div>
     </Modal>
   </common-table>
@@ -69,15 +70,21 @@
     data() {
       return {
         value1: '1',
+        showType:true,
         page: 1,
         limit: 25,
         showModal: false,
+        TENANT_ID:0,
+        url:'',
+        hintSuccess:'',
+        hintError:'',
         treeData:[],
         loading:false,
         total: 0,
         tableData: [],
         clearType: false,
         showTable: false,
+        buttonName:'',
         list: '',
         columns: [
           {title: '序号',  minWidth: 70,
@@ -107,9 +114,25 @@
       }
     },
     methods: {
+      showAll(){
+        if(this.showType){
+         let data =  this.machine2(this.treeData[0]);
+         this.treeData = [data];
+         this.showType = !this.showType
+        }else{
+          let data = this.machine(this.treeData[0]);
+          this.treeData = [data];
+          this.showType = !this.showType;
+        }
+      },
       add() {
         this.showModal = true;
+        this.buttonName = "导入";
         //获取树....
+        this.TENANT_ID = this.list.TENANT_ID;
+        this.url = "/manage/basis/three_mro/import";
+        this.hintError = '未选择导入项目';
+        this.hintSuccess = '导入成功';
         this.getTree(1);
       },
       getTree(flag){
@@ -120,23 +143,43 @@
             access_token: this.$store.state.user.token,
             flag:flag,
             ROLE_ID:'',
-            TENANT_ID:this.list.TENANT_ID,
+            TENANT_ID:this.TENANT_ID,
           }
         }).then(res => {
           if (res.success === true) {
+            this.treeData = [];
             this.treeData.push(this.machine(res.data));
           }
         })
       },
       edit() {
-        this.update(this.list);
+        this.buttonName = "删除";
+        this.url = "/manage/basis/three_mro/delete";
+        this.hintError = "未选择维修项目";
+        this.hintSuccess = "维修项目删除成功";
+        this.showModal = true;
+        this.getTree(2);
       },
       machine(data){
         data['title'] = data.nodeName;
-        var flag = data.children ? true : false;
+        data['expand'] = false;
+        let  flag = data.children ? true : false;
         if (flag) {
-          for (var i = 0; i < data.children.length; i++) {
+          for (let i = 0; i < data.children.length; i++) {
             this.machine(data.children[i]);
+          }
+        } else {
+
+        }
+        return data;
+      },
+      machine2(data){
+        data['title'] = data.nodeName;
+        data['expand'] = true;
+        let  flag = data.children ? true : false;
+        if (flag) {
+          for (let i = 0; i < data.children.length; i++) {
+            this.machine2(data.children[i]);
           }
         } else {
 
@@ -149,7 +192,41 @@
       addcancle() {
         this.showModal = false;
       },
-      addpost(name) {
+      xImport(){
+       let node =  this.$refs.myTree.getCheckedNodes();
+       let ids = this.getSon(node,[]);
+       if(ids.length > 0){
+       //调导入接口..../manage/basis/three_mro/import
+         let str = ids.join(",") + ",";
+         this.doImport(str);
+       }else{
+         this.$Modal.info({title:'系统提示',content:this.hintError});
+       }
+      },
+      doImport(str){
+        this.axios.request({
+          url: this.url,
+          method: 'post',
+          data: {
+            access_token: this.$store.state.user.token,
+            ids:str,
+            TENANT_ID:this.TENANT_ID,
+          }
+        }).then(res => {
+          if (res.success === true && res.data == true) {
+            this.$Modal.success({title:'系统提示',content: this.hintSuccess});
+            this.showModal = false;
+          }
+        })
+        this.clearsection();
+      },
+      getSon(data,store){
+        for(let i in data){
+          if(data[i].nodeId != "") store.push(data[i].nodeId);
+          let flag = data[i].children ? true : false;
+          if(flag) this.getSon(data[i].children,store);
+        }
+        return store;
       },
       changePage(page) {
         this.page = page;
