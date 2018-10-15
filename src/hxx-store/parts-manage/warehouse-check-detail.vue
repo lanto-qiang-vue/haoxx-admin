@@ -222,6 +222,8 @@ export default {
             saveFlag:true,
             noSaveFlag:false,
             printFlag:false,
+            printFlag1:false,//判断数据是否加载完成
+            printTime:null,//监控定时轮询
 
 
       }
@@ -235,6 +237,7 @@ export default {
           if(this.detailData){
               this.listSearch=this.detailData;
               console.log(this.listSearch);
+              this.printFlag1=false;
               this.getParts();//获取配件
               if(this.detailData.STATUS=='10441001'){
                   this.titleMsg='新建'
@@ -363,6 +366,7 @@ export default {
                 if (res.success === true) {
                     var val=res.data;
                     this.commitParts=[];
+                    this.printFlag1=true;
                     for(let i in val){
                         var partsObj={
                             "STOCK_ID":'',
@@ -407,6 +411,8 @@ export default {
                         }
                         this.commitParts.push(partsObj);
                     }
+                    
+
                 }
             })
         },
@@ -690,41 +696,52 @@ export default {
         },
         //仓库盘点单打印-------
         printWarehouse(){
-            var wtdData=this.$store.state.user.userInfo.tenant;
-            var listSearch={};
-            for(let i in this.listSearch){
-                switch(i){
-                    case'CHECK_DATE':
-                        listSearch[i]=formatDate(this.listSearch[i]);
-                    break;
-                    case'CHECK_TYPE':
-                        listSearch[i]=getName(this.getCheckType,this.listSearch[i]);
-                    break;
-                    case'STORE_NAME':
-                        listSearch[i]=getName(this.allStore,this.listSearch["STORE_ID"]);
-                    break;
-                    default : listSearch[i]= this.listSearch[i];
-                };
-            }
-            listSearch['printDate']=formatDate(new Date())+ ' '+ formatDate(new Date(), 'hh:mm:ss');
+            
+            clearTimeout(this.printTime);
+            console.log("仓库盘点单打印---");
+            if(this.printFlag1){
+                var wtdData=this.$store.state.user.userInfo.tenant;
+                var listSearch={};
+                for(let i in this.listSearch){
+                    switch(i){
+                        case'CHECK_DATE':
+                            listSearch[i]=formatDate(this.listSearch[i]);
+                        break;
+                        case'CHECK_TYPE':
+                            listSearch[i]=getName(this.getCheckType,this.listSearch[i]);
+                        break;
+                        case'STORE_NAME':
+                            listSearch[i]=getName(this.allStore,this.listSearch["STORE_ID"]);
+                        break;
+                        default : listSearch[i]= this.listSearch[i];
+                    };
+                }
+                listSearch['printDate']=formatDate(new Date())+ ' '+ formatDate(new Date(), 'hh:mm:ss');
 
-            var commitParts=[];
-            for(let i in this.commitParts){
-                commitParts.push(this.commitParts[i]);
-            }
+                var commitParts=[];
+                for(let i in this.commitParts){
+                    commitParts.push(this.commitParts[i]);
+                }
 
-            for(let i in commitParts){
-                commitParts[i].UNIT=getName(this.getUnit,commitParts[i].UNIT)||'';
-                commitParts[i].BRAND=getName(this.getBrand,commitParts[i].BRAND)||'';
-                commitParts[i].DIFFERENCE_NUM=commitParts[i].CHECK_NUM-commitParts[i].STOCK_NUM;
-            }
+                for(let i in commitParts){
+                    commitParts[i].UNIT=getName(this.getUnit,commitParts[i].UNIT)||'';
+                    commitParts[i].BRAND=getName(this.getBrand,commitParts[i].BRAND)||'';
+                    commitParts[i].DIFFERENCE_NUM=commitParts[i].CHECK_NUM-commitParts[i].STOCK_NUM;
+                }
 
-            var temp=printPdd(wtdData,listSearch,commitParts);
-            var LODOP=getLodop();
-            LODOP.SET_PRINT_STYLEA(0, "FontSize", 20);
-            LODOP.SET_PRINT_STYLEA(0, "Alignment", 2);
-            LODOP.ADD_PRINT_TABLE(40, 0, "100%", 950, temp);
-            LODOP.PREVIEW();
+                var temp=printPdd(wtdData,listSearch,commitParts);
+                var LODOP=getLodop();
+                LODOP.SET_PRINT_STYLEA(0, "FontSize", 20);
+                LODOP.SET_PRINT_STYLEA(0, "Alignment", 2);
+                LODOP.ADD_PRINT_TABLE(40, 0, "100%", 950, temp);
+                LODOP.PREVIEW();
+
+            }else{
+                let self=this;
+                this.printTime=setTimeout(function(){
+                    self.printWarehouse();
+                },300)
+            }
         },
     }
 }
