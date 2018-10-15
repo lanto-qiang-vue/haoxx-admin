@@ -1,7 +1,6 @@
 <template>
   <common-table v-model="tableData" :columns="columns" @changePageSize="changePageSize" @changePage="changePage"
-                :total="total" :show="showTable" :clearSelect="clearType" @onRowClick="onRowClick"
-                @onRowDblclick="dbclick" :page="page">
+                :total="total" :show="showTable" :clearSelect="clearType" :loading="loading" @onRowClick="onRowClick" :page="page">
     <div slot="search">
       <div class="search-block">
         <Input v-model="search.keyword" placeholder="关键字搜索..."></Input>
@@ -68,33 +67,16 @@
     name: 'three-maintain',
     components: {commonTable},
     data() {
-      const validatePHONE = (rule, value, callback) => {
-        let reg = /^[1][3,4,5,7,8][0-9]{9}$/;
-        let tel = /\d{3}-\d{8}/;
-        if (value != '' && !reg.test(value) && !tel.test(value)) {
-          callback(new Error('联系电话不正确'));
-        } else {
-          callback();
-        }
-      };
-      const validateEMAIL = (rule, value, callback) => {
-        let reg = /^([0-9A-Za-z\-_\.]+)@([0-9a-z]+\.[a-z]{2,3}(\.[a-z]{2})?)$/g;
-        if (value != '' && !reg.test(value)) {
-          callback(new Error('邮箱格式不正确'));
-        } else {
-          callback();
-        }
-      };
       return {
         value1: '1',
         page: 1,
         limit: 25,
         showModal: false,
+        loading:false,
         total: 0,
         tableData: [],
         clearType: false,
         showTable: false,
-        IS_DEFAULT: false,
         list: '',
         columns: [
           {title: '序号',  minWidth: 70,
@@ -126,12 +108,24 @@
     methods: {
       add() {
         this.showModal = true;
+        //获取树....
+        this.getTree(1);
       },
-      reset(){
-        for(let i in this.formData){
-          this.formData[i] = "";
-        }
-        this.$refs['formData'].resetFields();
+      getTree(flag){
+        this.axios.request({
+          url: '/manage/basis/three_mro/get_checkitem_tree',
+          method: 'post',
+          data: {
+            access_token: this.$store.state.user.token,
+            flag:flag,
+            ROLE_ID:'',
+            TENANT_ID:this.list.TENANT_ID,
+          }
+        }).then(res => {
+          if (res.success === true) {
+
+          }
+        })
       },
       edit() {
         this.update(this.list);
@@ -143,32 +137,6 @@
         this.showModal = false;
       },
       addpost(name) {
-        this.$refs[name].validate((valid) => {
-          if (valid) {
-            this.$Modal.confirm({
-              title: '系统提示',
-              content: '确认保存吗?',
-              onOk: this.tosave,
-            });
-          } else {
-            this.$Message.error("请校对红框信息");
-          }
-        })
-      },
-      tosave() {
-        this.axios.request({
-          url: '/manage/basedata/tb_insurer/save',
-          method: 'post',
-          data: {
-            access_token: this.$store.state.user.token,
-            data: JSON.stringify(this.formData),
-          }
-        }).then(res => {
-          if (res.success === true) {
-            this.showModal = false;
-            this.getList();
-          }
-        })
       },
       changePage(page) {
         this.page = page;
@@ -179,6 +147,7 @@
         this.getList();
       },
       getList() {
+        this.loading = true;
         this.axios.request({
           url: '/manage/basis/three_mro/get_list',
           method: 'post',
@@ -194,18 +163,15 @@
             this.tableData = res.data;
             this.total = res.total;
           }
+          this.loading = false;
         })
         this.clearsection();
       },
       onRowClick(row) {
         this.list = row;
       },
-      dbclick(row) {
-        this.update(row);
-      },
       update(row) {
-        this.formData = row;
-        this.showModal = true;
+
       },
       clear() {
         this.search.keyword = '';
