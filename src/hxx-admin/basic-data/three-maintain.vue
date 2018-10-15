@@ -48,6 +48,7 @@
           基本信息
           <div slot="content">
             <Button type="primary">展开全部</Button>
+            <Tree :data="treeData" show-checkbox></Tree>
           </div>
         </Panel>
       </Collapse>
@@ -60,7 +61,6 @@
 </template>
 <script>
   import commonTable from '@/hxx-components/common-table.vue'
-  import env from '_conf/url'
   import {getName, getDictGroup, getCreate} from '@/libs/util.js'
 
   export default {
@@ -72,6 +72,7 @@
         page: 1,
         limit: 25,
         showModal: false,
+        treeData:[],
         loading:false,
         total: 0,
         tableData: [],
@@ -123,12 +124,24 @@
           }
         }).then(res => {
           if (res.success === true) {
-
+            this.treeData.push(this.machine(res.data));
           }
         })
       },
       edit() {
         this.update(this.list);
+      },
+      machine(data){
+        data['title'] = data.nodeName;
+        var flag = data.children ? true : false;
+        if (flag) {
+          for (var i = 0; i < data.children.length; i++) {
+            this.machine(data.children[i]);
+          }
+        } else {
+
+        }
+        return data;
       },
       visibleChange() {
         this.clearsection();
