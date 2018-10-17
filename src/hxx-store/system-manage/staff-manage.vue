@@ -27,7 +27,7 @@
     @on-visible-change="visibleChange"
     :transition-names="['', '']">
     <div slot="header" style="font-weight: bold;font-size: 18px;">
-    重置[<span style="color:blue;">{{list.USER_NAME}}</span>]的登录密码
+    重置[<span style="color:blue;">{{title}}</span>]的登录密码
     </div>
     <Form :model="formData1"  ref="list1" :rules="rule1" :label-width="120" >
     <FormItem label="请输入新密码:" style="width:90%;" prop="PWD">
@@ -248,7 +248,7 @@ import mixin from '@/hxx-components/mixin'
 			reset(){
 				this.$refs['list1'].resetFields();
 				this.userId = this.list.USER_ID;
-				this.title = "重置[<div>"+ this.list.USER_NAME + "</div>]" 
+				this.title = this.list.USER_NAME;
 				this.setPasswordModal = true;
 			},
 			resetcancle(){

@@ -47,7 +47,7 @@
         <Panel name="1">
           基本信息
           <div slot="content">
-            <Button type="primary" @click="showAll">展开全部</Button>
+            <Button type="primary" @click="showAll">{{expandHint}}</Button>
             <Tree :data="treeData" show-checkbox ref="myTree"></Tree>
           </div>
         </Panel>
@@ -78,6 +78,7 @@
         url:'',
         hintSuccess:'',
         hintError:'',
+        expandHint:'',
         treeData:[],
         loading:false,
         total: 0,
@@ -116,10 +117,12 @@
     methods: {
       showAll(){
         if(this.showType){
+          this.expandHint = "收起全部";
          let data =  this.machine2(this.treeData[0]);
          this.treeData = [data];
          this.showType = !this.showType
         }else{
+          this.expandHint = "展开全部";
           let data = this.machine(this.treeData[0]);
           this.treeData = [data];
           this.showType = !this.showType;
@@ -128,6 +131,7 @@
       add() {
         this.showModal = true;
         this.buttonName = "导入";
+        this.expandHint = "展开全部";
         //获取树....
         this.TENANT_ID = this.list.TENANT_ID;
         this.url = "/manage/basis/three_mro/import";
@@ -153,7 +157,9 @@
         })
       },
       edit() {
+        this.TENANT_ID = this.list.TENANT_ID;
         this.buttonName = "删除";
+        this.expandHint = "展开全部";
         this.url = "/manage/basis/three_mro/delete";
         this.hintError = "未选择维修项目";
         this.hintSuccess = "维修项目删除成功";

@@ -901,23 +901,34 @@ export default [
         name: 'three-maintain',
         meta: {
           icon: 'md-funnel',
-          title: '三类维修项目',
+          title: '三类维修企业',
           lgType: "1001",
           access: '100405',
         },
         component: () => import('@/hxx-admin/basic-data/three-maintain.vue')
       },
       {
-        path: '/my-tree',
-        name: 'my-tree',
+        path: '/parts-classify',
+        name: 'parts-classify',
         meta: {
           icon: 'md-funnel',
-          title: '我的树',
+          title: '配件分类',
           lgType: "1001",
-          access: '100405',
+          access: '100206',
         },
-        component: () => import('@/hxx-admin/basic-data/my-tree.vue')
+        component: () => import('@/hxx-admin/basic-data/parts-classify.vue')
       },
+      // {
+      //   path: '/my-tree',
+      //   name: 'my-tree',
+      //   meta: {
+      //     icon: 'md-funnel',
+      //     title: '我的树',
+      //     lgType: "1001",
+      //     access: '100405',
+      //   },
+      //   component: () => import('@/hxx-admin/basic-data/my-tree.vue')
+      // },
       {
         path: '/source-manage',
         name: 'source-manage',
