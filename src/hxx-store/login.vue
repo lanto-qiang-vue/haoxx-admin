@@ -15,10 +15,10 @@
       <div class="login-con">
         <Card icon="log-in">
           <!-- 企业商户登录 1 -->
-          <Tabs v-if="isShow == 1"  v-model="indexName">
+          <Tabs v-if="isShow == 1"   v-model="indexName">
             <TabPane label="企业登录" name="name1">
               <div class="form-con">
-                <Form :model="form" @keydown.enter.native="handleSubmit">
+                <Form :model="form" @keydown.enter.native="handleSubmit('tel')">
                   <FormItem prop="userName">
                     <Input v-model="form.userName" :maxlength="11" placeholder="请输入用户名">
                                         <span slot="prepend">
@@ -46,7 +46,7 @@
             </TabPane>
             <TabPane label="员工登录" name="name2">
               <div class="form-con">
-                <Form :model="form2">
+                <Form :model="form2" @keydown.enter.native="handleSubmit('tenant')">
                   <FormItem prop="userName">
                     <Input v-model="form2.tenantId" placeholder="请输入商户号">
                                         <span slot="prepend">

@@ -33,13 +33,13 @@
       :transition-names="['', '']">
       <Form :model="formData" ref="formData" :rules="rules" :label-width="100">
         <FormItem label="类型名称:" style="width:90%;" prop="TYPE_NAME">
-          <Input v-model="formData.TYPE_NAME" type="text"> </Input>
+          <Input v-model="formData.TYPE_NAME" :maxlength="40" type="text"> </Input>
         </FormItem>
         <FormItem label="上一级分类:" style="width:90%;" prop="FATHER_NAME">
-          <Input v-model="formData.FATHER_NAME" :disabled="true"  type="text"> </Input>
+          <Input v-model="formData.FATHER_NAME"  :disabled="true"  type="text"> </Input>
         </FormItem>
         <FormItem label="备注:" style="width:90%;">
-          <Input v-model="formData.REMARK" type="textarea" placeholder="请输入描述信息..."></Input>
+          <Input v-model="formData.REMARK" type="textarea" :maxlength="40" placeholder="请输入描述信息..."></Input>
         </FormItem>
       </Form>
       <div slot="footer">
@@ -96,11 +96,24 @@
         this.formData.TYPE_ID = this.FATHER_ID;
         this.formData.FATHER_ID = this.PARENT_ID;
         this.formData.TYPE_LEVEL = this.TYPE_LEVEL - 1;
-        this.formData.FATHER_NAME = this.FATHER_NAME;
+        this.formData.FATHER_NAME = this.findName(this.treeData,this.PARENT_ID);
         this.formData.REMARK = this.remark;
         this.formData.TYPE_NAME = this.name;
         if(this.formData.TYPE_LEVEL > 0){
           this.showModal = true;
+        }
+      },
+      findName(data,id){
+        for(let i in data){
+          if(data[i].nodeId == id){
+            console.log(data[i].nodeName);
+            return data[i].nodeName;
+            break;
+          }else{
+            if(data[i].children){
+              this.findName(data[i].children,id);
+            }
+          }
         }
       },
       addCancel(){

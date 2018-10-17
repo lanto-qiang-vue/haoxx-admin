@@ -2,11 +2,11 @@
   <common-table v-model="tableData" :columns="columns" @changePageSize="changePageSize" @changePage="changePage" :total="total"  :show="showTable" :clearSelect="clearType" @onRowClick="onRowClick" @onRowDblclick="dbclick" :page="page">
     <div slot="search"  >
       <div class="search-block">
-        <Input v-model="search.keyword"  placeholder="员工账号/员工姓名/手机号码..."></Input>
+        <Input v-model="search.keyword"  placeholder="用户账号/用户名称/手机号码..."></Input>
       </div>
       <div class="search-block">
-        <Select  placeholder="" v-model="search.status" style="min-width: 100%;">
-          <Option v-for="(item, index) in statusList"
+        <Select  placeholder="请选择...." v-model="search.status" style="min-width: 100%;">
+          <Option v-for="(item, index) in statusList2"
                   :key="index" :value="item.code">{{item.name}}</Option>
         </Select>
       </div>
@@ -339,6 +339,7 @@
         this.getList();
       },
       getList(){
+        console.log(this.search.status);
         this.axios.request({
           url: '/manage/sys/users/list',
           method: 'post',
@@ -396,6 +397,7 @@
       clear(){
         this.search.keyword = '';
         this.search.status = 0;
+        console.log(this.search.status);
       },
       clearsection(){
         this.list = '';
@@ -413,6 +415,11 @@
       },
       statusList(){
         return getDictGroup(this.$store.state.app.dict,'1001');
+      },
+      statusList2(){
+        let data = getDictGroup(this.$store.state.app.dict,'1001');
+        data.unshift({name:'请选择...',code:0});
+        return data;
       },
       sexList(){
         return getDictGroup(this.$store.state.app.dict,'1003');
