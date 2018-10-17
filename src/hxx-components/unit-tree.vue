@@ -1,54 +1,79 @@
 <template>
   <div>
-    <div>
-      <div style="cursor:pointer;width:15px;height:15px;float:left;" @click="expand">{{arrows}}</div>
-      <Checkbox @on-change="onchange" :value="ischeck"></Checkbox>
-      {{name}}{{nodeId}}
+    <div ref="planA" @click="changeColor" style="background:none;cursor: pointer;line-height:25px;">
+      <div style="width:50%;text-align:left;float:left;">
+        <div ref="abc"  style="width:20px;height:20px;float:left;"></div>
+        <div style="cursor:pointer;width:15px;height:15px;float:left;" @click.stop="expand">{{arrows}}</div>
+        <!--<Checkbox @on-change="onchange" :value="ischeck"></Checkbox>-->
+        <div style="float:left;">{{name}}</div>
+      </div>
+      <div style="width:50%;float:left;text-align:center;">{{remark}}</div>
+      <div style="clear:both;"></div>
     </div>
     <unit-tree v-if="indexId < 0" :indexId="indexId + 1"></unit-tree>
     <!--声明类型type控制selectAll-->
-    <unit-tree style="margin-left:20px;" v-show="myshow" v-for="item in data" :ischeck="item.check" @onpush="onpush" @changeSelect="changeSelect" :select="selectAll" :data="item.children" :nodeId="item.id" :name="item.name"
+    <unit-tree  @cancelColor="cancelColor" v-for="item in data" :remark="item.remark" :fatherId="item.fatherId" :clearType="clearType" :changeAll="changeAll" v-show="myshow" :id="id" :data="item.children" :nodeId="item.nodeId" :level="level+1"
+               :name="item.nodeName"
                :indexId="0"></unit-tree>
   </div>
 </template>
 <script>
   import unitTree from '@/hxx-components/unit-tree.vue'
-
   export default {
     name: "unit-tree",
     components: {unitTree},
-    props: ['indexId', 'name', 'data', 'show','nodeId','select','ischeck'],
+    props: ['indexId', 'name', 'data', 'nodeId', 'level','id','changeAll','remark','clearType','fatherId'],
     data() {
       return {
         myshow: false,
         total: 0,
-        selectAll:false,
-        isSelect:false,
+        selectAll: false,
+        isSelect: false,
       }
     },
-    watch:{
-
+    watch: {
+      id(id){
+       if(this.nodeId == id){
+         this.$refs.planA.style.background = '#FFEFBB';
+       }else{
+         this.$refs.planA.style.background = 'none';
+       }
+      },
+      changeAll(data){
+        this.myshow = data;
+      },
+      clearType(){
+        this.$refs.planA.style.background = 'none';
+      },
     },
     methods: {
       expand() {
         this.myshow = !this.myshow;
       },
-      changeSelect(row){
-
+      changeColor(){
+        this.$emit('cancelColor',{nodeId:this.nodeId,indexName:this.name,level:this.level,fatherId:this.fatherId,name:this.name,remark:this.remark});
       },
-      onchange(row){
-       this.onpush(this.nodeId);
-      },
-      onpush(row){
-        //向父级传递
-        this.$emit('onpush',row);
-      },
+      cancelColor(data){
+        this.$emit('cancelColor',data);
+      }
     },
-    computed:{
-      arrows(){
-        if(this.data){
-          return '▶';
-        }else{
+    mounted() {
+      if(this.level == 1){
+        this.myshow = true;
+      }
+      this.$refs.abc.style.width = (this.level - 1) * 20 + "px";
+      // console.log(this.$refs.abc.style.width);
+    },
+    computed: {
+      arrows() {
+        // let flag = this.data[0].children;
+        if (this.data && this.data.length > 0) {
+          if (this.myshow) {
+            return '▼';
+          } else {
+            return '▶';
+          }
+        } else {
           return ''
         }
       }
