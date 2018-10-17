@@ -1862,8 +1862,8 @@
             console.log(11111)
             console.log(res)
             if (res.success === true) {
-              this.commitParts=res.data;
-              if(this.commitParts.length>0){
+              this.selectPartsGroup1(res.data);
+              if(res.data.length>0){
                   this.listSearch["REPAIR_PART_MONEY"]=0;
                     for(let i in res.data){
                         this.listSearch["REPAIR_PART_MONEY"]+=res.data[i]['PART_MONEY'];
@@ -2055,7 +2055,7 @@
                 listItemsModel[i]=this.getItem[j][i];
             }
             listItemsModel["ITEM_MONEY"]=listItemsModel["REPAIR_TIME"]*this.work_price+listItemsModel["PAINT_NUM"]*this.paint_price+listItemsModel["REPAIR_MONEY"];
-            listItemsModel["ITEM_LAST_MONEY"]=listItemsModel["REPAIR_TIME"]*this.work_price+listItemsModel["PAINT_NUM"]*this.paint_price+listItemsModel["REPAIR_MONEY"]-listItemsModel["ITEM_DERATE_MONEY"];
+            listItemsModel["ITEM_LAST_MONEY"]=(listItemsModel["REPAIR_TIME"]*this.work_price+listItemsModel["PAINT_NUM"]*this.paint_price+listItemsModel["REPAIR_MONEY"]-listItemsModel["ITEM_DERATE_MONEY"]).toFixed(2);
             console.log('xxxxxx',listItemsModel);
             this.commitItem.push(listItemsModel);
           }
@@ -2246,6 +2246,60 @@
 
         }
         this.computItemMoney();
+      },
+      selectPartsGroup1(val){
+        console.log("选择配件数据组",val);
+        this.getParts1=val;
+        this.commitParts=[];
+
+        for(let j in this.getParts1){
+              var commitParts={
+                  "PART_ID":"",
+                  "TENANT_ID":"",
+                  "CREATE_TIME":"",
+                  "CREATER":"",
+                  "NAME":"",
+                  "PART_NO":"",
+                  "TYPE_ID":"",
+                  "SALES_PRICE":0,
+                  "UNIT":"",
+                  "BRAND":"",
+                  "FORMAT":"",
+                  "FACTORY_NO":"",
+                  "PART_SOURCE":"",
+                  "IS_CANCEL":"",
+                  "RATE":"",
+                  "TAX":"",
+                  "NOT_CONTAINS_TAX_SALE_PRICE":"",
+                  "TYPE_NAME":"",
+                  "FATHER_ID":"",
+                  "GRAND_ID":"",
+                  "UPDATE_TIME":null,
+                  "id":"",
+                  "STOCK_NUM":0,
+                  "PART_MONEY":0,
+                  "PART_DERATE_MONEY":0,
+                  "PART_LAST_MONEY":0,
+                  "PART_NUM":1,
+                  "UNIT_COST":0,
+                  "GET_PART_TIME":null,
+                  "REMARK":"",
+                  "IS_SELF":false,
+                  "COST_MONEY":0,
+                  "IS_SEL":true,//新加的字段
+                  "UPDATER":"",
+                  "PURCHASE_PRICE":"",
+                  "THREE_EXPIRATION_DATE":"",
+                  "EXPIRATION_DATE":'',
+                  "STATUS":"",
+              }
+              for(let i in this.getParts1[j]){
+                commitParts[i]=this.getParts1[j][i];
+              }
+              commitParts["PART_MONEY"]=this.getParts1[j]["SALES_PRICE"]*(this.getParts1[j]["PART_NUM"]||1);
+              commitParts["PART_LAST_MONEY"]=this.getParts1[j]["SALES_PRICE"]*(this.getParts1[j]["PART_NUM"]||1)-commitParts["PART_DERATE_MONEY"];
+              this.commitParts.push(commitParts);
+        }
       },
       //选择配件按钮------
       goOnSelectParts(){
