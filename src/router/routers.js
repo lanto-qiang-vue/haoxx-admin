@@ -1032,6 +1032,17 @@ export default [
         },
         component: () => import('@/hxx-admin/stystem-management/index-roles.vue')
       },
+      {
+        path: '/admin-roles',
+        name: '/admin-roles',
+        meta: {
+          icon: 'md-funnel',
+          title: '后台角色管理',
+          lgType: "1001",
+          access: '100402',
+        },
+        component: () => import('@/hxx-admin/stystem-management/admin-roles.vue')
+      },
     ]
   },
   {

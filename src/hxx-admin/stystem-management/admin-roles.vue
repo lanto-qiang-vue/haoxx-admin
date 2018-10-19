@@ -164,7 +164,7 @@
     },
     methods: {
       edit(){
-       this.update(this.list);
+        this.update(this.list);
       },
       update(row){
         this.formData = row;
@@ -196,7 +196,7 @@
       },
       getList() {
         this.axios.request({
-          url: '/manage/sys/tenant_roles/list',
+          url: '/manage/sys/roles/list',
           method: 'post',
           data: {
             access_token: this.$store.state.user.token,
@@ -320,8 +320,8 @@
           }
         }).then(res => {
           if (res.success === true) {
-         this.showModal = false;
-         this.getList();
+            this.showModal = false;
+            this.getList();
           }
         })
       },
@@ -412,7 +412,7 @@
       },
       getTree(id='') {
         this.axios.request({
-          url: '/manage/sys/tenant_roles/getCheckedMenus',
+          url: '/manage/sys/roles/getCheckedMenus',
           method: 'post',
           data: {
             access_token: this.$store.state.user.token,
@@ -509,3 +509,4 @@
     }
   }
 </style>
+

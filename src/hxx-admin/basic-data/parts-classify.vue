@@ -96,7 +96,7 @@
         this.formData.TYPE_ID = this.FATHER_ID;
         this.formData.FATHER_ID = this.PARENT_ID;
         this.formData.TYPE_LEVEL = this.TYPE_LEVEL - 1;
-        this.formData.FATHER_NAME = this.findName(this.treeData,this.PARENT_ID);
+        this.findName(this.treeData,this.PARENT_ID);
         this.formData.REMARK = this.remark;
         this.formData.TYPE_NAME = this.name;
         if(this.formData.TYPE_LEVEL > 0){
@@ -106,8 +106,7 @@
       findName(data,id){
         for(let i in data){
           if(data[i].nodeId == id){
-            console.log(data[i].nodeName);
-            return data[i].nodeName;
+            this.formData.FATHER_NAME =  data[i].nodeName;
             break;
           }else{
             if(data[i].children){
@@ -200,7 +199,7 @@
         })
       },
       setDel(data){
-        console.log(JSON.stringify(data));
+        // console.log(JSON.stringify(data));
         for(let i = 0; i< data.length;i++){
           if(data[i].nodeId == this.FATHER_ID){
             data.splice(i,1);
@@ -258,7 +257,7 @@
         this.PARENT_ID = data.fatherId;
         this.name = data.name;
         this.remark = data.remark;
-        console.log(JSON.stringify(data));
+        // console.log(JSON.stringify(data));
       }
     },
     computed:{
