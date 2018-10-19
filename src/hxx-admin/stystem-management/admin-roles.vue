@@ -4,10 +4,10 @@
                 @onRowDblclick="dbclick" :page="page">
     <div slot="search">
       <div class="search-block">
-        <Input v-model="search.ROLE_CODE_lk" placeholder="角色名称..."></Input>
+        <Input v-model="search.ROLE_CODE_lk" placeholder="角色编号..."></Input>
       </div>
       <div class="search-block">
-        <Input v-model="search.ROLE_NAME_lk" placeholder="角色状态..."></Input>
+        <Input v-model="search.ROLE_NAME_lk" placeholder="角色名称..."></Input>
       </div>
       <div class="search-block">
         <Select v-model="search.status" placeholder="请选择状态...">
@@ -32,7 +32,7 @@
     <Modal
       v-model="showModal"
       class="table-modal-detail"
-      title="前台角色信息"
+      title="后台角色信息"
       width="90"
       :mask-closable="false"
       @on-visible-change="visibleChange"
@@ -154,15 +154,22 @@
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
           {title: '角色编号', key: 'ROLE_CODE', sortable: true, minWidth: 140},
-          {title: '角色描述', key: 'ROLE_NAME', sortable: true, minWidth: 140},
+          {title: '角色名称', key: 'ROLE_NAME', sortable: true, minWidth: 140},
+          {title: '角色描述', key: 'ROLE_DESC', sortable: true, minWidth: 140},
           {
             title: '状态', key: 'STATUS', sortable: true, minWidth: 140,
             render: (h, params) => h('span', getName(this.statusList, params.row.STATUS))
           },
+          {title: '创建时间', key: 'CREATE_TIME', sortable: true, minWidth: 140},
         ],
       }
     },
     methods: {
+      clear(){
+        this.search.status = 0;
+        this.search.ROLE_CODE_lk = "";
+        this.search.ROLE_NAME_lk = "";
+      },
       edit(){
         this.update(this.list);
       },
@@ -310,7 +317,7 @@
         let funcs = this.getFuncId(this.treeData, []);
         let btns = this.getButton(this.treeData, []);
         this.axios.request({
-          url: '/manage/sys/tenant_roles/save',
+          url: '/manage/sys/roles/save',
           method: 'post',
           data: {
             access_token: this.$store.state.user.token,
@@ -322,6 +329,11 @@
           if (res.success === true) {
             this.showModal = false;
             this.getList();
+          }else{
+            let self = this;
+            setTimeout(function(){
+              self.$Modal.error({title:'异常提示',content:res.Exception.message});
+            },500);
           }
         })
       },

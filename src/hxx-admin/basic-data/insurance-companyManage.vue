@@ -4,7 +4,7 @@
                 @onRowDblclick="dbclick" :page="page">
     <div slot="search">
       <div class="search-block">
-        <Input v-model="search.keyword" placeholder="公司编号/有效无效..."></Input>
+        <Input v-model="search.keyword" placeholder="公司编号/公司名称..."></Input>
       </div>
       <div class="search-block">
         <Select v-model="search.status" placeholder="请选择状态...">

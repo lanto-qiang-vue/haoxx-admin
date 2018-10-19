@@ -4,10 +4,10 @@
                 @onRowDblclick="dbclick" :page="page">
     <div slot="search">
       <div class="search-block">
-        <Input v-model="search.ROLE_CODE_lk" placeholder="角色名称..."></Input>
+        <Input v-model="search.ROLE_CODE_lk" placeholder="角色编号..."></Input>
       </div>
       <div class="search-block">
-        <Input v-model="search.ROLE_NAME_lk" placeholder="角色状态..."></Input>
+        <Input v-model="search.ROLE_NAME_lk" placeholder="角色名称..."></Input>
       </div>
       <div class="search-block">
         <Select v-model="search.status" placeholder="请选择状态...">
@@ -154,15 +154,22 @@
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
           {title: '角色编号', key: 'ROLE_CODE', sortable: true, minWidth: 140},
-          {title: '角色描述', key: 'ROLE_NAME', sortable: true, minWidth: 140},
+          {title: '角色名称', key: 'ROLE_NAME', sortable: true, minWidth: 140},
+          {title: '角色描述', key: 'ROLE_DESC', sortable: true, minWidth: 140},
           {
             title: '状态', key: 'STATUS', sortable: true, minWidth: 140,
             render: (h, params) => h('span', getName(this.statusList, params.row.STATUS))
           },
+          {title: '创建时间', key: 'CREATE_TIME', sortable: true, minWidth: 140},
         ],
       }
     },
     methods: {
+      clear(){
+        this.search.status = 0;
+        this.search.ROLE_CODE_lk = "";
+        this.search.ROLE_NAME_lk = "";
+      },
       edit(){
        this.update(this.list);
       },
@@ -180,6 +187,7 @@
       add() {
         this.$refs.list.resetFields();
         this.formData.ROLE_DESC = "";
+        this.formData.ROLE_ID = "";
         this.formData.STATUS = this.statusList2[0].code;
         this.getTree();
         this.showModal = true;

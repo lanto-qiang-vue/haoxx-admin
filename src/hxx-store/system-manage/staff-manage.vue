@@ -42,7 +42,7 @@
             <Modal  
     v-model="showModal"
     class="table-modal-detail"
-    title="用户信息"
+    title="员工管理"
     width="90"
     :mask-closable="false"
     @on-visible-change="visibleChange"
@@ -127,6 +127,7 @@
 import commonTable from '@/hxx-components/common-table.vue'
 import { getName, getDictGroup, getCreate } from '@/libs/util.js'
 import mixin from '@/hxx-components/mixin'
+import { getBtns } from '@/libs/util.js'
 	export default{
 		name:'staff-manage',
 		components:{commonTable},
@@ -245,6 +246,9 @@ import mixin from '@/hxx-components/mixin'
 		    }
 		},
 		methods:{
+      accessBtn(btnName){
+        return getBtns(this.$route.meta.access, this.$store.state.user.accessMenu).indexOf(btnName)>=0? true: false
+      },
 			reset(){
 				this.$refs['list1'].resetFields();
 				this.userId = this.list.USER_ID;
@@ -331,6 +335,10 @@ import mixin from '@/hxx-components/mixin'
 		 addpost(name){
 		this.$refs[name].validate((valid) => {
                     if (valid) {
+                      if(this.targetKeys.length == 0){
+                         this.$Message.info("请选取员工角色");
+                         return false;
+                      }
                     this.$Modal.confirm({
                       title:'系统提示',
                       content:'确认保存吗?',
@@ -418,6 +426,10 @@ import mixin from '@/hxx-components/mixin'
 		 	this.update(row);
 		 },
 		 update(row){
+			  if(!this.accessBtn('edit')){
+			    this.$Message.info('抱歉,你无权限这样做');
+			    return false;
+        }
 		 this.formData = row;
 		 var data = row.ROLE_NAME.split(',');
 		 this.data = data;
