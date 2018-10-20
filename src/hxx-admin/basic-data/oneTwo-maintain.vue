@@ -8,7 +8,7 @@
       </div>
       <div slot="right" class="split-pane">
         <common-table v-model="tableData" :columns="columns" :total="total" :show="showTable"
-                      @changePage="changePage" @changePageSize="changePageSize" :clearSelect="clearType"
+                      @changePage="changePage" :page="page" @changePageSize="changePageSize" :clearSelect="clearType"
                       @onRowClick="onRowClick">
           <div slot="search">
             <div class="search-block">
