@@ -275,7 +275,7 @@
           method: 'post',
           data: {
             access_token: this.$store.state.user.token,
-            data:JSON.stringify(obj),
+            data: JSON.stringify(obj),
           }
         }).then(res => {
           if (res.success === true) {
@@ -313,6 +313,7 @@
         this.formData.TYPE_ID = 0;
         this.formData.number = 0;
         this.formData.REMARK = "";
+        this.formData.ITEM_ID = "";
       },
       classify() {
         //获取项目分类
@@ -335,7 +336,7 @@
         this.$refs['list'].resetFields();
         this.update(this.list);
       },
-      update(data){
+      update(data) {
         this.classify();
         console.log(JSON.stringify(data));
         this.formData = data;
@@ -356,6 +357,21 @@
         this.customModal = true;
       },
       del() {
+        this.$Modal.confirm({title: '系统提示', content: '确认要删除吗?', onOk: this.doDel});
+      },
+      doDel() {
+        this.axios.request({
+          url: '/manage/basedata/repairproject/delete',
+          method: 'post',
+          data: {
+            access_token: this.$store.state.user.token,
+            ids: this.list.ITEM_ID,
+          }
+        }).then(res => {
+          if (res.success === true && res.data == true) {
+            this.getList();
+          }
+        })
       },
       getTree() {
         this.axios.request({

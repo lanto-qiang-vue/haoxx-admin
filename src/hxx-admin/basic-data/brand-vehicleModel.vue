@@ -18,7 +18,7 @@
       </div>
       <div slot="right" class="split-pane">
         <common-table v-model="tableData" :columns="columns" :total="total" :show="showTable" :showSearch="false"
-                      @changePage="changePage" @changePageSize="changePageSize" @onRowClick="onRowClick">
+                      @changePage="changePage" @changePageSize="changePageSize" :page="page" @onRowClick="onRowClick">
           <div slot="operate">
             <Input v-model="KEYWORD" placeholder="车型名称..." style="width: 300px"></Input>
             <Button type="primary" @click="page=1;getList()">
@@ -236,13 +236,23 @@
           {title: '国产/进口', key: 'JK_NAME', minWidth: 100},
           {title: '厂商', key: 'CS_NAME', minWidth: 150},
           {title: '车系名称', key: 'CX_NAME', minWidth: 150},
+          {title: '车系上市时间', key: 'SXSJ', minWidth: 150},
+          {title: '车系停产时间', key: 'TCSJ', minWidth: 150},
+          {title: '年款', key: 'PRODUCE_YEAR', minWidth: 100},
           {
             title: '市场指导价', key: 'SCZDJ', minWidth: 130,
             render: (h, params) => h('span', params.row.SCZDJ + '.00')
           },
+          {title: '车款上市时间', key: 'CKSSSJ', minWidth: 150},
+          {title: '车款停产时间', key: 'CKTCSJ', minWidth: 150},
+          {title: '排量:L', key: 'PLL', minWidth: 150},
+          {title: '排量:CC', key: 'PLCC', minWidth: 150},
           {title: '发动机', key: 'FDJ', minWidth: 100},
           {title: '变速器', key: 'BSQ', minWidth: 160},
           {title: '驱动方式', key: 'QDFS', minWidth: 120},
+          {title: '燃油形式', key: 'RYXS', minWidth: 120},
+          {title: '是否增压', key: 'SFZY', minWidth: 120},
+          {title: '功率', key: 'GL', minWidth: 120},
         ],
         treeData: [],
         treeDefault: [],

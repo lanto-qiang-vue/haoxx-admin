@@ -7,22 +7,45 @@
           <Button type="primary" icon="md-add" @click="showModal=true;"></Button>
           <div class="search-block">
             <Input v-model="keyWords" placeholder="类型编号/名称/数据元名称..">
-              <Icon type="ios-search" slot="suffix" @click="search" style="cursor:pointer;"/>
+              <Icon type="ios-search" slot="suffix" @click="getList" style="cursor:pointer;"/>
             </Input>
           </div>
         </div>
-        <Table :columns="columns" :data="tableData" border :highlight-row="true" @on-current-change="onCurrentChange"
-               :height="tableHeight"></Table>
+        <Table :columns="columns" :data="tableData" border :highlight-row="true"
+               :height="tableHeight" @on-row-click="rowClick" :row-class-name="rowClass"></Table>
       </div>
       <div slot="right" class="split-pane">
         <div class="operate">
-          <Button type="primary">新增</Button>
-          <Button type="error" @click="">删除</Button>
-          <Button type="info">刷新</Button>
+          <Button type="primary" :disabled="canAdd" @click="addCode">新增</Button>
+          <Button type="error" :disabled="canDelete" @click="deleteConfirm">删除</Button>
+          <Button type="info" :disabled="canAdd" @click="refresh">刷新</Button>
         </div>
-        <Table :columns="columns1" :data="tableData1" border></Table>
+        <Table :columns="columns1"   @on-selection-change="select" :data="tableData1" border></Table>
       </div>
     </Split>
+    <Modal
+      v-model="showModal2"
+      title="基本信息"
+      :width="400"
+      @on-visible-change="visibleChange"
+      :scrollable="true"
+      :transfer="true"
+      :footer-hide="false"
+
+      :mask-closable="false"
+      :transition-names="['', '']">
+      <Form :label-width="110" ref="formData" :rules="rules" :model="formData">
+        <FormItem label="数据源名称:" prop="CODE_DESC">
+          <Input type="text" v-model="formData.CODE_DESC"> </Input>
+        </FormItem>
+      </Form>
+      <!--底部按钮组-->
+      <div slot="footer">
+        <Button @click="showModal2=false;">取消</Button>
+        <Button type="primary" @click="submit('formData')">保存</Button>
+
+      </div>
+    </Modal>
     <Modal
       v-model="showModal"
       title="基本信息"
@@ -45,7 +68,7 @@
       <!--底部按钮组-->
       <div slot="footer">
         <Button @click="showModal=false;">取消</Button>
-        <Button type="primary" @click="handleSubmit('listSearch')">提交</Button>
+        <Button type="primary" @click="handleSubmit('listSearch')">保存</Button>
 
       </div>
     </Modal>
@@ -63,7 +86,14 @@
       return {
         splitNum: 0.3,
         keyWords: '',
+        typeId:'',
+        typeName:'',
+        obj:[],
         tableData: [],
+        formData:{
+          CODE_DESC:'',
+        },
+        showModal2:false,
         columns: [
           {title: '类型编码', key: 'TYPE', width: 95},
           {title: '类型名称', key: 'TYPE_NAME', minWidth: 130},
@@ -79,7 +109,6 @@
           },
           {
             title: '数据元', key: 'CODE_ID', minWidth: 110,
-
           },
           {title: '数据元名称', key: 'CODE_DESC', minWidth: 120},
           {title: '排序值', key: 'NUM', minWidth: 80},
@@ -108,12 +137,17 @@
         },
         ruleValidate: {
           typeName: [
-            {required: true, message: '请填写', trigger: 'change'}
+            {required: true, message: '请填写数据源类型', trigger: 'change'}
           ],
           codeName: [
-            {required: true, message: '请填写', trigger: 'change'}
+            {required: true, message: '请填写数据源名称', trigger: 'change'}
           ],
         },
+        rules:{
+          CODE_DESC:[
+            {required: true, message: '请填数据源名称', trigger: 'change'}
+          ],
+        }
       }
     },
     mounted() {
@@ -129,10 +163,67 @@
       statusList() {
         return getDictGroup(this.$store.state.app.dict, '1001');
       },
+      canAdd(){
+        return this.typeId == "";
+      },
+      canDelete(){
+        return this.obj.length == 0;
+      },
     },
     methods: {
+      rowClass(row,index){
+        if(row.TYPE == this.typeId){
+          return "ivu-table-stripe-even";
+         }
+      },
+      deleteConfirm(){
+       if(this.canDelete){
+         this.$Message.info('请选择要删除的数据');
+       }else{
+         this.$Modal.confirm({title:'系统提示',content:'确认要删除吗?',onOk:this.deleteCode});
+       }
+      },
+      deleteCode(){
+        let ids = [];
+        for(let i in this.obj){
+          ids.push(this.obj[i].CODE_ID);
+        }
+        let id = ids.join(',');
+        this.axios.request({
+          url: '/manage/basedata/dbcode/deleteCode',
+          method: 'post',
+          data: {
+            access_token: this.$store.state.user.token,
+            ids:id,
+          }
+        }).then(res => {
+          if (res.success === true) {
+            let data = this.tableData1;
+             for(let i in id){
+               let did = id[i];
+               for(let a in data){
+
+               }
+             }
+          }
+        })
+      },
+      addCode(){
+        this.showModal2 = true;
+      },
+      refresh(){
+        this.getCodeList(this.typeId);
+      },
       onCurrentChange(){
 
+      },
+      select(row){
+       this.obj = row;
+      },
+      rowClick(row){
+        this.typeId = row.TYPE;
+        this.typeName = row.TYPE_NAME;
+        this.getCodeList(row.TYPE);
       },
       search(){
 
@@ -149,10 +240,24 @@
           }, time);
         }
       },
-      getCodeList(id){
-        alert(id);
+      //获取小分类数据
+      getCodeList(){
+        this.axios.request({
+          url: '/manage/basedata/dbcode/codeList',
+          method: 'post',
+          data: {
+            type:this.typeId,
+            page: 1,
+            start: 0,
+            access_token: this.$store.state.user.token
+          }
+        }).then(res => {
+          if (res.success === true) {
+             this.tableData1 = res.data;
+          }
+        })
       },
-      //获取当前页面数据------
+      //获取大分类数据
       getList() {
         this.axios.request({
           url: '/manage/basedata/dbcode/typeList',
@@ -166,13 +271,15 @@
           }
         }).then(res => {
           if (res.success === true) {
+            this.typeId = res.data[0].TYPE;
+            this.typeName = res.data[0].TYPE_NAME;
             this.tableData = res.data;
-            this.getCodeList(this.tableData[0].TYPE);
+            this.getCodeList();
           }
         })
       },
-      //新增数据类型----
-      addNewType() {
+      //新增第一步
+      F1(){
         this.axios.request({
           url: '/manage/basedata/dbcode/addNewType',
           method: 'post',
@@ -181,23 +288,98 @@
           }
         }).then(res => {
           if (res.success === true) {
-
+              let type = res.data.TYPE;
+              this.F2(type);
           }
         })
       },
-      //数据源类型名称修改
-      setTypeName(type, name) {
+      F2(type){
+        this.axios.request({
+          url: '/manage/basedata/dbcode/codeList',
+          method: 'post',
+          data: {
+            access_token: this.$store.state.user.token,
+            limit:25,
+            page:1,
+            type:type,
+          }
+        }).then(res => {
+          if (res.success === true) {
+            let data = res.data[0];
+            data.CODE_DESC = this.listSearch.codeName;
+            this.F3(data);
+            this.F4(data.TYPE,this.listSearch.typeName);
+          }
+        })
+      },
+      F3(data,flag = false){
+        this.axios.request({
+          url: '/manage/basedata/dbcode/updateCode',
+          method: 'post',
+          data: {
+            access_token: this.$store.state.user.token,
+            type:data.TYPE,
+            codeBak:data.CODE_ID,
+            data:JSON.stringify(data)
+          }
+        }).then(res => {
+          if (res.success === true) {
+            this.showModal = false;
+            this.showModal2 = false;
+            if(flag) this.getCodeList();
+          }
+        })
+      },
+      F4(type,name){
         this.axios.request({
           url: '/manage/basedata/dbcode/updateType',
           method: 'post',
           data: {
             access_token: this.$store.state.user.token,
-            type: type,
-            name: name,
+            name:name,
+            type:type,
           }
         }).then(res => {
           if (res.success === true) {
-
+           this.tableData.unshift({TYPE:type,TYPE_NAME:name});
+           this.typeId = type;
+           this.typeName = name;
+           this.getCodeList();
+          }
+        })
+      },
+      F5(type,name){
+        this.axios.request({
+          url: '/manage/basedata/dbcode/addNewCode',
+          method: 'post',
+          data: {
+            access_token: this.$store.state.user.token,
+            type:type,
+            typeName:name,
+          }
+        }).then(res => {
+          if (res.success === true) {
+            let data = res.data;
+            data.CODE_DESC = this.formData.CODE_DESC;
+            this.F3(data,true);
+          }
+        })
+      },
+      setCode(row,flag = true){
+        this.axios.request({
+          url: '/manage/basedata/dbcode/updateCode',
+          method: 'post',
+          data: {
+            access_token: this.$store.state.user.token,
+            type: row.TYPE,
+            codeBak:row.CODE_ID,
+            data:JSON.stringify(row)
+          }
+        }).then(res => {
+          if (res.success === true) {
+          this.showModal = false;
+          this.showModal2 = false;
+          this.getList();
           }
         })
       },
@@ -205,7 +387,18 @@
       handleSubmit(name) {
         this.$refs[name].validate((valid) => {
           if (valid) {
-            this.addNewType();
+            this.F1();
+          }else{
+            this.$Message.error("请校对红框字段");
+          }
+        });
+      },
+      submit(name){
+        this.$refs[name].validate((valid) => {
+          if (valid) {
+            this.F5(this.typeId,this.typeName);
+          }else{
+            this.$Message.error("请校对红框字段");
           }
         });
       },
@@ -213,27 +406,15 @@
       visibleChange() {
 
       },
-      //新增数据元-------
-      addNewCode() {
-        this.axios.request({
-          url: '/manage/basedata/dbcode/addNewCode',
-          method: 'post',
-          data: {
-            type: 1055,
-            typeName: '',
-            access_token: this.$store.state.user.token
-          }
-        }).then(res => {
-          if (res.success === true) {
-
-          }
-        })
-      },
     },
 
   }
 </script>
-
+<style lang="less">
+  .ivu-table-stripe-even td{
+   background-color:#BFE9FF;
+  }
+</style>
 <style lang="less" scoped>
   .search-block {
     display: inline-block;
@@ -241,7 +422,9 @@
     /*margin-left: 10px;*/
     overflow: hidden;
   }
-
+.ivu-table-stripe-even{
+  background-color:red;
+}
   .demo-split {
     border: 1px solid #dcdee2;
   }

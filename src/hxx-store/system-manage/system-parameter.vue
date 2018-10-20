@@ -46,7 +46,7 @@
                                     	let self=this;
                                         if(stype == 2){
                                         	let reg = /^[0-9]*$/;
-                                         if(!reg.test(e.target.value)){
+                                         if(!reg.test(e.target.value) || e.target.value == ""){
                                           e.target.value = store;
                                          }else{
                                           if(e.target.value != store) self.update(params.row,e.target.value); 

@@ -187,6 +187,7 @@
       add() {
         this.$refs.list.resetFields();
         this.formData.ROLE_DESC = "";
+        this.formData.ROLE_ID = "";
         this.formData.STATUS = this.statusList2[0].code;
         this.getTree();
         this.showModal = true;
