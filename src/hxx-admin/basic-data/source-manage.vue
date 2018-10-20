@@ -20,7 +20,7 @@
           <Button type="error" :disabled="canDelete" @click="deleteConfirm">删除</Button>
           <Button type="info" :disabled="canAdd" @click="refresh">刷新</Button>
         </div>
-        <Table :columns="columns1"   @on-selection-change="select" :data="tableData1" border></Table>
+        <Table :columns="columns1" @on-selection-change="select" :data="tableData1" border></Table>
       </div>
     </Split>
     <Modal
@@ -86,33 +86,44 @@
       return {
         splitNum: 0.3,
         keyWords: '',
-        typeId:'',
-        typeName:'',
-        obj:[],
+        typeId: '',
+        typeName: '',
+        obj: [],
         tableData: [],
-        formData:{
-          CODE_DESC:'',
+        formData: {
+          CODE_DESC: '',
         },
-        showModal2:false,
+        showModal2: false,
         columns: [
           {title: '类型编码', key: 'TYPE', width: 95},
-          {title: '类型名称', key: 'TYPE_NAME', minWidth: 130,
+          {
+            title: '类型名称', key: 'TYPE_NAME', minWidth: 130,
             render: (h, params) => {
               let store = params.row.TYPE_NAME;
-                return h('div', [
-                  h('Input', {
-                      props: {
-                        value: params.row.TYPE_NAME,
-                      },
-                      on: {
-                        "on-blur":(e)=>{
-
-                        },
-
-                      }
+              let type = params.row.TYPE;
+              let self = this;
+              return h('div', [
+                h('Input', {
+                    props: {
+                      value: params.row.TYPE_NAME,
                     },
-                  )
-                ]);
+                    on: {
+                      "on-blur": (e) => {
+                        let val = e.target.value;
+                        if (val == '') {
+                          self.$Message.error('类型名称不能为空');
+                          e.target.value = store;
+                        } else {
+                          if (e.target.value != store) {
+                            self.updateType(type, val);
+                          }
+                        }
+                      },
+
+                    }
+                  },
+                )
+              ]);
             }
           },
         ],
@@ -127,12 +138,110 @@
           },
           {
             title: '数据元', key: 'CODE_ID', minWidth: 110,
+            render: (h, params) => {
+              let store = params.row.CODE_ID;
+              let self = this;
+              return h('div', [
+                h('Input', {
+                    props: {
+                      value: params.row.CODE_ID,
+                    },
+                    on: {
+                      "on-blur": (e) => {
+                        let val = e.target.value;
+                        if (val == '') {
+                          self.$Message.error('数据元不能为空');
+                          e.target.value = store;
+                        } else {
+                          if (e.target.value != store) {
+                            self.updateCode(params.row, 4, val);
+                          }
+                        }
+                      },
+
+                    }
+                  },
+                )
+              ]);
+            }
           },
-          {title: '数据元名称', key: 'CODE_DESC', minWidth: 120},
-          {title: '排序值', key: 'NUM', minWidth: 80},
           {
-            title: '状态', key: 'STATUS', minWidth: 80,
-            render: (h, params) => h('span', getName(this.statusList, params.row.STATUS))
+            title: '数据元名称', key: 'CODE_DESC', minWidth: 120,
+            render: (h, params) => {
+              let store = params.row.CODE_DESC;
+              let self = this;
+              return h('div', [
+                h('Input', {
+                    props: {
+                      value: params.row.CODE_DESC,
+                    },
+                    on: {
+                      "on-blur": (e) => {
+                        let val = e.target.value;
+                        if (val == '') {
+                          self.$Message.error('数据源名称不能为空');
+                          e.target.value = store;
+                        } else {
+                          if (e.target.value != store) {
+                          self.updateCode(params.row, 1, val);
+                          }
+                        }
+                      },
+
+                    }
+                  },
+                )
+              ]);
+            }
+          },
+          {
+            title: '排序值', key: 'NUM', minWidth: 100,
+            render: (h, params) => {
+              let dsq = null;
+              let self = this;
+              return h('div', [
+                h('InputNumber', {
+                    props: {
+                      value: params.row.NUM,
+                    },
+                    on: {
+                      "on-change": (val) => {
+                        clearTimeout(dsq);
+                       dsq = setTimeout(function(){
+                          self.updateCode(params.row, 3, val);
+                        },1000);
+                      }
+
+                    }
+                  },
+                )
+              ]);
+            }
+          },
+          {
+            title: '状态', key: 'STATUS', minWidth: 120,
+            // render: (h, params) => h('span', getName(this.statusList, params.row.STATUS))
+            render: (h, params) => {
+              return h('Select', {
+                  props: {
+                    value: params.row.STATUS,
+                  },
+                  on: {
+                    'on-change': (value) => {
+                      this.tableData1[params.index].STATUS = value;
+                      this.updateCode(params.row, 2, value);
+                    }
+                  },
+                },
+                this.statusList.map(function (type) {
+                  return h('Option', {
+                    props: {
+                      value: type.code,
+                    }
+                  }, type.name);
+                })
+              );
+            }
           },
           {title: '创建人', key: 'CREATE_BY', minWidth: 120},
           {
@@ -161,8 +270,8 @@
             {required: true, message: '请填写数据源名称', trigger: 'change'}
           ],
         },
-        rules:{
-          CODE_DESC:[
+        rules: {
+          CODE_DESC: [
             {required: true, message: '请填数据源名称', trigger: 'change'}
           ],
         }
@@ -181,29 +290,89 @@
       statusList() {
         return getDictGroup(this.$store.state.app.dict, '1001');
       },
-      canAdd(){
+      canAdd() {
         return this.typeId == "";
       },
-      canDelete(){
+      canDelete() {
         return this.obj.length == 0;
       },
     },
     methods: {
-      rowClass(row,index){
-        if(row.TYPE == this.typeId){
+      updateCode(data, code, val) {
+        let codeBak;
+        switch (code) {
+          case 1:
+            data.CODE_DESC = val;
+            codeBak = data.CODE_ID;
+            break;
+          case 2:
+            data.STATUS = val;
+            codeBak = data.CODE_ID;
+            break;
+          case 3:
+            data.NUM = val;
+            codeBak = data.CODE_ID;
+            break;
+          case 4:
+            codeBak = data.CODE_ID;
+            data.CODE_ID_BAK = codeBak;
+            data.CODE_ID = val;
+            break;
+        }
+        this.axios.request({
+          url: '/manage/basedata/dbcode/updateCode',
+          method: 'post',
+          data: {
+            access_token: this.$store.state.user.token,
+            type: data.TYPE,
+            codeBak: codeBak,
+            data: JSON.stringify(data)
+          }
+        }).then(res => {
+          if (res.success === true) {
+            if(code == 4) this.getCodeList();
+          }else{
+            let self = this;
+            setTimeout(function(){
+              self.$Modal.error({title:'错误提示',content:res.Exception.message});
+            },500);
+            if(code == 4) this.getCodeList();
+            return false;
+          }
+        })
+
+      },
+      updateType(type, name) {
+        this.axios.request({
+          url: '/manage/basedata/dbcode/updateType',
+          method: 'post',
+          data: {
+            access_token: this.$store.state.user.token,
+            name: name,
+            type: type,
+          }
+        }).then(res => {
+          if (res.success === true) {
+            this.typeId = type;
+            this.typeName = name;
+          }
+        })
+      },
+      rowClass(row, index) {
+        if (row.TYPE == this.typeId) {
           return "ivu-table-stripe-even";
-         }
+        }
       },
-      deleteConfirm(){
-       if(this.canDelete){
-         this.$Message.info('请选择要删除的数据');
-       }else{
-         this.$Modal.confirm({title:'系统提示',content:'确认要删除吗?',onOk:this.deleteCode});
-       }
+      deleteConfirm() {
+        if (this.canDelete) {
+          this.$Message.info('请选择要删除的数据');
+        } else {
+          this.$Modal.confirm({title: '系统提示', content: '确认要删除吗?', onOk: this.deleteCode});
+        }
       },
-      deleteCode(){
+      deleteCode() {
         let ids = [];
-        for(let i in this.obj){
+        for (let i in this.obj) {
           ids.push(this.obj[i].CODE_ID);
         }
         let id = ids.join(',');
@@ -212,54 +381,54 @@
           method: 'post',
           data: {
             access_token: this.$store.state.user.token,
-            ids:id,
+            ids: id,
           }
         }).then(res => {
           if (res.success === true) {
             let data = this.tableData1;
-             for(let i in ids){
-               let did = ids[i];
-               console.log(did);
-               for(let a in data){
-                 if(data[a].CODE_ID == did){
-                   data.splice(a,1);
-                 }
-               }
-             }
-             //为空代表已删空...
-            if(data.length == 0){
+            for (let i in ids) {
+              let did = ids[i];
+              console.log(did);
+              for (let a in data) {
+                if (data[a].CODE_ID == did) {
+                  data.splice(a, 1);
+                }
+              }
+            }
+            //为空代表已删空...
+            if (data.length == 0) {
               let tableData = this.tableData;
-              for(let i in tableData){
-                if(tableData[i].TYPE == this.typeId){
-                  tableData.splice(i,1);
+              for (let i in tableData) {
+                if (tableData[i].TYPE == this.typeId) {
+                  tableData.splice(i, 1);
                 }
               }
               this.tableData = tableData;
               this.typeId = "";
               this.obj = [];
             }
-             this.tableData1 = data;
+            this.tableData1 = data;
           }
         })
       },
-      addCode(){
+      addCode() {
         this.showModal2 = true;
       },
-      refresh(){
+      refresh() {
         this.getCodeList(this.typeId);
       },
-      onCurrentChange(){
+      onCurrentChange() {
 
       },
-      select(row){
-       this.obj = row;
+      select(row) {
+        this.obj = row;
       },
-      rowClick(row){
+      rowClick(row) {
         this.typeId = row.TYPE;
         this.typeName = row.TYPE_NAME;
         this.getCodeList(row.TYPE);
       },
-      search(){
+      search() {
 
       },
       resize(time) {
@@ -275,19 +444,20 @@
         }
       },
       //获取小分类数据
-      getCodeList(){
+      getCodeList() {
+        this.obj = [];
         this.axios.request({
           url: '/manage/basedata/dbcode/codeList',
           method: 'post',
           data: {
-            type:this.typeId,
+            type: this.typeId,
             page: 1,
             start: 0,
             access_token: this.$store.state.user.token
           }
         }).then(res => {
           if (res.success === true) {
-             this.tableData1 = res.data;
+            this.tableData1 = res.data;
           }
         })
       },
@@ -313,7 +483,7 @@
         })
       },
       //新增第一步
-      F1(){
+      F1() {
         this.axios.request({
           url: '/manage/basedata/dbcode/addNewType',
           method: 'post',
@@ -322,98 +492,98 @@
           }
         }).then(res => {
           if (res.success === true) {
-              let type = res.data.TYPE;
-              this.F2(type);
+            let type = res.data.TYPE;
+            this.F2(type);
           }
         })
       },
-      F2(type){
+      F2(type) {
         this.axios.request({
           url: '/manage/basedata/dbcode/codeList',
           method: 'post',
           data: {
             access_token: this.$store.state.user.token,
-            limit:25,
-            page:1,
-            type:type,
+            limit: 25,
+            page: 1,
+            type: type,
           }
         }).then(res => {
           if (res.success === true) {
             let data = res.data[0];
             data.CODE_DESC = this.listSearch.codeName;
             this.F3(data);
-            this.F4(data.TYPE,this.listSearch.typeName);
+            this.F4(data.TYPE, this.listSearch.typeName);
           }
         })
       },
-      F3(data,flag = false){
+      F3(data, flag = false) {
         this.axios.request({
           url: '/manage/basedata/dbcode/updateCode',
           method: 'post',
           data: {
             access_token: this.$store.state.user.token,
-            type:data.TYPE,
-            codeBak:data.CODE_ID,
-            data:JSON.stringify(data)
+            type: data.TYPE,
+            codeBak: data.CODE_ID,
+            data: JSON.stringify(data)
           }
         }).then(res => {
           if (res.success === true) {
             this.showModal = false;
             this.showModal2 = false;
-            if(flag) this.getCodeList();
+            if (flag) this.getCodeList();
           }
         })
       },
-      F4(type,name){
+      F4(type, name) {
         this.axios.request({
           url: '/manage/basedata/dbcode/updateType',
           method: 'post',
           data: {
             access_token: this.$store.state.user.token,
-            name:name,
-            type:type,
+            name: name,
+            type: type,
           }
         }).then(res => {
           if (res.success === true) {
-           this.tableData.unshift({TYPE:type,TYPE_NAME:name});
-           this.typeId = type;
-           this.typeName = name;
-           this.getCodeList();
+            this.tableData.unshift({TYPE: type, TYPE_NAME: name});
+            this.typeId = type;
+            this.typeName = name;
+            this.getCodeList();
           }
         })
       },
-      F5(type,name){
+      F5(type, name) {
         this.axios.request({
           url: '/manage/basedata/dbcode/addNewCode',
           method: 'post',
           data: {
             access_token: this.$store.state.user.token,
-            type:type,
-            typeName:name,
+            type: type,
+            typeName: name,
           }
         }).then(res => {
           if (res.success === true) {
             let data = res.data;
             data.CODE_DESC = this.formData.CODE_DESC;
-            this.F3(data,true);
+            this.F3(data, true);
           }
         })
       },
-      setCode(row,flag = true){
+      setCode(row, flag = true) {
         this.axios.request({
           url: '/manage/basedata/dbcode/updateCode',
           method: 'post',
           data: {
             access_token: this.$store.state.user.token,
             type: row.TYPE,
-            codeBak:row.CODE_ID,
-            data:JSON.stringify(row)
+            codeBak: row.CODE_ID,
+            data: JSON.stringify(row)
           }
         }).then(res => {
           if (res.success === true) {
-          this.showModal = false;
-          this.showModal2 = false;
-          this.getList();
+            this.showModal = false;
+            this.showModal2 = false;
+            this.getList();
           }
         })
       },
@@ -422,16 +592,16 @@
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.F1();
-          }else{
+          } else {
             this.$Message.error("请校对红框字段");
           }
         });
       },
-      submit(name){
+      submit(name) {
         this.$refs[name].validate((valid) => {
           if (valid) {
-            this.F5(this.typeId,this.typeName);
-          }else{
+            this.F5(this.typeId, this.typeName);
+          } else {
             this.$Message.error("请校对红框字段");
           }
         });
@@ -445,8 +615,8 @@
   }
 </script>
 <style lang="less">
-  .ivu-table-stripe-even td{
-   background-color:#BFE9FF;
+  .ivu-table-stripe-even td {
+    background-color: #BFE9FF;
   }
 </style>
 <style lang="less" scoped>
@@ -456,9 +626,11 @@
     /*margin-left: 10px;*/
     overflow: hidden;
   }
-.ivu-table-stripe-even{
-  background-color:red;
-}
+
+  .ivu-table-stripe-even {
+    background-color: red;
+  }
+
   .demo-split {
     border: 1px solid #dcdee2;
   }
