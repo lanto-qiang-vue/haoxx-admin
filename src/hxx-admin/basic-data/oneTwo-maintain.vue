@@ -311,7 +311,7 @@
         this.classify();
         //项目分类默认请选择....
         this.formData.TYPE_ID = 0;
-        this.formData.number = 0;
+        this.number = 0;
         this.formData.REMARK = "";
         this.formData.ITEM_ID = "";
       },
