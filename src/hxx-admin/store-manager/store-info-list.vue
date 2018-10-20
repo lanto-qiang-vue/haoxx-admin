@@ -27,8 +27,8 @@
   </div>
   <div slot="operate">
     <Button type="primary" :disabled="!detailData" @click="showStoreModal= true">查看/编辑</Button>
-    <Button type="success" :disabled="!detailData || detailData.CHECK_STATUS == '10351004'" @click="showRecordInfo">添加电子健康档案账号</Button>
-    <Button type="error" v-show="!detailData || detailData.CHECK_STATUS!='10351004'" :disabled="!detailData" @click="updateCheckStatus">门店停用</Button>
+    <Button type="success" :disabled="!detailData || detailData.CHECK_STATUS != '10351002'" @click="showRecordInfo">添加电子健康档案账号</Button>
+    <Button type="error" v-show="!detailData || detailData.CHECK_STATUS!='10351004'" :disabled="!detailData || detailData.CHECK_STATUS != '10351002'" @click="updateCheckStatus">门店停用</Button>
     <Button type="success" v-show="detailData && detailData.CHECK_STATUS=='10351004'" :disabled="!detailData" @click="updateCheckStatus">门店恢复</Button>
   </div>
 
@@ -218,7 +218,8 @@
                   }
                 }).then(res => {
                   if (res.success === true) {
-                    this.showAddModal= false
+                    this.showAddModal= false;
+                    this.getList();
                     this.$Message.success('保存成功');
                   }
                 })
