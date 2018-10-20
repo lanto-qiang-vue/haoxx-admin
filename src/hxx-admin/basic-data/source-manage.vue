@@ -96,7 +96,25 @@
         showModal2:false,
         columns: [
           {title: '类型编码', key: 'TYPE', width: 95},
-          {title: '类型名称', key: 'TYPE_NAME', minWidth: 130},
+          {title: '类型名称', key: 'TYPE_NAME', minWidth: 130,
+            render: (h, params) => {
+              let store = params.row.TYPE_NAME;
+                return h('div', [
+                  h('Input', {
+                      props: {
+                        value: params.row.TYPE_NAME,
+                      },
+                      on: {
+                        "on-blur":(e)=>{
+
+                        },
+
+                      }
+                    },
+                  )
+                ]);
+            }
+          },
         ],
         columns1: [
           {
@@ -199,12 +217,28 @@
         }).then(res => {
           if (res.success === true) {
             let data = this.tableData1;
-             for(let i in id){
-               let did = id[i];
+             for(let i in ids){
+               let did = ids[i];
+               console.log(did);
                for(let a in data){
-
+                 if(data[a].CODE_ID == did){
+                   data.splice(a,1);
+                 }
                }
              }
+             //为空代表已删空...
+            if(data.length == 0){
+              let tableData = this.tableData;
+              for(let i in tableData){
+                if(tableData[i].TYPE == this.typeId){
+                  tableData.splice(i,1);
+                }
+              }
+              this.tableData = tableData;
+              this.typeId = "";
+              this.obj = [];
+            }
+             this.tableData1 = data;
           }
         })
       },

@@ -234,6 +234,9 @@
 
       },
       changeData() {
+        this.treeData = [];
+        this.FATHER_ID = '';
+        this.clearType = Math.random();
         this.spinShow = true;
         this.axios.request({
           url: '/manage/basedata/part_type/part_type_tree',
