@@ -116,6 +116,8 @@
                         } else {
                           if (e.target.value != store) {
                             self.updateType(type, val);
+                          }else if(val.length > 50){
+                            self.$Message.error('长度不能大于50');
                           }
                         }
                       },
@@ -155,6 +157,8 @@
                         } else {
                           if (e.target.value != store) {
                             self.updateCode(params.row, 4, val);
+                          }else if(val.length > 50){
+                            self.$Message.error('长度不能大于50');
                           }
                         }
                       },
@@ -211,7 +215,11 @@
                         if(val == "" || !reg.test(val)){
                           e.target.value = store;
                         }else{
-                          if(val != store) self.updateCode(params.row, 3, val);
+                          if(val != store){
+                            self.updateCode(params.row, 3, val);
+                          }else if(val.length > 7){
+                            self.$Message.error('长度不能大于7');
+                          }
                         }
                       }
 
