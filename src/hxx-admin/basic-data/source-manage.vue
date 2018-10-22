@@ -116,8 +116,6 @@
                         } else {
                           if (e.target.value != store) {
                             self.updateType(type, val);
-                          }else if(val.length > 50){
-                            self.$Message.error('长度不能大于50');
                           }
                         }
                       },
@@ -147,6 +145,7 @@
                 h('Input', {
                     props: {
                       value: params.row.CODE_ID,
+                      maxlength:50,
                     },
                     on: {
                       "on-blur": (e) => {
@@ -157,8 +156,6 @@
                         } else {
                           if (e.target.value != store) {
                             self.updateCode(params.row, 4, val);
-                          }else if(val.length > 50){
-                            self.$Message.error('长度不能大于50');
                           }
                         }
                       },
@@ -178,6 +175,7 @@
                 h('Input', {
                     props: {
                       value: params.row.CODE_DESC,
+                      maxlength:50,
                     },
                     on: {
                       "on-blur": (e) => {
@@ -207,7 +205,8 @@
               return h('div', [
                 h('Input', {
                     props: {
-                      value: params.row.NUM
+                      value: params.row.NUM,
+                      maxlength:7,
                     },
                     on: {
                       "on-blur":(e) => {
@@ -217,8 +216,6 @@
                         }else{
                           if(val != store){
                             self.updateCode(params.row, 3, val);
-                          }else if(val.length > 7){
-                            self.$Message.error('长度不能大于7');
                           }
                         }
                       }
