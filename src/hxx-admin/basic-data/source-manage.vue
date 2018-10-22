@@ -197,19 +197,22 @@
           {
             title: '排序值', key: 'NUM', minWidth: 100,
             render: (h, params) => {
-              let dsq = null;
               let self = this;
+              let store = params.row.NUM;
+              let reg = /^[0-9]*$/;
               return h('div', [
-                h('InputNumber', {
+                h('Input', {
                     props: {
-                      value: params.row.NUM,
+                      value: params.row.NUM
                     },
                     on: {
-                      "on-change": (val) => {
-                        clearTimeout(dsq);
-                       dsq = setTimeout(function(){
-                          self.updateCode(params.row, 3, val);
-                        },1000);
+                      "on-blur":(e) => {
+                        let val = e.target.value;
+                        if(val == "" || !reg.test(val)){
+                          e.target.value = store;
+                        }else{
+                          if(val != store) self.updateCode(params.row, 3, val);
+                        }
                       }
 
                     }
