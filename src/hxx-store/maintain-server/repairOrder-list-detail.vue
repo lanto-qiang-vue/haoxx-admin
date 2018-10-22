@@ -190,7 +190,7 @@
       <select-vehicle :showoff="showoff" @selectCar="selectCar">
       </select-vehicle>
       <!--选择项目-->
-      <select-itemsType :showTenanceItems="showTenanceItems" @sTenanceItem="sTenanceItem" :initGetItem="initGetItem">
+      <select-itemsType :showTenanceItems="showTenanceItems" @sTenanceItem="sTenanceItem" :initGetItem="initGetItem" :initSearch="listSearch">
       </select-itemsType>
       <!--选择配件-->
       <select-parts :showSelectParts="showSelectParts" @selectPartsItem="selectPartsItem" :initParts="initParts">

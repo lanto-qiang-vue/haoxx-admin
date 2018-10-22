@@ -61,7 +61,7 @@ import commonTable from '@/hxx-components/common-table.vue'
   import { getName, getDictGroup } from '@/libs/util.js'
 	export default {
 		name: "select-itemsType",
-        props:['showTenanceItems','initGetItem',"showTransfer"],
+        props:['showTenanceItems','initGetItem',"showTransfer",'initSearch'],
         components: {commonTable},
         data(){
             return{
@@ -201,10 +201,15 @@ import commonTable from '@/hxx-components/common-table.vue'
                 this.resetVehicle();//首次进来数据重置
                 this.selectData=this.initGetItem;
                 this.test2='1';
+
+                console.log('进来的汽车参数',this.initSearch);
+                
                 this.getList();
                 this.getCarType();
                 this.getBanJinList();
                 this.getCarList();
+
+                
                 
             }
         },
@@ -362,6 +367,7 @@ import commonTable from '@/hxx-components/common-table.vue'
                         }
                     }
                     for(let i in this.getCarListData){
+                        console.log(this.getCarListData[i].CLASS_NAME);
                         let carListArr=this.getCarListData[i].CLASS_NAME.split('-');
                         // console.log(carListArr);
                         if(carListArr[0]==carType){
