@@ -36,7 +36,7 @@
       :transition-names="['', '']">
       <Form :label-width="110" ref="formData" :rules="rules" :model="formData">
         <FormItem label="数据源名称:" prop="CODE_DESC">
-          <Input type="text" v-model="formData.CODE_DESC"> </Input>
+          <Input type="text" :maxlength="50" v-model="formData.CODE_DESC"> </Input>
         </FormItem>
       </Form>
       <!--底部按钮组-->
@@ -59,10 +59,10 @@
       :transition-names="['', '']">
       <Form :label-width="110" ref="listSearch" :rules="ruleValidate" :model="listSearch">
         <FormItem label="类型名称:" prop="typeName">
-          <Input type="text" v-model="listSearch.typeName" placeholder=""> </Input>
+          <Input type="text" :maxlength="50" v-model="listSearch.typeName" placeholder=""> </Input>
         </FormItem>
         <FormItem label="数据元名称:" prop="codeName">
-          <Input type="text" v-model="listSearch.codeName" placeholder=""> </Input>
+          <Input type="text" :maxlength="50" v-model="listSearch.codeName" placeholder=""> </Input>
         </FormItem>
       </Form>
       <!--底部按钮组-->
@@ -106,6 +106,7 @@
                 h('Input', {
                     props: {
                       value: params.row.TYPE_NAME,
+                      maxlength:50,
                     },
                     on: {
                       "on-blur": (e) => {
