@@ -226,6 +226,8 @@
       },
     },
     created(){
+		  // this.info.BUSINESS_TYPE = this.BUSINESS_TYPE_group[0].code;
+		  // this.info.STATUS = this.STATUS_group[0].code;
 		  if(this.locale == 'admin') this.interface = '/manage/info/tenantinfo/regionList';
       if(this.type == 1){this.editAble = true;}
       let rule= (this.isAdmin? []: [{ required: true, message:'必填项不能为空'}])
@@ -310,11 +312,11 @@
       cancelEdit(){
         this.$refs.form.resetFields()
         if(this.data){
-          console.log('start')
+          // console.log('start')
           for (let key in this.info){
             this.info[key]= this.data[key]
           }
-          console.log('finished')
+          // console.log('finished')
           //审核状态如果有...
           let flag = this.data['CHECK_STATUS'] ? true : false;
           if(flag){
