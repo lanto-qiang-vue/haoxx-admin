@@ -28,7 +28,6 @@
       </div>
       <div style="clear:both;"></div>
     </div>
-    <unit-tree v-if="indexId < 0"></unit-tree>
     <xunit-tree v-for="item in data" :expand="item.expand" :indexId="0" :text="item.text" :funcId="item.funcId"
                 v-show="expand"
                 :level="level+1" :data="item.children" @spliceId="spliceId" :funcButton="item.funcButton"
