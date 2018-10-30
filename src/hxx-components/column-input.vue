@@ -2,7 +2,6 @@
 <div class="column-input" @click="click">
   <InputNumber v-if="type=='number'" ref="number" :min="min" :max="max" v-model="val" v-show="show=='number'"
                @on-blur="blurFun"  @on-focus="focusFun" @on-change="change" :disabled='disabled'></InputNumber>
-               
 </div>
 </template>
 
