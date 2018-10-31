@@ -468,6 +468,16 @@ export default [
           access: '100302',
         },
         component: () => import('@/hxx-store/customer-relations/card-recharge.vue')
+      },
+      {path: '/card-record',
+        name: 'card-record',
+        meta: {
+          icon: 'md-funnel',
+          title: '储值卡消费记录',
+          lgType: "1002",
+          access: '100302',
+        },
+        component: () => import('@/hxx-store/customer-relations/card-record.vue')
       }
       // {
       //   path: 'test',

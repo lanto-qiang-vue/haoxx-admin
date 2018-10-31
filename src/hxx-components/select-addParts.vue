@@ -399,6 +399,11 @@
 	}
 </script>
 <style lang="less">
+  .ivu-input-number-input {
+    height: 27px;
+  }
+</style>
+<style lang="less">
    #select-type{
       .ivu-select-dropdown{
         width: 250px

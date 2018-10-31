@@ -33,7 +33,7 @@
       <Button type="success" v-if="" :disabled="canDo || list.STATUS != '10471002'" @click="collection()">收款</Button>
       <Button type="warning" v-if="" :disabled="canDo  || list.STATUS != '10471003'" @click="rcollection()">反收款</Button>
       <Button type="error" v-if="" :disabled="canDo || list.STATUS != '10471001'" @click="remove()">作废</Button>
-      <Button type="primary" v-if="" :disabled="canDo">打印充值单</Button>
+      <Button type="primary" v-if="" @click="xPrint" :disabled="canDo || list.STATUS == '10471001'">打印充值单</Button>
     </div>
     <Modal
       class="table-modal-detail"
@@ -49,6 +49,7 @@
     >
       <Collapse value="1">
         <Panel name="1">
+          基本信息
           <div slot="content">
             <Form ref="formData" :model="formData" :label-width="120" :rules="ruleValidate" inline class="common-form">
               <FormItem label="客户名称:" style="width:45%;" prop="CUSTOMER_NAME">
@@ -83,7 +84,7 @@
         </Panel>
       </Collapse>
       <div slot="footer">
-        <Button type="primary" @click="save('formData')" style="margin-left:10px;">保存</Button>
+        <Button type="primary" v-show="this.formData.STATUS == '10471001'" @click="save('formData')" style="margin-left:10px;">保存</Button>
         <Button type="primary" @click="showModal = false">返回</Button>
       </div>
     </Modal>
@@ -102,32 +103,79 @@
       <Collapse v-model="valueList">
         <Panel name="1">
           结算信息
-          <Form slot="content" ref="collectionData" :model="collectionData" :label-width="120" inline class="common-form">
-            <FormItem label="合计金额:" style="width:30%;color:red;">
-              <div style="color:red;width:100%;font-size:18px;">{{collectionData.SUM_MONEY}}</div>
+          <Form slot="content" ref="collectionData" :model="collectionData" :rules="rule2" :label-width="120"
+                class="common-form">
+            <FormItem label="合计金额:" style="width:30%;">
+              <div style="color:red;font-size:18px;">{{collectionData.SUM_MONEY}}</div>
             </FormItem>
             <FormItem label="实收金额:" style="width:30%;">
               <div style="color:red;width:100%;font-size:18px;" v-text="collectionData.REAL_MONEY"></div>
             </FormItem>
             <div style="clear:both;"></div>
             <FormItem label="优惠金额:" style="width:30%;">
-              <InputNumber type="text" :max="collectionData.SUM_MONEY" :min="0" @on-blur="onBlur" v-model="collectionData.LESS_MONEY" @on-change="changeVal"></InputNumber>
+              <InputNumber type="text" :max="collectionData.SUM_MONEY" :min="0"
+                           v-model="collectionData.LESS_MONEY" @on-change="changeVal"></InputNumber>
             </FormItem>
-            <FormItem label="收款人:" style="width:30%;">
-              <Input type="text" v-model="collectionData.FOLLOW_PERSON"></Input>
+            <FormItem label="收款人:" style="width:30%;" prop="FOLLOW_PERSON">
+              <Select v-model="collectionData.FOLLOW_PERSON" style="width: 100%;">
+                <Option v-for="(item, index) in payeeList"
+                        :key="index" :value="item.USER_NAME">{{item.USER_NAME}}
+                </Option>
+              </Select>
             </FormItem>
             <FormItem label="支付金额:" style="width:30%;">
-              <InputNumber type="text" v-model="collectionData.MONEY1"></InputNumber>
+              <InputNumber type="text" :readonly="true" v-model="collectionData.MONEY1"></InputNumber>
+            </FormItem>
+          </Form>
+        </Panel>
+        <Panel name="2">
+          支付方式
+          <Form slot="content" :label-width="0" class="common-form">
+            <FormItem style="width:20%;">
+              <Tooltip placement="top">
+                <Button>支付宝</Button>
+                <div slot="content">
+                  <p>正在研发中</p>
+                </div>
+              </Tooltip>
+            </FormItem>
+            <FormItem style="width:20%;">
+              <Tooltip placement="top">
+                <Button>微信支付</Button>
+                <div slot="content">
+                  <p>正在研发中</p>
+                </div>
+              </Tooltip>
+            </FormItem>
+            <FormItem style="width:20%;">
+              <Tooltip placement="top">
+                <Button>短信账单收款</Button>
+                <div slot="content">
+                  <p>正在研发中</p>
+                </div>
+              </Tooltip>
+            </FormItem>
+            <FormItem style="width:20%;">
+              <Select v-model="collectionData.PAYMENT1" style="width: 100%;">
+                <Option v-for="(item, index) in payTypeList"
+                        :key="index" :value="item.code">{{item.name}}
+                </Option>
+              </Select>
             </FormItem>
           </Form>
         </Panel>
       </Collapse>
+      <div slot="footer">
+        <Button type="primary" @click="doCollection('collectionData')">收款</Button>
+        <Button @click="collectionModal=false">关闭</Button>
+      </div>
     </Modal>
     <select-customer @select="select" class="table-modal-detail" :showoff="showoff"></select-customer>
   </common-table>
 </template>
 <script>
   import commonTable from '@/hxx-components/common-table.vue'
+  import {getLodop} from '@/hxx-components/LodopFuncs.js'
   import {getName, getDictGroup, getCreate} from '@/libs/util.js'
   import selectCustomer from '@/hxx-components/select-customer.vue'
 
@@ -135,25 +183,52 @@
     name: 'card-recharge',
     components: {commonTable, selectCustomer},
     data() {
+      const person = (rule, value, callback) => {
+        if (this.collectionData.FOLLOW_PERSON == '==请选择==') {
+          callback(new Error('请选择收款人'));
+        } else {
+          callback();
+        }
+      }
+      const cardRule = (rule, value, callback) => {
+        if (this.formData.CARD_ID == '0') {
+          callback(new Error('请选择充值卡产品'));
+        } else {
+          callback();
+        }
+      }
       return {
         showModal: false,
         showoff: false,
-        collectionModal:false,
+        collectionModal: false,
         tableData: [],
-        valueList:[1,2],
+        rule2: {
+          FOLLOW_PERSON: [{required: true, message: '请选择收款人'},
+            {validator: person, trigger: 'change,blur'},
+          ],
+        },
+        valueList: [1, 2],
         list: '',
-        clearSelect:false,
-        collectionData:{
-          RECORD_ID:'',
-          CUSTOMER_ID:'',
-          SUM_MONEY:0,
-          FOLLOW_PERSON:'',
-          MONEY1:0,
-          PAYMENT1:'',
-          LESS_MONEY:0,
-          REAL_MONEY:0,
-          IS_GIVE_INVOICE:"10041002",
-          REMARK:"",
+        clearSelect: false,
+        payeeList: [],
+        payTypeList: [
+          {name: '其它方式', code: '0'},
+          {name: '现金', code: '10101001'},
+          {name: '刷卡', code: '10101002'},
+          {name: '储值卡', code: '10101004'},
+          {name: '转账', code: '10101006'},
+        ],
+        collectionData: {
+          RECORD_ID: '',
+          CUSTOMER_ID: '',
+          SUM_MONEY: 0,
+          FOLLOW_PERSON: '',
+          MONEY1: 0,
+          PAYMENT1: '',
+          LESS_MONEY: 0,
+          REAL_MONEY: 0,
+          IS_GIVE_INVOICE: "10041002",
+          REMARK: "",
         },
         type: 0,
         person: [],
@@ -172,7 +247,9 @@
         ruleValidate: {
           CUSTOMER_NAME: [{required: true, message: '请点击选取客户'}],
           MEMBER_CARD_NO: [{required: true, message: '请填写会员卡号'}],
-          CARD_ID: [{required: true, message: '请选择储值卡产品'}],
+          CARD_ID: [{required: true, message: '请选择储值卡产品'},
+            {validator: cardRule, trigger: 'change,blur'},
+          ],
           FOLLOW_PERSON: [{required: true, message: '请选取办理人'}]
         },
         columns: [
@@ -208,21 +285,86 @@
       }
     },
     methods: {
-      changeVal(e){
+      getDate() {
+        let date = new Date();
+        let seperator1 = "-";
+        let seperator2 = ":";
+        let month = date.getMonth() + 1;
+        let strDate = date.getDate();
+        if (month >= 1 && month <= 9) {
+          month = "0" + month;
+        }
+        if (strDate >= 0 && strDate <= 9) {
+          strDate = "0" + strDate;
+        }
+        let currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
+          + " " + date.getHours() + seperator2 + date.getMinutes()
+          + seperator2 + date.getSeconds();
+        return currentdate;
+      },
+      doCollection(name) {
+        this.$refs[name].validate((valid) => {
+          if (valid) {
+            if (this.collectionData.PAYMENT1 == 0) {
+              this.$Modal.info({title: '系统提示', content: '请选择支付方式'});
+              return;
+            }
+            this.$Modal.confirm({
+              title: '系统提示',
+              content: '<div style="color:red;">确认收款' + this.collectionData.MONEY1 + "元</div>",
+              onOk: () => {
+                ///tenant/customer/tt_member_recharge_record/collect_money
+                this.axios.request({
+                  url: 'tenant/customer/tt_member_recharge_record/collect_money',
+                  method: 'post',
+                  data: {
+                    access_token: this.$store.state.user.token,
+                    data: JSON.stringify(this.collectionData),
+                    customer_id:this.collectionData.CUSTOMER_ID,
+                    recharge_id:this.collectionData.RECORD_ID
+                  }
+                }).then(res => {
+                  if (res.success === true) {
+                    this.$Message.success("收款成功");
+                    this.collectionModal = false;
+                    this.getList();
+                  }
+                })
+              },
+            });
+          } else {
+            this.$Message.error("请校对红框信息");
+          }
+        })
+      },
+      changeVal(e) {
         this.collectionData.REAL_MONEY = this.collectionData.SUM_MONEY - e;
         this.collectionData.MONEY1 = this.collectionData.SUM_MONEY - e;
         let self = this;
-        setTimeout(function(){
+        setTimeout(function () {
           self.collectionData.LESS_MONEY = self.collectionData.LESS_MONEY || 0;
-        },200);
+        }, 200);
       },
-      onBlur(){
-        // this.collectionData.LESS_MONEY = this.newVal;
+      getPayee() {
+        this.axios.request({
+          url: '/tenant/repair/ttrepairworkorder/getEmployeeList',
+          method: 'post',
+          data: {
+            access_token: this.$store.state.user.token,
+            limit: 25,
+            page: 1,
+          }
+        }).then(res => {
+          if (res.success === true) {
+            this.payeeList = res.data;
+            this.payeeList.unshift({USER_NAME: '==请选择=='});
+          }
+        })
       },
-      visibleChange(){
+      visibleChange() {
         this.clearSection();
       },
-      clearSection(){
+      clearSection() {
         this.list = '';
         this.clearSelect = Math.random();
       },
@@ -290,11 +432,7 @@
         this.ids.push(row.RECHARGE_ID);
       },
       changeSelect(row) {
-        // this.list = row;
-        // this.ids = [];
-        // for(var i in row){
-        //  this.ids.push(row[i].RECHARGE_ID);
-        // }
+
       },
       changePage(page) {
         this.page = page;
@@ -310,6 +448,11 @@
       },
       add() {
         this.$refs['formData'].resetFields();
+        for (let i in this.formData) {
+          this.formData[i] = "";
+        }
+        // alert(this.$store.state.user.userInfo.tenant.);
+        this.formData.FOLLOW_PERSON = this.$store.state.user.userInfo.user.userName;
         this.showModal = true;
       },
       getBase() {
@@ -332,16 +475,18 @@
         })
         if (this.person.length === 0) {
           var group = this.$store.state.app.tenant;
-          this.person.push({USER_NAME: '请选择', USER_ID: 0});
+          this.person.push({USER_NAME: '==请选择==', USER_ID: 0});
           for (var i in group) {
             this.person.push(group[i]);
           }
         }
       },
       edit() {
+        this.$refs.formData.resetFields();
         this.update(this.list);
       },
       update(row) {
+        console.log(JSON.stringify(row));
         this.formData = row;
         this.showModal = true;
       },
@@ -410,8 +555,8 @@
               method: 'post',
               data: {
                 access_token: this.$store.state.user.token,
-                id:this.list.RECHARGE_ID,
-                status:'10471002',
+                id: this.list.RECHARGE_ID,
+                status: '10471002',
               }
             }).then(res => {
               if (res.success === true) {
@@ -433,8 +578,8 @@
               method: 'post',
               data: {
                 access_token: this.$store.state.user.token,
-                id:this.list.RECHARGE_ID,
-                status:'10471001',
+                id: this.list.RECHARGE_ID,
+                status: '10471001',
               }
             }).then(res => {
               if (res.success === true) {
@@ -447,24 +592,125 @@
       },
       collection() {
         //收款....
-        this.collectionData.RECORD_ID = this.list.RECORD_ID;
+        this.getPayee();
+        console.log(JSON.stringify(this.list));
+        this.collectionData.RECORD_ID = this.list.RECHARGE_ID;
         this.collectionData.CUSTOMER_ID = this.list.CUSTOMER_ID;
         //总计
         this.collectionData.SUM_MONEY = this.list.SALES_MONEY;
         //应收
         this.collectionData.REAL_MONEY = this.list.SALES_MONEY;
+        //判断是否存在....
         this.collectionData.FOLLOW_PERSON = this.list.FOLLOW_PERSON;
         //inputNumber真正支付金额
         this.collectionData.MONEY1 = this.list.SALES_MONEY;
         //支付方式
-        this.collectionData.PAYMENT1 = 0;
+        this.collectionData.PAYMENT1 = '0';
         //inputNumber少缴纳金额
         this.collectionData.LESS_MONEY = 0;
-        this.collectionData.IS_GIVE_INVOICE = "";
         this.collectionData.REMARK = this.list.REMARK;
         this.collectionModal = true;
       },
+      xPrint() {
+        let LODOP = getLodop();
+        let temp = "<meta http-equiv=\"X-UA-Compatible\" content=\"IE=Edge\"><style>table{border:2px #000 solid;border-collapse: collapse;} th,td{border: 1px solid #000;} .noBorder th,.noBorder td{border:none;} .noRTLBorder th,.noRTLBorder td{border-right:none;border-top:none;border-left:none;} .noRLBorder th,.noRLBorder td{border-right:none;border-left:none;}' +\n" +
+          "     \"th,td {padding: 2px; line-height: 16px; text-align: center; vertical-align: middle;font-size:13px; } td{text-align: left;} .text-center,.text-center th,.text-center td{text-align:center;} .text-right,.text-right th,.text-right td{text-align:right;}\" +\n" +
+          "     \".w100{width:100px;} .w110{width:110px;} .w130{width:130px;} .w200{ width:200px;} .h30{ height:30px;line-height:25px;} .w30{width:30px;} .w70{width:70px;} .w80{width:80px;}  .w400{width:700px;} \" +\n" +
+          "     \".text-left{text-align:left;} </style>";
+        temp += '<div style="padding:0 10px;">' +
+          '<table border=0 width="100%" cellspacing="0" cellpadding="0" bordercolor="#000000">' +
+          '<tbody>' +
+          '<tr>' +
+          '<td height="50" colspan="4"><div align="center" style="font-size:24px;"><strong>储值卡充值</strong></div></td>' +
+          '</tr>' +
+          '<tr>' +
+          '<td>维修企业名称</td>' +
+          '<td>' + this.$store.state.user.userInfo.tenant.tenantName + '</td>' +
+          '<td>维修企业联系人</td>' +
+          '<td>' + this.$store.state.user.userInfo.tenant.linkMan + '</td>' +
+          '</tr>' +
+          '<tr>' +
+          '<td>维修企业地址</td>' +
+          '<td>' + this.$store.state.user.userInfo.tenant.tenantAdd + '</td>' +
+          '<td>维修企业联系电话</td>' +
+          '<td>' + this.$store.state.user.userInfo.tenant.linkTel + '</td>' +
+          '</tr>' +
+          '<tr>' +
+          '<td>客户名称</td>' +
+          '<td>' + this.list.CUSTOMER_NAME + '</td>' +
+          '<td>会员卡号</td>' +
+          '<td>' + this.list.MEMBER_CARD_NO + '</td>' +
+          '</tr>' +
+          '<tr>' +
+          '<td>客户联系电话</td>' +
+          '<td>' + this.list.MOBILE_PHONE + '</td>' +
+          '<td>充值时间</td>' +
+          '<td>' + this.list.RECHARGE_TIME + '</td>' +
+          '</tr>' +
+          '<tr>' +
+          '<td>储值卡产品</td>' +
+          '<td>' + this.list.CARD_NAME + '</td>' +
+          '<td>售价</td>' +
+          '<td><div align="right">' + this.list.SALES_MONEY.toFixed(2) + '</div></td>' +
+          '</tr>' +
+          '<tr>' +
+          '<td>赠送价值</td>' +
+          '<td><div align="right">' + this.list.DERATE_MONEY.toFixed(2) + '</div></td>' +
+          '<td>总价值</td>' +
+          '<td><div align="right">' + this.list.SUM_MONEY.toFixed(2) + '</div></td>' +
+          '</tr>' +
+          '<tr>' +
+          '<td>办理人</td>' +
+          '<td>' + this.list.FOLLOW_PERSON + '</td>' +
+          '<td>打印日期</td>' +
+          '<td>' + this.getDate() + '</td>' +
+          '</tr>' +
+          '<tr class="noBorder" style="height:100px;">' +
+          '<td colspan="2">维修企业（盖章）：</td>' +
+          '<td colspan="2"><div align="center">客户签名（盖章）：</div></td>' +
+          '</tr>' +
+          '<tr class="noBorder" style="height:80px;">' +
+          '<td><div align="center">日期：</div></td>' +
+          '<td><div align="left">年　　月　　日</div></td>' +
+          '<td><div align="center">日期：</div></td>' +
+          '<td><div align="left">年　　月　　日</div></td>' +
+          '</tr>' +
+          '</tbody>' +
+          '</table>' +
+          '</div>';
+        LODOP.SET_PRINT_STYLEA(0, "FontSize", 20);
+        LODOP.SET_PRINT_STYLEA(0, "Alignment", 2);
+        LODOP.ADD_PRINT_TABLE(40, 0, "100%", 950, temp);
+        LODOP.PREVIEW();
+        this.clearSection();
+      },
       rcollection() {
+        this.$Modal.confirm({
+          title: '系统提示',
+          content: '确认要反收款吗',
+          onOk: () => {
+            this.axios.request({
+              url: '/tenant/customer/tt_member_recharge_record/recollect_money',
+              method: 'post',
+              data: {
+                access_token: this.$store.state.user.token,
+                customer_id: this.list.CUSTOMER_ID,
+                recharge_id: this.list.RECHARGE_ID,
+                sum_money: this.list.SUM_MONEY,
+              }
+            }).then(res => {
+              if (res.success === true) {
+                this.$Message.success("反审收款成功");
+                this.getList();
+              } else {
+                let self = this;
+                setTimeout(function () {
+                  self.$Modal.info({title: '系统提示', content: res.title});
+                }, 500);
+              }
+            })
+          }
+        });
       },
     },
     computed: {
@@ -488,8 +734,13 @@
     },
   }
 </script>
+<style lang="less">
+  .ivu-input-number-input {
+    height: 27px;
+  }
+</style>
 <style lang="less" scoped>
-  .operate {
+  perate {
     margin-top: 10px;
     padding: 15px;
     border: 1px solid #dcdee2;

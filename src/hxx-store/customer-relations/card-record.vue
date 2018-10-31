@@ -3,13 +3,7 @@
                 :total="total" :show="showTable" :page="page" :showOperate="false">
     <div slot="search">
       <div class="search-block">
-        <Input v-model="search.keyword" placeholder="公司编号/公司名称..."></Input>
-      </div>
-      <div class="search-block">
-        <Select v-model="search.status">
-          <Option v-for="(item, index) in defaultList"
-                  :key="index" :value="item.code">{{item.name}}</Option>
-        </Select>
+        <Input v-model="search.keyword" placeholder="客户名称/手机号..."></Input>
       </div>
       <ButtonGroup size="small">
         <Button type="primary" @click="page=1;getList()">
@@ -27,7 +21,7 @@
   import {getName, getDictGroup, getCreate} from '@/libs/util.js'
 
   export default {
-    name: 'insurance-comp',
+    name: 'card-record',
     components: {commonTable},
     data() {
       return {
@@ -39,14 +33,24 @@
         showTable: false,
         list: '',
         columns: [
-          {title: '公司编号', key: 'CORP_NO', sortable: true, minWidth: 140},
-          {title: '公司名称', key: 'CORP_NAME', sortable: true, minWidth: 140},
-          {title: '联系电话', key: 'TELPHONE', sortable: true, minWidth: 140},
-          {title: '传真', key: 'FAX', sortable: true, minWidth: 140},
-          {title: '邮箱', key: 'EMAIL', sortable: true, minWidth: 140},
+          {title: '序号',  minWidth: 80,
+            render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
+          },
+          {title: '消费日期', key: 'USE_DATE', sortable: true, minWidth: 140,
+            render: (h, params) => h('span',params.row.USE_DATE.substr(0,10))
+          },
+          {title: '会员卡号', key: 'MEMBER_CARD_NO', sortable: true, minWidth: 140},
+          {title: '客户名称', key: 'CUSTOMER_NAME', sortable: true, minWidth: 140},
+          {title: '联系电话', key: 'MOBILE_PHONE', sortable: true, minWidth: 140},
+          {title: '消费金额', key: 'USE_MONEY', sortable: true, minWidth: 140,
+            render: (h, params) => h('span',params.row.USE_MONEY.toFixed(2))
+          },
           {
-            title: '状态', key: 'STATUS', sortable: true, minWidth: 140,
-            render: (h, params) => h('span', getName(this.defaultList, params.row.STATUS))
+            title: '消费类型', key: 'RECORD_TYPE', sortable: true, minWidth: 140,
+            render: (h, params) => h('span', getName(this.defaultList, params.row.RECORD_TYPE))
+          },
+          {
+            title: '消费单据', key: 'RECORD_NO', sortable: true, minWidth: 140,
           },
         ],
         search: {
@@ -67,14 +71,13 @@
       getList() {
         ///tenant/basedata/ttstorehouse/list
         this.axios.request({
-          url: '/tenant/basedata/tbinsurer/list',
+          url: '/tenant/customer/tt_card_use_record/list',
           method: 'post',
           data: {
             access_token: this.$store.state.user.token,
             limit: this.limit,
             page: this.page,
             KEYWORD: this.search.keyword,
-            STATUS_eq: this.search.status || '',
           }
         }).then(res => {
           if (res.success === true) {
@@ -91,7 +94,6 @@
       },
       clear() {
         this.search.keyword = '';
-        this.search.status = '';
       },
       clearsection() {
         this.list = '';
@@ -109,9 +111,10 @@
         return flag;
       },
       defaultList() {
-        return getDictGroup(this.$store.state.app.dict, '1001');
+        return getDictGroup(this.$store.state.app.dict, '1027');
       }
     }
 
   }
 </script>
+
