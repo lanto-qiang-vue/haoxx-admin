@@ -475,7 +475,7 @@ export default [
           icon: 'md-funnel',
           title: '储值卡消费记录',
           lgType: "1002",
-          access: '100302',
+          access: '100303',
         },
         component: () => import('@/hxx-store/customer-relations/card-record.vue')
       }
@@ -608,6 +608,17 @@ export default [
     },
     component: Main,
     children:[
+      {
+        path: '/supplier-profile',
+        name: 'supplier-profile',
+        meta: {
+          icon: 'md-funnel',
+          title: '供应商档案',
+          lgType: "1002",
+          access: '100505',
+        },
+        component: () => import('@/hxx-store/base-data/supplier-profile.vue')
+      },
       {
         path: '/warehouse-manage',
         name: 'warehouse-manage',

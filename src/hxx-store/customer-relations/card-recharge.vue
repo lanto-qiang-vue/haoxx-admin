@@ -1,7 +1,7 @@
 <template>
   <common-table v-model="tableData" :columns="columns" @changePageSize="changePageSize" @changePage="changePage"
                 :total="total" :show="showTable" @changeSelect="changeSelect" @onRowClick="onRowClick"
-                @onRowDblclick="dbclick" :clearSelect="clearSelect">
+                @onRowDblclick="dbclick" :page="page" :clearSelect="clearSelect">
     <div slot="search">
       <div class="search-block">
         <Input v-model="search.KEYWORD" placeholder="会员卡号/客户名称/联系电话..."></Input>
@@ -113,7 +113,7 @@
             </FormItem>
             <div style="clear:both;"></div>
             <FormItem label="优惠金额:" style="width:30%;">
-              <InputNumber type="text" :max="collectionData.SUM_MONEY" :min="0"
+              <InputNumber type="text" :max="money" :min="0"
                            v-model="collectionData.LESS_MONEY" @on-change="changeVal"></InputNumber>
             </FormItem>
             <FormItem label="收款人:" style="width:30%;" prop="FOLLOW_PERSON">
@@ -210,6 +210,7 @@
         editType:1,
         showoff: false,
         collectionModal: false,
+        money:0,
         tableData: [],
         rule2: {
           FOLLOW_PERSON: [{required: true, message: '请选择收款人'},
@@ -224,7 +225,7 @@
           {name: '其它方式', code: '0'},
           {name: '现金', code: '10101001'},
           {name: '刷卡', code: '10101002'},
-          {name: '储值卡', code: '10101004'},
+          // {name: '储值卡', code: '10101004'},
           {name: '转账', code: '10101006'},
         ],
         collectionData: {
@@ -349,8 +350,8 @@
         })
       },
       changeVal(e) {
-        this.collectionData.REAL_MONEY = this.collectionData.SUM_MONEY - e;
-        this.collectionData.MONEY1 = this.collectionData.SUM_MONEY - e;
+        this.collectionData.REAL_MONEY = this.money - e;
+        this.collectionData.MONEY1 = this.money - e;
         let self = this;
         setTimeout(function () {
           self.collectionData.LESS_MONEY = self.collectionData.LESS_MONEY || 0;
@@ -447,9 +448,11 @@
       },
       changePage(page) {
         this.page = page;
+        this.getList();
       },
       changePageSize(size) {
         this.limit = size;
+        this.getList();
       },
       dbclick(row) {
         this.update(row);
@@ -611,8 +614,9 @@
         this.collectionData.RECORD_ID = this.list.RECHARGE_ID;
         this.collectionData.CUSTOMER_ID = this.list.CUSTOMER_ID;
         //总计
-        this.collectionData.SUM_MONEY = this.list.SALES_MONEY;
+        this.collectionData.SUM_MONEY = this.list.SUM_MONEY;
         //应收
+        this.money = this.list.SALES_MONEY;
         this.collectionData.REAL_MONEY = this.list.SALES_MONEY;
         //判断是否存在....
         this.collectionData.FOLLOW_PERSON = this.list.FOLLOW_PERSON;
@@ -714,7 +718,7 @@
               }
             }).then(res => {
               if (res.success === true) {
-                this.$Message.success("反审收款成功");
+                this.$Message.success("反收款成功");
                 this.getList();
               } else {
                 let self = this;

@@ -140,9 +140,12 @@
             title: '总价值', key: 'SUM_MONEY', sortable: true, minWidth: 100
           },
           {
-            title: '有效期开始', key: 'START_DATE', sortable: true, minWidth: 150
+            title: '有效期开始', key: 'START_DATE', sortable: true, minWidth: 150,
+            render: (h, params) => h('span',params.row.START_DATE.substr(0,10))
           },
-          {title: '有效期结束', key: 'END_DATE', sortable: true, minWidth: 150},
+          {title: '有效期结束', key: 'END_DATE', sortable: true, minWidth: 150,
+            render: (h, params) => h('span',params.row.END_DATE.substr(0,10))
+          },
         ],
         ruleValidate: {
           CARD_NAME: [{required: true, message: '储值卡名称必填', trigger: 'blur'}],
