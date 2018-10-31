@@ -84,7 +84,7 @@
         </Panel>
       </Collapse>
       <div slot="footer">
-        <Button type="primary" v-show="this.formData.STATUS == '10471001'" @click="save('formData')" style="margin-left:10px;">保存</Button>
+        <Button type="primary" v-show="this.editType == 1 || this.formData.STATUS == '10471001'" @click="save('formData')" style="margin-left:10px;">保存</Button>
         <Button type="primary" @click="showModal = false">返回</Button>
       </div>
     </Modal>
@@ -190,6 +190,13 @@
           callback();
         }
       }
+      const transactor = (rule, value, callback) => {
+        if (this.formData.FOLLOW_PERSON == '==请选择==') {
+          callback(new Error('请选择办理人'));
+        } else {
+          callback();
+        }
+      }
       const cardRule = (rule, value, callback) => {
         if (this.formData.CARD_ID == '0') {
           callback(new Error('请选择充值卡产品'));
@@ -197,8 +204,10 @@
           callback();
         }
       }
+
       return {
         showModal: false,
+        editType:1,
         showoff: false,
         collectionModal: false,
         tableData: [],
@@ -250,7 +259,9 @@
           CARD_ID: [{required: true, message: '请选择储值卡产品'},
             {validator: cardRule, trigger: 'change,blur'},
           ],
-          FOLLOW_PERSON: [{required: true, message: '请选取办理人'}]
+          FOLLOW_PERSON: [{required: true, message: '请选取办理人'},
+            {validator: transactor, trigger: 'change,blur'},
+          ]
         },
         columns: [
           // {type: 'selection', width: 50, fixed: 'left'},
@@ -448,6 +459,7 @@
       },
       add() {
         this.$refs['formData'].resetFields();
+        this.editType = 1;
         for (let i in this.formData) {
           this.formData[i] = "";
         }
@@ -483,11 +495,13 @@
       },
       edit() {
         this.$refs.formData.resetFields();
+        this.editType = 2;
         this.update(this.list);
       },
       update(row) {
         console.log(JSON.stringify(row));
         this.formData = row;
+        this.MEMBER_CARD_NO = this.formData.MEMBER_CARD_NO;
         this.showModal = true;
       },
       remove() {
