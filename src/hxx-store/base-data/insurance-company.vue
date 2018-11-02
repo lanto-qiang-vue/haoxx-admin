@@ -27,7 +27,7 @@
   import {getName, getDictGroup, getCreate} from '@/libs/util.js'
 
   export default {
-    name: 'insurance-comp',
+    name: 'insurance-company',
     components: {commonTable},
     data() {
       return {

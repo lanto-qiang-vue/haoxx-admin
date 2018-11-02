@@ -359,6 +359,17 @@ export default [
     component: Main,
     children:[
       {
+        path: '/parts-purchase',
+        name: 'parts-purchase',
+        meta: {
+          icon: 'md-funnel',
+          title: '配件采购',
+          lgType: "1002",
+          access: '100203',
+        },
+        component: () => import('@/hxx-store/parts-manage/parts-purchase.vue')
+      },
+      {
         path: '/maintain-pick',
         name: 'maintain-pick',
         meta: {

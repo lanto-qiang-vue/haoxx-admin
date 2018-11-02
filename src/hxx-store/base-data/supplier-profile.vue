@@ -1,6 +1,6 @@
 <template>
   <common-table v-model="tableData" :columns="columns" @changePageSize="changePageSize" @changePage="changePage"
-                :total="total" :show="showTable" :page="page">
+                :total="total" :show="showTable" :page="page" @onRowClick="onRowClick" :clearSelect="clearType" @onRowDblclick="dbclick">
     <div slot="search">
       <div class="search-block">
         <Input v-model="search.keyword" placeholder="供应商编号/名称/联系电话..."></Input>
@@ -41,96 +41,73 @@
         <Panel name="1">
           仓库基本信息
           <Form slot="content" :model="formData" ref="formData" :rules="rules" :label-width="120" class="common-form">
-            <FormItem label="会员卡号:" style="width:30%;" prop="MEMBER_CARD_NO">
-              <Input type="text" v-model="formData.MEMBER_CARD_NO"
+            <FormItem label="供应商名称:" style="width:30%;" prop="NAME">
+              <Input type="text" v-model="formData.NAME"
                      style="min-width: 100%;"> </Input>
             </FormItem>
-            <FormItem label="会员卡号:" style="width:60%;" prop="MEMBER_CARD_NO">
-              <Input type="text" v-model="formData.MEMBER_CARD_NO"
+            <FormItem label="单位地址:" style="width:60%;">
+              <Input type="text" v-model="formData.ADDRESS"
                      style="min-width: 100%;"> </Input>
             </FormItem>
-            <FormItem label="会员卡号:" style="width:30%;" prop="MEMBER_CARD_NO">
-              <Input type="text" v-model="formData.MEMBER_CARD_NO"
+            <FormItem label="供应商类型:" style="width:30%;" prop="TYPE">
+              <Select v-model="formData.TYPE">
+                <Option v-for="(item, index) in list1008"
+                        :key="index" :value="item.code">{{item.name}}
+                </Option>
+              </Select>
+            </FormItem>
+            <FormItem label="联系人:" style="width:30%;">
+              <Input type="text" v-model="formData.LINKMAN"
                      style="min-width: 100%;"> </Input>
             </FormItem>
-            <FormItem label="会员卡号:" style="width:30%;" prop="MEMBER_CARD_NO">
-              <Input type="text" v-model="formData.MEMBER_CARD_NO"
+            <FormItem label="联系电话:" style="width:30%;" prop="TELPHONE">
+              <Input type="text" v-model="formData.TELPHONE"
                      style="min-width: 100%;"> </Input>
             </FormItem>
-            <FormItem label="会员卡号:" style="width:30%;" prop="MEMBER_CARD_NO">
-              <Input type="text" v-model="formData.MEMBER_CARD_NO"
+            <FormItem label="单位传真:" style="width:30%;">
+              <Input type="text" v-model="formData.FAX"
                      style="min-width: 100%;"> </Input>
             </FormItem>
-            <FormItem label="会员卡号:" style="width:30%;" prop="MEMBER_CARD_NO">
-              <Input type="text" v-model="formData.MEMBER_CARD_NO"
+            <FormItem label="单位邮箱:" style="width:30%;" prop="EMAIL">
+              <Input type="text" v-model="formData.EMAIL"
                      style="min-width: 100%;"> </Input>
             </FormItem>
-            <FormItem label="会员卡号:" style="width:30%;" prop="MEMBER_CARD_NO">
-              <Input type="text" v-model="formData.MEMBER_CARD_NO"
+            <FormItem label="发票类型:" style="width:30%;">
+              <Select v-model="formData.INVOICE_TYPE">
+                <Option v-for="(item, index) in list1009"
+                        :key="index" :value="item.code">{{item.name}}
+                </Option>
+              </Select>
+            </FormItem>
+            <FormItem label="税号:" style="width:30%;">
+              <Input type="text" v-model="formData.TAX_NO"
                      style="min-width: 100%;"> </Input>
             </FormItem>
-            <FormItem label="会员卡号:" style="width:30%;" prop="MEMBER_CARD_NO">
-              <Input type="text" v-model="formData.MEMBER_CARD_NO"
-                     style="min-width: 100%;"> </Input>
+            <FormItem label="结算方式:" style="width:30%;" prop="BALANCE_TYPE">
+              <Select v-model="formData.BALANCE_TYPE">
+                <Option v-for="(item, index) in list1010"
+                        :key="index" :value="item.code">{{item.name}}
+                </Option>
+              </Select>
             </FormItem>
-            <FormItem label="会员卡号:" style="width:30%;" prop="MEMBER_CARD_NO">
-              <Input type="text" v-model="formData.MEMBER_CARD_NO"
-                     style="min-width: 100%;"> </Input>
+            <FormItem label="状态:" style="width:30%;" prop="STATUS">
+              <Select v-model="formData.STATUS">
+                <Option v-for="(item, index) in defaultList"
+                        :key="index" :value="item.code">{{item.name}}
+                </Option>
+              </Select>
             </FormItem>
-            <FormItem label="会员卡号:" style="width:30%;" prop="MEMBER_CARD_NO">
-              <Input type="text" v-model="formData.MEMBER_CARD_NO"
-                     style="min-width: 100%;"> </Input>
-            </FormItem>
-            <FormItem label="会员卡号:" style="width:30%;" prop="MEMBER_CARD_NO">
-              <Input type="text" v-model="formData.MEMBER_CARD_NO"
-                     style="min-width: 100%;"> </Input>
-            </FormItem>
-            <FormItem label="会员卡号:" style="width:30%;" prop="MEMBER_CARD_NO">
-              <Input type="text" v-model="formData.MEMBER_CARD_NO"
-                     style="min-width: 100%;"> </Input>
-            </FormItem>
-            <FormItem label="会员卡号:" style="width:30%;" prop="MEMBER_CARD_NO">
-              <Input type="text" v-model="formData.MEMBER_CARD_NO"
-                     style="min-width: 100%;"> </Input>
-            </FormItem>
-            <FormItem label="会员卡号:" style="width:30%;" prop="MEMBER_CARD_NO">
-              <Input type="text" v-model="formData.MEMBER_CARD_NO"
-                     style="min-width: 100%;"> </Input>
-            </FormItem>
-            <FormItem label="会员卡号:" style="width:30%;" prop="MEMBER_CARD_NO">
-              <Input type="text" v-model="formData.MEMBER_CARD_NO"
-                     style="min-width: 100%;"> </Input>
-            </FormItem>
-            <FormItem label="会员卡号:" style="width:30%;" prop="MEMBER_CARD_NO">
-              <Input type="text" v-model="formData.MEMBER_CARD_NO"
-                     style="min-width: 100%;"> </Input>
-            </FormItem>
-            <FormItem label="会员卡号:" style="width:30%;" prop="MEMBER_CARD_NO">
-              <Input type="text" v-model="formData.MEMBER_CARD_NO"
-                     style="min-width: 100%;"> </Input>
-            </FormItem>
-            <FormItem label="会员卡号:" style="width:30%;" prop="MEMBER_CARD_NO">
-              <Input type="text" v-model="formData.MEMBER_CARD_NO"
-                     style="min-width: 100%;"> </Input>
-            </FormItem>
-            <FormItem label="会员卡号:" style="width:30%;" prop="MEMBER_CARD_NO">
-              <Input type="text" v-model="formData.MEMBER_CARD_NO"
-                     style="min-width: 100%;"> </Input>
-            </FormItem>
-            <FormItem label="会员卡号:" style="width:30%;" prop="MEMBER_CARD_NO">
-              <Input type="text" v-model="formData.MEMBER_CARD_NO"
-                     style="min-width: 100%;"> </Input>
-            </FormItem>
-            <FormItem label="会员卡号:" style="width:80%;" prop="MEMBER_CARD_NO">
-              <Input type="textarea" v-model="formData.MEMBER_CARD_NO"
-                     style="min-width: 100%;"> </Input>
+            <FormItem label="备注:" style="width:90%;">
+              <Input type="textarea" v-model="formData.REMARK"
+                     style="min-width: 100%;" placeholder="请输入描述信息..."> </Input>
             </FormItem>
           </Form>
         </Panel>
       </Collapse>
+      <div style="height:60px;"></div>
       <div slot="footer">
-        <Button @click="addcancle()">取消</Button>
-        <Button type="primary" @click="addpost('list')">保存</Button>
+        <Button type="primary" @click="addPost('formData')">保存</Button>
+        <Button @click="showModal=false">取消</Button>
       </div>
     </Modal>
   </common-table>
@@ -142,7 +119,39 @@
   export default {
     name: 'supplier-profile',
     components: {commonTable},
+    activated(){
+      this.getRouterData();
+    },
     data() {
+      const typeRule = (rule, value, callback) => {
+        if (this.formData.TYPE == '0') {
+          callback(new Error('请选择供应商类型'));
+        } else {
+          callback();
+        }
+      }
+      const balanceRule = (rule, value, callback) => {
+        if (this.formData.BALANCE_TYPE == '0') {
+          callback(new Error('请选择结算方式'));
+        } else {
+          callback();
+        }
+      }
+      const statusRule = (rule, value, callback) => {
+        if (this.formData.STATUS == '0') {
+          callback(new Error('请选择状态'));
+        } else {
+          callback();
+        }
+      }
+      const emailRule = (rule, value, callback) => {
+        let reg = /^([0-9A-Za-z\-_\.]+)@([0-9a-z]+\.[a-z]{2,3}(\.[a-z]{2})?)$/g;
+        if (value != '' && !reg.test(value)) {
+          callback(new Error('邮箱格式不正确'));
+        } else {
+          callback();
+        }
+      }
       return {
         page: 1,
         limit: 25,
@@ -151,9 +160,30 @@
         showModal: false,
         clearType: false,
         showTable: false,
-        formData: {},
+        routerType:false,
+        formData: {
+          SUPPLIER_ID: "",
+          NAME: "",
+          ADDRESS: "",
+          TYPE: "0",
+          LINKMAN: "",
+          TELPHONE: "",
+          FAX: "",
+          EMAIL: "",
+          INVOICE_TYPE: "0",
+          TAX_NO: "",
+          BALANCE_TYPE: "0",
+          STATUS: "0",
+          REMARK: ""
+        },
         list: '',
-        rules: {},
+        rules: {
+          NAME: [{required: true, message: '请填写供应商名称'}],
+          TYPE: [{required: true, message: '请选择供应商类型'}, {validator: typeRule, trigger: 'change,blur'}],
+          BALANCE_TYPE: [{required: true, message: '请选择结算方式'}, {validator: balanceRule, trigger: 'change,blur'}],
+          STATUS: [{required: true, message: '请选择状态'}, {validator: statusRule, trigger: 'change,blur'}],
+          EMAIL: [{validator: emailRule, trigger: 'change,blur'}],
+        },
         columns: [
           {
             title: '序号', minWidth: 80,
@@ -191,14 +221,86 @@
       }
     },
     methods: {
+      getRouterData(){
+        let queryData=this.$route.query;
+        this.routerType = queryData.type;
+        if(this.routerType){
+          this.add();
+        }
+      },
+      addPost(name) {
+        this.$refs[name].validate((valid) => {
+          if (valid) {
+            this.$Modal.confirm({
+              title: '系统提示',
+              content: '确认保存吗?',
+              onOk: () => {
+                ///tenant/basedata/ttsupplier/save
+                this.formData.INVOICE_TYPE = this.formData.INVOICE_TYPE == 0 ? '' : this.formData.INVOICE_TYPE;
+                this.axios.request({
+                  url: '/tenant/basedata/ttsupplier/save',
+                  method: 'post',
+                  data: {
+                    access_token: this.$store.state.user.token,
+                    data:JSON.stringify(this.formData)
+                  }
+                }).then(res => {
+                  if (res.success === true) {
+                    this.showModal = false;
+                    this.getList();
+                    let self = this;
+                    setTimeout(function(){
+                      if(self.routerType){
+                        self.routerType = false;
+                        self.$router.push({path:'/parts-purchase',query:{type:true}});
+                      }
+                    },200);
+                  }
+                })
+              },
+            });
+          } else {
+            this.$Message.error("请校对红框信息");
+          }
+        })
+      },
       visibleChange() {
+        this.clearsection();
       },
       add() {
+        this.$refs.formData.resetFields();
         this.showModal = true;
       },
       edit() {
+        this.update(this.list);
+      },
+      update(row){
+        this.formData = row;
+        //空转0....
+        this.formData.INVOICE_TYPE = this.formData.INVOICE_TYPE == '' ? '0' : this.formData.INVOICE_TYPE;
+        this.showModal = true;
       },
       remove() {
+        this.$Modal.confirm({
+          title:'系统提示',
+          content:'确认要删除吗?',
+          onOk:()=>{
+            // /tenant/basedata/ttsupplier/delete
+            this.axios.request({
+              url: '/tenant/basedata/ttsupplier/delete',
+              method: 'post',
+              data: {
+                access_token: this.$store.state.user.token,
+                ids:this.list.SUPPLIER_ID
+              }
+            }).then(res => {
+              if (res.success === true) {
+                this.$Message.success("删除成功");
+                this.getList();
+              }
+            })
+          }
+        });
       },
       changePage(page) {
         this.page = page;
@@ -228,9 +330,10 @@
         this.clearsection();
       },
       onRowClick(row) {
-
+       this.list = row;
       },
       dbclick(row) {
+        this.update(row);
       },
       clear() {
         this.search.keyword = '';
@@ -252,13 +355,19 @@
         return flag;
       },
       list1008() {
-        return getDictGroup(this.$store.state.app.dict, '1008');
+        let data = getDictGroup(this.$store.state.app.dict, '1008');
+        data.unshift({code: '0', name: '请选择'});
+        return data;
       },
       list1009() {
-        return getDictGroup(this.$store.state.app.dict, '1009');
+        let data = getDictGroup(this.$store.state.app.dict, '1009');
+        data.unshift({code: '0', name: '请选择'});
+        return data;
       },
       list1010() {
-        return getDictGroup(this.$store.state.app.dict, '1010');
+        let data = getDictGroup(this.$store.state.app.dict, '1010');
+        data.unshift({code: '0', name: '请选择'});
+        return data;
       },
       defaultList() {
         let data = getDictGroup(this.$store.state.app.dict, '1001');
