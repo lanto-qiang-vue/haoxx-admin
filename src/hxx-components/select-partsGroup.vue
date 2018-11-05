@@ -178,8 +178,8 @@ import selectAddParts from '@/hxx-components/select-addParts.vue'
                                     },
                                     on: {
                                         click: (index) => {
-                                            console.log(params.index);
-                                            console.log(this.tableData[params.index]);
+                                            // console.log(params.index);
+                                            // console.log(this.tableData[params.index]);
                                             this.select(params.row)
                                         }
                                     }
@@ -200,7 +200,7 @@ import selectAddParts from '@/hxx-components/select-addParts.vue'
         },
         watch:{
             showSelectPartsGroup(){
-                console.log("点击选择配件了");
+                // console.log("点击选择配件了");
                 this.showOnoff=true;
                 this.getList();
                 this.getTypeSellList();
@@ -279,7 +279,7 @@ import selectAddParts from '@/hxx-components/select-addParts.vue'
                 this.getList()
             },
             onRowClick( row, index){
-                console.log(row);
+                // console.log(row);
                 
             },
             searchVehicle(){
