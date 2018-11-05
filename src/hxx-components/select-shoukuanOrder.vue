@@ -87,7 +87,7 @@
                         </FormItem>
                     </Form>
                 </Panel>
-                <Panel name="4" v-if="disFlag">是否开据发票
+                <Panel name="4" v-if="disFapiao">是否开据发票
                     <Form slot="content" :label-width="120" class="detail-form" >
                         <FormItem label="">
                             <Checkbox v-model="single" @on-change="isGiveInvoiceFun">是否开据发票</Checkbox>
@@ -199,7 +199,8 @@ export default {
             
             payModeData:[],
             timer:null,
-            disFlag:false,
+            disFlag:true,
+            disFapiao:false,
             accountNum:0,//统计定时轮询次数
         }
     },
@@ -212,7 +213,7 @@ export default {
             this.payModeData=getDictGroup(this.$store.state.app.dict, '1010');
             var arr=[];
             for(let i in this.payModeData){
-                if(this.payModeData[i].order==7||this.payModeData[i].order==8||this.payModeData[i].order==4){
+                if(this.payModeData[i].order==7||this.payModeData[i].order==8){
                     
                 }else{
                     arr.push(this.payModeData[i]);
