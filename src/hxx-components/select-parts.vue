@@ -197,7 +197,7 @@ import commonTable from '@/hxx-components/common-table.vue'
         methods:{
             state(item){
                 for(let i in this.selectData){
-                    if(this.selectData[i].STOCK_ID== item.STOCK_ID){
+                    if(this.selectData[i].PART_ID== item.PART_ID){
                         return true
                     }
                 }
@@ -206,7 +206,7 @@ import commonTable from '@/hxx-components/common-table.vue'
             select(item){
                 let flag=true
                 for(let i in this.selectData){
-                    if(this.selectData[i].STOCK_ID== item.STOCK_ID){
+                    if(this.selectData[i].PART_ID== item.PART_ID){
                         this.selectData.splice(i,1)
                         flag= false
                         break;

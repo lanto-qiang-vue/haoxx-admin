@@ -37,7 +37,7 @@
   export default {
     name: 'select-supply',
     components: {commonTable},
-    props: ['showType','refresh'],
+    props: ['showType','refresh','switchType'],
     data() {
       return {
         page: 1,
@@ -76,7 +76,7 @@
     },
     methods: {
       goTo(){
-        this.$router.push({path:'/supplier-profile',query:{type:true}});
+        this.$router.push({path:'/supplier-profile',query:{type:true,switchType:this.switchType}});
       },
       visibleChange() {
         this.clearsection();

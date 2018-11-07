@@ -18,7 +18,6 @@
            <div class="search-block">
                 <Input  placeholder="客户编号/名称号码/联系电话..." v-model="search.input"></Input>
            </div>
-            
                 <Button type="primary" @click="searchVehicle" size="small"><Icon type="ios-search" size="24"/></Button>
                 <Button type="primary" @click="resetVehicle" size="small"><Icon type="ios-undo" size="24"/></Button>
         </div>
