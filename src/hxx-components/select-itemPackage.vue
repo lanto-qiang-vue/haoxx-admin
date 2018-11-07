@@ -30,6 +30,10 @@
            
         </div>
     </common-table>
+    <div slot="footer">
+        <Button type="primary" @click="showOnoff=false;" style="margin-right: 10px;">确定</Button>
+
+    </div>
   </Modal>
 </template>
 

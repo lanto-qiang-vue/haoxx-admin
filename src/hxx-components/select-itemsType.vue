@@ -10,33 +10,33 @@
         :transfer= "showTransfer"
         :footer-hide="false"
         :transition-names="['', '']"
-        class="table-modal-detail"
-    >
+        class="table-modal-detail">
 
     <common-table v-model="tableData" :columns="columns" :show="showTenanceItems" :total="total" @changePage="changePage" 
         @changePageSize="changePageSize" @onRowClick="onRowClick" :showOperate=false>
         <div slot="search">
             <Form  class="common-form">
                 <FormItem >
-                    <Select v-model="test1" @on-change="changeCarType" placeholder="选择车辆类型">
+                    <Select v-model="test1" @on-change="changeCarType" placeholder="选择车辆类型" :disabled="isdisabled">
                         <Option v-for="(item, index) in getCarTypeData" :key="item.cartype" :value="item.cartype">{{item.CARNAME}}</Option>
                     </Select>
                 </FormItem>
-                <FormItem v-if="isThreeType">
-                    <Select :disabled="isdisabled" v-model="test2" placeholder="选择项目分类" >
-                        <Option v-for="(item, index) in carItemType" :key="item.TYPE_ID" :value="item.TYPE_ID">{{item.TYPE_NAME}}</Option>
-                    </Select>
-                </FormItem>
-                <FormItem v-if="isThreeType">
-                    <Select :disabled="isdisabled" v-model="test3" placeholder="选择发动机类型" >
-                        <Option v-for="(item, index) in banJinListData" :key="item.ENGINE_TYPE" :value="item.ENGINE_TYPE">{{item.ENGINE_TYPE_NAME}}</Option>
-                    </Select>
-                </FormItem>
-                <FormItem v-if="isThreeType">
-                    <Select :disabled="isdisabled" v-model="test4" placeholder="选择汽车参数" >
+                <FormItem >
+                    <Select  v-model="test4" placeholder="选择汽车参数" :disabled="isdisabled">
                         <Option v-for="(item, index) in carListData" :key="item.CLASS_TYPE" :value="item.CLASS_TYPE">{{item.CLASS_NAME}}</Option>
                     </Select>
                 </FormItem>
+                <FormItem >
+                    <Select  v-model="test3" placeholder="选择发动机类型" >
+                        <Option v-for="(item, index) in banJinListData" :key="item.ENGINE_TYPE" :value="item.ENGINE_TYPE">{{item.ENGINE_TYPE_NAME}}</Option>
+                    </Select>
+                </FormItem>
+                <FormItem >
+                    <Select  v-model="test2" placeholder="选择项目分类" >
+                        <Option v-for="(item, index) in carItemType" :key="item.TYPE_ID" :value="item.TYPE_ID">{{item.TYPE_NAME}}</Option>
+                    </Select>
+                </FormItem>
+                
                 <FormItem >
                     <Input  placeholder="项目编号/名称..." v-model="test5"></Input>
                 </FormItem>
@@ -46,13 +46,17 @@
                         <Button type="primary" title="重置" @click="resetVehicle" style="margin-right:20px;"><Icon type="ios-undo" size="28"/></Button>
                         
                     </ButtonGroup>
-                    <Button type="primary" @click="addItemFun" v-if="!isThreeType">新增</Button>
+                    <Button type="primary" @click="addItemFun">新增</Button>
                 </FormItem>
            </Form>
            
         </div>
 
     </common-table>
+    <div slot="footer">
+        <Button type="primary" @click="showOnoff=false;" style="margin-right: 10px;">确定</Button>
+
+    </div>
   </Modal>
 </template>
 
@@ -73,45 +77,6 @@ import commonTable from '@/hxx-components/common-table.vue'
                 getCarTypeData:[],//汽车类型集合
                 getBanJinListData:[],//发动机类型集合
                 getCarListData:[],//汽车参数集合
-                getItemType:[
-                        { TYPE_ID: "1", TYPE_NAME: "维护", cartype: "3" },
-                        { TYPE_ID: "2", TYPE_NAME: "大修和全车喷漆", cartype: "3" },
-                        { TYPE_ID: "3", TYPE_NAME: "发动机机械", cartype: "3" },
-                        { TYPE_ID: "4", TYPE_NAME: "发动机电气", cartype: "3" },
-                        { TYPE_ID: "5", TYPE_NAME: "变速箱", cartype: "3" },
-                        { TYPE_ID: "6", TYPE_NAME: "转向系统", cartype: "3" },
-                        { TYPE_ID: "7", TYPE_NAME: "悬挂系统", cartype: "3" },
-                        { TYPE_ID: "8", TYPE_NAME: "驱动桥", cartype: "3" },
-                        { TYPE_ID: "9", TYPE_NAME: "制动系统", cartype: "3" },
-                        { TYPE_ID: "10", TYPE_NAME: "电气", cartype: "3" },
-                        { TYPE_ID: "11", TYPE_NAME: "空调", cartype: "3" },
-                        { TYPE_ID: "12", TYPE_NAME: "钣金", cartype: "3" },
-                        { TYPE_ID: "13", TYPE_NAME: "喷漆", cartype: "3" },
-                        { TYPE_ID: "25", TYPE_NAME: "维护", cartype: "4" },
-                        { TYPE_ID: "26", TYPE_NAME: "大修和全车喷漆", cartype: "4" },
-                        { TYPE_ID: "27", TYPE_NAME: "发动机机械", cartype: "4" },
-                        { TYPE_ID: "28", TYPE_NAME: "发动机电气", cartype: "4" },
-                        { TYPE_ID: "29", TYPE_NAME: "变速箱", cartype: "4" },
-                        { TYPE_ID: "30", TYPE_NAME: "转向系统", cartype: "4" },
-                        { TYPE_ID: "31", TYPE_NAME: "悬挂系统", cartype: "4" },
-                        { TYPE_ID: "32", TYPE_NAME: "驱动桥", cartype: "4" },
-                        { TYPE_ID: "33", TYPE_NAME: "制动系统", cartype: "4" },
-                        { TYPE_ID: "34", TYPE_NAME: "电气", cartype: "4" },
-                        { TYPE_ID: "35", TYPE_NAME: "空调", cartype: "4" },
-                        { TYPE_ID: "36", TYPE_NAME: "钣金", cartype: "4" },
-                        { TYPE_ID: "37", TYPE_NAME: "喷漆", cartype: "4" },
-                        { TYPE_ID: "38", TYPE_NAME: "维护和大修", cartype: "5" },
-                        { TYPE_ID: "39", TYPE_NAME: "发动机附离合器", cartype: "5" },
-                        { TYPE_ID: "40", TYPE_NAME: "变速箱附传动轴", cartype: "5" },
-                        { TYPE_ID: "41", TYPE_NAME: "转向系、前桥、前悬挂", cartype: "5" },
-                        { TYPE_ID: "42", TYPE_NAME: "后桥、后悬挂、制动", cartype: "5" },
-                        { TYPE_ID: "43", TYPE_NAME: "电气", cartype: "5" },
-                        { TYPE_ID: "44", TYPE_NAME: "车身", cartype: "5" },
-                        { TYPE_ID: "45", TYPE_NAME: "车架、漆工", cartype: "5" },
-                        { TYPE_ID: "116", TYPE_NAME: "自定义", cartype: "3" },
-                        { TYPE_ID: "117", TYPE_NAME: "自定义", cartype: "4" },
-                        { TYPE_ID: "118", TYPE_NAME: "自定义", cartype: "5" },
-                ],//汽车项目分类
                 carTypeData:[],//过滤后的汽车类型
                 carItemType:[],//过滤后的汽车分类
                 banJinListData:[],//过滤后的发动机类型
@@ -150,7 +115,7 @@ import commonTable from '@/hxx-components/common-table.vue'
                     {title: '油漆面数', key: 'PAINT_NUM', sortable: true, minWidth: 120},
                     {title: '发动机类型', key: 'ENGINE_TYPE_NAME', sortable: true, minWidth: 170},
                     {title: '汽车排量', key: 'CLASS_NAME', sortable: true, minWidth: 250},
-                    {title: '操作', key: 'operation', sortable: true, minWidth: 100,fixed: 'right',
+                    {title: '操作', key: 'operation', sortable: true, minWidth: 120,fixed: 'right',
                         render: (h, params) => {
                             let buttonContent= this.state(params.row)? '取消选择':'选择';
                             let buttonStatus= this.state(params.row)? 'warning':'primary';
@@ -185,36 +150,74 @@ import commonTable from '@/hxx-components/common-table.vue'
                 buttonContent:"选择",//自定义按钮内容
                 isdisabled:true,//判断下拉框是否下拉
                 isThreeType:true,//判断是不是三类------
-
+                carNameArr:[
+                    {code:'轿车',name:3},
+                    {code:'客车',name:4},
+                    {code:'货车',name:5},
+                ],//汽车数据集合------
+                vehicleNumberArr:[
+                    { code: '轿车-排量<1.6升-A', name: 'A' },
+                    { code: '轿车-1.6升≤排量≤1.8升-B', name: 'B' },
+                    { code: '轿车-1.8升<排量≤2.3升-C', name: 'C' },
+                    { code: '轿车-2.3升<排量≤3升-D', name: 'D' },
+                    { code: '轿车-3升<排量≤4升-E', name: 'E' },
+                    { code: '客车-车总长≤4米（座位≤7座）-I', name: 'I' },
+                    { code: '客车-4米<车总长≤5米（8座≤座位≤19座）-J', name: 'J' },
+                    { code: '客车-5米<车总长≤7米（20座≤座位≤32座）-K', name: 'K' },
+                    { code: '客车-7米<车总长≤10米（33座≤座位≤44座）-L', name: 'L' },
+                    { code: '客车-10米<车总长（45座≤座位）-M', name: 'M' },
+                    { code: '货车-载质量≤0.75吨-P', name: 'P' },
+                    { code: '货车-汽油(0.75吨<载质量≤3.50吨)-Q', name: 'Q' },
+                    { code: '货车-柴油(0.75吨<载质量≤3.50吨)-R', name: 'R' },
+                    { code: '货车-汽油(0.75吨<载质量≤3.50吨)-S', name: 'S' },
+                    { code: '货车-柴油(0.75吨<载质量≤3.50吨)-T', name: 'T' },
+                    { code: '货车-载质量≥8吨-U', name: 'U' }
+                ],//未筛选
             }
         },
         watch:{
             showTenanceItems(){
-                console.log("点击选择项目了",this.$store.state.user.userInfo.tenant.businessType);
-                if(this.$store.state.user.userInfo.tenant.businessType=="10331003"||this.$store.state.user.userInfo.tenant.businessType=="10331004"){
-                    this.isThreeType=false;
-                }else{
-                    this.isThreeType=true;
-                }
-
                 this.showOnoff=true;
                 this.resetVehicle();//首次进来数据重置
                 this.selectData=this.initGetItem;
-                this.test2='1';
 
-                console.log('进来的汽车参数',this.initSearch);
+                
+
+                if(this.initSearch){
+                    let getCarName=getName(this.vehicleTypeArr,this.initSearch.VEHICLE_TYPE);
+                    this.test1=getName(this.carNameArr,getCarName);
+                    
+                    this.changeCarType(this.test1);
+                    this.test4=getName(this.vehicleNumberArr,this.initSearch.VEHICLE_TYPE_CODE);
+                    this.isdisabled=true;
+                }else{
+                    this.test1=3;
+                    this.test4="A";
+                    
+                    this.changeCarType(this.test1);
+
+                    this.isdisabled=false;
+                }
+                
+
+                
+                
+                
+
                 
                 this.getList();
-                this.getCarType();
-                this.getBanJinList();
-                this.getCarList();
-
-                
-                
             }
         },
+        computed: {
+            //车辆类型---
+            vehicleTypeArr(){
+                return getDictGroup(this.$store.state.app.dict, '1052');
+            },
+        },
         mounted() {
-            
+            this.getCarType();
+            this.getBanJinList();
+            this.getCarList();
         },
         methods:{
             state(item){
@@ -238,6 +241,7 @@ import commonTable from '@/hxx-components/common-table.vue'
                 this.$emit('sTenanceItem', this.selectData);
                 console.log('this.selectData',this.selectData)
             },
+            //计数函数---------------
             countList(idx){
                 this.axios.request({
                     url: '/tenant/basedata/repairiteminfo/saveitemId',
@@ -249,27 +253,46 @@ import commonTable from '@/hxx-components/common-table.vue'
                 }).then(res => {
                 })
             },
+            //根据汽车id获取项目分类参数--------
+            getCarData(name){
+                this.axios.request({
+                    url: '/tenant/basedata/repairiteminfo/getItemType',
+                    method: 'post',
+                    data: {
+                        page: 1,
+                        limit: 25,
+                        cartype: name,
+                        access_token: this.$store.state.user.token
+                    }
+                }).then(res => {
+                    if (res.success === true) {
+                        this.carItemType=res.data;
+                        this.test2='';
+                    }
+              })
+            },
+            //获取列表数据--------
             getList(){
-                if(this.$store.state.user.userInfo.tenant.businessType=="10331003"||this.$store.state.user.userInfo.tenant.businessType=="10331004"){
-                     this.axios.request({
-                            url: '/tenant/basedata/repairiteminfo/infolist11',
-                            method: 'post',
-                            data: {
-                                cartype_eq: this.test1||'',
-                                KEYWORD: this.test5||'',
-                                page: this.page,
-                                limit: this.limit,
-                                access_token: this.$store.state.user.token
-                            }
-                        }).then(res => {
-                            if (res.success === true) {
-                                console.log("得到列表数据",res);
-                                this.tableData= res.data
-                                this.total= res.total
+                // if(this.$store.state.user.userInfo.tenant.businessType=="10331003"||this.$store.state.user.userInfo.tenant.businessType=="10331004"){
+                //      this.axios.request({
+                //             url: '/tenant/basedata/repairiteminfo/infolist11',
+                //             method: 'post',
+                //             data: {
+                //                 cartype_eq: this.test1||'',
+                //                 KEYWORD: this.test5||'',
+                //                 page: this.page,
+                //                 limit: this.limit,
+                //                 access_token: this.$store.state.user.token
+                //             }
+                //         }).then(res => {
+                //             if (res.success === true) {
+                //                 console.log("得到列表数据",res);
+                //                 this.tableData= res.data
+                //                 this.total= res.total
 
-                            }
-                    })
-                }else{
+                //             }
+                //     })
+                // }else{
                      this.axios.request({
                             url: '/tenant/basedata/repairiteminfo/infolist1',
                             method: 'post',
@@ -291,9 +314,10 @@ import commonTable from '@/hxx-components/common-table.vue'
 
                             }
                     })
-                }
+                // }
                
             },
+            //获取汽车类型-----
             getCarType(){
                 this.axios.request({
                     url: '/tenant/basedata/repairiteminfo/getCarTypeSelList',
@@ -309,6 +333,7 @@ import commonTable from '@/hxx-components/common-table.vue'
                     }
               })
             },
+            //获取发送机维修类型-------
             getBanJinList(){
                 this.axios.request({
                     url: '/tenant/basedata/repairiteminfo/getBanJinList',
@@ -324,6 +349,7 @@ import commonTable from '@/hxx-components/common-table.vue'
                     }
               })
             },
+            //获取汽车排量参数问题--------
             getCarList(){
                 this.axios.request({
                     url: '/tenant/basedata/repairiteminfo/getCarList',
@@ -341,51 +367,46 @@ import commonTable from '@/hxx-components/common-table.vue'
             },
             //改变汽车类型时过滤参数;
             changeCarType(val){
-                console.log(val);
-                // console.log(this.search.select1)
                 
-                this.test2="";
-                this.test3="";
-                this.test4="";
 
-                this.carItemType=[];
                 this.carListData=[];
                 this.banJinListData=[];
                 if(val){
-                    this.isdisabled=false;
-                    let carType=null;
+                    
+                    let carType='';
+                    
                     for(let i in this.getCarTypeData){
-                        if(val==this.getCarTypeData[i].cartype){
-                            carType=this.getCarTypeData[i].CARNAME;
+                        if(this.getCarTypeData[i]['cartype']==val){
+                            carType=this.getCarTypeData[i]['CARNAME'];
                             break;
                         }
                     }
                     
-                    for(let i in this.getItemType){
-                        if(val==this.getItemType[i].cartype){
-                            this.carItemType.push(this.getItemType[i]);
-                        }
-                    }
                     for(let i in this.getCarListData){
-                        console.log(this.getCarListData[i].CLASS_NAME);
-                        let carListArr=this.getCarListData[i].CLASS_NAME.split('-');
-                        // console.log(carListArr);
-                        if(carListArr[0]==carType){
-                            let newJson={"CLASS_TYPE":this.getCarListData[i].CLASS_TYPE,"CLASS_NAME":carListArr[1]};
-                            this.carListData.push(newJson);
-                            // console.log(this.carListData);
+                        
+                        if(this.getCarListData[i]['CLASS_NAME'].indexOf(carType)!=-1){
+                            this.carListData.push(this.getCarListData[i]);
                         }
                     }
+
+                    if(!this.initSearch){
+                        
+                        this.test4=this.carListData[0]['CLASS_TYPE'];
+                    }
+
+                    
                     if(val==3){
                         this.banJinListData=[{ENGINE_TYPE: 1, ENGINE_TYPE_NAME: "化油器"},{ENGINE_TYPE: 2, ENGINE_TYPE_NAME: "电喷"}];
+                        this.test3=2;
                     }else if(val==4){
                         this.banJinListData=[{ENGINE_TYPE: 1, ENGINE_TYPE_NAME: "化油器"},{ENGINE_TYPE: 2, ENGINE_TYPE_NAME: "电喷"}];
+                        this.test3=2;
                     }else if(val==5){
                         this.banJinListData=[];
                         this.banJinListData=[{ENGINE_TYPE: 0, ENGINE_TYPE_NAME: "其他"}];
-                    }else{
-                        this.banJinListData=[];
+                        this.test3=0;
                     }
+                    this.getCarData(this.test1);
                 }
                 
             },
@@ -404,64 +425,23 @@ import commonTable from '@/hxx-components/common-table.vue'
                 // this.$emit('selectCar', row);
             },
             searchVehicle(){
-                
-                if(this.$store.state.user.userInfo.tenant.businessType=="10331003"||this.$store.state.user.userInfo.tenant.businessType=="10331004"){
-                    this.page=1;
-                            this.getList();
-                }else{
-                        if(this.test1){
-                            this.page=1;
-                            this.getList();
-                        }else{
-                            this.$Modal.confirm({
-                                title:"系统提示!",
-                                content:"未选择车辆类型",
-                                
-                            })
-                        }
-                }
-                
+                this.page=1;
+                this.getList();
             },
             resetVehicle(){
-                // console.log("重置之前先打印",this.test1,this.test2,this.test3,this.test4,this.test5);
-                this.test1="";
                 this.test2="";
-                this.test3="";
-                this.test4="";
                 this.test5="";
-                // console.log("重置之 后 打印",this.test1,this.test2,this.test3,this.test4,this.test5);
-                this.isdisabled=true;
             },
             //新增项目--------
             addItemFun(){
+
                 if(this.test5){
-                    this.axios.request({
-                            url: '/tenant/basedata/repairadditem/check_item',
-                            method: 'post',
-                            data: {
-                                access_token: this.$store.state.user.token
-                            }
-                        }).then(res => {
-                            if (res.success === true) {
-                                var data = res.data;
-                                if (data.length <= 0 || data == null) {
-                                    this.$Modal.confirm({
-                                        title:"系统提示!",
-                                        content:"系统提示', '暂未导入维修项目，请先行导入！",
-                                        
-                                    })
-                                    return;
-                                } else {
-
-                                    this.$Modal.confirm({
-                                        title:"系统提示!",
-                                        content:"确认新增吗?",
-                                        onOk:this.addFun,
-                                    })
-
-                                }
-                            }
+                    this.$Modal.confirm({
+                        title:"系统提示!",
+                        content:"确认新增吗?",
+                        onOk:this.addCheckItem,
                     })
+                    
                 }else{
                     this.$Modal.confirm({
                         title:"系统提示!",
@@ -470,12 +450,33 @@ import commonTable from '@/hxx-components/common-table.vue'
                     })
                 }
             },
+            addCheckItem(){
+                this.axios.request({
+                            url: '/tenant/basedata/repairadditem/check_item',
+                            method: 'post',
+                            data: {
+                                CAR_TYPE:this.test1,
+                                access_token: this.$store.state.user.token
+                            }
+                        }).then(res => {
+                            if (res.success === true) {
+                                
+                                this.addFun();
+                                    
+
+                                
+                            }
+                    })
+            },
             addFun(){
                 this.axios.request({
                     url: '/tenant/basedata/repairadditem/add_item',
                     method: 'post',
                     data: {
                         ITEM_NAME:this.test5,
+                        CAR_TYPE:this.test1,
+                        CLASS_TYPE:this.test4,
+                        ENGINE_TYPE:this.test3,
                         access_token: this.$store.state.user.token,
                     }
                 }).then(res => {

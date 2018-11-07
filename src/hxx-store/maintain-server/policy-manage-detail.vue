@@ -433,9 +433,10 @@
             oldValue['BUY_DATE']=formatDate(oldValue['BUY_DATE']);
             oldValue['START_DATE']=formatDate(oldValue['START_DATE']);
             oldValue['END_DATE']=formatDate(oldValue['END_DATE']);
-
+            console.log(oldValue);
             if(this.tableDetailData){
-                this.tableData[this.tableIndex]=oldValue;
+                this.tableData.splice(this.tableIndex,1,oldValue);
+                // this.tableData[this.tableIndex]=oldValue;
             }else{
                 this.tableData.push(oldValue);
             }

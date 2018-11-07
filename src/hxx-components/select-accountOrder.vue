@@ -426,6 +426,7 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
 
                     
                     var wtdData=this.$store.state.user.userInfo.tenant;
+                    console.log('结算预览',wtdData);
                     var store=this.$store;
                     if (this.$store.state.user.userInfo.tenant && this.$store.state.user.userInfo.tenant.businessType == ('10331003'||'10331004')) {
                     console.log('三级维修');

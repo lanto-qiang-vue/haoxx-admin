@@ -2,7 +2,7 @@
 <template>
   <common-table v-model="tableData" :columns="columns" :total="total" :clearSelect="clearTableSelect"
                 @changePage="changePage" @changePageSize="changePageSize" @onRowClick="onRowClick"
-                @onRowDblclick="onRowDblclick" :show="showTable" :page="page">
+                @onRowDblclick="onRowDblclick" :show="showTable" :page="page" :loading="loading">
     <div  slot="search">
       <div class="search-block">
         <Input v-model="search.input" placeholder="工单单号/送修人/联系电话..."></Input>
@@ -61,6 +61,7 @@
     mixins: [mixin],
     data(){
 		  return{
+        loading:false,
         showQuickDetail:null,//快速开单框
         columns: [
           // {type: 'selection', width: 50, fixed: 'left'},
@@ -169,6 +170,7 @@
 		  getList(){
         this.search.orderDateGte=formatDate(this.search.orderDateGte);
         this.search.orderDateIte=formatDate(this.search.orderDateIte);
+        this.loading=true;
         this.axios.request({
             url: '/tenant/repair/ttrepairworkorder/list',
             method: 'post',
@@ -186,6 +188,7 @@
               if (res.success === true) {
                   this.tableData= res.data
                   this.total= res.total
+                  this.loading=false;
               }
           })
           //重置按钮状态------------

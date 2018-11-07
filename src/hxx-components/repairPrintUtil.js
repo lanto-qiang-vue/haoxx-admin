@@ -439,6 +439,24 @@ export const printAccountFun=function(wtdData,listSearch,commitItem,commitItemGr
   var itemMoney=0;
   var partsMoney=0;
   var otherMoney=0;
+  var localhostString='';
+  if(wtdData.areaId=='0'){
+    localhostString='<tr class="noBorder">'+
+            '<td colspan="10" class="text-left" style="padding:0px 10px">6. 请扫描二维码或登录上海汽修平台，对本次维修服务进行评价。</td>'+
+            '</tr>'+
+            '<tr class="noBorder">'+
+            '<td colspan="5" style="text-align:right;"><img src="/static/img/pj_qrcode.png" style="width:152px;height:152px;"/></td>'+
+            '<td colspan="5" style="padding:30px 0px;vertical-align: top;text-align:left;">上海市机动车维修公共服务平台</td>'+
+            '</tr>';
+  }else{
+    localhostString='<tr class="noBorder">'+
+            '<td colspan="10" class="text-left" style="padding:0px 10px"></td>'+
+            '</tr>'+
+            '<tr class="noBorder">'+
+            '<td colspan="5" style="text-align:right;"></td>'+
+            '<td colspan="5" style="padding:30px 0px;vertical-align: top;text-align:left;"></td>'+
+            '</tr>';
+  }
   for(let i in commitItem){
       itemString+='<tr class="text-center">';
       itemString+='<td>'+(parseInt(i)+1)+'</td>';
@@ -680,13 +698,8 @@ export const printAccountFun=function(wtdData,listSearch,commitItem,commitItemGr
             '<tr class="noBorder">'+
             '<td colspan="10" class="text-left" style="padding:0px 10px">5. 企业承诺本次维修的新能源汽车专用部件<span style="border-bottom:#000 1px solid;display:inline-block;padding:0 10px;min-width:30px;">'+listSearch.ZY_PART+'</span>维修质量保证期为<span style="border-bottom:#000 1px solid;display:inline-block;padding:0 10px;min-width:30px;">'+listSearch.ZY_PART_BZQ+'</span>公里。</td>'+
             '</tr>'+
-            '<tr class="noBorder">'+
-            '<td colspan="10" class="text-left" style="padding:0px 10px">6. 请扫描二维码或登录上海汽修平台，对本次维修服务进行评价。</td>'+
-            '</tr>'+
-            '<tr class="noBorder">'+
-            '<td colspan="5" style="text-align:right;"><img src="/static/img/pj_qrcode.png" style="width:152px;height:152px;"/></td>'+
-            '<td colspan="5" style="padding:30px 0px;vertical-align: top;text-align:left;">上海市机动车维修公共服务平台</td>'+
-            '</tr>'+
+              localhostString
+            +
             '<tr class="noBorder">'+
             '<td colspan="5" style="text-align:left;">承修方 (盖章)：</td>'+
             '<td colspan="5" style="text-align:left;">托修方签名 (盖章)：</td>'+
