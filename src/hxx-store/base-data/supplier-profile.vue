@@ -157,6 +157,7 @@
         limit: 25,
         total: 0,
         tableData: [],
+        switchType:0,
         showModal: false,
         clearType: false,
         showTable: false,
@@ -226,6 +227,7 @@
         this.routerType = queryData.type;
         if(this.routerType){
           this.add();
+          this.switchType = queryData.switchType;
         }
       },
       addPost(name) {
@@ -250,9 +252,15 @@
                     this.getList();
                     let self = this;
                     setTimeout(function(){
-                      if(self.routerType){
+                      if(self.routerType && self.switchType == 1){
                         self.routerType = false;
+                        self.switchType = 0;
                         self.$router.push({path:'/parts-purchase',query:{type:true}});
+                      }
+                      if(self.routerType && self.switchType == 2){
+                        self.routerType = false;
+                        self.switchType = 0;
+                        self.$router.push({path:'/parts-back',query:{type:true}});
                       }
                     },200);
                   }

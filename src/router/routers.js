@@ -370,6 +370,28 @@ export default [
         component: () => import('@/hxx-store/parts-manage/parts-purchase.vue')
       },
       {
+        path: '/parts-back',
+        name: 'parts-back',
+        meta: {
+          icon: 'md-funnel',
+          title: '配件退货',
+          lgType: "1002",
+          access: '100207',
+        },
+        component: () => import('@/hxx-store/parts-manage/parts-back.vue')
+      },
+      {
+        path: '/parts-sell',
+        name: 'parts-sell',
+        meta: {
+          icon: 'md-funnel',
+          title: '配件销售',
+          lgType: "1002",
+          access: '100202',
+        },
+        component: () => import('@/hxx-store/parts-manage/parts-sell.vue')
+      },
+      {
         path: '/maintain-pick',
         name: 'maintain-pick',
         meta: {

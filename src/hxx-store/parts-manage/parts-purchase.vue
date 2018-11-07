@@ -1,6 +1,6 @@
 <template>
   <common-table v-model="tableData" :columns="columns" @changePageSize="changePageSize" @changePage="changePage"
-                :total="total" :show="showTable" :page="page" @onRowClick="onRowClick" @onRowDblclick="dbclick">
+                :total="total" :show="showTable" :clearSelect="clearType" :page="page" @onRowClick="onRowClick" @onRowDblclick="dbclick">
     <div slot="search">
       <div class="search-block">
         <Input v-model="search.keyword" placeholder="采购单号/供应商名称..."></Input>
@@ -105,7 +105,7 @@
         </Button>
       </div>
       <div style="float:left;font-size:18px;">合计金额:&nbsp;<span style="color:red;">{{formData.SUM_MONEY}}</span></div>
-      <div style="height:60px;"></div>
+      <div style="height:120px;"></div>
       <div slot="footer">
         <Button type="primary" @click="addPost('formData')">保存</Button>
         <Button @click="showModal=false">取消</Button>
@@ -148,16 +148,16 @@
     </Modal>
     <select-parts-group @selectPartsGroup="selectPartsGroup" :showSelectPartsGroup="showParts"
                         :initPartsGroup="initParts"></select-parts-group>
-    <select-supply @transmit="transmit" :showType="showType" :refresh="refreshType"></select-supply>
+    <select-supply @transmit="transmit" :showType="showType" :switchType="1" :refresh="refreshType"></select-supply>
   </common-table>
 </template>
 <script>
-  import commonTable from '@/hxx-components/common-table.vue'
   import selectSupply from '@/hxx-components/select-supply.vue'
   import {getLodop} from '@/hxx-components/LodopFuncs.js'
   import unitInput from '@/hxx-components/unit-input.vue'
   import selectPartsGroup from '@/hxx-components/select-partsGroup.vue'
   import {getName, getDictGroup, getCreate} from '@/libs/util.js'
+  import commonTable from '@/hxx-components/common-table.vue'
   import {deepClone} from "../../libs/util";
 
   export default {
@@ -202,7 +202,7 @@
         },
         paymentList: [],
         payData: {
-          "RECORD_ID": "115",
+          "RECORD_ID": "",
           "CUSTOMER_ID": "",
           "MEMBER_CARD_ID": "",
           "MEMBER_TYPE": "",
@@ -375,6 +375,9 @@
         showTable: false,
         list: '',
         columns: [
+          {title: '序号',  minWidth: 80,
+            render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
+          },
           {title: '仓库名称', key: 'STORE_NAME', sortable: true, minWidth: 120},
           {
             title: '采购日期', key: 'PURCHASE_DATE', sortable: true, minWidth: 120,
@@ -386,10 +389,10 @@
           },
           {title: '供应商名称', key: 'SUPPLIER_NAME', sortable: true, minWidth: 140,},
           {title: '采购员', key: 'PURCHASE_PERSON', sortable: true, minWidth: 120},
-          // {
-          //   title: '采购总金额', key: 'SUM_MONEY', sortable: true, minWidth: 140,
-          //   render: (h, params) => h('span', params.row.SUM_MONEY.toFixed(2))
-          // },
+          {
+            title: '采购总金额', key: 'SUM_MONEY', sortable: true, minWidth: 140,
+            render: (h, params) => h('span', (params.row.SUM_MONEY.toFixed(2) || 0))
+          },
           {
             title: '状态', key: 'STATUS', sortable: true, minWidth: 100,
             render: (h, params) => h('span', getName(this.list1048, params.row.STATUS))
@@ -557,36 +560,47 @@
         this.payModal = true;
       },
       check() {
-        //审核.../tenant/part/tt_part_purchase/check
-        this.axios.request({
-          url: '/tenant/part/tt_part_purchase/check',
-          method: 'post',
-          data: {
-            access_token: this.$store.state.user.token,
-            id: this.list.PURCHASE_ID,
+        this.$Modal.confirm({
+          title:'系统提示',
+          content:'确认要审核吗?',
+          onOk:()=>{
+            this.axios.request({
+              url: '/tenant/part/tt_part_purchase/check',
+              method: 'post',
+              data: {
+                access_token: this.$store.state.user.token,
+                id: this.list.PURCHASE_ID,
+              }
+            }).then(res => {
+              if (res.success === true) {
+                this.$Message.success("审核成功");
+                this.getList();
+              }
+            })
           }
-        }).then(res => {
-          if (res.success === true) {
-            this.$Message.success("审核成功");
-            this.getList();
-          }
-        })
+        });
       },
       rcheck() {
         //反审核../tenant/part/tt_part_purchase/recheck
-        this.axios.request({
-          url: '/tenant/part/tt_part_purchase/recheck',
-          method: 'post',
-          data: {
-            access_token: this.$store.state.user.token,
-            id: this.list.PURCHASE_ID,
+        this.$Modal.confirm({
+          title:'系统提示',
+          content:'确认要反审核吗?',
+          onOk:()=>{
+            this.axios.request({
+              url: '/tenant/part/tt_part_purchase/recheck',
+              method: 'post',
+              data: {
+                access_token: this.$store.state.user.token,
+                id: this.list.PURCHASE_ID,
+              }
+            }).then(res => {
+              if (res.success === true) {
+                this.$Message.success("反审核成功");
+                this.getList();
+              }
+            })
           }
-        }).then(res => {
-          if (res.success === true) {
-            this.$Message.success("反审核成功");
-            this.getList();
-          }
-        })
+        });
       },
       countMoney() {
         //合计金额
@@ -620,6 +634,7 @@
         }).then(res => {
           if (res.success === true) {
             this.data2 = res.data;
+            this.initParts = this.data2;
           }
         })
       },
