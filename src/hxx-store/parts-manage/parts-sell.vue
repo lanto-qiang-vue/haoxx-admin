@@ -29,7 +29,7 @@
       <Button type="warning" :disabled="canDo || list.STATUS != '10471002'" @click="rcheck">反审核</Button>
       <Button type="success" :disabled="canDo || list.STATUS != '10471002'" @click="collection">收款</Button>
       <Button type="error" :disabled="canDo || list.STATUS != '10471001'" @click="del">作废</Button>
-      <Button type="primary" :disabled="canDo || list.STATUS == '10471001'" @click="print">打印退货单</Button>
+      <Button type="primary" :disabled="canDo || list.STATUS == '10471001'" @click="print">打印销售单</Button>
     </div>
     <Modal
       v-model="showModal"
@@ -47,7 +47,8 @@
           基本信息
           <Form slot="content" :model="formData" ref="formData" :rules="rules" :label-width="120" class="common-form">
             <FormItem label="客户名称:" style="width:30%;" prop="CUSTOMER_NAME">
-              <Input type="text" @on-click="selectCustomer" :readonly="true" v-model="formData.CUSTOMER_NAME" icon="ios-search"
+              <Input type="text" @on-click="selectCustomer" :readonly="true" v-model="formData.CUSTOMER_NAME"
+                     icon="ios-search"
                      style="min-width: 100%;">
               </Input>
             </FormItem>
@@ -57,7 +58,8 @@
               </Input>
             </FormItem>
             <FormItem label="车牌号码:" style="width:30%;" prop="PLATE_NUM">
-              <Input type="text" @on-click="selectType=Math.random()" :readonly="true" v-model="formData.PLATE_NUM" icon="ios-search"
+              <Input type="text" @on-click="selectType=Math.random()" :readonly="true" v-model="formData.PLATE_NUM"
+                     icon="ios-search"
                      style="min-width: 100%;">
               </Input>
             </FormItem>
@@ -129,6 +131,20 @@
       :transfer="false"
     >
       <Collapse v-model="valueList">
+        <Panel name="3">
+          会员卡信息
+          <Form slot="content" :label-width="120" class="common-form">
+            <FormItem label="会员姓名:" style="width:30%;">
+              <div style="color:red;font-size:18px;">{{collectionData.CUSTOMER_NAME}}</div>
+            </FormItem>
+            <FormItem label="会员卡号:" style="width:30%;">
+              <div style="color:red;font-size:18px;">{{collectionData.MEMBER_CARD_NO}}</div>
+            </FormItem>
+            <FormItem label="余额:" style="width:30%;">
+              <div style="color:red;font-size:18px;">{{collectionData.SURP_MONEY}}</div>
+            </FormItem>
+          </Form>
+        </Panel>
         <Panel name="1">
           结算信息
           <Form slot="content" ref="collectionData" :model="collectionData" :rules="rule2" :label-width="120"
@@ -187,16 +203,38 @@
             </FormItem>
           </Form>
         </Panel>
+        <Panel name="4">
+          是否需要发票
+          <i-switch v-model="have" size="large">
+            <span slot="open">是</span>
+            <span slot="close">否</span>
+          </i-switch>
+          <Form slot="content" ref="bill" :model="collectionData" :rules="rule2" :label-width="120"
+                class="common-form">
+            <div style="clear:both;"></div>
+            <FormItem label="发票编号:" style="width:40%;" prop="INVOICE_NO">
+              <Input v-model="collectionData.INVOICE_NO"> </Input>
+            </FormItem>
+            <FormItem label="发票抬头:" style="width:40%;">
+              <Input v-model="collectionData.CORP_NAME"> </Input>
+            </FormItem>
+            <FormItem label="税号:" style="width:40%;">
+              <Input v-model="collectionData.TAX_NO"> </Input>
+            </FormItem>
+            <FormItem label="备注:" style="width:40%;">
+              <Input v-model="collectionData.REMARK"> </Input>
+            </FormItem>
+          </Form>
+        </Panel>
       </Collapse>
       <div slot="footer">
+        <Button type="primary" @click="showCard=Math.random()">更换会员卡</Button>
         <Button type="primary" @click="doCollection('collectionData')">收款</Button>
         <Button @click="collectionModal=false">关闭</Button>
       </div>
     </Modal>
+    <select-value-card :showoff="showCard" @selectCard="selectCard" :showTransfer="false"></select-value-card>
     <select-customer :showoff="showType" @select="transmit"></select-customer>
-    <!--<select-supply @transmit="transmit" :showType="showType" :switchType="2" :refresh="refreshType"></select-supply>-->
-
-    <!--<select-purchase-no :showType="selectType" @selectCallback="selectCallback"></select-purchase-no>-->
     <select-vehicle :showoff="selectType" @selectCar="selectCar"></select-vehicle>
     <selectParts :showSelectParts="showSelectParts" :initParts="initParts" :stockFlag="true"
                  @selectPartsItem="selectPartsItem"></selectParts>
@@ -209,11 +247,13 @@
   import selectCustomer from '@/hxx-components/select-customer.vue'
   import selectVehicle from '@/hxx-components/select-vehicle.vue'
   import selectParts from '@/hxx-components/select-parts.vue'
+  import selectValueCard from '@/hxx-components/select-valueCard.vue'
   import {getName, getDictGroup, getCreate} from '@/libs/util.js'
+  import {deepClone} from "../../libs/util";
 
   export default {
     name: "parts-sell",
-    components: {commonTable, selectCustomer, selectVehicle, selectParts, unitInput},
+    components: {commonTable, selectCustomer, selectVehicle, selectParts, unitInput, selectValueCard},
     data() {
       const personRule = (rule, value, callback) => {
         if (this.formData.FOLLOW_PERSON == '请选择') {
@@ -222,22 +262,48 @@
           callback();
         }
       }
+      const personRule2 = (rule, value, callback) => {
+        if (this.collectionData.FOLLOW_PERSON == '请选择') {
+          callback(new Error('请选择收款人'));
+        } else {
+          callback();
+        }
+      }
+      const billRule = (rule, value, callback) => {
+        if (value == '' && this.have) {
+          callback(new Error('请填写发票编号'));
+        } else {
+          callback();
+        }
+      }
       return {
-        rule2: {},
+        rule2: {
+          INVOICE_NO: [{validator: billRule, trigger: 'change,blur'}],
+          FOLLOW_PERSON: [{validator: personRule2, trigger: 'change,blur'}],
+        },
         collectionModal: false,
+        showCard: false,
         money: 0,
-        valueList: [1, 2],
+        valueList: [1, 2, 3],
+        have: false,
         payTypeList: [
           {name: '其它方式', code: '0'},
           {name: '现金', code: '10101001'},
           {name: '刷卡', code: '10101002'},
-          // {name: '储值卡', code: '10101004'},
+          {name: '储值卡', code: '10101004'},
           {name: '转账', code: '10101006'},
         ],
         payeeList: [],
-        collectionData: {
+        collectionData: {},
+        storeCollectionData: {
           "RECORD_ID": "",
+          "SALES_NO": "",
           "RETURN_NO": "",
+          "CUSTOMER_ID": "",
+          "MEMBER_CARD_ID": "",
+          "MEMBER_TYPE": "",
+          "MEMBER_CARD_STATUS": "",
+          "SURP_MONEY": 0,
           "REALMONEY": 0,
           "SUM_MONEY": 0,
           "REAL_MONEY": 0,
@@ -245,8 +311,12 @@
           "FOLLOW_PERSON": "",
           "MONEY1": 0,
           "PAYMENT1": "0",
-          "IS_GIVE_INVOICE": "",
-          "RETURN_ID": ""
+          "IS_GIVE_INVOICE": "0",
+          "INVOICE_NO": "",
+          "CORP_NAME": "",
+          "TAX_NO": "",
+          "REMARK": "",
+          "SALES_ID": ""
         },
         page: 1,
         total: 0,
@@ -255,7 +325,8 @@
         showSelectParts: false,
         initParts: [],
         limit: 25,
-        formData: {
+        formData: {},
+        storeData: {
           "SALES_ID": "",
           "VEHICLE_ID": "",
           "CUSTOMER_ID": "",
@@ -306,9 +377,9 @@
           {
             title: '数量', key: 'PART_NUM', minWidth: 120,
             render: (h, params) => {
-              this.countMoney();
               params.row.SUM_MONEY = parseInt(params.row.PART_NUM) * parseFloat(params.row.SALES_PRICE);
               params.row.REAL_MONEY = params.row.SUM_MONEY - params.row.LESS_MONEY;
+              this.countMoney();
               return h('div', [
                 h(unitInput, {
                     props: {
@@ -488,13 +559,13 @@
       },
       print() {
         this.axios.request({
-          url: '/tenant/part/tt_part_purchase_return/part_info',
+          url: '/tenant/part/tt_part_sales/part_info',
           method: 'post',
           data: {
             access_token: this.$store.state.user.token,
             page: 1,
             limit: 25,
-            return_id: this.list.RETURN_ID,
+            sales_id: this.list.SALES_ID,
           }
         }).then(res => {
           if (res.success === true) {
@@ -506,7 +577,7 @@
             temp += '<div style="padding:0 10px;">' +
               '<table border=0 width="100%" cellspacing="0" cellpadding="0" bordercolor="#000000">' +
               '<tr>' +
-              '<td height="50" colspan="9"><div align="center" style="font-size:24px;"><strong>采购退货</strong></div></td>' +
+              '<td height="50" colspan="9"><div align="center" style="font-size:24px;"><strong>配件销售</strong></div></td>' +
               '</tr>' +
               '<tr>' +
               '<td>维修企业名称</td>' +
@@ -521,60 +592,66 @@
               '<td colspan="3">' + this.$store.state.user.userInfo.tenant.linkTel + '</td>' +
               '</tr>' +
               '<tr>' +
-              '<td>退货供应商</td>' +
-              '<td colspan="4">' + this.list.SUPPLIER_NAME + '</td>' +
-              '<td>退货日期</td>' +
-              '<td colspan="3">' + this.list.RETURN_DATE.substr(0, 10) + '</td>' +
+              '<td>客户名称</td>' +
+              '<td colspan="4">' + this.list.CUSTOMER_NAME + '</td>' +
+              '<td>销售日期</td>' +
+              '<td colspan="3">' + this.list.SALES_DATE.substr(0, 10) + '</td>' +
               '</tr>' +
               '<tr>' +
-              '<td>退货员</td>' +
-              '<td colspan="4">' + this.list.RETURN_PERSON + '</td>' +
-              '<td>退货单号</td>' +
-              '<td colspan="3">' + this.list.RETURN_NO + '</td>' +
+              '<td>客户联系方式</td>' +
+              '<td colspan="4">' + this.list.MOBILE_PHONE + '</td>' +
+              '<td>销售单号</td>' +
+              '<td colspan="3">' + this.list.SALES_NO + '</td>' +
               '</tr>' +
               '<tr>' +
-              '<td>退货原因</td>' +
-              '<td colspan="4">' + this.list.RETURN_REASON + '</td>' +
+              '<td>服务顾问</td>' +
+              '<td colspan="4">' + this.list.FOLLOW_PERSON + '</td>' +
               '<td>打印日期</td>' +
-              '<td colspan="3">' + this.getDate() + '</td>' +
+              '<td colspan="3">' + this.getDate(new Date()) + '</td>' +
               '</tr>' +
               '<tr>' +
               '<td><strong>序号</strong></td>' +
-              '<td><strong>退货仓库</strong></td>' +
               '<td><strong>配件名称</strong></td>' +
               '<td><strong>原厂编号</strong></td>' +
               '<td><div align="right"><strong>数量</strong></div></td>' +
               '<td><strong>单位</strong></td>' +
-              '<td><strong>品牌</strong></td>' +
-              '<td><div align="right"><strong>退货单价</strong></div></td>' +
-              '<td><div align="right"><strong>退货金额</strong></div></td>' +
+              '<td><div align="right"><strong>单价</strong></div></td>' +
+              '<td><div align="right"><strong>小计金额</strong></div></td>' +
+              '<td><div align="right"><strong>优惠金额</strong></div></td>' +
+              '<td><div align="right"><strong>应收金额</strong></div></td>' +
               '</tr>';
             let countNumber = 0;
             let countMoney = 0;
+            let countless = 0;
+            let countreal = 0;
             for (let i = 0; i < data.length; i++) {
               countNumber += data[i].PART_NUM;
               countMoney += data[i].SUM_MONEY;
+              countless += data[i].LESS_MONEY;
+              countreal += data[i].REAL_MONEY;
               temp += '<tr>' +
                 '<td>' + (i + 1) + '</td>' +
-                '<td>' + data[i].STORE_NAME + '</td>' +
                 '<td>' + data[i].NAME + '</td>' +
                 '<td>' + data[i].FACTORY_NO + '</td>' +
                 '<td><div align="right">' + data[i].PART_NUM + '</div></td>' +
                 '<td>' + (getName(this.list1015, data[i].UNIT) || "") + '</td>' +
-                '<td>' + (getName(this.list1016, data[i].BRAND) || "") + '</td>' +
-                '<td><div align="right">' + data[i].PURCHASE_PRICE.toFixed(2) + '</div></td>' +
+                '<td><div align="right">' + data[i].SALES_PRICE.toFixed(2) + '</div></td>' +
                 '<td><div align="right">' + data[i].SUM_MONEY.toFixed(2) + '</div></td>' +
+                '<td><div align="right">' + data[i].LESS_MONEY.toFixed(2) + '</div></td>' +
+                '<td><div align="right">' + data[i].REAL_MONEY.toFixed(2) + '</div></td>' +
                 '</tr>';
             }
-            temp += '<tr>' +
-              '<td colspan="4"><div align="center"><strong>退货总数量</strong></div></td>' +
-              '<td><div align="right">' + countNumber + '</div></td>' +
-              '<td colspan="3"><div align="center"><strong>退货总金额</strong></div></td>' +
-              '<td><div align="right">' + countMoney.toFixed(2) + '</div></td>' +
+            temp += '<tr>'+
+              '<td colspan="3"><div align="center"><strong>数量汇总</strong></div></td>'+
+              '<td><div align="right">'+countNumber+'</div></td>'+
+              '<td colspan="2"><div align="center"><strong>金额汇总</strong></div></td>'+
+              '<td><div align="right">'+ countMoney.toFixed(2)+'</div></td>'+
+              '<td><div align="right">'+ countless.toFixed(2)+'</div></td>'+
+              '<td><div align="right">'+ countreal.toFixed(2)+'</div></td>'+
               '</tr>';
-            temp += '</tbody>' +
-              '</table>' +
-              '</div>';
+              temp += '</tbody>' +
+                '</table>' +
+                '</div>';
             let LODOP = getLodop();
             LODOP.SET_PRINT_STYLEA(0, "FontSize", 20);
             LODOP.SET_PRINT_STYLEA(0, "Alignment", 2);
@@ -589,11 +666,11 @@
           content: '确认要删除吗?',
           onOk: () => {
             this.axios.request({
-              url: '/tenant/part/tt_part_purchase_return/cancel',
+              url: '/tenant/part/tt_part_sales/cancel',
               method: 'post',
               data: {
                 access_token: this.$store.state.user.token,
-                ids: this.list.RETURN_ID,
+                ids: this.list.SALES_ID,
               }
             }).then(res => {
               if (res.success === true) {
@@ -605,6 +682,35 @@
         });
       },
       doCollection(name) {
+        let flag = false;
+        if (this.collectionData.PAYMENT1 == '10101004') {
+          if (this.collectionData.SURP_MONEY < this.collectionData.MONEY1) {
+            this.$Modal.info({
+              title: '系统提示',
+              content: '储值卡余额不足',
+            });
+            return;
+          }
+        }
+        if (this.have) {
+          this.$refs['bill'].validate((valid) => {
+            if (valid) {
+            } else {
+              this.$Message.error("请填写发票编号");
+              flag = true;
+            }
+          })
+        }
+        this.$refs[name].validate((valid) => {
+          if (valid) {
+          } else {
+            this.$Message.error("请校对红框内容");
+            flag = true;
+          }
+        })
+        if (flag) {
+          return;
+        }
         if (this.collectionData.PAYMENT1 == 0) {
           this.$Modal.info({
             title: '系统提示',
@@ -616,13 +722,23 @@
           title: '系统提示',
           content: '确认收款<span style="color:red">' + this.collectionData.MONEY1 + '元</span>',
           onOk: () => {
+            if (this.have) {
+              this.collectionData.IS_GIVE_INVOICE = '10041001';
+            } else {
+              this.collectionData.IS_GIVE_INVOICE = '10041002';
+            }
             this.axios.request({
-              url: '/tenant/part/tt_part_purchase_return/collect_money',
+              url: '/tenant/part/tt_part_sales/collect_money',
               method: 'post',
               data: {
                 access_token: this.$store.state.user.token,
                 data: JSON.stringify(this.collectionData),
-                parts: JSON.stringify(this.data2)
+                parts: JSON.stringify(this.data2),
+                customer_id: this.collectionData.MEMBER_CARD_ID,
+                money1: this.collectionData.MONEY1,
+                money2: '',
+                payment1: this.collectionData.PAYMENT1,
+                payment2: '',
               }
             }).then(res => {
               if (res.success === true) {
@@ -637,12 +753,12 @@
       zfb() {
 //支付宝支付
         this.axios.request({
-          url: '/tenant/part/tt_part_purchase_return/pay_return',
+          url: '/tenant/part/tt_part_sales/pay_sales',
           method: 'post',
           data: {
             access_token: this.$store.state.user.token,
             body: 100001,
-            out_trade_no: this.collectionData.RETURN_NO,
+            out_trade_no: this.collectionData.SALES_NO,
             total_amount: this.collectionData.MONEY1,
           }
         }).then(res => {
@@ -672,21 +788,42 @@
         this.collectionData.MONEY1 = this.collectionData.SUM_MONEY - e;
       },
       collection() {
+        //重置发票状态...
+        this.valueList = [1,2,3];
+        this.have = false;
+        this.collectionData = deepClone(this.storeCollectionData);
+        this.collectionData.CUSTOMER_ID = this.list.CUSTOMER_ID;
+        this.collectionData.MEMBER_CARD_ID = this.list.CUSTOMER_ID;
+        this.collectionData.MEMBER_TYPE = this.list.MEMBER_TYPE;
+        this.collectionData.MEMBER_CARD_STATUS = this.list.MEMBER_CARD_STATUS;
+        this.collectionData.SALES_ID = this.list.SALES_ID;
+        this.collectionData.RECORD_ID = this.list.SALES_ID;
+        this.collectionData.SALES_NO = this.list.SALES_NO;
+        this.collectionData.FOLLOW_PERSON = this.list.FOLLOW_PERSON;
+        this.collectionData.LESS_MONEY = this.list.LESS_MONEY;
+        this.collectionData.REAL_MONEY = this.list.REAL_MONEY;
+        this.collectionData.SUM_MONEY = this.list.SUM_MONEY;
+        this.collectionData.MONEY1 = this.list.REAL_MONEY;
+        this.collectionData.REALMONEY = this.list.SUM_MONEY;
+        this.collectionData.SURP_MONEY = this.list.SURPLUS_MONEY;
+        this.collectionData.PAYMENT1 = '0';
+        //设定优惠最大值...
+        this.money = this.list.SUM_MONEY;
+//....
+        this.collectionData.MEMBER_CARD_NO = this.list.MEMBER_CARD_NO || '无储值卡';
+        this.collectionData.CUSTOMER_NAME = this.list.CUSTOMER_NAME;
         this.getPerson();
-        this.getParts(this.list.RETURN_ID);
-        this.collectionData.RETURN_ID = this.list.RETURN_ID;
-        this.collectionData.RECORD_ID = this.list.RETURN_ID;
-        this.collectionData.RETURN_NO = this.list.RETURN_NO;
-        this.collectionData.REALMONEY = this.list.RETURN_MONEY;
-        this.collectionData.SUM_MONEY = this.list.RETURN_MONEY;
-        this.collectionData.REAL_MONEY = this.list.RETURN_MONEY;
-        this.money = this.list.RETURN_MONEY;
-        this.collectionData.LESS_MONEY = 0;
-        this.collectionData.PAYMENT1 = "0";
-        this.collectionData.FOLLOW_PERSON = this.list.RETURN_PERSON;
-        this.collectionData.MONEY1 = this.list.RETURN_MONEY;
-        this.collectionData.IS_GIVE_INVOICE = this.list.IS_CANCEL;
+        this.getParts(this.list.SALES_ID);
         this.collectionModal = true;
+      },
+      selectCard(row) {
+        //会员卡更换回调...
+        console.log(JSON.stringify(row));
+        this.collectionData.MEMBER_TYPE = row.MEMBER_TYPE;
+        this.collectionData.MEMBER_CARD_ID = row.CUSTOMER_ID;
+        this.collectionData.MEMBER_CARD_NO = row.MEMBER_CARD_NO;
+        this.collectionData.SURP_MONEY = row.SURPLUS_MONEY;
+        this.collectionData.CUSTOMER_NAME = row.NAME;
       },
       getPayee() {
         this.axios.request({
@@ -710,11 +847,11 @@
           content: '确认要反审核吗?',
           onOk: () => {
             this.axios.request({
-              url: '/tenant/part/tt_part_purchase_return/recheck',
+              url: '/tenant/part/tt_part_sales/recheck',
               method: 'post',
               data: {
                 access_token: this.$store.state.user.token,
-                id: this.list.RETURN_ID,
+                id: this.list.SALES_ID,
               }
             }).then(res => {
               if (res.success === true) {
@@ -732,11 +869,11 @@
             content: '确认要审核吗',
             onOk: () => {
               this.axios.request({
-                url: '/tenant/part/tt_part_purchase_return/check',
+                url: '/tenant/part/tt_part_sales/check',
                 method: 'post',
                 data: {
                   access_token: this.$store.state.user.token,
-                  id: this.list.RETURN_ID,
+                  id: this.list.SALES_ID,
                 }
               }).then(res => {
                 if (res.success === true) {
@@ -772,10 +909,10 @@
       selectPartsItem(row) {
         this.initParts = row;
         for (let q in this.initParts) {
-          if(this.initParts[q].PART_COST){
+          if (this.initParts[q].PART_COST) {
 
-          }else{
-            this.initParts[q].PART_COST = this.formData.UNIT_COST;
+          } else {
+            this.initParts[q].PART_COST = this.initParts[q].UNIT_COST;
           }
           if (this.initParts[q].PART_NUM) {
 
@@ -793,6 +930,7 @@
           }
           this.initParts[q].SALES_PRICE = this.initParts[q].SALES_PRICE || 0;
           this.initParts[q].SUM_MONEY = this.initParts[q].PART_NUM * parseFloat(this.initParts[q].SALES_PRICE);
+          this.initParts[q].REAL_MONEY = this.initParts[q].SUM_MONEY - this.initParts[q].LESS_MONEY;
         }
         for (let i in this.initParts) {
           for (let a in this.data2) {
@@ -905,6 +1043,7 @@
         this.initParts = [];
         this.data2 = [];
         this.getPerson();
+        this.formData = deepClone(this.storeData);
         for (let i in this.formData) {
           this.formData[i] = "";
         }
@@ -969,6 +1108,7 @@
         }).then(res => {
           if (res.success === true) {
             this.tableData = res.data;
+            this.total = res.total;
             this.clearSection();
           }
         })
@@ -979,6 +1119,15 @@
         if (data.length == 0) {
           this.countMoney();
         }
+      },
+      valueList(val) {
+        let type = false;
+        for (let i in val) {
+          if (val[i] == 4) {
+            type = true;
+          }
+        }
+        this.have = type;
       },
     },
     computed: {

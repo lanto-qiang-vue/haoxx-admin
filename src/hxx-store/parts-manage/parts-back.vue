@@ -47,11 +47,11 @@
           基本信息
           <Form slot="content" :model="formData" ref="formData" :rules="rules" :label-width="120" class="common-form">
             <FormItem label="退货供应商:" style="width:30%;" prop="SUPPLIER_NAME">
-              <Input type="text" @on-click="selectSupply" v-model="formData.SUPPLIER_NAME" icon="ios-search"
+              <Input type="text" :readonly="true" @on-click="selectSupply" v-model="formData.SUPPLIER_NAME" icon="ios-search"
                      style="min-width: 100%;">
               </Input>
             </FormItem>
-            <FormItem label="退货原因:" style="width:30%;" prop="SUPPLIER_NAME">
+            <FormItem label="退货原因:" style="width:30%;" prop="RETURN_REASON">
               <Input type="text" v-model="formData.RETURN_REASON"
                      style="min-width: 100%;">
               </Input>
@@ -71,8 +71,7 @@
               </Select>
             </FormItem>
             <FormItem label="原始采购单号:" style="width:30%;">
-              <Input type="text" @on-click="selectPurchaseNo" v-model="formData.PURCHASE_NO" icon="ios-search"
-                     style="min-width: 100%;">
+              <Input type="text" @on-click="selectPurchaseNo" v-model="formData.PURCHASE_NO" icon="ios-search">
               </Input>
             </FormItem>
           </Form>
@@ -81,17 +80,16 @@
           采购配件明细
           <div slot="content">
             <Table
-              class="main-table"
               ref="tablesMain"
+              class="main-table"
               :columns="columns2"
               :data="data2"
-              stripe
               border
             ></Table>
           </div>
         </Panel>
       </Collapse>
-      <div class="r-list-search">
+      <div style="width:100%;text-align:center;padding-top:20px;">
         <Button @click="showSelectParts=Math.random()" type="primary" shape="circle" style="margin-right: 10px;">
           <Icon type="md-checkmark" size="24"/>
           选择配件
@@ -253,6 +251,7 @@
         rules: {
           SUPPLIER_NAME: [{required: true, message: '请选择退货供应商'}],
           RETURN_DATE: [{required: true, message: '请填写退货日期'}],
+          RETURN_REASON:[{required:true,message:'请填写退货原因'}],
         },
         search: {
           keyword: "",
@@ -260,7 +259,7 @@
         },
         columns2: [
           {
-            title: '序号', key: 'STORE_NAME', minWidth: 90,
+            title: '序号', key: 'STORE_NAME', minWidth: 80,
             render: (h, params) => h('span', params.index + 1)
           },
           {title: '仓库', key: 'STORE_NAME', sortable: true, minWidth: 120},
@@ -907,47 +906,9 @@
   }
 </script>
 <style scoped lang="less">
-  .search-block {
-    display: inline-block;
-    width: 200px;
-    margin-right: 10px;
-  }
-
-  .r-list-search {
-    width: 100%;
-    padding: 20px 0;
-    text-align: center;
-
-  }
-
   .r-list-choose-parts {
     width: 100%;
     padding: 20px 0;
     text-align: center;
-  }
-
-  .r-list-money {
-    padding-top: 20px;
-    width: 100%;
-    font-size: 16px;
-    text-align: center;
-
-    span {
-      color: red;
-
-    }
-    .r-list-money-reset {
-      font-size: 22px;
-    }
-  }
-
-  .r-list-chekbox {
-    width: 100%;
-    overflow: hidden;
-    font-size: 18px;
-    padding: 5px 10px;
-    div {
-      float: right;
-    }
   }
 </style>
