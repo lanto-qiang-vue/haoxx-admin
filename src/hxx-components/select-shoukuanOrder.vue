@@ -87,7 +87,7 @@
                         </FormItem>
                     </Form>
                 </Panel>
-                <Panel name="4" v-if="disFapiao">是否开据发票
+                <Panel name="4" >是否开据发票
                     <Form slot="content" :label-width="120" class="detail-form" >
                         <FormItem label="">
                             <Checkbox v-model="single" @on-change="isGiveInvoiceFun">是否开据发票</Checkbox>

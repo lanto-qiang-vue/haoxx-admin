@@ -909,6 +909,7 @@
                                 },
                                 on: {
                                     "on-change":(val)=>{
+                                        
                                         console.log('其他费用数据----',val);
                                         params.row.REPAIR_MONEY1=parseFloat(val.toFixed(2));
                                         this.commitOtherItem[params.index]=params.row;
@@ -1538,7 +1539,7 @@
                     this.vehicleNumberArr.push(this.vehicleNumberArr1[i]);
                 }
             }
-
+            this.listSearch.VEHICLE_TYPE_CODE=this.vehicleNumberArr[0]['code'];
         },
         
         visibleChange(status){
