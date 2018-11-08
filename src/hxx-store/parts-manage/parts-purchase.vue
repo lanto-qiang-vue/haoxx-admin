@@ -713,6 +713,11 @@
           } else {
             this.initParts[q].PART_NUM = 1;
           }
+          if(this.initParts[q].RATE){
+
+          }else{
+            this.initParts[q].RATE = 0;
+          }
           this.initParts[q].PURCHASE_PRICE = this.initParts[q].PURCHASE_PRICE || 0;
           this.initParts[q].SUM_MONEY = this.initParts[q].PART_NUM * parseFloat(this.initParts[q].PURCHASE_PRICE);
         }

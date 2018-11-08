@@ -1044,9 +1044,6 @@
         this.data2 = [];
         this.getPerson();
         this.formData = deepClone(this.storeData);
-        for (let i in this.formData) {
-          this.formData[i] = "";
-        }
         this.$refs.formData.resetFields();
         this.formData.SEND_TYPE = this.list1036[0].code;
         this.formData.FOLLOW_PERSON = this.$store.state.user.userInfo.user.userName;
