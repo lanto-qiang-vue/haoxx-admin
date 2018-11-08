@@ -21,7 +21,7 @@
                         <Option v-for="(item, index) in getSellItem" :key="index" :value="item.TYPE_ID">{{item.TYPE_NAME}}</Option>
                     </Select>
                 </FormItem>
-                <FormItem label="仓库:" v-show='stockFlag'>
+                <FormItem label="仓库:" v-show='stockFlag' :label-width="60">
                     <Select v-model="test2">
                         <Option v-for="(item, index) in getAllItem" :key="index" :value="item.STORE_ID">{{item.NAME}}</Option>
                     </Select>
@@ -197,7 +197,7 @@ import commonTable from '@/hxx-components/common-table.vue'
         methods:{
             state(item){
                 for(let i in this.selectData){
-                    if(this.selectData[i].PART_ID== item.PART_ID){
+                    if(this.selectData[i].PART_ID== item.PART_ID && this.selectData[i].STORE_ID == item.STORE_ID){
                         return true
                     }
                 }
@@ -206,7 +206,7 @@ import commonTable from '@/hxx-components/common-table.vue'
             select(item){
                 let flag=true
                 for(let i in this.selectData){
-                    if(this.selectData[i].PART_ID== item.PART_ID){
+                    if(this.selectData[i].PART_ID== item.PART_ID && this.selectData[i].STORE_ID == item.STORE_ID){
                         this.selectData.splice(i,1)
                         flag= false
                         break;

@@ -2,6 +2,7 @@
     <Modal
       :transition-names="['', '']"
         v-model="showOnoff"
+      class="table-modal-detail"
         title="选择客户"
         width="90"
         :scrollable="true"
@@ -9,7 +10,7 @@
         :footer-hide="true"
     >
     <common-table v-model="tableData" :columns="columns" :show="showoff" :total="total" @changePage="changePage" 
-        @changePageSize="changePageSize" @onRowClick="onRowClick">
+        @changePageSize="changePageSize" :showTable="showTable" @onRowClick="onRowClick" :showOperate="false">
         <div slot="search">
            <div class="search-block">
                 <Input  placeholder="客户编号/手机号/联系电话..." v-model="search.input"></Input>
@@ -131,6 +132,7 @@ import commonTable from '@/hxx-components/common-table.vue'
                 showModal:false,
                 // collapse: ['1','2'],
                 sexGroup:[],
+                showTable:false,
                 xhide:false,
                 resourceGroup:[],
                 levelGroup:[],
@@ -191,7 +193,7 @@ import commonTable from '@/hxx-components/common-table.vue'
         },
         watch:{
             showoff(){
-                console.log("点击我了");
+                this.showTable = Math.random();
                 this.showOnoff=true;
                 this.getList();
             }
