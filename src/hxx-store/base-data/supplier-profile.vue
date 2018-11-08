@@ -29,7 +29,7 @@
     <Modal
       v-model="showModal"
       class="table-modal-detail"
-      title="仓库管理"
+      title="供应商管理"
       width="90"
       :mask-closable="false"
       @on-visible-change="visibleChange"
@@ -39,7 +39,7 @@
       :transition-names="['', '']">
       <Collapse value="1">
         <Panel name="1">
-          仓库基本信息
+          供应商基本信息
           <Form slot="content" :model="formData" ref="formData" :rules="rules" :label-width="120" class="common-form">
             <FormItem label="供应商名称:" style="width:30%;" prop="NAME">
               <Input type="text" v-model="formData.NAME"
@@ -115,6 +115,7 @@
 <script>
   import commonTable from '@/hxx-components/common-table.vue'
   import {getName, getDictGroup, getCreate} from '@/libs/util.js'
+  import {deepClone} from "../../libs/util";
 
   export default {
     name: 'supplier-profile',
@@ -162,7 +163,8 @@
         clearType: false,
         showTable: false,
         routerType:false,
-        formData: {
+        formData:{},
+        storeData: {
           SUPPLIER_ID: "",
           NAME: "",
           ADDRESS: "",
@@ -209,6 +211,7 @@
           },
           {
             title: '创建人', key: 'CREATER', sortable: true, minWidth: 140,
+            render: (h, params) => h('span', getCreate(this.$store.state.app.tenant, params.row.CREATER))
           },
           {
             title: '创建时间', key: 'CREATE_TIME', sortable: true, minWidth: 140,
@@ -276,6 +279,7 @@
         this.clearsection();
       },
       add() {
+        this.formData = deepClone(this.storeData);
         this.$refs.formData.resetFields();
         this.showModal = true;
       },

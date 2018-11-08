@@ -9,7 +9,7 @@
       <div class="search-block">
         <Select v-model="search.status">
           <Option v-for="(item, index) in list1047"
-                  :key="index" :value="item.code">{{item.name}}W
+                  :key="index" :value="item.code">{{item.name}}
           </Option>
         </Select>
       </div>
@@ -1073,6 +1073,7 @@
         this.getPerson();
         this.getParts(row.SALES_ID);
         this.formData = row;
+        this.formData.SALES_DATE = new Date(this.formData.SALES_DATE);
         this.showModal = true;
       },
       getParts(id) {

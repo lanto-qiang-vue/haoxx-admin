@@ -98,6 +98,7 @@
             limit: this.limit,
             page: this.page,
             KEYWORD: this.search.keyword,
+            STATUS_eq:'10011001',
           }
         }).then(res => {
           if (res.success === true) {
