@@ -193,6 +193,7 @@
   import selectPurchaseNo from '@/hxx-components/select-PurchaseNo.vue'
   import selectParts from '@/hxx-components/select-parts.vue'
   import {getName, getDictGroup, getCreate} from '@/libs/util.js'
+  import {deepClone} from "../../libs/util";
 
   export default {
     name: "parts-back",
@@ -231,7 +232,8 @@
         showSelectParts: false,
         initParts: [],
         limit: 25,
-        formData: {
+        formData:{},
+        storeData: {
           "RETURN_ID": "",
           "SUPPLIER_ID": "",
           "PURCHASE_ID": "",
@@ -801,6 +803,7 @@
         })
       },
       add() {
+        this.formData = deepClone(this.storeData);
         this.initParts = [];
         this.data2 = [];
         this.getPerson();
@@ -865,6 +868,7 @@
         }).then(res => {
           if (res.success === true) {
             this.tableData = res.data;
+            this.total = res.total;
             this.clearSection();
           }
         })

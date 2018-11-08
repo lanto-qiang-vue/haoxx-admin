@@ -4,12 +4,12 @@
                 @onRowDblclick="dbClick">
     <div slot="search">
       <div class="search-block">
-        <Input v-model="search.keyword" placeholder="退货单号/供应商名称..."></Input>
+        <Input v-model="search.keyword" placeholder="销售单号/客户名称..."></Input>
       </div>
       <div class="search-block">
         <Select v-model="search.status">
           <Option v-for="(item, index) in list1047"
-                  :key="index" :value="item.code">{{item.name}}
+                  :key="index" :value="item.code">{{item.name}}W
           </Option>
         </Select>
       </div>

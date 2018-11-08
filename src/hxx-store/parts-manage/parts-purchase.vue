@@ -555,6 +555,7 @@
         this.getPerson();
         this.payData.FOLLOW_PERSON = this.$store.state.user.userInfo.user.userName;
         this.payData.PURCHASE_ID = this.list.PURCHASE_ID;
+        this.payData.RECORD_ID = this.list.PURCHASE_ID;
         this.payData.SUM_MONEY = this.list.SUM_MONEY;
         this.payData.MONEY = this.list.SUM_MONEY;
         this.payModal = true;
