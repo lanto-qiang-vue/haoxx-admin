@@ -208,7 +208,7 @@ export default {
         showSelectAccount(){
             this.showShouKuan=true;
             this.handleReset("shoukuanSearch");
-            // this.handleReset("isInvoice");
+            this.handleReset("isInvoice");
             //取付款方式的值集合-------
             this.payModeData=getDictGroup(this.$store.state.app.dict, '1010');
             var arr=[];
@@ -222,6 +222,9 @@ export default {
             this.payModeData=arr;
 
             //进来重置参数-----------
+            for(let i in this.isInvoice){
+                this.isInvoice[i]='';
+            }
             for(let i in this.shoukuanSearch){
                 switch(i){
                     case "SURPLUS_MONEY":

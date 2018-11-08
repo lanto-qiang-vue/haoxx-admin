@@ -173,6 +173,7 @@ import commonTable from '@/hxx-components/common-table.vue'
                     { code: '货车-柴油(0.75吨<载质量≤3.50吨)-T', name: 'T' },
                     { code: '货车-载质量≥8吨-U', name: 'U' }
                 ],//未筛选
+                flagData:1,
             }
         },
         watch:{
@@ -180,7 +181,7 @@ import commonTable from '@/hxx-components/common-table.vue'
                 this.showOnoff=true;
                 this.resetVehicle();//首次进来数据重置
                 this.selectData=this.initGetItem;
-
+                this.flagData=1;
                 
 
                 if(this.initSearch){
@@ -294,9 +295,10 @@ import commonTable from '@/hxx-components/common-table.vue'
                 //     })
                 // }else{
                      this.axios.request({
-                            url: '/tenant/basedata/repairiteminfo/infolist1',
+                            url: '/tenant/basedata/repairiteminfo/infolist11',
                             method: 'post',
                             data: {
+                                flag:this.flagData,
                                 cartype_eq: this.test1||'',
                                 TYPE_ID_eq: this.test2||'',
                                 ENGINE_TYPE_eq: this.test3||'',
@@ -426,6 +428,7 @@ import commonTable from '@/hxx-components/common-table.vue'
             },
             searchVehicle(){
                 this.page=1;
+                this.flagData=2;
                 this.getList();
             },
             resetVehicle(){
