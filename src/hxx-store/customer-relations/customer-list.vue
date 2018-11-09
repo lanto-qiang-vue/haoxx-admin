@@ -80,14 +80,14 @@
         etype:false,//excel上传显示
         showDetail:true,//detail查询修改
         selection:'',//存储选择的对象
-        showTable: false
+        showTable: Math.random(),
       }
     },
     mounted () {
       this.getList()
       this.baseUrl=env
       // console.log(env)
-      this.showTable= true
+      this.showTable= Math.random()
     },
     methods:{
       add(){

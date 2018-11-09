@@ -142,7 +142,9 @@ export const getRelativeTime = timeStamp => {
  */
 export const formatDate= (value, format) => {
   if (value) {
+    console.log('转化之前',value);
     value = new Date(value);
+    console.log('转化hi后',value);
     let o = {
       "M+": value.getMonth() + 1, //month
       "d+": value.getDate(),    //day

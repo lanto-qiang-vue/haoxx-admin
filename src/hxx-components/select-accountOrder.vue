@@ -318,7 +318,9 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                 });
             },
             saveAccount(){
+                let newDate=this.shoukuanSearch.OUT_DATE;
                 this.shoukuanSearch.OUT_DATE=formatDate(this.shoukuanSearch.OUT_DATE)+ ' '+ formatDate(this.shoukuanSearch.OUT_DATE, 'hh:mm:ss');
+                console.log(this.shoukuanSearch.OUT_DATE);
                 this.axios.request({
                     url: '/tenant/repair/ttrepairworkorder/saveAccount',
                     method: 'post',
@@ -335,12 +337,15 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                         
 
                     }else{
-                        this.$Modal.confirm({
-                            title:"系统提示!",
-                            content:res.Exception.message,
-                            
-                            
-                        })
+                        setTimeout(()=>{
+                            this.$Modal.confirm({
+                                title:"系统提示!",
+                                content:res.Exception.message,
+                            })
+                        },200);
+                        
+                        this.shoukuanSearch.OUT_DATE=newDate;
+                        // this.$Message.error(res.Exception.message)
                     }
                 })
            },
