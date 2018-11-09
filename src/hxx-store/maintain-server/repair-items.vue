@@ -89,7 +89,7 @@
               <!-- <div style="height:20px;"></div> -->
               <!-- 手动 -->
               <FormItem label="发动机类型:" v-if="isShow" style="width:45%;" prop="ENGINE_TYPE">
-                <Select v-model="formData.ENGINE_TYPE" style="min-width: 100%;">
+                <Select v-model="formData.ENGINE_TYPE" style="min-width: 100%;" >
                   <Option v-for="(item, index) in engine"
                           :key="index" :value="item.ENGINE_TYPE">{{item.ENGINE_TYPE_NAME}}
                   </Option>
@@ -257,7 +257,7 @@
         ruleValidate: {
           TYPE_ID: [{required: true}],
           ENGINE_TYPE: [{required: true,message:'请选取发动机类型'}],//发动机类型
-          CLASS_TYPE: [{required: true}],
+          CLASS_TYPE: [{required: true,message:'请选择汽车参数'}],
           ITEM_NO: [{required: true, message: '项目编号必填', trigger: 'blur'}],
           NAME: [{required: true, message: '项目名称必填', trigger: 'blur'}],
         },
@@ -628,7 +628,7 @@
               }
             }
             // this.parameter = res.data;
-            if (flag) this.formData.CLASS_TYPE = this.parameter[0].CLASS_TYPE;
+            // if (flag) this.formData.CLASS_TYPE = this.parameter[0].CLASS_TYPE;
           })
 
         })
@@ -648,10 +648,11 @@
         // })
         switch(this.carType){
           case 3:
-            this.engine = [{ENGINE_TYPE:1,ENGINE_TYPE_NAME:'化油器'},];
           case 4:
+            this.engine = [{ENGINE_TYPE:1,ENGINE_TYPE_NAME:'化油器'},{ENGINE_TYPE:2,ENGINE_TYPE_NAME:'电喷'}];
             break;
           case 5:
+            this.engine = [{ENGINE_TYPE:0,ENGINE_TYPE_NAME:'其他'}];
             break;
         }
         //获取汽车参数
