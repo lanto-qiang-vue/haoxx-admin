@@ -311,6 +311,13 @@
 		 		this.cleartype = Math.random();
 		 	},
 		 	addpost(name){
+        if(this.initParts.length == 0){
+          this.$Modal.info({
+            title:'系统提示',
+            content:'请选择至少一条配件信息',
+          });
+          return;
+        }
        this.$refs[name].validate((valid) => {
                     if (valid) {
                     this.$Modal.confirm({

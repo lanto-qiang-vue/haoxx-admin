@@ -34,6 +34,7 @@
     mixins: [mixin],
 		data(){
 			return {
+			  cardModal:false,
         cleartype:false,
         color:[],
         hidetype:1,
@@ -73,6 +74,10 @@
 			}
 		},
     methods:{
+      // transmit(){
+      //   this.cardModal = true;
+      //   alert(1);
+      // },
       rowclick(row){
       this.obj = row;
       },

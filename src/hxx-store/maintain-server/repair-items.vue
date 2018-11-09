@@ -44,7 +44,8 @@
           </div>
           <div slot="right" style="height:100%;">
             <common-table :columns="columns1" :showSearch="false" :showOperate="false"
-                          v-model="initParts" :show="ishow" :total="total2" :page="page2"  @changePageSize="changePageSize2" @changePage="changePage2" @changeSelect="changeSelect">
+                          v-model="initParts" :show="ishow" :total="total2" :page="page2"
+                          @changePageSize="changePageSize2" @changePage="changePage2" @changeSelect="changeSelect">
             </common-table>
           </div>
         </Split>
@@ -155,6 +156,7 @@
   import {getName, getDictGroup, getCreate} from '@/libs/util.js'
   import commonTable from '@/hxx-components/common-table.vue'
   import mixin from '@/hxx-components/mixin'
+
   export default {
     name: 'repair-items',
     components: {commonTable},
@@ -163,14 +165,16 @@
       return {
         title: '',
         clearType: false,
+        typeName:'',
         value1: '1',
-        storeData:{},
-        storeKey:0,
-        store2:[],
+        storeData: {},
+        storeKey: 0,
+        carType: 0,
+        store2: [],
         des: '元',
         value2: '2',
         description: '标准金额',
-        importData:[],
+        importData: [],
         number: 0,
         ishow: false,
         customModal: false,
@@ -241,9 +245,9 @@
         page: 1,
         limit: 25,
         total: 0,
-        page2:1,
-        limit2:25,
-        total2:0,
+        page2: 1,
+        limit2: 25,
+        total2: 0,
         KEYWORD: '',
         TYPE: '全部',
         show: false,
@@ -252,7 +256,7 @@
         showModal: false,
         ruleValidate: {
           TYPE_ID: [{required: true}],
-          ENGINE_TYPE: [{required: true}],//发动机类型
+          ENGINE_TYPE: [{required: true,message:'请选取发动机类型'}],//发动机类型
           CLASS_TYPE: [{required: true}],
           ITEM_NO: [{required: true, message: '项目编号必填', trigger: 'blur'}],
           NAME: [{required: true, message: '项目名称必填', trigger: 'blur'}],
@@ -304,65 +308,65 @@
       }
     },
     methods: {
-      changeSelect(row){
-      this.importData = row;
+      changeSelect(row) {
+        this.importData = row;
       },
-      toimport(){
-      if(this.importData.length > 0){
-        let flag = this.importData[0].level ? true : false;
-        if(!flag){
-          let data = this.importData;
-          let ids = "";
-          for(var i in data){
-            console.log(i);
-            ids += data[i].nodeId + ',';
-            for(var d=0;d<this.storeData[this.storeKey].length;d++){
-              // console.log("左边"+this.storeData[this.storeKey][d].nodeId + "右边" + data[i].nodeId);
-              if(this.storeData[this.storeKey][d].nodeId == data[i].nodeId){
-                  this.storeData[this.storeKey].splice(d,1);
+      toimport() {
+        if (this.importData.length > 0) {
+          let flag = this.importData[0].level ? true : false;
+          if (!flag) {
+            let data = this.importData;
+            let ids = "";
+            for (var i in data) {
+              console.log(i);
+              ids += data[i].nodeId + ',';
+              for (var d = 0; d < this.storeData[this.storeKey].length; d++) {
+                // console.log("左边"+this.storeData[this.storeKey][d].nodeId + "右边" + data[i].nodeId);
+                if (this.storeData[this.storeKey][d].nodeId == data[i].nodeId) {
+                  this.storeData[this.storeKey].splice(d, 1);
+                }
               }
             }
-          }
-          this.doImport(ids);
-          //剔除导入数据....
-          this.store2 = this.storeData[this.storeKey];
-          this.page2 = 1;
-          this.paging(this.store2);
-        }else{
-          let children = this.find3(this.importData,[])
-          console.log(JSON.stringify(children));
-          let ids = "";
-          for(let i in children){
-            let data = this.storeData[children[i]];
-            for(let a in data){
-              ids += data[a].nodeId + ',';
+            this.doImport(ids);
+            //剔除导入数据....
+            this.store2 = this.storeData[this.storeKey];
+            this.page2 = 1;
+            this.paging(this.store2);
+          } else {
+            let children = this.find3(this.importData, [])
+            console.log(JSON.stringify(children));
+            let ids = "";
+            for (let i in children) {
+              let data = this.storeData[children[i]];
+              for (let a in data) {
+                ids += data[a].nodeId + ',';
+              }
             }
+            this.doImport(ids);
+            this.showModal = false;
           }
-          this.doImport(ids);
-          this.showModal = false;
         }
-      }
       },
-      find3(data,da){
-        for(let i in data){
-          if(data[i].level == 3){
+      find3(data, da) {
+        for (let i in data) {
+          if (data[i].level == 3) {
             da.push(data[i].nodeId);
-          }else{
+          } else {
             let flag = data[i].children ? true : false;
-            if(flag){
-              this.find3(data[i].children,da)
+            if (flag) {
+              this.find3(data[i].children, da)
             }
           }
         }
         return da;
       },
-      doImport(ids){
+      doImport(ids) {
         this.axios.request({
           url: '/tenant/basedata/repairproject/import',
           method: 'post',
           data: {
             access_token: this.$store.state.user.token,
-            ids:ids
+            ids: ids
           },
         }).then(res => {
           if (res.success === true) {
@@ -374,32 +378,32 @@
         if (!row[0]) {
           return;
         }
-        if(row[0].level == 3){
+        if (row[0].level == 3) {
           var store = this.storeData[row[0].nodeId];
           this.storeKey = row[0].nodeId;
-        }else{
+        } else {
           var store = row[0].children;
         }
         this.store2 = store;
         this.paging(store);
       },
-      changePageSize2(size){
+      changePageSize2(size) {
         this.limit2 = size;
         this.paging(this.store2);
       },
-      changePage2(page){
+      changePage2(page) {
         this.page2 = page;
         this.paging(this.store2);
       },
-      paging(store){
+      paging(store) {
         //正常分页...
         let total = store.length;
         this.total2 = total;
         let start = (this.page2 - 1) * this.limit2;
-        let end  = start + this.limit2;
+        let end = start + this.limit2;
         end = (end > total) ? total : end;
         this.initParts = [];
-        for(let i = start;i<end;i++){
+        for (let i = start; i < end; i++) {
           this.initParts.push(store[i]);
         }
       },
@@ -505,6 +509,7 @@
       getnode(num) {
         if (num.length > 0) {
           this.TYPE = num[0].title == '全部车型' ? '全部' : num[0].title;
+          this.carType = num[0].cartype;
           var type_id = num[0].nodeId ? num[0].nodeId : num[0].title;
           this.TYPE_ID = type_id == '全部车型' ? '' : type_id;
           this.page = 1;
@@ -530,8 +535,8 @@
         da['expand'] = false;
         da['level'] = level;
         let flag = data.children ? true : false;
-        if(flag && level == 3){
-        this.storeData[data.nodeId] = data.children;
+        if (flag && level == 3) {
+          this.storeData[data.nodeId] = data.children;
         }
         if (level < 3) {
           da['children'] = [];
@@ -605,27 +610,52 @@
               if (this.caritems[i].TYPE_NAME == '自定义') {
                 this.formData.TYPE_ID = this.caritems[i].TYPE_ID;
               }
+              if (this.caritems[i].cartype == this.carType) {
+                this.typeName = this.caritems[i].CARNAME;
+              }
             }
           }
+          this.axios.request({
+            url: '/tenant/basedata/repairiteminfo/getCarList',
+            method: 'post',
+            data: {access_token: this.$store.state.user.token, page: 1, limit: 25}
+          }).then(res => {
+            let store = res.data;
+            this.parameter = [];
+            for(let i in store){
+              if(store[i].CLASS_NAME.indexOf(this.typeName) > -1){
+                this.parameter.push(store[i]);
+              }
+            }
+            // this.parameter = res.data;
+            if (flag) this.formData.CLASS_TYPE = this.parameter[0].CLASS_TYPE;
+          })
+
         })
         //获取发动机类型
-        this.axios.request({
-          url: '/tenant/basedata/repairiteminfo/getBanJinList',
-          method: 'post',
-          data: {access_token: this.$store.state.user.token, page: 1, limit: 25}
-        }).then(res => {
-          this.engine = res.data;
-          if (flag) this.formData.ENGINE_TYPE = this.engine[0].ENGINE_TYPE;
-        })
+        // this.axios.request({
+        //   url: '/tenant/basedata/repairiteminfo/getBanJinList',
+        //   method: 'post',
+        //   data: {access_token: this.$store.state.user.token, page: 1, limit: 25}
+        // }).then(res => {
+        //   this.engine = [];
+        //   for(let i in res.data){
+        //     if(res.data[i].ENGINE_TYPE_NAME.indexOf(this.typeName) < 0 ){
+        //       this.engine.push(res.data[i]);
+        //     }
+        //   }
+        //   if (flag) this.formData.ENGINE_TYPE = this.engine[0].ENGINE_TYPE;
+        // })
+        switch(this.carType){
+          case 3:
+            this.engine = [{ENGINE_TYPE:1,ENGINE_TYPE_NAME:'化油器'},];
+          case 4:
+            break;
+          case 5:
+            break;
+        }
         //获取汽车参数
-        this.axios.request({
-          url: '/tenant/basedata/repairiteminfo/getCarList',
-          method: 'post',
-          data: {access_token: this.$store.state.user.token, page: 1, limit: 25}
-        }).then(res => {
-          this.parameter = res.data;
-          if (flag) this.formData.CLASS_TYPE = this.parameter[0].CLASS_TYPE;
-        })
+
         //获取单选框分钟
         this.group = getDictGroup(this.$store.state.app.dict, '1014');
         this.formData.CHARGE_TYPE = this.group[0]['code'];

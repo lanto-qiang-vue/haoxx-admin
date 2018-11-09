@@ -8,7 +8,7 @@
     @on-visible-change="visibleChange"
     :mask-closable="false"
     :scrollable="false"
-    :transfer="true"
+    :transfer="false"
   >
 
     <Tabs @on-click="qh" v-model="indexName" class="modal-tabs">
@@ -94,7 +94,7 @@
             <Input type="text" v-model="formData.snumber" style="min-width: 100%;"> </Input>
           </FormItem>
         </Form>
-        <Form ref="formDatas" :label-width="80">
+        <Form ref="formDatas" :label-width="120">
           <FormItem label="备注:">
             <Input type="textarea" v-model="formData.remark" placeholder="请输入备注信息"> </Input>
           </FormItem>
@@ -148,13 +148,32 @@
       <!-- 会员结束 -->
     </Tabs>
     <!-- 到时候改成vehicleShow -->
+    <Modal
+      v-model="cardModal"
+      :mask-closable="false"
+      title="会员卡编辑"
+      width="400"
+      :transfer= "true"
+      :transition-names="['', '']">
+      <Form :model="memberData" ref="memberData" :rules="memberData" :label-width="120" class="common-form">
+        <FormItem label="会员卡编号:" style="width:100%;">
+          <Input v-model="memberData.MEMBER_CARD_NO"></Input>
+        </FormItem>
+      </Form>
+      <div slot="footer">
+        <Button type="primary" @click="cardPost">保存</Button>
+        <Button type="error" @click="cardModal=false">关闭</Button>
+      </div>
+    </Modal>
     <cart-modal class="table-modal-detail" @clearsection="clearsection" :info="rows" :hidetype="hidetype"
                 :show="showLook"></cart-modal>
     <vehicle-add @refresh="refresh()" @clearsection="clearsection" :CUSTOMER_ID="tabshow" :row="row"
                  :show="vehicleShow"></vehicle-add>
     <div slot="footer">
       <Button @click="showModal=false">取消</Button>
-      <Button type="primary">发卡/换卡</Button>
+      <Button type="primary" v-show="indexName == 'm3'" @click="changeCard">发卡/换卡</Button>
+      <Button type="error" v-show="indexName == 'm3'">停用</Button>
+      <Button type="success" v-show="indexName == 'm3'">启用</Button>
       <Button type="primary" v-show="indexName=='m1'" @click="hsubmit('formData')">保存</Button>
       <Button type="success" v-show="indexName=='m2'" @click="vehicleAdd">新增</Button>
       <Button type="primary" :disabled="cando" v-show="indexName=='m2'" @click="vehicleEdit">修改</Button>
@@ -163,6 +182,7 @@
   </Modal>
   <!-- 车辆档案新增组件 -->
   <!-- 车辆答案组件结束 -->
+
 </template>
 <script>
   import commonTable from '@/hxx-components/common-table.vue'
@@ -176,6 +196,11 @@
     components: {commonTable, vehicleAdd, cartModal},
     data() {
       return {
+        cardModal:false,
+        memberData:{
+          MEMBER_CARD_NO:'',
+          CUSTOMER_ID:'',
+        },
         valueList: [1],
         tableData3: [],
         formData2: {
@@ -317,14 +342,16 @@
         this.tabshow = row.CUSTOMER_ID;
         var that = this.formData;
         //会员展示部分......
-        this.formData2.SURPLUS_MONEY = row.SURPLUS_MONEY || "";
-        this.formData2.RECHARGE_MONEY = row.RECHARGE_MONEY || "";
-        this.formData2.USE_MONEY = row.USE_MONEY || "";
+        this.formData2.SURPLUS_MONEY = row.SURPLUS_MONEY || 0;
+        this.formData2.RECHARGE_MONEY = row.RECHARGE_MONEY || 0;
+        this.formData2.USE_MONEY = row.USE_MONEY || 0;
         this.formData2.CARD_STOP_REASON = row.CARD_STOP_REASON || "";
         if(row.MEMBER_CARD_STATUS == '10491001' ){
           //会员卡启用不展示停用原因
           this.formData2.CARD_STOP_REASON = "";
         }
+        this.memberData.MEMBER_CARD_NO = row.MEMBER_CARD_NO || "";
+        this.memberData.CUSTOMER_ID = row.CUSTOMER_ID;
         this.formData2.MEMBER_CARD_NO = row.MEMBER_CARD_NO || "";
         this.formData2.MEMBER_CARD_STATUS = getName(getDictGroup(this.$store.state.app.dict,'1049'),row.MEMBER_CARD_STATUS);
         that.name = row.NAME;
@@ -403,6 +430,47 @@
 
     },
     methods: {
+      cardPost(name){
+       this.$Modal.confirm({
+         title:'系统提示',
+         content:'确认保存吗?',
+         onOk:()=>{
+           this.axios.request({
+             url: '/tenant/basedata/ttcustomerfile/update_member_card',
+             method: 'post',
+             data: {
+               access_token: this.$store.state.user.token,
+               data:JSON.stringify(this.memberData)
+             }
+           }).then(res => {
+             if (res.success === true) {
+               // this.tableData3 = res.data;
+               let row = res.data;
+               this.formData2.SURPLUS_MONEY = row.SURPLUS_MONEY || 0;
+               this.formData2.RECHARGE_MONEY = row.RECHARGE_MONEY || 0;
+               this.formData2.USE_MONEY = row.USE_MONEY || 0;
+               this.formData2.CARD_STOP_REASON = row.CARD_STOP_REASON || "";
+               if(row.MEMBER_CARD_STATUS == '10491001' ){
+                 //会员卡启用不展示停用原因
+                 this.formData2.CARD_STOP_REASON = "";
+               }
+               this.memberData.MEMBER_CARD_NO = row.MEMBER_CARD_NO || "";
+               this.memberData.CUSTOMER_ID = row.CUSTOMER_ID;
+               this.formData2.MEMBER_CARD_NO = row.MEMBER_CARD_NO || "";
+               this.formData2.MEMBER_CARD_STATUS = getName(getDictGroup(this.$store.state.app.dict,'1049'),row.MEMBER_CARD_STATUS);
+               this.cardModal = false;
+               this.$emit('transmit');
+             }
+           })
+         }
+       });
+      },
+      changeCard(){
+        //发卡换卡....
+        // alert(2);
+        this.cardModal = true;
+        // this.$emit('transmit');
+      },
       getCardRecord() {
         //会员卡记录...
         this.axios.request({
@@ -667,5 +735,8 @@
     bottom: 0;
     background-color: white;
     z-index: 4;
+  }
+  .myModal .ivu-modal-bod{
+    height:300px;
   }
 </style>
