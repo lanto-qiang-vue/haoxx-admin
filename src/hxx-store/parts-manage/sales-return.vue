@@ -938,7 +938,7 @@
         return this.list == "";
       },
       canShow() {
-        return this.formData.SALES_ID == "" || this.formData.STATUS == '10481001';
+        return this.formData.RETURN_ID == "" || this.formData.STATUS == '10481001';
       },
       list1010() {
         return getDictGroup(this.$store.state.app.dict, '1010');

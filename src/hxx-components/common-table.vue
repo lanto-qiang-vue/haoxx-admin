@@ -1,7 +1,7 @@
 <template>
 <div class="common-table" ref="commonTable">
   <Collapse v-model="collapse" v-show="showSearch"  class="table-search" @on-change="changeCollapse">
-    <Panel name="1">查询
+    <Panel name="1">{{searchTitle}}
       <div slot="content" >
         <slot name="search"></slot>
       </div>
@@ -91,6 +91,11 @@
         type: Function,
         default () {
           return ''
+        }
+      },
+      searchTitle:{
+        default(){
+          return '查询';
         }
       },
       context: {
@@ -197,7 +202,20 @@
             console.log(".table-search", commonTable.querySelector(".table-search").offsetHeight)
             console.log(".operate", commonTable.querySelector(".operate").offsetHeight)
             console.log(".table-bottom", commonTable.querySelector(".table-bottom").offsetHeight)
+            self.checkHeight();
           }, time);
+        }
+      },
+      checkHeight(){
+        let commonTable=this.$refs.commonTable;
+        let tablesMain = this.$refs.tablesMain;
+        // alert(commonTable.querySelector(".table-bottom").offsetTop);
+        console.log("底部高度"+commonTable.querySelector(".table-bottom").offsetTop);
+        console.log("table高度"+(tablesMain.$el.offsetTop+this.tableHeight));
+        // alert(tablesMain.$el.offsetTop+this.tableHeight);
+        if(commonTable.querySelector(".table-bottom").offsetTop < (tablesMain.$el.offsetTop+this.tableHeight)){
+          console.log("重新执行了呢");
+           this.resize(1000);
         }
       },
       changeCollapse(){

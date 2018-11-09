@@ -180,7 +180,7 @@
         spinShow: false,
         changeTree: [],
         init1: [],
-        isShow: false,
+        isShow: true,
         init2: [],
         list: '',
         split: 0.2,

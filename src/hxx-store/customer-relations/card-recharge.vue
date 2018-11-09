@@ -178,6 +178,7 @@
   import {getLodop} from '@/hxx-components/LodopFuncs.js'
   import {getName, getDictGroup, getCreate} from '@/libs/util.js'
   import selectCustomer from '@/hxx-components/select-customer.vue'
+  import {deepClone} from "../../libs/util";
 
   export default {
     name: 'card-recharge',
@@ -244,7 +245,8 @@
         person: [],
         cardGroup: [],
         MEMBER_CARD_NO: '',
-        formData: {
+        formData:{},
+        storeData: {
           RECHARGE_ID: '',
           CUSTOMER_NAME: '',
           CUSTOMER_ID: '',
@@ -462,12 +464,9 @@
         this.showoff = Math.random();
       },
       add() {
+        this.formData = deepClone(this.storeData);
         this.$refs['formData'].resetFields();
         this.editType = 1;
-        for (let i in this.formData) {
-          this.formData[i] = "";
-        }
-        // alert(this.$store.state.user.userInfo.tenant.);
         this.formData.FOLLOW_PERSON = this.$store.state.user.userInfo.user.userName;
         this.showModal = true;
       },

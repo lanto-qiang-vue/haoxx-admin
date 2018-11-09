@@ -80,14 +80,14 @@
         etype:false,//excel上传显示
         showDetail:true,//detail查询修改
         selection:'',//存储选择的对象
-        showTable: false
+        showTable: Math.random(),
       }
     },
     mounted () {
       this.getList()
+      this.showTable= Math.random();
       this.baseUrl=env
       // console.log(env)
-      this.showTable= true
     },
     methods:{
       add(){
@@ -233,13 +233,13 @@ computed:{
   }
 }
 </script>
-<style lang="less" scoped>
-.search-block{
-  display: inline-block;
-  width: 200px;
-  margin-right: 10px;
-}
-.ftext{
-  text-align:left;
-}
-</style>
+<!--<style lang="less" scoped>-->
+<!--.search-block{-->
+  <!--display: inline-block;-->
+  <!--width: 200px;-->
+  <!--margin-right: 10px;-->
+<!--}-->
+<!--.ftext{-->
+  <!--text-align:left;-->
+<!--}-->
+<!--</style>-->
