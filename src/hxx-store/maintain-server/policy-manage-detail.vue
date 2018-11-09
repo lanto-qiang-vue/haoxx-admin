@@ -250,7 +250,7 @@
                 "VEHICLE_TAX":0,
                 "VCI_DERATE":"",
                 "TCI_DERATE":"",
-                "SUM_MONEY":"",
+                "SUM_MONEY":0,
                 "DEDUCT_MONEY":0,
                 "APPLICANT_PERSON":"",
                 "APPLICANT_TELPHONE":"",
