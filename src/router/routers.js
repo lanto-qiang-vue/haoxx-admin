@@ -374,7 +374,7 @@ export default [
         name: 'parts-back',
         meta: {
           icon: 'md-funnel',
-          title: '配件退货',
+          title: '采购退货',
           lgType: "1002",
           access: '100207',
         },
@@ -390,6 +390,17 @@ export default [
           access: '100202',
         },
         component: () => import('@/hxx-store/parts-manage/parts-sell.vue')
+      },
+      {
+        path: '/sales-return',
+        name: 'sales-return',
+        meta: {
+          icon: 'md-funnel',
+          title: '销售退货',
+          lgType: "1002",
+          access: '100206',
+        },
+        component: () => import('@/hxx-store/parts-manage/sales-return.vue')
       },
       {
         path: '/maintain-pick',

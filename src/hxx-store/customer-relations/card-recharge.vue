@@ -270,19 +270,20 @@
             title: '序号', minWidth: 80,
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
-          {title: '客户名称', key: 'CUSTOMER_NAME', sortable: true, minWidth: 150},
-          {title: '会员卡号', key: 'MEMBER_CARD_NO', sortable: true, minWidth: 150},
-          {title: '联系电话', key: 'MOBILE_PHONE', sortable: true, minWidth: 150},
+          {title: '客户名称', key: 'CUSTOMER_NAME', sortable: true, minWidth: 120},
+          {title: '会员卡号', key: 'MEMBER_CARD_NO', sortable: true, minWidth: 140},
+          {title: '联系电话', key: 'MOBILE_PHONE', sortable: true, minWidth: 140},
           {
-            title: '充值时间', key: 'RECHARGE_TIME', sortable: true, minWidth: 150,
+            title: '充值时间', key: 'RECHARGE_TIME', sortable: true, minWidth: 120,
             render: (h, params) => h('span', params.row.RECHARGE_TIME.substr(0, 10))
           },
           {title: '充值卡产品', key: 'CARD_NAME', sortable: true, minWidth: 150},
-          {title: '售价', key: 'SALES_MONEY', sortable: true, minWidth: 150},
-          {title: '赠送价值', key: 'DERATE_MONEY', sortable: true, minWidth: 150},
-          {title: '总价值', key: 'SUM_MONEY', sortable: true, minWidth: 150},
+          {title: '售价', key: 'SALES_MONEY', sortable: true, minWidth: 100},
+          {title: '赠送价值', key: 'DERATE_MONEY', sortable: true, minWidth: 120},
+          {title: '总价值', key: 'SUM_MONEY', sortable: true, minWidth: 120},
+          {title: '办理人', key: 'FOLLOW_PERSON', sortable: true, minWidth: 120},
           {
-            title: '状态', key: 'STATUS', sortable: true, minWidth: 150,
+            title: '状态', key: 'STATUS', sortable: true, minWidth: 100,
             render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.STATUS))
           }
         ],

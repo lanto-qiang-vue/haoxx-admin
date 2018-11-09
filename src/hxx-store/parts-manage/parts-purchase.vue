@@ -46,7 +46,7 @@
           基本信息
           <Form slot="content" :model="formData" ref="formData" :rules="rules" :label-width="120" class="common-form">
             <FormItem label="供应商:" style="width:30%;" prop="SUPPLIER_NAME">
-              <Input type="text" @on-click="selectSupply" v-model="formData.SUPPLIER_NAME" icon="ios-search"
+              <Input type="text" @on-click="selectSupply" :readonly="true" v-model="formData.SUPPLIER_NAME" icon="ios-search"
                      style="min-width: 100%;">
               </Input>
             </FormItem>
@@ -107,7 +107,7 @@
       <div style="float:left;font-size:18px;">合计金额:&nbsp;<span style="color:red;">{{formData.SUM_MONEY}}</span></div>
       <div style="height:120px;"></div>
       <div slot="footer">
-        <Button type="primary" @click="addPost('formData')">保存</Button>
+        <Button type="primary" v-show="canShow"  @click="addPost('formData')">保存</Button>
         <Button @click="showModal=false">取消</Button>
       </div>
     </Modal>
@@ -143,7 +143,7 @@
       </Form>
       <div slot="footer">
         <Button @click="payModal=false">取消</Button>
-        <Button type="primary" @click="payPost('payData')">保存</Button>
+        <Button type="primary"  @click="payPost('payData')">保存</Button>
       </div>
     </Modal>
     <select-parts-group @selectPartsGroup="selectPartsGroup" :showSelectPartsGroup="showParts"
@@ -642,6 +642,10 @@
       addPost(name) {
         this.$refs[name].validate((valid) => {
           if (valid) {
+            if (this.data2.length == 0) {
+              this.$Modal.info({title: '系统提示', content: '至少需有1条配件记录'});
+              return;
+            }
             this.$Modal.confirm({
               title: '系统提示',
               content: '确认保存吗?',
@@ -708,6 +712,11 @@
 
           } else {
             this.initParts[q].PART_NUM = 1;
+          }
+          if(this.initParts[q].RATE){
+
+          }else{
+            this.initParts[q].RATE = 0;
           }
           this.initParts[q].PURCHASE_PRICE = this.initParts[q].PURCHASE_PRICE || 0;
           this.initParts[q].SUM_MONEY = this.initParts[q].PART_NUM * parseFloat(this.initParts[q].PURCHASE_PRICE);
@@ -783,6 +792,7 @@
         this.$refs.formData.resetFields();
         //配件列表清空
         this.data2 = [];
+        this.initParts = [];
         this.formData.PURCHASE_ID = "";
         this.formData.PURCHASE_TYPE = this.list1024[0].code;
         this.formData.PURCHASE_PERSON = this.$store.state.user.userInfo.user.userName;
@@ -841,6 +851,9 @@
       this.getList();
     },
     computed: {
+      canShow(){
+        return (this.formData.PURCHASE_ID == "" || this.formData.STATUS == '10481001');
+      },
       canDo() {
         return this.list == "";
       },
