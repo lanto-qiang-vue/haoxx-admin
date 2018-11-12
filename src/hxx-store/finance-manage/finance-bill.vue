@@ -311,7 +311,7 @@
           <span>{{base.REPAIR_ITEM_DERATE_MONEY}}</span>
            - 配件优惠金额：
           <span>{{base.REPAIR_PART_DERATE_MONEY}}</span>
-          </InputNumber>= 合计应收金额：
+   = 合计应收金额：
           <span class="r-list-money-reset">{{base.SUM_MONEY}}元</span>
       </p>
     </div>
@@ -335,7 +335,7 @@
          <span>{{infos.LESS_MONEY}}</span>
            =
           应收金额:
-          <span class="r-list-money-reset">{{infos.REAL_MONEY}}</span>
+          <span class="r-list-money-reset">{{infos.SUM_MONEY-infos.LESS_MONEY}}</span>
       </p>
     </div>
     <div slot="footer" style="text-align: center; font-size: 18px;">

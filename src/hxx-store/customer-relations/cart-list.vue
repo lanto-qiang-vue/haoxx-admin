@@ -1,5 +1,5 @@
 <template>
-  <common-table v-model="tableData" :columns="columns" @changePageSize="changePageSize" @changePage="changePage" :total="total"  :show="showTable" :clearSelect="cleartype" @onRowClick="rowclick" @changeSelect="changeSelect" @onRowDblclick="dbclick">
+  <common-table v-model="tableData" :columns="columns" @changePageSize="changePageSize" @changePage="changePage" :total="total" :page="page"  :show="showTable" :clearSelect="cleartype" @onRowClick="rowclick" @changeSelect="changeSelect" @onRowDblclick="dbclick">
     <div slot="search"  >
       <div class="search-block">
         <Input v-model="search.keyword"  placeholder="客户名称/车牌号码/联系电话..."></Input>
@@ -34,6 +34,7 @@
     mixins: [mixin],
 		data(){
 			return {
+			  cardModal:false,
         cleartype:false,
         color:[],
         hidetype:1,
@@ -73,6 +74,10 @@
 			}
 		},
     methods:{
+      // transmit(){
+      //   this.cardModal = true;
+      //   alert(1);
+      // },
       rowclick(row){
       this.obj = row;
       },
@@ -208,13 +213,13 @@
     }
 	}
 </script>
-<style lang="less" scoped>
-.search-block{
-  display: inline-block;
-  width: 200px;
-  margin-right: 10px;
-}
-.ftext{
-  text-align:left;
-}
-</style>
+<!--<style lang="less" scoped>-->
+<!--.search-block{-->
+  <!--display: inline-block;-->
+  <!--width: 200px;-->
+  <!--margin-right: 10px;-->
+<!--}-->
+<!--.ftext{-->
+  <!--text-align:left;-->
+<!--}-->
+<!--</style>-->

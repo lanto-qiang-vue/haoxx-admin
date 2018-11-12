@@ -91,6 +91,7 @@
         split: 0.2,
         value1: '1',
         value3: '3',
+        addType:0,
         title: '',
         data2: [],
         showModal: false,
@@ -196,6 +197,7 @@
         this.formData.SHOP_NAME = this.obj.nodeName;
         this.formData.REMARK = this.obj.remark ? this.obj.remark : '';
         this.storeId = this.obj.nodeId;
+        this.addType = 3;
         this.showModal = true;
       },
       addwork() {
@@ -209,6 +211,7 @@
         this.storeId = 0;
         this.labelname = "班组名称:";
         this.title = "班组信息";
+        this.addType = 2;
         this.showModal = true;
       },
       visibleChange() {
@@ -223,6 +226,7 @@
         this.storeId = 0;
         this.labelname = "车间名称:";
         this.title = "车间信息";
+        this.addType = 1;
         this.showModal = true;
       },
       addcancle() {
@@ -243,34 +247,64 @@
       },
       workShopSave() {
         // /tenant/basedata/ttworkshop/save_shop
-        var data = {};
-        var hint;
-        var url;
-        if (this.type == 2 && this.storeId > 0) {
-          data['SHOP_ID'] = "";
-          data['CLASS_ID'] = this.classid;
-          hint = "班组修改成功";
-          data['CLASS_NAME'] = this.formData.SHOP_NAME;
-          data['REMARK'] = this.formData.REMARK;
-          url = "/tenant/basedata/ttworkshop/save_class";
-        } else {
-          if (this.storeId < 1) {
+        let data = {};
+        let hint;
+        let url;
+        switch(this.addType){
+          case 1:
+            data = this.formData;
+            hint = "车间新增成功";
+            url = "/tenant/basedata/ttworkshop/save_shop";
+            break;
+          case 2:
             hint = "班组新增成功";
             data['SHOP_ID'] = this.classid;
             data['CLASS_ID'] = "";
             data['CLASS_NAME'] = this.formData.SHOP_NAME;
             data['REMARK'] = this.formData.REMARK;
             url = "/tenant/basedata/ttworkshop/save_class";
-          } else {
-            data = this.formData;
-            hint = "车间新增成功";
-            if (this.storeId > 0) {
-              data['SHOP_ID'] = this.storeId;
-              hint = "车间修改成功";
+            break;
+          case 3:
+            if(this.type == 2){
+              data['SHOP_ID'] = "";
+              data['CLASS_ID'] = this.classid;
+              hint = "班组修改成功";
+              data['CLASS_NAME'] = this.formData.SHOP_NAME;
+              data['REMARK'] = this.formData.REMARK;
+              url = "/tenant/basedata/ttworkshop/save_class";
+            }else{
+              data = this.formData;
+                data['SHOP_ID'] = this.storeId;
+                hint = "车间修改成功";
+              url = "/tenant/basedata/ttworkshop/save_shop";
             }
-            url = "/tenant/basedata/ttworkshop/save_shop";
-          }
+            break;
         }
+        // if (this.type == 2 && this.storeId > 0) {
+        //   data['SHOP_ID'] = "";
+        //   data['CLASS_ID'] = this.classid;
+        //   hint = "班组修改成功";
+        //   data['CLASS_NAME'] = this.formData.SHOP_NAME;
+        //   data['REMARK'] = this.formData.REMARK;
+        //   url = "/tenant/basedata/ttworkshop/save_class";
+        // } else {
+        //   if (this.storeId < 1) {
+        //     hint = "班组新增成功";
+        //     data['SHOP_ID'] = this.classid;
+        //     data['CLASS_ID'] = "";
+        //     data['CLASS_NAME'] = this.formData.SHOP_NAME;
+        //     data['REMARK'] = this.formData.REMARK;
+        //     url = "/tenant/basedata/ttworkshop/save_class";
+        //   } else {
+        //     data = this.formData;
+        //     hint = "车间新增成功";
+        //     if (this.storeId > 0) {
+        //       data['SHOP_ID'] = this.storeId;
+        //       hint = "车间修改成功";
+        //     }
+        //     url = "/tenant/basedata/ttworkshop/save_shop";
+        //   }
+        // }
         this.axios.request({
           url: url,
           method: 'post',
@@ -377,9 +411,42 @@
     }
   }
 </script>
+<style scoped lang="less">
+  .split{
+    border: 1px solid #dcdee2;
+    background-color: white;
+    .split-pane{
+      padding: 10px;
+      height: 100%;
+      overflow: auto;
+      position: relative;
+      .tree-search{
+        padding: 15px;
+        border-radius: 3px;
+      }
+      .tree-input{
+        z-index: 1;
+      }
+      .vehicle-tree{
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        padding: 50px 0 10px 10px;
+        overflow: hidden;
+      }
+    }
+  }
+</style>
 <style lang="less">
-  .ivu-transfer-list{
-    width:40%;
-    height:400px;
+  .vehicle-tree{
+    >.ivu-tree-children{
+      height: 100%;
+      overflow: auto;
+    }
+    .highlight{
+      color: red;
+    }
   }
 </style>

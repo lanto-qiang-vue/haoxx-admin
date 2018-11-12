@@ -220,6 +220,9 @@
       },
       show(val){
         val? document.querySelector("#store-info-detail .info").scrollTop= 0: ''
+        if(this.locale == "admin"){
+          this.cancelEdit();
+        }
       },
       'info.REMARK'(){
         this.$emit('getRemark',this.info.REMARK);

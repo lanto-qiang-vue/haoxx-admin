@@ -143,7 +143,7 @@
       </Form>
       <div slot="footer">
         <Button @click="payModal=false">取消</Button>
-        <Button type="primary"  @click="payPost('payData')">保存</Button>
+        <Button type="primary"  @click="payPost('payData')">付款</Button>
       </div>
     </Modal>
     <select-parts-group @selectPartsGroup="selectPartsGroup" :showSelectPartsGroup="showParts"

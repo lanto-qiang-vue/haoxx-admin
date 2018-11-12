@@ -10,7 +10,7 @@
         <div style="float:left;">{{text}}</div>
       </div>
       <div style="width:40%;float:left;text-align:left;" v-html="button"></div>
-      <div style="width:30%;float:left;text-align:center;">
+      <div style="width:30%;float:left;text-align:center;position:relative;">
         <Dropdown trigger="custom" :visible="visible" @on-clickoutside="handleClose" v-if="buttonShow">
           <a href="javascript:void(0)" @click="handleOpen">
             <Icon type="ios-arrow-down"></Icon>

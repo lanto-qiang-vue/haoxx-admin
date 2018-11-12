@@ -22,7 +22,7 @@
     </div>
     <!-- 添加查询修改-->
     <!-- class="table-modal-detail" -->
-    <customer-list-detail  :show="showDetail" @refresh="getList()" :detail="detail" class="table-modal-detail" @clearsection="clearsection"></customer-list-detail>
+    <customer-list-detail  :show="showDetail" @refresh="getList()" :detail="detail" class="table-modal-detail" @transmit="transmit" @clearsection="clearsection"></customer-list-detail>
     <!-- Excel上传 -->
     <upload-excel  :type="etype" :success="'esuccess'" @esuccess="esuccess"></upload-excel>
   </common-table>
@@ -40,6 +40,7 @@
     mixins: [mixin],
     data(){
       return{
+        cardModal:false,
         columns: [
           {title: '序号',  minWidth: 80,
             render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1)
@@ -85,11 +86,14 @@
     },
     mounted () {
       this.getList()
+      this.showTable= Math.random();
       this.baseUrl=env
       // console.log(env)
-      this.showTable= Math.random()
     },
     methods:{
+      transmit(){
+        this.getList();
+      },
       add(){
       this.showDetail=Math.random();
       var formData = {
@@ -233,13 +237,13 @@ computed:{
   }
 }
 </script>
-<style lang="less" scoped>
-.search-block{
-  display: inline-block;
-  width: 200px;
-  margin-right: 10px;
-}
-.ftext{
-  text-align:left;
-}
-</style>
+<!--<style lang="less" scoped>-->
+<!--.search-block{-->
+  <!--display: inline-block;-->
+  <!--width: 200px;-->
+  <!--margin-right: 10px;-->
+<!--}-->
+<!--.ftext{-->
+  <!--text-align:left;-->
+<!--}-->
+<!--</style>-->

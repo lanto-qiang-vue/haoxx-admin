@@ -447,7 +447,7 @@
                       data: params.row,
                       min: 0,
                       type: 'float',
-                      switchType: 3,
+                      switchType:4,
                       time: 200,
                     },
                     on: {

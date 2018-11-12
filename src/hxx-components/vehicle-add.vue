@@ -7,7 +7,7 @@
     title="车辆新增"
     :mask-closable="false"
     :scrollable="true"
-    :transfer= "false"
+    :transfer= "true"
     :footer-hide="false">	
     <!-- 车辆车辆档案新增调用 -->
     <Form :label-width="120" :model="formData" ref="formData" class="common-form" :rules="ruleValidate" inline>

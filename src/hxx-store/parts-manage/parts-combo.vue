@@ -97,6 +97,7 @@
 	import { getName, getDictGroup, getCreate } from '@/libs/util.js'
   import selectPartsGroup from '@/hxx-components/select-partsGroup.vue'
   import mixin from '@/hxx-components/mixin'
+  import {deepClone} from "../../libs/util";
 	export default{
 		'name':'parts-combo',
 		components:{commonTable,selectPartsGroup},
@@ -122,7 +123,8 @@
 		 		value1:'1',
 		 		value2:'2',
 		 		value3:'3',
-		 		formData:{
+        formData:{},
+		 		storeData:{
           GROUP_NAME:'',
           SALES_PRICE:0,
           STATUS:'',
@@ -231,9 +233,9 @@
        this.initParts = row;
       },
 		 	add(){
+        this.formData = deepClone(this.storeData);
         this.$refs['list'].resetFields();
         this.formData.STATUS = this.statusList[0].code;
-        this.formData.GROUP_INFO = '';
         this.initParts = [];
 		 		this.showModal = true;
 		 	},
@@ -309,6 +311,13 @@
 		 		this.cleartype = Math.random();
 		 	},
 		 	addpost(name){
+        if(this.initParts.length == 0){
+          this.$Modal.info({
+            title:'系统提示',
+            content:'请选择至少一条配件信息',
+          });
+          return;
+        }
        this.$refs[name].validate((valid) => {
                     if (valid) {
                     this.$Modal.confirm({
