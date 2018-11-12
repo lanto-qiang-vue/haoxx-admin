@@ -561,8 +561,6 @@
                             this.commitOneParts=null;
                             this.$Message.info('退料成功');
                             this.handleReset('personObj');
-                        }else{
-                            this.$Message.error(res.Exception.message);
                         }
                     })
                     this.showRejected=false;
@@ -606,8 +604,6 @@
                                 this.handleReset('storeObj');
                             }
                             
-                        }else{
-                            this.$Message.error(res.Exception.message);
                         }
                     })
                     this.showReceive=false;
@@ -645,8 +641,6 @@
                                 this.commitOneParts=null;
                                 this.$Message.info('领料成功');
                                 this.handleReset('storeObj');
-                        }else{
-                            this.$Message.error(res.Exception.message);
                         }
                     })
         },
