@@ -64,7 +64,7 @@
         @on-visible-change="visibleChange"
         :mask-closable="false"
         :scrollable="true"
-        :transfer="false"
+        :transfer="true"
         :footer-hide="false"
         :transition-names="['', '']">
         <Collapse v-model="value1">
@@ -76,11 +76,12 @@
                 <Input type="text" v-model="formData.NAME"> </Input>
               </FormItem>
               <FormItem label="项目分类:" style="width:30%;" prop="TYPE_ID">
-                <Select placeholder="" :disabled="true" v-model="formData.TYPE_ID" style="min-width: 100%;">
-                  <Option v-for="(item, index) in caritems"
-                          :key="index" :value="item.TYPE_ID">{{item.TYPE_NAME}}
-                  </Option>
-                </Select>
+                <Input type="text" :disabled="true" value="自定义2"></Input>
+                <!--<Select placeholder="" :disabled="true" v-model="formData.TYPE_ID" style="min-width: 100%;">-->
+                  <!--<Option v-for="(item, index) in caritems"-->
+                          <!--:key="index" :value="item.TYPE_ID">{{item.TYPE_NAME}}-->
+                  <!--</Option>-->
+                <!--</Select>-->
               </FormItem>
               <FormItem label="项目编号:" v-if="editType" style="width:30%;" prop="ITEM_NO">
                 <Input type="text" :disabled="true" v-model="formData.ITEM_NO"> </Input>
@@ -264,7 +265,6 @@
       }
     },
     mounted() {
-      //获取树
       this.show = Math.random();
       this.getTree();
       this.getList();
@@ -341,6 +341,13 @@
               for (let a in data) {
                 ids += data[a].nodeId + ',';
               }
+            }
+            if(ids == ""){
+              this.$Modal.info({
+                title:'系统提示',
+                content:'无可导项目',
+              });
+              return;
             }
             this.doImport(ids);
             this.showModal = false;
@@ -452,7 +459,10 @@
           obj.CLASS_TYPE = this.formData.CLASS_TYPE;
           url = "/tenant/basedata/repairiteminfo/saveitem";
         }
+        alert(this.formData.TYPE_ID);
         obj.TYPE_ID = this.formData.TYPE_ID;
+        obj['typeIdHidden-inputEl'] = this.formData.TYPE_ID;
+        obj['carTypeRef'] = this.carType;
         obj.CHARGE_TYPE = this.formData.CHARGE_TYPE;
         obj.ITEM_NO = this.formData.ITEM_NO;
         obj.NAME = this.formData.NAME;
@@ -594,6 +604,8 @@
         this.number = 0;
         this.$refs['list'].resetFields();
         this.formData.REMARK = '';
+        this.formData.TYPE_ID = this.TYPE_ID;
+        this.formData.ITEM_ID = "";
         this.customModal = true;
         this.getbase(true);
       },
@@ -606,10 +618,7 @@
         }).then(res => {
           this.caritems = res.data;
           if (flag) {
-            for (var i = 0; i < this.caritems.length; i++) {
-              if (this.caritems[i].TYPE_NAME == '自定义') {
-                this.formData.TYPE_ID = this.caritems[i].TYPE_ID;
-              }
+            for (let i = 0; i < this.caritems.length; i++) {
               if (this.caritems[i].cartype == this.carType) {
                 this.typeName = this.caritems[i].CARNAME;
               }
@@ -649,10 +658,10 @@
         switch(this.carType){
           case 3:
           case 4:
-            this.engine = [{ENGINE_TYPE:1,ENGINE_TYPE_NAME:'化油器'},{ENGINE_TYPE:2,ENGINE_TYPE_NAME:'电喷'}];
+            this.engine = [{ENGINE_TYPE:"1",ENGINE_TYPE_NAME:'化油器'},{ENGINE_TYPE:"2",ENGINE_TYPE_NAME:'电喷'}];
             break;
           case 5:
-            this.engine = [{ENGINE_TYPE:0,ENGINE_TYPE_NAME:'其他'}];
+            this.engine = [{ENGINE_TYPE:"0",ENGINE_TYPE_NAME:'其他'}];
             break;
         }
         //获取汽车参数

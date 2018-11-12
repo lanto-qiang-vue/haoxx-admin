@@ -43,6 +43,11 @@
                  value = self.data.MAX_SHOP_PRICE;
                }
                break;
+             case 4:
+               if(value > self.data.SUM_MONEY){
+                 value = self.data.SUM_MONEY;
+               }
+               break;
            }
            self.$emit('change',value);
            self.xValue = value;

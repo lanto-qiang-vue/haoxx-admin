@@ -568,6 +568,7 @@
         }).then(res => {
           if (res.success === true) {
             this.tableData3 = res.data;
+            this.total3 = res.total;
           }
         })
       },

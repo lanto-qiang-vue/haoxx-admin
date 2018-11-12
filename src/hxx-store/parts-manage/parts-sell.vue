@@ -27,7 +27,7 @@
       <Button type="info" :disabled="canDo" @click="edit">修改/查看</Button>
       <Button type="success" :disabled="canDo || list.STATUS != '10471001'" @click="check">审核</Button>
       <Button type="warning" :disabled="canDo || list.STATUS != '10471002'" @click="rcheck">反审核</Button>
-      <Button type="success" :disabled="canDo || list.STATUS != '10471002'" @click="collection">付款</Button>
+      <Button type="success" :disabled="canDo || list.STATUS != '10471002'" @click="collection">收款</Button>
       <Button type="error" :disabled="canDo || list.STATUS != '10471001'" @click="del">作废</Button>
       <Button type="primary" :disabled="canDo || list.STATUS == '10471001'" @click="print">打印销售单</Button>
     </div>
@@ -447,7 +447,7 @@
                       data: params.row,
                       min: 0,
                       type: 'float',
-                      switchType: 3,
+                      switchType:4,
                       time: 200,
                     },
                     on: {
