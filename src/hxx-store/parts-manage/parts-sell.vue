@@ -141,7 +141,7 @@
               <div style="color:red;font-size:18px;">{{collectionData.MEMBER_CARD_NO}}</div>
             </FormItem>
             <FormItem label="余额:" style="width:30%;">
-              <div style="color:red;font-size:18px;">{{collectionData.SURP_MONEY}}</div>
+              <div style="color:red;font-size:18px;">{{collectionData.SURP_MONEY || 0}}</div>
             </FormItem>
           </Form>
         </Panel>
@@ -227,6 +227,7 @@
           </Form>
         </Panel>
       </Collapse>
+      <div style="height:60px;"></div>
       <div slot="footer">
         <Button type="primary" @click="showCard=Math.random()">更换会员卡</Button>
         <Button type="primary" @click="doCollection('collectionData')">收款</Button>
@@ -279,7 +280,7 @@
       }
       return {
         rule2: {
-          INVOICE_NO: [{validator: billRule, trigger: 'change,blur'}],
+          INVOICE_NO: [{required:true,message:'发票编号必填'},{validator: billRule, trigger: 'change,blur'}],
           FOLLOW_PERSON: [{validator: personRule2, trigger: 'change,blur'}],
         },
         collectionModal: false,
