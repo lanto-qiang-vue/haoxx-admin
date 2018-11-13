@@ -3,7 +3,7 @@
   <div class="info">
     <Collapse v-model="collapse">
       <Panel name="1">门店基本信息
-        <Form class="common-form" ref="form" :rules="ruleValidate" :model="info" :label-width="80" slot="content">
+        <Form class="common-form" ref="form" :rules="ruleValidate" :model="info" :label-width="120" slot="content">
           <FormItem prop="TENANT_NAME" label="门店名称">
             <Input v-model="info.TENANT_NAME" :readonly="!editAble" :disabled="!isAdmin && !isRegister"></Input>
             <!--<span class="formText" v-show="editAble">{{info.COMPANYCODE}}</span>-->

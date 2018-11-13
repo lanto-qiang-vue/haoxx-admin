@@ -8,7 +8,7 @@
     @on-visible-change="visibleChange"
     :mask-closable="false"
     :scrollable="false"
-    :transfer="false"
+    :transfer="true"
   >
 
     <Tabs @on-click="qh" v-model="indexName" class="modal-tabs">
@@ -151,10 +151,13 @@
     <Modal
       v-model="cardModal"
       :mask-closable="false"
+      class="member"
+      :styles="{height:'200px'}"
       title="会员卡编辑"
       width="400"
-      :transfer="true"
+      :transfer="false"
       :transition-names="['', '']">
+      <div style="height:10px;"></div>
       <Form :model="memberData" ref="memberData" :rules="rule3" :label-width="120" class="common-form">
         <FormItem label="会员卡编号:" style="width:100%;" prop="MEMBER_CARD_NO">
           <Input v-model="memberData.MEMBER_CARD_NO"></Input>
@@ -169,8 +172,9 @@
       v-model="stopModal"
       :mask-closable="false"
       title="会员卡停用"
+      :styles="{height:'200px'}"
       width="400"
-      :transfer="true"
+      :transfer="false"
       :transition-names="['', '']">
       <Form :model="memberData" ref="memberData2" :rules="rule4" :label-width="120" class="common-form">
         <FormItem label="停用原因:" style="width:100%;" prop="CARD_STOP_REASON">
@@ -249,7 +253,7 @@
             title: '序号', minWidth: 80,
             render: (h, params) => h('span', (this.page3 - 1) * this.limit3 + params.index + 1)
           },
-          {title: '储值卡产品', key: 'CARD_NAME', sortable: true, minWidth: 120},
+          {title: '储值卡产品', key: 'CARD_NAME', sortable: true, minWidth: 140},
           {title: '售价', key: 'SALES_MONEY', sortable: true, minWidth: 120},
           {title: '赠送价值', key: 'DERATE_MONEY', sortable: true, minWidth: 120},
           {title: '总价值', key: 'SUM_MONEY', sortable: true, minWidth: 120},
@@ -821,9 +825,5 @@
     bottom: 0;
     background-color: white;
     z-index: 4;
-  }
-
-  .myModal .ivu-modal-bod {
-    height: 300px;
   }
 </style>

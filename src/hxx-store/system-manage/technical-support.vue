@@ -51,10 +51,10 @@ export default {
                 {title: '故障类型', key: 'fAULT_TYPE', sortable: true, minWidth: 120,
                     
                 },
-                {title: '备注', key: 'rEMARK', sortable: true, minWidth: 150,
+                {title: '备注', key: 'rEMARK', sortable: true, minWidth: 120,tooltip:true
                     
                 },
-                {title: '技术答复', key: 'fAULT_ANSWER', sortable: true, minWidth: 120,
+                {title: '技术答复', key: 'fAULT_ANSWER', sortable: true, minWidth: 120,tooltip:true,
                 },
                 {title: '答复时间', key: 'aNSWER_TIME', sortable: true, minWidth: 120,
                     

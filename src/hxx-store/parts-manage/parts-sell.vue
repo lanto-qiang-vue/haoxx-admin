@@ -283,6 +283,7 @@
         },
         collectionModal: false,
         showCard: false,
+        timer:'',
         money: 0,
         valueList: [1, 2, 3],
         have: false,
@@ -507,7 +508,7 @@
           },
           {
             title: '合计金额', key: 'SUM_MONEY', sortable: true, minWidth: 120,
-            render: (h, params) => h('span', params.row.SUM_MONEY.toFixed(2))
+            render: (h, params) => h('span', parseFloat(params.row.SUM_MONEY).toFixed(2))
           },
           {
             title: '优惠金额', key: 'LESS_MONEY', sortable: true, minWidth: 120,
@@ -780,12 +781,47 @@
               var obj = document.getElementById('xxx');
               document.body.removeChild(obj);
             }, 500);
+            this.collectionModal = false;
+            this.insertSales();
+          }
+        })
+      },
+      insertSales(){
+        this.collectionData.PAYMENT1 = "10101008";
+        this.axios.request({
+          url: '/tenant/part/tt_part_sales/insert_sales',
+          method: 'post',
+          data: {
+            access_token: this.$store.state.user.token,
+            data:JSON.stringify(this.collectionData),
+            SALES_NO: this.collectionData.SALES_NO
+          }
+        }).then(res => {
+          if (res.success === true) {
+            clearInterval(this.timer);
+            this.timer = setInterval(()=>{
+              this.axios.request({
+                url: '/tenant/part/tt_part_sales/get_status',
+                method: 'post',
+                data: {
+                  access_token: this.$store.state.user.token,
+                  SALES_NO: this.collectionData.SALES_NO
+                }
+              }).then(res => {
+                if (res.success === true) {
+                  if(res.data[0].STATUS == '10471003'){
+                    clearInterval(this.timer);
+                    this.getList();
+                  }
+                }
+              })
+            },3000);
           }
         })
       },
       changeVal(e) {
-        this.collectionData.REAL_MONEY = this.collectionData.SUM_MONEY - e;
-        this.collectionData.MONEY1 = this.collectionData.SUM_MONEY - e;
+        this.collectionData.REAL_MONEY = (this.collectionData.SUM_MONEY - e).toFixed(2);
+        this.collectionData.MONEY1 = (this.collectionData.SUM_MONEY - e).toFixed(2);
       },
       collection() {
         //重置发票状态...
@@ -876,9 +912,54 @@
                   id: this.list.SALES_ID,
                 }
               }).then(res => {
-                if (res.success === true) {
+                if (res.success === true && res.data == true) {
                   this.$Message.success("审核成功");
                   this.getList();
+                }else{
+                  let self = this;
+                  let value;
+                  let data = this.$store.state.user.userInfo.params;
+                  for (let i in data) {
+                    if (data[i].PARAM_ID == 'P2001') {
+                      value = parseInt(data[i].PARAM_VALUE);
+                      break;
+                    }
+                  }
+                  switch (value) {
+                    case 1:
+                      break;
+                    case 2:
+                      setTimeout(() => {
+                        this.$Modal.confirm({
+                          title: '系统提示',
+                          content: res.data,
+                          onOk: () => {
+                            this.axios.request({
+                              url: '/tenant/part/tt_part_sales/check',
+                              method: 'post',
+                              data: {
+                                access_token: this.$store.state.user.token,
+                                id: this.list.SALES_ID,
+                                yes_out:1,
+                              }
+                            }).then(res => {
+                              if (res.success === true && res.data == true) {
+                                this.$Message.success("审核成功");
+                                this.getList();
+                              } else {
+
+                              }
+                            })
+                          }
+                        });
+                      }, 300);
+                      break;
+                    case 3:
+                      setTimeout(() => {
+                        this.$Modal.error({title: '系统提示', content: res.data});
+                      }, 300);
+                      break;
+                  }
                 }
               })
             }

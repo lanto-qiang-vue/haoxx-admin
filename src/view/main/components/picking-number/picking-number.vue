@@ -12,7 +12,7 @@
 		name: "picking-number",
     computed:{
 		  num(){
-		    return this.$store.state.app.pickingNumber
+        return this.$store.state.app.pickingNumber || 0;
       },
       showThis(){
         return this.$store.getters.loginType=='1002'

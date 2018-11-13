@@ -34,6 +34,7 @@
              case 0:
                break;
              case 1:
+               // console.log(JSON.stringify(self.data));
                if(value <self.data.MIN_SHOP_PRICE){
                  self.$Modal.info({title:'系统提示',content:'采购单价不能低于最低采购价,系统已为您自动调整为最低采购价！'});
                  value = self.data.MIN_SHOP_PRICE;

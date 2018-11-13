@@ -548,6 +548,17 @@ export default [
     component: Main,
     children:[
       {
+        path: '/invoice-manage',
+        name: 'invoice-manage',
+        meta: {
+          icon: 'md-funnel',
+          title: '发票管理',
+          lgType: "1002",
+          access: '100401',
+        },
+        component: () => import('@/hxx-store/finance-manage/invoice-manage.vue')
+      },
+      {
         path: '/expend-income',
         name: 'expend-income',
         meta: {

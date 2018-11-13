@@ -49,7 +49,7 @@
     <Modal v-model="showAddModal" @on-visible-change="visibleChange" title="添加电子健康档案账号" :width="400">
       <Form ref="form" :rules="ruleValidate" :model="recordInfo" :label-width="80">
         <FormItem label="门店名称">
-          <span>{{detailData? detailData.TENANT_NAME: ''}}</span>
+          <span>{{storeName}}</span>
         </FormItem>
         <FormItem prop="COMPANYCODE" label="企业编码">
           <Input v-model="recordInfo.COMPANYCODE"></Input>
@@ -74,7 +74,7 @@
         <Button type="primary" @click="saveVersion('setData')">保存</Button>
       </div>
     </Modal>
-    <Modal v-model="resetModal" @on-visible-change="visibleChange" title="重置道路运输许可证" :width="400">
+    <Modal v-model="resetModal" @on-visible-change="visibleChange" title="重置健康档案账号" :width="400">
       <Form ref="resetData" :rules="resetRule" :model="resetData" :label-width="120">
         <FormItem label="道路运输许可证号" prop="roadlicense">
           <Input v-model="resetData.roadlicense"></Input>
@@ -82,7 +82,7 @@
       </Form>
       <div slot="footer">
         <Button @click="resetModal=false">取消</Button>
-        <Button type="primary" @click="saveReset('resetData')">保存</Button>
+        <Button type="primary" @click="saveReset('resetData')">重置</Button>
       </div>
     </Modal>
     <Modal v-model="showStoreModal" title="门店注册信息" :width="90" footer-hide :transfer="false"
@@ -112,6 +112,7 @@
         }
       }
       return {
+        storeName:'',
         setModal: false,//控制设置门店版本
         resetModal: false,//重置健康档案
         resetData: {
@@ -153,6 +154,7 @@
             title: '序号', minWidth: 70,
             render: (h, params) => h('span', (this.query.page - 1) * this.query.limit + params.index + 1)
           },
+          {title: '企业登录账号', key: 'USER_CODE', sortable: true, minWidth: 130},
           {title: '门店商户号', key: 'TENANT_NUM', sortable: true, minWidth: 130},
           {title: '门店名称', key: 'TENANT_NAME', sortable: true, minWidth: 200},
           {title: '门店地址', key: 'TENANT_ADD', sortable: true, minWidth: 150},
@@ -201,7 +203,7 @@
         let flag = false;
         if(!this.detailData) flag = true;
         if(!flag){
-          if(!this.detailData.ROAD_LICENSE) flag = true;
+          if(this.detailData.AREA_ID != 1) flag = true;
         }
         return flag;
       }
@@ -392,6 +394,7 @@
         this.showDetail = Math.random()
       },
       showRecordInfo() {
+        this.storeName = this.detailData.TENANT_NAME;
         this.recordInfo.COMPANYCODE = this.detailData.COMPANYCODE
         this.recordInfo.COMPANYPASSWORD = this.detailData.COMPANYPASSWORD
         this.recordInfo.TENANT_ID = this.detailData.TENANT_ID

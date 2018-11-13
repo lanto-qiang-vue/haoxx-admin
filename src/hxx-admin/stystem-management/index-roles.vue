@@ -49,6 +49,13 @@
                 <FormItem label="角色名称:" style="width:90%;" prop="ROLE_NAME">
                   <Input v-model="formData.ROLE_NAME" type="text"> </Input>
                 </FormItem>
+                <FormItem label="选择版本:" style="width:90%;" prop="ROLE_TYPE">
+                  <Select v-model="formData.ROLE_TYPE">
+                    <Option v-for="(item, index) in roleList"
+                            :key="index" :value="item.ROLE_TYPE">{{item.ROLE_NAME}}
+                    </Option>
+                  </Select>
+                </FormItem>
                 <FormItem label="角色状态:" style="width:90%;" prop="STATUS">
                   <Select v-model="formData.STATUS">
                     <Option v-for="(item, index) in statusList2"
@@ -119,6 +126,11 @@
     data() {
       return {
         treeData: [],
+        roleList:[
+          {ROLE_TYPE:"0",ROLE_NAME:"基础版"},
+          {ROLE_TYPE:"1",ROLE_NAME:"专业版"},
+          {ROLE_TYPE:"2",ROLE_NAME:"公共版"},
+        ],
         value1: '1',
         value2: '2',
         expandType: true,
@@ -131,12 +143,14 @@
           "ROLE_ID": "",
           "ROLE_CODE": "",
           "ROLE_NAME": "",
+          "ROLE_TYPE":"0",
           "STATUS": "",
           "ROLE_DESC": "",
         },
         rules: {
           ROLE_NAME: [{required: true, message: '角色名称必填'}],
-          STATUS: [{required: true}]
+          STATUS: [{required: true}],
+          ROLE_TYPE:[{required:true}]
         },
         list: '',
         page: 1,
@@ -188,6 +202,7 @@
         this.$refs.list.resetFields();
         this.formData.ROLE_DESC = "";
         this.formData.ROLE_ID = "";
+        this.formData.ROLE_TYPE = "0";
         this.formData.STATUS = this.statusList2[0].code;
         this.getTree();
         this.showModal = true;

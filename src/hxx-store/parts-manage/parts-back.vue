@@ -47,7 +47,8 @@
           基本信息
           <Form slot="content" :model="formData" ref="formData" :rules="rules" :label-width="120" class="common-form">
             <FormItem label="退货供应商:" style="width:30%;" prop="SUPPLIER_NAME">
-              <Input type="text" :readonly="true" @on-click="selectSupply" v-model="formData.SUPPLIER_NAME" icon="ios-search"
+              <Input type="text" :readonly="true" @on-click="selectSupply" v-model="formData.SUPPLIER_NAME"
+                     icon="ios-search"
                      style="min-width: 100%;">
               </Input>
             </FormItem>
@@ -179,6 +180,13 @@
         <Button @click="collectionModal=false">关闭</Button>
       </div>
     </Modal>
+    <Modal>
+    </Modal>
+    <Modal v-model="showFrame">
+      <iframe id="ifrID" src="http://www.baidu.com" frameBorder="0" width="100%" scrolling="yes" height="100%">
+
+      </iframe>
+    </Modal>
     <select-supply @transmit="transmit" :showType="showType" :switchType="2" :refresh="refreshType"></select-supply>
     <select-purchase-no :showType="selectType" @selectCallback="selectCallback"></select-purchase-no>
     <selectParts :showSelectParts="showSelectParts" :initParts="initParts" :stockFlag="true"
@@ -200,6 +208,8 @@
     components: {commonTable, selectSupply, selectPurchaseNo, selectParts, unitInput},
     data() {
       return {
+        showFrame:false,
+        timer:'',
         rule2: {},
         collectionModal: false,
         money: 0,
@@ -232,7 +242,7 @@
         showSelectParts: false,
         initParts: [],
         limit: 25,
-        formData:{},
+        formData: {},
         storeData: {
           "RETURN_ID": "",
           "SUPPLIER_ID": "",
@@ -253,7 +263,7 @@
         rules: {
           SUPPLIER_NAME: [{required: true, message: '请选择退货供应商'}],
           RETURN_DATE: [{required: true, message: '请填写退货日期'}],
-          RETURN_REASON:[{required:true,message:'请填写退货原因'}],
+          RETURN_REASON: [{required: true, message: '请填写退货原因'}],
         },
         search: {
           keyword: "",
@@ -488,17 +498,17 @@
                 '<td>' + data[i].NAME + '</td>' +
                 '<td>' + data[i].FACTORY_NO + '</td>' +
                 '<td><div align="right">' + data[i].PART_NUM + '</div></td>' +
-                '<td>' + (getName(this.list1015,data[i].UNIT) || "") + '</td>' +
-                '<td>' + (getName(this.list1016,data[i].BRAND) || "") + '</td>' +
+                '<td>' + (getName(this.list1015, data[i].UNIT) || "") + '</td>' +
+                '<td>' + (getName(this.list1016, data[i].BRAND) || "") + '</td>' +
                 '<td><div align="right">' + data[i].PURCHASE_PRICE.toFixed(2) + '</div></td>' +
                 '<td><div align="right">' + data[i].SUM_MONEY.toFixed(2) + '</div></td>' +
                 '</tr>';
             }
             temp += '<tr>' +
               '<td colspan="4"><div align="center"><strong>退货总数量</strong></div></td>' +
-              '<td><div align="right">'+ countNumber +'</div></td>' +
+              '<td><div align="right">' + countNumber + '</div></td>' +
               '<td colspan="3"><div align="center"><strong>退货总金额</strong></div></td>' +
-              '<td><div align="right">'+ countMoney.toFixed(2)+'</div></td>' +
+              '<td><div align="right">' + countMoney.toFixed(2) + '</div></td>' +
               '</tr>';
             temp += '</tbody>' +
               '</table>' +
@@ -592,12 +602,47 @@
               var obj = document.getElementById('xxx');
               document.body.removeChild(obj);
             }, 500);
+            this.collectionModal = false;
+            this.insertReturn();
+          }
+        })
+      },
+      insertReturn(){
+        this.collectionData.PAYMENT1 = "10101008";
+        this.axios.request({
+          url: '/tenant/part/tt_part_purchase_return/insert_return',
+          method: 'post',
+          data: {
+            access_token: this.$store.state.user.token,
+            data:JSON.stringify(this.collectionData),
+            RETURN_NO: this.collectionData.RETURN_NO
+          }
+        }).then(res => {
+          if (res.success === true) {
+            clearInterval(this.timer);
+          this.timer = setInterval(()=>{
+            this.axios.request({
+              url: '/tenant/part/tt_part_purchase_return/return_status',
+              method: 'post',
+              data: {
+                access_token: this.$store.state.user.token,
+                RETURN_NO: this.collectionData.RETURN_NO
+              }
+            }).then(res => {
+              if (res.success === true) {
+               if(res.data[0].STATUS == '10471003'){
+                 clearInterval(this.timer);
+                 this.getList();
+               }
+              }
+            })
+          },3000);
           }
         })
       },
       changeVal(e) {
-        this.collectionData.REAL_MONEY = this.collectionData.SUM_MONEY - e;
-        this.collectionData.MONEY1 = this.collectionData.SUM_MONEY - e;
+        this.collectionData.REAL_MONEY = (this.collectionData.SUM_MONEY - e).toFixed(2);
+        this.collectionData.MONEY1 = (this.collectionData.SUM_MONEY - e).toFixed(2);
       },
       collection() {
         this.getPerson();
@@ -667,9 +712,54 @@
                   id: this.list.RETURN_ID,
                 }
               }).then(res => {
-                if (res.success === true) {
+                if (res.success === true && res.data == true) {
                   this.$Message.success("审核成功");
                   this.getList();
+                } else {
+                  let self = this;
+                  let value;
+                  let data = this.$store.state.user.userInfo.params;
+                  for (let i in data) {
+                    if (data[i].PARAM_ID == 'P2001') {
+                      value = parseInt(data[i].PARAM_VALUE);
+                      break;
+                    }
+                  }
+                  switch (value) {
+                    case 1:
+                      break;
+                    case 2:
+                      setTimeout(() => {
+                        this.$Modal.confirm({
+                          title: '系统提示',
+                          content: res.data,
+                          onOk: () => {
+                            this.axios.request({
+                              url: '/tenant/part/tt_part_purchase_return/check',
+                              method: 'post',
+                              data: {
+                                access_token: this.$store.state.user.token,
+                                id: this.list.RETURN_ID,
+                                yes_out:1,
+                              }
+                            }).then(res => {
+                              if (res.success === true && res.data == true) {
+                                this.$Message.success("审核成功");
+                                this.getList();
+                              } else {
+
+                              }
+                            })
+                          }
+                        });
+                      }, 300);
+                      break;
+                    case 3:
+                      setTimeout(() => {
+                        this.$Modal.error({title: '系统提示', content: res.data});
+                      }, 300);
+                      break;
+                  }
                 }
               })
             }
