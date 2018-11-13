@@ -22,13 +22,13 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="primary" @click="add">新增</Button>
-      <Button type="info" :disabled="canDo" @click="edit">修改/查看</Button>
-      <Button type="success" :disabled="canDo || list.STATUS != '10481001'" @click="check">审核</Button>
-      <Button type="warning" :disabled="canDo || list.STATUS != '10481002'" @click="rcheck">反审核</Button>
-      <Button type="success" :disabled="canDo || list.STATUS != '10481002'" @click="payment">付款</Button>
-      <Button type="error" :disabled="canDo || list.STATUS != '10481001'" @click="del">作废</Button>
-      <Button type="primary" :disabled="canDo || list.STATUS == '10481001'" @click="Xprint">打印采购单</Button>
+      <Button type="primary" v-if="accessBtn('add')" @click="add">新增</Button>
+      <Button type="info" v-if="accessBtn('edit')" :disabled="canDo" @click="edit">修改/查看</Button>
+      <Button type="success" v-if="accessBtn('check')" :disabled="canDo || list.STATUS != '10481001'" @click="check">审核</Button>
+      <Button type="warning" v-if="accessBtn('recheck')" :disabled="canDo || list.STATUS != '10481002'" @click="rcheck">反审核</Button>
+      <Button type="success" v-if="accessBtn('pay_money')" :disabled="canDo || list.STATUS != '10481002'" @click="payment">付款</Button>
+      <Button type="error" v-if="accessBtn('cancel')" :disabled="canDo || list.STATUS != '10481001'" @click="del">作废</Button>
+      <Button type="primary" v-if="accessBtn('printCgd')" :disabled="canDo || list.STATUS == '10481001'" @click="Xprint">打印采购单</Button>
     </div>
     <Modal
       v-model="showModal"
@@ -158,11 +158,13 @@
   import selectPartsGroup from '@/hxx-components/select-partsGroup.vue'
   import {getName, getDictGroup, getCreate} from '@/libs/util.js'
   import commonTable from '@/hxx-components/common-table.vue'
-  import {deepClone} from "../../libs/util";
+  import {deepClone} from "../../libs/util"
+  import mixin from '@/hxx-components/mixin'
 
   export default {
     name: 'parts-purchase',
     components: {commonTable, selectSupply, selectPartsGroup, unitInput},
+    mixins: [mixin],
     activated() {
       let queryData = this.$route.query;
       if (queryData.type) {

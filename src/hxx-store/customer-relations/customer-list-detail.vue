@@ -192,9 +192,9 @@
                  :show="vehicleShow"></vehicle-add>
     <div slot="footer">
       <Button @click="showModal=false">取消</Button>
-      <Button type="primary" v-show="indexName == 'm3'" @click="changeCard">发卡/换卡</Button>
-      <Button type="error" v-show="indexName == 'm3'" :disabled="ty" @click="stopCard">停用</Button>
-      <Button type="success" v-show="indexName == 'm3'" :disabled="qy" @click="cardPost(3)">启用</Button>
+      <Button type="primary" v-if="accessBtn('vipcard')" v-show="indexName == 'm3'" @click="changeCard">发卡/换卡</Button>
+      <Button type="error" v-if="accessBtn('vipstop')" v-show="indexName == 'm3'" :disabled="ty" @click="stopCard">停用</Button>
+      <Button type="success" v-if="accessBtn('vipstart')" v-show="indexName == 'm3'" :disabled="qy" @click="cardPost(3)">启用</Button>
       <Button type="primary" v-show="indexName=='m1'" @click="hsubmit('formData')">保存</Button>
       <Button type="success" v-show="indexName=='m2'" @click="vehicleAdd">新增</Button>
       <Button type="primary" :disabled="cando" v-show="indexName=='m2'" @click="vehicleEdit">修改</Button>
@@ -212,10 +212,12 @@
   import vehicleAdd from '@/hxx-components/vehicle-add.vue'
   import cartModal from '@/hxx-store/customer-relations/cart-modal.vue'
   import {deepClone} from "../../libs/util";
+  import mixin from '@/hxx-components/mixin'
 
   export default {
     name: "customer-list-detail",
     components: {commonTable, vehicleAdd, cartModal},
+    mixins: [mixin],
     data() {
       return {
         cardModal: false,

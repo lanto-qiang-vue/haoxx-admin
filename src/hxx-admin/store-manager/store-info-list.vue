@@ -154,7 +154,7 @@
             title: '序号', minWidth: 70,
             render: (h, params) => h('span', (this.query.page - 1) * this.query.limit + params.index + 1)
           },
-          {title: '企业登录账号', key: 'USER_CODE', sortable: true, minWidth: 130},
+          {title: '企业登录账号', key: 'USER_CODE', sortable: true, minWidth: 150},
           {title: '门店商户号', key: 'TENANT_NUM', sortable: true, minWidth: 130},
           {title: '门店名称', key: 'TENANT_NAME', sortable: true, minWidth: 200},
           {title: '门店地址', key: 'TENANT_ADD', sortable: true, minWidth: 150},

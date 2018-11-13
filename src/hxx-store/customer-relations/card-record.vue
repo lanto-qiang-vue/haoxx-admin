@@ -19,10 +19,11 @@
 <script>
   import commonTable from '@/hxx-components/common-table.vue'
   import {getName, getDictGroup, getCreate} from '@/libs/util.js'
-
+  import mixin from '@/hxx-components/mixin'
   export default {
     name: 'card-record',
     components: {commonTable},
+    mixins: [mixin],
     data() {
       return {
         page: 1,

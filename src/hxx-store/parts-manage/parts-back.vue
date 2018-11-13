@@ -23,13 +23,13 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="primary" @click="add">新增</Button>
-      <Button type="info" :disabled="canDo" @click="edit">修改/查看</Button>
-      <Button type="success" :disabled="canDo || list.STATUS != '10471001'" @click="check">审核</Button>
-      <Button type="warning" :disabled="canDo || list.STATUS != '10471002'" @click="rcheck">反审核</Button>
-      <Button type="success" :disabled="canDo || list.STATUS != '10471002'" @click="collection">收款</Button>
-      <Button type="error" :disabled="canDo || list.STATUS != '10471001'" @click="del">作废</Button>
-      <Button type="primary" :disabled="canDo || list.STATUS == '10471001'" @click="print">打印退货单</Button>
+      <Button type="primary" v-if="accessBtn('add')" @click="add">新增</Button>
+      <Button type="info" v-if="accessBtn('edit')" :disabled="canDo" @click="edit">修改/查看</Button>
+      <Button type="success" v-if="accessBtn('check')" :disabled="canDo || list.STATUS != '10471001'" @click="check">审核</Button>
+      <Button type="warning" v-if="accessBtn('recheck')" :disabled="canDo || list.STATUS != '10471002'" @click="rcheck">反审核</Button>
+      <Button type="success" v-if="accessBtn('collect')" :disabled="canDo || list.STATUS != '10471002'" @click="collection">收款</Button>
+      <Button type="error" v-if="accessBtn('cancel')" :disabled="canDo || list.STATUS != '10471001'" @click="del">作废</Button>
+      <Button type="primary" v-if="accessBtn('printThd')" :disabled="canDo || list.STATUS == '10471001'" @click="print">打印退货单</Button>
     </div>
     <Modal
       v-model="showModal"
@@ -201,11 +201,13 @@
   import selectPurchaseNo from '@/hxx-components/select-PurchaseNo.vue'
   import selectParts from '@/hxx-components/select-parts.vue'
   import {getName, getDictGroup, getCreate} from '@/libs/util.js'
+  import mixin from '@/hxx-components/mixin'
   import {deepClone} from "../../libs/util";
 
   export default {
     name: "parts-back",
     components: {commonTable, selectSupply, selectPurchaseNo, selectParts, unitInput},
+    mixins: [mixin],
     data() {
       return {
         showFrame:false,
@@ -574,6 +576,9 @@
       },
       zfb() {
 //支付宝支付
+        if(this.collectionData.MONEY1 < 0){
+          this.$Modal.info({title:'系统提示',content:'支付金额小于0不能使用支付宝支付'});
+        }
         this.axios.request({
           url: '/tenant/part/tt_part_purchase_return/pay_return',
           method: 'post',

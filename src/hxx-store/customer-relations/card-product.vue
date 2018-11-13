@@ -16,9 +16,9 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="primary" @click="add()">新增</Button>
-      <Button type="info" :disabled="cando" @click="edit()">修改</Button>
-      <Button type="error" :disabled="cando" @click="remove()">作废</Button>
+      <Button type="primary" v-if="accessBtn('add')" @click="add()">新增</Button>
+      <Button type="info" v-if="accessBtn('edit')" :disabled="cando" @click="edit()">修改</Button>
+      <Button type="error" v-if="accessBtn('ban')" :disabled="cando" @click="remove()">作废</Button>
     </div>
     <!-- 产品新增 -->
     <Modal
@@ -91,10 +91,11 @@
 <script>
   import commonTable from '@/hxx-components/common-table.vue'
   import {formatDate} from '@/libs/tools.js'
-
+  import mixin from '@/hxx-components/mixin'
   export default {
     name: 'card-product',
     components: {commonTable},
+    mixins: [mixin],
     computed: {
       cando() {
         var flag = this.list == '' ? true : false;

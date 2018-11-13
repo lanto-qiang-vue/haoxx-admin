@@ -26,14 +26,14 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="primary" v-if="" @click="add()">新增</Button>
-      <Button type="info" v-if="" :disabled="canDo" @click="edit()">编辑/查看</Button>
-      <Button type="success" v-if="" :disabled="canDo  || list.STATUS != '10471001'" @click="check()">审核</Button>
-      <Button type="warning" v-if="" :disabled="canDo  || list.STATUS != '10471002'" @click="rcheck()">反审核审核</Button>
-      <Button type="success" v-if="" :disabled="canDo || list.STATUS != '10471002'" @click="collection()">收款</Button>
-      <Button type="warning" v-if="" :disabled="canDo  || list.STATUS != '10471003'" @click="rcollection()">反收款</Button>
-      <Button type="error" v-if="" :disabled="canDo || list.STATUS != '10471001'" @click="remove()">作废</Button>
-      <Button type="primary" v-if="" @click="xPrint" :disabled="canDo || list.STATUS == '10471001'">打印充值单</Button>
+      <Button type="primary" v-if="accessBtn('add')" @click="add()">新增</Button>
+      <Button type="info" v-if="accessBtn('edit')" :disabled="canDo" @click="edit()">编辑/查看</Button>
+      <Button type="success" v-if="accessBtn('check')" :disabled="canDo  || list.STATUS != '10471001'" @click="check()">审核</Button>
+      <Button type="warning" v-if="accessBtn('recheck')" :disabled="canDo  || list.STATUS != '10471002'" @click="rcheck()">反审核审核</Button>
+      <Button type="success" v-if="accessBtn('collect')" :disabled="canDo || list.STATUS != '10471002'" @click="collection()">收款</Button>
+      <Button type="warning" v-if="accessBtn('recollect')" :disabled="canDo  || list.STATUS != '10471003'" @click="rcollection()">反收款</Button>
+      <Button type="error" v-if="accessBtn('cancel')" :disabled="canDo || list.STATUS != '10471001'" @click="remove()">作废</Button>
+      <Button type="primary" v-if="accessBtn('printRechargeDoc')" @click="xPrint" :disabled="canDo || list.STATUS == '10471001'">打印充值单</Button>
     </div>
     <Modal
       class="table-modal-detail"
@@ -178,11 +178,13 @@
   import {getLodop} from '@/hxx-components/LodopFuncs.js'
   import {getName, getDictGroup, getCreate} from '@/libs/util.js'
   import selectCustomer from '@/hxx-components/select-customer.vue'
+  import mixin from '@/hxx-components/mixin'
   import {deepClone} from "../../libs/util";
 
   export default {
     name: 'card-recharge',
     components: {commonTable, selectCustomer},
+    mixins: [mixin],
     data() {
       const person = (rule, value, callback) => {
         if (this.collectionData.FOLLOW_PERSON == '==请选择==') {
