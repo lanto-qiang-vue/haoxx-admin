@@ -13,7 +13,7 @@
                 :total="total" :show="showTable" @onRowClick="onRowClick" :page="page" :showOperate="false">
     <div slot="search">
       <div class="search-block">
-        <Input v-model="search.keyword" placeholder="开票公司/发票编号..."></Input>
+        <Input v-model="search.keyword" placeholder="客户名称/手机号码..."></Input>
       </div>
       <ButtonGroup size="small">
         <Button type="primary" @click="page=1;getList()">
@@ -90,8 +90,8 @@
           method: 'post',
           data: {
             access_token: this.$store.state.user.token,
-            limit: 25,
-            page: 1,
+            limit: this.limit,
+            page: this.page,
             KEYWORD: this.search.keyword,
           }
         }).then(res => {
