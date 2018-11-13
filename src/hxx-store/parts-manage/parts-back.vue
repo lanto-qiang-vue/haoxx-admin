@@ -576,7 +576,7 @@
       },
       zfb() {
 //支付宝支付
-        if(this.collectionData.MONEY1 < 0){
+        if(this.collectionData.MONEY1 <= 0){
           this.$Modal.info({title:'系统提示',content:'支付金额小于0不能使用支付宝支付'});
         }
         this.axios.request({

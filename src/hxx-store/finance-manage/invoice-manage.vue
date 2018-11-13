@@ -180,8 +180,8 @@
           method: 'post',
           data: {
             access_token: this.$store.state.user.token,
-            limit: 25,
-            page: 1,
+            limit: this.limit,
+            page: this.page,
             KEYWORD: this.search.keyword,
           }
         }).then(res => {
