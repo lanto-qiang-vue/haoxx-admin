@@ -369,6 +369,17 @@ export default [
         },
         component: () => import('@/hxx-store/parts-manage/parts-purchase.vue')
       },
+      // {
+      //   path: '/my-select',
+      //   name: 'my-select',
+      //   meta: {
+      //     icon: 'md-funnel',
+      //     title: '我的选择组件!',
+      //     lgType: "1002",
+      //     access: '100203',
+      //   },
+      //   component: () => import('@/hxx-store/parts-manage/my-select.vue')
+      // },
       {
         path: '/parts-back',
         name: 'parts-back',
