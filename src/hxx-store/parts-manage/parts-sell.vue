@@ -757,6 +757,7 @@
 //支付宝支付
         if(this.collectionData.MONEY1 <= 0){
           this.$Modal.info({title:'系统提示',content:'支付金额小于0不能使用支付宝支付'});
+          return;
         }
         this.axios.request({
           url: '/tenant/part/tt_part_sales/pay_sales',
