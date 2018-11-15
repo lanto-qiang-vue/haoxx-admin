@@ -1552,13 +1552,23 @@
         handleSubmit (name) {
             this.$refs[name].validate((valid) => {
                 if (valid) {
-                      if(this.listSearch.VEHICLE_MODEL&&this.listSearch.VIN_NO&&this.listSearch.CUSTOMER_NAME){
-                        this.$Modal.confirm({
-                            title:"系统提示!",
-                            content:"确定要保存吗？",
-                            onOk:this.saveData,
-                            
-                        })
+                      if(this.listSearch.VEHICLE_MODEL&&this.listSearch.VIN_NO){
+                          if(this.listSearch.CUSTOMER_NAME){
+                              this.$Modal.confirm({
+                                    title:"系统提示!",
+                                    content:"确定要保存吗？",
+                                    onOk:this.saveData,
+                                    
+                                })
+                          }else{
+                              this.$Modal.confirm({
+                                    title:"系统提示!",
+                                    content:"车主名称缺失，请先完善客户信息",
+                                    onOk:this.perfectCustomerData,
+                                    
+                                })
+                          }
+                        
                       }else{
                         this.$Modal.confirm({
                             title:"系统提示!",
@@ -1576,6 +1586,9 @@
         },
         perfectCarData(){
           this.$router.push({path:'/cart-list'});
+        },
+        perfectCustomerData(){
+          this.$router.push({path:'/customer-list'});
         },
         saveData(){
             // this.listSearch.COME_DATE=formatDate(this.listSearch.COME_DATE);
@@ -1608,13 +1621,22 @@
         handleCommit(name){
             this.$refs[name].validate((valid) => {
                 if (valid) {
-                      if(this.listSearch.VEHICLE_MODEL&&this.listSearch.VIN_NO&&this.listSearch.CUSTOMER_NAME){
-                        this.$Modal.confirm({
-                            title:"系统提示!",
-                            content:"确定要派工吗？",
-                            onOk:this.commitdata,
-                            
-                        })
+                      if(this.listSearch.VEHICLE_MODEL&&this.listSearch.VIN_NO){
+                        if(this.listSearch.CUSTOMER_NAME){
+                              this.$Modal.confirm({
+                                    title:"系统提示!",
+                                    content:"确定要派工吗？",
+                                    onOk:this.saveData,
+                                    
+                                })
+                          }else{
+                              this.$Modal.confirm({
+                                    title:"系统提示!",
+                                    content:"车主名称缺失，请先完善客户信息",
+                                    onOk:this.perfectCustomerData,
+                                    
+                                })
+                          }
                       }else{
                         this.$Modal.confirm({
                             title:"系统提示!",
