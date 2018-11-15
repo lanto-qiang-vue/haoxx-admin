@@ -4,7 +4,7 @@
         <Modal v-model="showShouKuan"
             title="维修工单结算收款"
             width="90"
-            @on-visible-change=""
+            @on-visible-change="visibleChange"
             :scrollable="true"
             :transfer= "false"
             :footer-hide="false"
@@ -88,11 +88,10 @@
                     </Form>
                 </Panel>
                 <Panel name="4" >是否开据发票
-                    <Form slot="content" :label-width="120" class="detail-form" >
-                        <FormItem label="">
-                            <Checkbox v-model="single" @on-change="isGiveInvoiceFun">是否开据发票</Checkbox>
-                        </FormItem>
-                    </Form>
+                    <i-switch v-model="single" size="large" @on-change="isGiveInvoiceFun">
+                        <span slot="open">是</span>
+                        <span slot="close">否</span>
+                    </i-switch>
                     <Form slot="content" :label-width="120" inline class="detail-form" ref="isInvoice" :rules="ruleValidate" :model="isInvoice">
                         <FormItem label="发票编号:" prop="INVOICE_NO">
                             <Input type="text"  v-model="isInvoice.INVOICE_NO" placeholder="" style="min-width: 250px;"> </Input>
@@ -111,7 +110,8 @@
             </Collapse>
             <select-valueCard :showoff="showCard" :showTransfer=false @selectCard="selectCard" :showCardData="showCardData"></select-valueCard>
             </div>
-            
+
+
             <div slot="footer">
                 <Button type="primary" @click="savePay('shoukuanSearch')" style="margin-right: 10px;">收款</Button>
                 <Button @click="showShouKuan=false;" style="margin-right: 10px;">取消</Button>
@@ -148,6 +148,7 @@ export default {
             
         };
         return{
+            
             single:false,//是否选择开发票
             isInvoice:{
                 "INVOICE_NO":'',
@@ -252,7 +253,16 @@ export default {
             this.shoukuanSearch["LESS_MONEY"]=(this.listSearch['REPAIR_ITEM_DERATE_MONEY']+this.listSearch['REPAIR_PART_DERATE_MONEY'])||0;
 
             this.shoukuanFun();
-        }
+        },
+        collapse1(val) {
+            let type = false;
+            for (let i in val) {
+            if (val[i] == 4) {
+                type = true;
+            }
+            }
+            this.single = type;
+        },
     },
     mounted() {
        
@@ -580,6 +590,14 @@ export default {
                 }
             }) 
         },
+        //界面窗口变化
+            visibleChange(status){
+                if(status === false){
+                    this.collapse1=['1','2','3'];
+                    this.single=false;
+                    this.handleReset("isInvoice");
+                }
+            },
 
     
     }

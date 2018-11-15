@@ -70,7 +70,7 @@
                                     <FormItem label="质量保证期:">
                                         
                                         <InputNumber :min="0" v-model="shoukuanSearch.ZY_PART_BZQ" @on-change="bzqFun" :disabled="jiesuanButton"
-                                            :formatter="value => `${value}公里`" :parser="value => value.replace('公里', '')"
+                                            
                                         ></InputNumber>
                                     </FormItem>
                                 </Form>
