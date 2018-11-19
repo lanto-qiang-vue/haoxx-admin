@@ -184,13 +184,12 @@
 
       <div class="r-list-money" v-if="isAccountFlag">
         <p style="text-align: left">
-          维修项目费用：
-          <span>{{listSearch.REPAIR_ITEM_MONEY}}元</span> + 维修配件费用:
-          <span>{{listSearch.REPAIR_PART_MONEY}}元</span> + 其他费用:
-          <span>{{listSearch.OTHER_MONEY}}元</span> - 维修项目优惠金额:
-          <span>{{listSearch.REPAIR_ITEM_DERATE_MONEY}}元</span> - 配件优惠金额:
-          <span>{{listSearch.REPAIR_PART_DERATE_MONEY}}元</span>= 合计应收金额:
-          <span>{{listSearch.SUM_MONEY}}元</span>
+          <span class="bold">合计应收金额：<span>{{listSearch.SUM_MONEY}}元</span> = </span>
+          维修项目费用：<span>{{listSearch.REPAIR_ITEM_MONEY}}元</span> +
+          维修配件费用：<span>{{listSearch.REPAIR_PART_MONEY}}元</span> +
+          其他费用：<span>{{listSearch.OTHER_MONEY}}元</span> -
+          维修项目优惠金额：<span>{{listSearch.REPAIR_ITEM_DERATE_MONEY}}元</span> -
+          配件优惠金额：<span>{{listSearch.REPAIR_PART_DERATE_MONEY}}元</span>
         </p>
       </div>
       <!--//结算信息-->
@@ -2875,12 +2874,15 @@
   .r-list-money {
     padding-top: 20px;
     width: 100%;
-    font-size: 16px;
+    font-size: 12px;
     text-align: center;
-
     span {
       color: red;
-
+    }
+    .bold{
+      font-size: 14px;
+      font-weight: 600;
+      color: black;
     }
     .r-list-money-reset {
       font-size: 22px;

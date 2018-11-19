@@ -283,10 +283,6 @@
 <style lang="less">
 .common-table{
   .table-search{
-    .ivu-collapse-header{
-      height: 36px;
-      line-height: 36px;
-    }
     .ivu-collapse-content-box{
       padding-bottom: 0;
     }
