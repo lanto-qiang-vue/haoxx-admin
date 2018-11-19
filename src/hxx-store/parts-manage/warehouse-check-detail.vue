@@ -3,7 +3,8 @@
   <Modal
     v-model="showModal"
     title="仓库盘点单"
-    width="90"
+    width="98"
+    class="table-modal-detail"
     @on-visible-change="visibleChange"
     :scrollable="true"
     :transfer= "false"
@@ -11,7 +12,7 @@
     :transition-names="['', '']"
   >
     <div style="height: 100%;overflow: auto; padding-bottom: 30px;">
-        <div style="font-size: 18px;text-align: right;color: red;padding-right: 30px;">{{this.titleMsg}}</div>
+        <div class="status">&nbsp;&nbsp;&nbsp;&nbsp;({{this.titleMsg}})</div>
     <Collapse v-model="collapse">
       <Panel name="1">查询
        <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="85" inline class="detail-form">
@@ -763,6 +764,14 @@ export default {
     width: 100%;
     padding: 20px 0;
     text-align: center;
+  }
+  .r-list-header{
+    h1{
+      padding-top:10px;
+      font-size: 14px;
+      font-weight: 400;
+      margin-bottom: 5px;
+    }
   }
   .r-list-money{
     width: 100%;

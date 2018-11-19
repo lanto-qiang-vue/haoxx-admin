@@ -7,13 +7,18 @@
     <div slot="right" class="split-pane">
     <common-table :columns="columns" :total="total" :page="page" v-model="tableData" :show="show" @changePageSize="changePageSize" @changePage="changePage" :clearSelect="cleartype" @onRowClick="onRowClick">
           <div slot="search">
-          <Input  placeholder="配件名称/原厂编号..." v-model="KEYWORD" style="width: 300px"></Input>
-          <label>&nbsp;&nbsp;&nbsp;配件类别:&nbsp;&nbsp;&nbsp;</label>
-          <Input :disabled="true" v-model="TYPE" style="width:250px;"></Input>
-      <ButtonGroup size="small">
-        <Button type="primary" @click="page=1;getList()"><Icon type="ios-search" size="24"/></Button>
-        <Button type="primary" @click="clear()"><Icon type="ios-undo" size="24"/></Button>
-      </ButtonGroup>
+            <Form class="common-form">
+              <FormItem>
+                <Input  placeholder="配件名称/原厂编号..." v-model="KEYWORD"></Input>
+              </FormItem>
+              <FormItem label="配件类别" :label-width="80">
+                <Input :disabled="true" v-model="TYPE"></Input>
+              </FormItem>
+              <ButtonGroup size="small">
+                <Button type="primary" @click="page=1;getList()"><Icon type="ios-search" size="24"/></Button>
+                <Button type="primary" @click="clear()"><Icon type="ios-undo" size="24"/></Button>
+              </ButtonGroup>
+            </Form>
           </div>
               <div slot="operate">
       <Button type="primary" @click="add()" v-if="accessBtn('add')">新增</Button>

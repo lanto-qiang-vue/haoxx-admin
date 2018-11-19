@@ -4,13 +4,18 @@
     :title="title"
     @on-visible-change="visibleChange"
     :mask-closable="false"
+    class="table-modal-detail"
     width="80"
     :scrollable="true"
-    :transfer= "false"
+    :transfer= "true"
     :footer-hide="false"
     :transition-names="['', '']"
   >
-    <div style="font-size: 18px;text-align: right;color: red;padding-right: 30px;">{{titleMsg}}</div>
+    <div style="height: 100%;overflow: auto; padding-bottom: 30px;">
+    <div class="status" v-show="title.length == 4">&nbsp;&nbsp;({{titleMsg}})</div>
+      <div class="status" v-show="title.length == 6">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;({{titleMsg}})</div>
+      <div class="status" v-show="title.length == 8">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;({{titleMsg}})</div>
+      <!--<div class="status">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;({{titleMsg}})</div>-->
     <Collapse v-model="collapse">
       <Panel name="1">详情
        <Form ref="listSearch" v-if="tem == 1"   slot="content" :label-width="120" inline class="detail-form">
@@ -102,7 +107,6 @@
                                <FormItem label="发货方式:" style="width:30%;">
                 <Input type="text" :value="getName(this.sendtype,this.sellinfo.SEND_TYPE)"  style="min-width: 100%;" :readonly="true"> </Input>
                 </FormItem>
-                                </FormItem>
                                <FormItem label="服务顾问:" style="width:30%;">
                 <Input type="text" v-model="sellinfo.FOLLOW_PERSON"  style="min-width: 100%;" :readonly="true"> </Input>
                 </FormItem>
@@ -125,7 +129,6 @@
                                <FormItem label="采购类型:" style="width:30%;">
                 <Input type="text" :value="getName(this.shoptype,this.shopinfo.PURCHASE_TYPE)"  style="min-width: 100%;" :readonly="true"> </Input>
                 </FormItem>
-                                </FormItem>
                                <FormItem label="备注:" style="width:30%;">
                 <Input type="text" v-model="shopinfo.REMARK"  style="min-width: 100%;" :readonly="true"> </Input>
                 </FormItem>
@@ -148,7 +151,6 @@
                                <FormItem label="原始销售单:" style="width:30%;">
                 <Input type="text" :value="returninfo.SALES_NO"  style="min-width: 100%;" :readonly="true"> </Input>
                 </FormItem>
-                                </FormItem>
                                <FormItem label="退货仓库:" style="width:30%;">
                 <Input type="text" :value="getstore(returninfo.STORE_ID)"  style="min-width: 100%;" :readonly="true"> </Input>
                 </FormItem>
@@ -302,8 +304,9 @@
   </div>
   <!-- 购货付款信息结束 -->
     <div class="r-list-money" v-if="tem == 1">
-      <p>
-        维修项目费用：
+      <p style="text-align: left">
+        <span class="bold">合计应收金额：<span>{{base.SUM_MONEY}}元</span> = </span>
+        维修项目费用:
         <span>{{base.REPAIR_ITEM_MONEY}}元</span>
          + 维修配件费用：
          <span>{{base.REPAIR_PART_MONEY}}元</span>
@@ -311,12 +314,12 @@
           <span>{{base.REPAIR_ITEM_DERATE_MONEY}}</span>
            - 配件优惠金额：
           <span>{{base.REPAIR_PART_DERATE_MONEY}}</span>
-   = 合计应收金额：
-          <span class="r-list-money-reset">{{base.SUM_MONEY}}元</span>
+   <!--= 合计应收金额：-->
+          <!--<span class="r-list-money-reset">{{base.SUM_MONEY}}元</span>-->
       </p>
     </div>
         <div class="r-list-money" v-if="tem == 1 && (accountType.PAYMENT2 ? accountType.PAYMENT2 : '') != ''">
-      <p>
+      <p style="text-align: left">
         结算单号：
         <span>{{accountType.COLLECT_NO}}</span>
          结算方式一:
@@ -328,20 +331,32 @@
       </p>
     </div>
             <div class="r-list-money" v-if="tem == 3">
-      <p>
+      <p style="text-align: left">
+        <span class="bold">合计应收金额：<span>{{infos.SUM_MONEY-infos.LESS_MONEY}}</span> = </span>
         合计金额：
         <span>{{infos.SUM_MONEY}}</span>
          -优惠金额:
          <span>{{infos.LESS_MONEY}}</span>
-           =
-          应收金额:
-          <span class="r-list-money-reset">{{infos.SUM_MONEY-infos.LESS_MONEY}}</span>
+           <!--=-->
+          <!--应收金额:-->
+          <!--<span class="r-list-money-reset">{{infos.SUM_MONEY-infos.LESS_MONEY}}</span>-->
       </p>
     </div>
+      <div class="r-list-money" v-if="tem == 2">
+        <p style="float:left;"><span class="bold">合计金额：<span>{{retire.RETURN_MONEY}}</span></span></p>
+      </div>
+      <div class="r-list-money" v-if="tem == 4">
+        <p style="float:left;"><span class="bold">合计金额：<span>{{shopinfo.SUM_MONEY}}</span></span></p>
+      </div>
+      <div class="r-list-money" v-if="tem == 5">
+        <p style="float:left;"><span class="bold">合计金额：<span>{{returninfo.RETURN_MONEY}}</span>  </span></p>
+      </div>
+    <div style="height:60px;"></div>
+    </div>
     <div slot="footer" style="text-align: center; font-size: 18px;">
-    <div v-if="tem == 2" style="float:left;">合计金额:<span style="color:red;"><b>{{retire.RETURN_MONEY}}</b></span></div>
-    <div v-if="tem == 4" style="float:left;">合计金额:<span style="color:red;"><b>{{shopinfo.SUM_MONEY}}</b></span></div>
-    <div v-if="tem == 5" style="float:left;">合计金额:<span style="color:red;"><b>{{returninfo.RETURN_MONEY}}</b></span></div>
+    <!--<div v-if="tem == 2" style="float:left;">合计金额:<span style="color:red;"><b>{{retire.RETURN_MONEY}}</b></span></div>-->
+    <!--<div v-if="tem == 4" style="float:left;">合计金额:<span style="color:red;"><b>{{shopinfo.SUM_MONEY}}</b></span></div>-->
+    <!--<div v-if="tem == 5" style="float:left;">合计金额:<span style="color:red;"><b>{{returninfo.RETURN_MONEY}}</b></span></div>-->
     <Button type="primary" @click="showModal = false">返回</Button>
     </div>
     <combo-detail :tshow="tcshow" :tid="tcid"></combo-detail>
@@ -580,6 +595,7 @@
       }
       },
       getInfo(){
+      this.title = getName(this.$store.state.app.dict,this.detailData.RECORD_TYPE);
         switch(this.detailData.RECORD_TYPE){
           case '10271001':
           this.tem = 1;
@@ -593,11 +609,10 @@
                 }
         }).then(res => {
           if (res.success === true) {
-          this.base = res.data;
+              this.base = res.data;
               this.base.REPAIR_TYPE = getName(this.$store.state.app.dict,this.base.REPAIR_TYPE);
               this.base.VEHICLE_TYPE = getName(this.$store.state.app.dict,this.base.VEHICLE_TYPE);
               this.titleMsg = getName(this.$store.state.app.dict,this.base.STATUS);
-              this.title = getName(this.$store.state.app.dict,this.base.GD_TYPE);
           }
         })
      // 获取详情维修配件
@@ -687,7 +702,7 @@
           if (res.success === true) {
           this.retire = res.data;
           this.titleMsg = getName(this.$store.state.app.dict,this.retire.STATUS);
-          this.title = getName(this.$store.state.app.dict,this.retire.RECORD_TYPE);
+          // this.title = getName(this.$store.state.app.dict,this.retire.RECORD_TYPE);
           }
         })
         //获取退货配件/tenant/part/tt_part_purchase_return/part_info
@@ -732,7 +747,7 @@
           if (res.success === true) {
           this.sellinfo = res.data;
           this.titleMsg = getName(this.$store.state.app.dict,this.sellinfo.STATUS);
-          this.title = getName(this.$store.state.app.dict,this.sellinfo.RECORD_TYPE);
+          // this.title = getName(this.$store.state.app.dict,this.sellinfo.RECORD_TYPE);
           }
         })
         //配件明细/tenant/part/tt_part_sales/part_info
@@ -778,7 +793,7 @@
         }).then(res => {
           if (res.success === true) {
           this.shopinfo = res.data;
-          this.title = getName(this.$store.state.app.dict,this.shopinfo.RECORD_TYPE);
+          // this.title = getName(this.$store.state.app.dict,this.shopinfo.RECORD_TYPE);
           this.titleMsg = getName(this.$store.state.app.dict,this.shopinfo.STATUS);
           }
         })
@@ -838,7 +853,7 @@
           if (res.success === true) {
           this.returninfo = res.data;
           this.titleMsg = getName(this.$store.state.app.dict,this.returninfo.STATUS);
-          this.title = getName(this.$store.state.app.dict,this.returninfo.RECOR_TYPE);
+          // this.title = getName(this.$store.state.app.dict,this.returninfo.RECOR_TYPE);
           }
         })
         //获取仓库信息 /tenant/basedata/ttstorehouse/get_all_list
@@ -908,17 +923,29 @@
     padding: 20px 0;
     text-align: center;
   }
-  .r-list-money{
+  .r-list-money {
+    padding-top: 20px;
     width: 100%;
-    font-size: 18px;
+    font-size: 12px;
     text-align: center;
-
-    span{
-      color:red;
-
+    span {
+      color: red;
     }
-    .r-list-money-reset{
+    .bold{
+      font-size: 14px;
+      font-weight: 600;
+      color: black;
+    }
+    .r-list-money-reset {
       font-size: 22px;
+    }
+  }
+  .r-list-header{
+    h1{
+      font-size: 14px;
+      font-weight: 400;
+      margin-bottom: 5px;
+      padding-top:10px;
     }
   }
   .r-list-chekbox{

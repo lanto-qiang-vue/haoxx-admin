@@ -3,16 +3,17 @@
   <Modal
     v-model="showModal"
     title="维修服务预约"
-    width="90"
+    width="98"
     @on-visible-change="visibleChange"
+    class="table-modal-detail"
     :scrollable="true"
     :transfer= "false"
     :footer-hide="false"
     :mask-closable="false"
     :transition-names="['', '']"
   >
-    <div style="height: 100%;overflow: auto;">
-      <div class="titleMsg">{{titleMsg}}</div>
+    <div style="height: 100%;overflow: auto; padding-bottom: 30px;">
+      <div class="status">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;({{titleMsg}})</div>
       <Collapse v-model="collapse">
         <Panel name="1">基本信息
         <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="120" class="common-form">
@@ -122,8 +123,9 @@
       </div>
 
       <div class="r-list-money">
-        <p>
-          维修项目费用：
+        <p style="float:left;">
+          <span class="bold">合计应收金额：<span>{{listSearch.SUM_MONEY}}元</span></span> =
+          维修项目费用+
           <span>{{listSearch.REPAIR_ITEM_MONEY}}元</span>
           + 维修配件费用：
           <span>{{listSearch.REPAIR_PART_MONEY}}元</span>
@@ -131,8 +133,6 @@
             <span>{{listSearch.REPAIR_ITEM_DERATE_MONEY}}元</span>
             - 配件优惠金额：
             <span>{{listSearch.REPAIR_PART_DERATE_MONEY}}元</span>
-            = 合计应收金额：
-            <span class="r-list-money-reset">{{listSearch.SUM_MONEY}}元</span>
         </p>
       </div>
     </div>
@@ -1392,6 +1392,13 @@
     text-align: right;
     padding-right: 30px;
   }
+  .r-list-header{
+    h1{
+      font-size: 14px;
+      font-weight: 400;
+      margin-bottom: 5px;
+    }
+  }
   .search-block{
     display: inline-block;
     width: 200px;
@@ -1408,17 +1415,20 @@
     padding: 20px 0;
     text-align: center;
   }
-  .r-list-money{
+  .r-list-money {
+    padding-top: 20px;
     width: 100%;
-    font-size: 18px;
+    font-size: 12px;
     text-align: center;
-    margin:20px 0;
-    margin-bottom: 50px;
-    span{
-      color:red;
-
+    span {
+      color: red;
     }
-    .r-list-money-reset{
+    .bold{
+      font-size: 14px;
+      font-weight: 600;
+      color: black;
+    }
+    .r-list-money-reset {
       font-size: 22px;
     }
   }

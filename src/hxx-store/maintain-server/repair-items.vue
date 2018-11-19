@@ -8,17 +8,33 @@
                     @changePageSize="changePageSize" @changePage="changePage" :clearSelect="clearType"
                     @onRowClick="onRowClick">
         <div slot="search">
-          <Input placeholder="项目编号/名称..." v-model="KEYWORD" style="width: 300px"></Input>
-          <label>&nbsp;&nbsp;&nbsp;项目类别:&nbsp;&nbsp;&nbsp;</label>
-          <Input :disabled="true" v-model="TYPE" style="width:250px;"></Input>
-          <ButtonGroup size="small">
-            <Button type="primary" @click="page=1;getList()">
-              <Icon type="ios-search" size="24"/>
-            </Button>
-            <Button type="primary" @click="clear()">
-              <Icon type="ios-undo" size="24"/>
-            </Button>
-          </ButtonGroup>
+          <Form class="common-form">
+            <FormItem>
+              <Input placeholder="项目编号/名称..." v-model="KEYWORD"></Input>
+            </FormItem>
+            <FormItem :label-width="80" label="项目类别:">
+              <Input placeholder="项目编号/名称..." :disabled="true" v-model="TYPE"></Input>
+            </FormItem>
+            <ButtonGroup size="small">
+              <Button type="primary" @click="page=1;getList()">
+                <Icon type="ios-search" size="24"/>
+              </Button>
+              <Button type="primary" @click="clear()">
+                <Icon type="ios-undo" size="24"/>
+              </Button>
+            </ButtonGroup>
+          </Form>
+          <!--<div class="search-block">-->
+          <!--<Input placeholder="项目编号/名称..." v-model="KEYWORD"></Input>-->
+          <!--</div>-->
+          <!--<div class="search-block">-->
+            <!--&lt;!&ndash;<label>&nbsp项目类别:&nbsp;&nbsp;&nbsp;</label>&ndash;&gt;-->
+            <!--<Form>-->
+            <!--<FormItem label="项目类别">-->
+              <!--<Input placeholder="项目编号/名称..." :disabled="true" v-model="TYPE"></Input>-->
+            <!--</FormItem>-->
+            <!--</Form>-->
+          <!--</div>-->
         </div>
         <div slot="operate">
           <Button type="primary" @click="impor()" v-if="accessBtn('export')">导入标准库</Button>

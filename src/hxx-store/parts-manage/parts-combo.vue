@@ -55,12 +55,10 @@
                 </FormItem>
                 </Form>
               </Panel>
-              </Collapse>
-              <Collapse v-model="value2">
               <Panel name="2">
               	套餐内配件信息
               	<div slot="content">
-              	<div>
+              	<div style="padding-bottom: 10px;">
               	<Button type="primary" @click="changeadd()">添加</Button>
               	</div>
                     <Table
@@ -72,8 +70,6 @@
                     border></Table>
                 </div>
               </Panel>
-              </Collapse>
-              <Collapse v-model="value3">
               <Panel name="3">
                 备注描述:
                 <div slot="content">
@@ -120,7 +116,7 @@
           GROUP_NAME:[{required:true,message:'名称必填'}],
           SALES_PRICE:[{required:true}],
         },
-		 		value1:'1',
+		 		value1:[1,2,3],
 		 		value2:'2',
 		 		value3:'3',
         formData:{},
