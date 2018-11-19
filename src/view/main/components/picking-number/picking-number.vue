@@ -60,8 +60,8 @@
 <style scoped lang="less">
 .picking-number{
   display: inline-block;
-  height: 64px;
-  line-height: 64px;
+  height: 50px;
+  line-height: 50x;
   border-left: 1px solid #F0F0F0;
   border-right: 1px solid #F0F0F0;
   font-size: 14px;

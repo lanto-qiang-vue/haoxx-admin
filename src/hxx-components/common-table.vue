@@ -259,9 +259,10 @@
     margin-bottom: 10px;
   }
   .operate{
-    margin-bottom: 10px;
-    padding: 15px 15px 10px 15px;
-    border: 1px solid #dcdee2;
+    margin-bottom: 5px;
+    /*margin-bottom: 10px;*/
+    /*padding: 15px 15px 10px 15px;*/
+    /*border: 1px solid #dcdee2;*/
     border-radius: 3px;
   }
   .operate button{
@@ -281,6 +282,15 @@
 </style>
 <style lang="less">
 .common-table{
+  .table-search{
+    .ivu-collapse-header{
+      height: 36px;
+      line-height: 36px;
+    }
+    .ivu-collapse-content-box{
+      padding-bottom: 0;
+    }
+  }
   .main-table{
     .ivu-table-row{
       cursor: default;
