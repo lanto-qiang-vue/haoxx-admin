@@ -152,7 +152,7 @@
         </div>
       </div>
       <div class="r-list-header">
-        <h1>维修配件</h1>
+        <h1 style="padding-top:20px;">维修配件</h1>
       </div>
       <Table
         class="main-table"
@@ -170,7 +170,7 @@
         </Button>
       </div>
       <div class="r-list-header">
-        <h1>其他费用</h1>
+        <h1 style="padding-top:20px;">其他费用</h1>
       </div>
       <Table
         class="main-table"
@@ -2853,9 +2853,8 @@
 
   .r-list-search {
     width: 100%;
-    padding: 20px 0;
     text-align: center;
-
+    padding-top:20px;
   }
   .r-list-header{
     h1{
@@ -2867,7 +2866,7 @@
 
   .r-list-choose-parts {
     width: 100%;
-    padding: 20px 0;
+    padding-top:20px;
     text-align: center;
   }
 
