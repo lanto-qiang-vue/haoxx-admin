@@ -80,8 +80,8 @@ export default {
   display: inline-block;
   vertical-align: top;
   .ivu-tooltip-rel{
-    height: 64px;
-    line-height: 56px;
+    height: 50px;
+    line-height: 50px;
     vertical-align: top;
     i{
       cursor: pointer;

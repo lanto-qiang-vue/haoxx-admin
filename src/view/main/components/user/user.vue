@@ -246,30 +246,31 @@ export default {
   }
   .login-user{
     display: inline-block;
-    height: 64px;
+    height: 50px;
     text-align: right;
     vertical-align: middle;
     padding-left: 5px;
     padding-right: 5px;
     border-right: 1px solid #F0F0F0;
     p{
-      line-height: 34px;
-      font-size: 16px;
+      line-height: 22px;
+      font-size: 14px;
       vertical-align: top;
+      margin-top: 5px;
     }
     p.on{
-      line-height: 64px;
+      line-height: 50px;
     }
     span{
       vertical-align: top;
-      line-height: 24px;
-      font-size: 13px;
+      line-height: 18px;
+      font-size: 12px;
       color: #2D8cF0;
     }
   }
   .head{
     padding: 0 10px;
-    height: 64px;
+    height: 50px;
     display: inline-block;
     vertical-align: top;
     .avatar{
