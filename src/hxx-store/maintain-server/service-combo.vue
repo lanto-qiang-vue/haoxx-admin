@@ -23,7 +23,7 @@
     v-model="showModal"
     class="table-modal-detail"
     title="维修项目套餐"
-    width="90"
+    width="98"
     :mask-closable="false"
     @on-visible-change="visibleChange"
     :scrollable="true"
@@ -59,12 +59,10 @@
                 </FormItem>
                 </Form>
               </Panel>
-              </Collapse>
-              <Collapse v-model="value2">
               <Panel name="2">
               	套餐内维修项目信息
               	<div slot="content">
-              	<div>
+              	<div style="padding-bottom:10px;">
               	<Button type="primary" @click="changeadd()">添加</Button>
               	</div>
                     <Table
@@ -76,8 +74,6 @@
                     border></Table>
                 </div>
               </Panel>
-              </Collapse>
-              <Collapse v-model="value3">
               <Panel name="3">
                 备注描述:
                 <div slot="content">
@@ -107,9 +103,7 @@
     mixins: [mixin],
 		data(){
 		return{
-		value1:'1',
-		value2:'2',
-    value3:'3',
+		value1:[1,2,3],
     initData:'',
     IS_PREINSTALL:false,
     list:'',

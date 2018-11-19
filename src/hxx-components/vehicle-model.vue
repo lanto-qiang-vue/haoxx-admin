@@ -11,7 +11,7 @@
                     @changePage="changePage" @changePageSize="changePageSize" @onRowClick="onRowClick">
         <div slot="operate">
           <Input v-model="KEYWORD" placeholder="车型名称..." style="width: 300px"></Input>
-          <Button type="primary" @click="page=1;getList()"><Icon type="ios-search" size="24"/></Button>
+          <Button type="primary" size="small" style="margin-left:10px;margin-top:2px;" @click="page=1;getList()"><Icon type="ios-search" size="24"/></Button>
         </div>
       </common-table>
     </div>

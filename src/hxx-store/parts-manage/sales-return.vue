@@ -664,9 +664,54 @@
                 id: this.list.RETURN_ID,
               }
             }).then(res => {
-              if (res.success === true) {
+              if (res.success === true && res.data == true) {
                 this.$Message.success("反审核成功");
                 this.getList();
+              } else {
+                let self = this;
+                let value;
+                let data = this.$store.state.user.userInfo.params;
+                for (let i in data) {
+                  if (data[i].PARAM_ID == 'P2001') {
+                    value = parseInt(data[i].PARAM_VALUE);
+                    break;
+                  }
+                }
+                switch (value) {
+                  case 1:
+                    break;
+                  case 2:
+                    setTimeout(() => {
+                      this.$Modal.confirm({
+                        title: '系统提示',
+                        content: res.data,
+                        onOk: () => {
+                          this.axios.request({
+                            url: '/tenant/part/tt_part_sales_return/recheck',
+                            method: 'post',
+                            data: {
+                              access_token: this.$store.state.user.token,
+                              id: this.list.RETURN_ID,
+                              yes_out:1,
+                            }
+                          }).then(res => {
+                            if (res.success === true && res.data == true) {
+                              this.$Message.success("反审核成功");
+                              this.getList();
+                            } else {
+
+                            }
+                          })
+                        }
+                      });
+                    }, 300);
+                    break;
+                  case 3:
+                    setTimeout(() => {
+                      this.$Modal.error({title: '系统提示', content: res.data});
+                    }, 300);
+                    break;
+                }
               }
             })
           }

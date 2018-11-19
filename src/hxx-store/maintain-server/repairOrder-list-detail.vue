@@ -3,7 +3,7 @@
   <Modal
     v-model="showModal"
     title="维修开单"
-    width="90"
+    width="98"
     @on-visible-change="visibleChange"
     :scrollable="true"
     :transfer="false"
@@ -13,10 +13,10 @@
     :transition-names="['', '']"
   >
     <div style="height: 100%;overflow: auto; padding-bottom: 30px;">
-      <div style="font-size: 18px;text-align: right;color: red;padding-right: 30px;">{{titleMsg}}</div>
+      <div class="status">({{titleMsg}})</div>
       <Collapse v-model="collapse">
         <Panel name="1">查询
-          <Form ref="listSearch" :rules="ruleValidate" :model="listSearch" slot="content" :label-width="110"
+          <Form ref="listSearch" :rules="ruleValidate" :model="listSearch" slot="content" :label-width="100"
                 class="common-form">
             <FormItem label="车牌号码:" prop="PLATE_NUM">
               <Input @on-focus="showoff=Math.random();" type="text" v-model="listSearch.PLATE_NUM" placeholder="请输入车牌号"
@@ -152,7 +152,7 @@
         </div>
       </div>
       <div class="r-list-header">
-        <h1>维修配件</h1>
+        <h1 style="padding-top:20px;">维修配件</h1>
       </div>
       <Table
         class="main-table"
@@ -170,7 +170,7 @@
         </Button>
       </div>
       <div class="r-list-header">
-        <h1>其他费用</h1>
+        <h1 style="padding-top:20px;">其他费用</h1>
       </div>
       <Table
         class="main-table"
@@ -183,14 +183,13 @@
       ></Table>
 
       <div class="r-list-money" v-if="isAccountFlag">
-        <p>
-          维修项目费用：
-          <span>{{listSearch.REPAIR_ITEM_MONEY}}元</span> + 维修配件费用:
-          <span>{{listSearch.REPAIR_PART_MONEY}}元</span> + 其他费用:
-          <span>{{listSearch.OTHER_MONEY}}元</span> - 维修项目优惠金额:
-          <span>{{listSearch.REPAIR_ITEM_DERATE_MONEY}}元</span> - 配件优惠金额:
-          <span>{{listSearch.REPAIR_PART_DERATE_MONEY}}元</span>= 合计应收金额:
-          <span>{{listSearch.SUM_MONEY}}元</span>
+        <p style="text-align: left">
+          <span class="bold">合计应收金额：<span>{{listSearch.SUM_MONEY}}元</span> = </span>
+          维修项目费用：<span>{{listSearch.REPAIR_ITEM_MONEY}}元</span> +
+          维修配件费用：<span>{{listSearch.REPAIR_PART_MONEY}}元</span> +
+          其他费用：<span>{{listSearch.OTHER_MONEY}}元</span> -
+          维修项目优惠金额：<span>{{listSearch.REPAIR_ITEM_DERATE_MONEY}}元</span> -
+          配件优惠金额：<span>{{listSearch.REPAIR_PART_DERATE_MONEY}}元</span>
         </p>
       </div>
       <!--//结算信息-->
@@ -244,7 +243,7 @@
 
     <!--底部按钮组-->
     <div slot="footer">
-      <Button v-if="accessBtn('save')" :disabled="buttonStateArr.save" @click="handleSubmit('listSearch')" size="large"
+      <Button v-if="accessBtn('save')" :disabled="buttonStateArr.save" @click="handleSubmit('listSearch')"
               type="primary">保存
       </Button>
       <Button v-if="accessBtn('submit')" :disabled="buttonStateArr.dopay" @click="handleCommit('listSearch')"
@@ -2880,26 +2879,35 @@
 
   .r-list-search {
     width: 100%;
-    padding: 20px 0;
     text-align: center;
-
+    padding-top:20px;
+  }
+  .r-list-header{
+    h1{
+      font-size: 14px;
+      font-weight: 400;
+      margin-bottom: 5px;
+    }
   }
 
   .r-list-choose-parts {
     width: 100%;
-    padding: 20px 0;
+    padding-top:20px;
     text-align: center;
   }
 
   .r-list-money {
     padding-top: 20px;
     width: 100%;
-    font-size: 16px;
+    font-size: 12px;
     text-align: center;
-
     span {
       color: red;
-
+    }
+    .bold{
+      font-size: 14px;
+      font-weight: 600;
+      color: black;
     }
     .r-list-money-reset {
       font-size: 22px;
