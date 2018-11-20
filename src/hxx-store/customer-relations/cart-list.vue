@@ -20,7 +20,7 @@
       <Button type="info" :disabled="cando" @click="edit()" v-if="accessBtn('edit')">编辑/查看</Button>
       <!--<Button type="error" :disabled="cando" @click="remove()">作废</Button>-->
     </div>
-  <cart-modal class="table-modal-detail" @clearsection="clearsection" :info="info" :hidetype="hidetype" @refresh="refresh" :show="show"></cart-modal>
+  <cart-modal @clearsection="clearsection" :info="info" :hidetype="hidetype" @refresh="refresh" :show="show"></cart-modal>
   </common-table>
 </template>
 <script>
@@ -82,6 +82,7 @@
       this.obj = row;
       },
       add(){
+        alert(1);
         this.show = Math.random();
         var data = {
         MUST_SAFE_CORP:0,
