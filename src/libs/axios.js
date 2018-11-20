@@ -54,13 +54,13 @@ class httpRequest {
         // return false
         if(data.hasOwnProperty("Exception")){
           if(data["Exception"].hasOwnProperty("message")){
-            Message.error(data.Exception.message || '服务内部错误2')
+            Message.error(data.Exception.message || '服务内部错误3')
           }else{
             Message.error(data.title || '服务内部错误2')
           }
           
         }else{
-          Message.error(data.title || '服务内部错误2')
+          Message.error(data.title || '服务内部错误1')
         }
         
       }

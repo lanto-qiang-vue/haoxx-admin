@@ -461,7 +461,7 @@ export const printAccountFun=function(wtdData,listSearch,commitItem,commitItemGr
       itemString+='<tr class="text-center">';
       itemString+='<td>'+(parseInt(i)+1)+'</td>';
       itemString+='<td colspan="2">'+commitItem[i].NAME+'</td>';
-      itemString+='<td colspan="2" tclass="a">'+commitItem[i].REPAIR_TIME+'</td>';
+      itemString+='<td colspan="2" tclass="a">'+filterFun(commitItem[i].REPAIR_TIME)+'</td>';
       itemString+='<td colspan="2" tclass="a">'+store.state.user.userInfo.params[0].PARAM_VALUE+'</td>';
       itemString+='<td colspan="2" tclass="a">'+commitItem[i].ITEM_MONEY+'</td>';
       itemString+='</tr>';
@@ -501,17 +501,20 @@ export const printAccountFun=function(wtdData,listSearch,commitItem,commitItemGr
 
   }
 
-  for(let i=0;i<4;i++){
-    otherString+='<tr class="text-center">';
-    otherString+='<td>'+(parseInt(i)+1)+'</td>';
+  if(commitOtherItem.length>0){
+    for(let i=0;i<4;i++){
+      otherString+='<tr class="text-center">';
+      otherString+='<td>'+(parseInt(i)+1)+'</td>';
 
-    otherString+='<td colspan="6">'+commitOtherItem[0]['REPAIR_ITEM'+(parseInt(i)+1)]+'</td>';
-    otherString+='<td colspan="2" tclass="c">'+commitOtherItem[0]['REPAIR_MONEY'+(parseInt(i)+1)]+'</td>';
-    otherString+='</tr>';
+      otherString+='<td colspan="6">'+commitOtherItem[0]['REPAIR_ITEM'+(parseInt(i)+1)]+'</td>';
+      otherString+='<td colspan="2" tclass="c">'+commitOtherItem[0]['REPAIR_MONEY'+(parseInt(i)+1)]+'</td>';
+      otherString+='</tr>';
 
-    otherMoney+=parseFloat(commitOtherItem[0]['REPAIR_MONEY'+(parseInt(i)+1)]);
+      otherMoney+=parseFloat(commitOtherItem[0]['REPAIR_MONEY'+(parseInt(i)+1)]);
 
+    }
   }
+  
   var style3='';
   if(styleFlag){
       style3='<meta http-equiv="X-UA-Compatible" content="IE=Edge"><style>table{border:2px #000 solid;border-collapse: collapse;} th,td{border: 1px solid #000;} .noBorder th,.noBorder td{border:none;} .noRTLBorder th,.noRTLBorder td{border-right:none;border-top:none;border-left:none;} .noRLBorder th,.noRLBorder td{border-right:none;border-left:none;}' +
@@ -522,11 +525,11 @@ export const printAccountFun=function(wtdData,listSearch,commitItem,commitItemGr
 
   
 
-  var temp='<div style="padding:0 30px;" id="print_style">'+style3+
+  var temp='<div style="padding:0 20px;" id="print_style">'+style3+
             '<table border=0 width="100%" cellspacing="0" cellpadding="0" bordercolor="#000000">'+
             '<tdead>'+
             '<tr class="noBorder">'+
-            '<td colspan="10" style="text-align:center;"><b style="line-height:30px;font-size:18px;">机动车维修费用结算清单</b></td>'+
+            '<td colspan="10" style="text-align:center;"><b style="line-height:30px;font-size:16px;">机动车维修费用结算清单</b></td>'+
             '</tr>'+
             '<tr class="noBorder">'+
             
