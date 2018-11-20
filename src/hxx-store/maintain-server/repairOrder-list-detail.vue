@@ -82,12 +82,12 @@
             <FormItem label="进厂日期:">
               <DatePicker v-model="listSearch.COME_DATE" type="datetime" format="yyyy-MM-dd HH:mm"
                           :time-picker-options="{steps: [1, 30, 30]}" placeholder="" :options="startTimeOptions"
-                          @on-change="startTimeChange"></DatePicker>
+                         @on-open-change="openStartTime"></DatePicker>
             </FormItem>
             <FormItem label="计划完工日期:">
               <DatePicker v-model="listSearch.PLAN_END_DATE" type="datetime" format="yyyy-MM-dd HH:mm"
                           :time-picker-options="{steps: [1, 30, 30]}" placeholder="" :options="endTimeOptions"
-                          @on-change="endTimeChange"></DatePicker>
+                           @on-open-change="openEndTime"></DatePicker>
             </FormItem>
 
           </Form>
@@ -2627,24 +2627,50 @@
         this.$emit('closeGetList');//重新请求数据
         this.titleMsg = "已结清";
       },
-      //选择时间判断是否大于出厂时间
-      startTimeChange(e) { //设置开始时间
-        if (new Date(e).getTime() >= new Date(this.listSearch.PLAN_END_DATE).getTime()) {
-          this.$Modal.confirm({
-            title: "系统提示!",
-            content: "进厂日期不可大于计划完工日期",
-          })
+      // //选择时间判断是否大于出厂时间
+      // startTimeChange(e) { //设置开始时间
 
-          this.listSearch.COME_DATE = new Date();
+      //   if (new Date(e).getTime() >= new Date(this.listSearch.PLAN_END_DATE).getTime()) {
+      //     this.$Modal.confirm({
+      //       title: "系统提示!",
+      //       content: "进厂日期不可大于计划完工日期",
+      //     })
+
+      //     this.listSearch.COME_DATE = new Date();
+      //   }
+      // },
+      // endTimeChange(e) { //设置结束时间
+      // console.log(e);
+      //   if (new Date(e).getTime() <= new Date(this.listSearch.COME_DATE).getTime()) {
+      //     this.$Modal.confirm({
+      //       title: "系统提示!",
+      //       content: "计划完工日期不可小于进厂日期",
+      //     })
+      //     this.listSearch.PLAN_END_DATE = new Date();
+      //   }
+      // },
+      openStartTime(val){
+        if(!val){
+          if (new Date(this.listSearch.COME_DATE).getTime() >= new Date(this.listSearch.PLAN_END_DATE).getTime()) {
+            this.$Modal.confirm({
+              title: "系统提示!",
+              content: "进厂日期不可大于计划完工日期",
+            })
+
+            this.listSearch.COME_DATE = new Date();
+          }
         }
       },
-      endTimeChange(e) { //设置结束时间
-        if (new Date(e).getTime() <= new Date(this.listSearch.COME_DATE).getTime()) {
-          this.$Modal.confirm({
-            title: "系统提示!",
-            content: "计划完工日期不可小于进厂日期",
-          })
-          this.listSearch.PLAN_END_DATE = new Date();
+      openEndTime(val){
+        console.log(val);
+        if(!val){
+            if (new Date(this.listSearch.PLAN_END_DATE).getTime() <= new Date(this.listSearch.COME_DATE).getTime()) {
+              this.$Modal.confirm({
+                title: "系统提示!",
+                content: "计划完工日期不可小于进厂日期",
+              })
+              this.listSearch.PLAN_END_DATE = new Date();
+            }
         }
       },
       //打印测试部分-----------
