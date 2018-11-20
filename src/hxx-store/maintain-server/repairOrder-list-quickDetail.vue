@@ -128,7 +128,7 @@
         项目合计费用：
         <span>{{listSearch.REPAIR_ITEM_MONEY}}元</span>
           - 优惠金额：
-          <InputNumber  :disabled="!isOrderSuccess" v-model="listSearch.REPAIR_ITEM_DERATE_MONEY" @on-change="computItemMoney" :min="0">
+          <InputNumber  :disabled="!isOrderSuccess" v-model="listSearch.REPAIR_ITEM_DERATE_MONEY" @on-change="accountChange" @on-blur="accountBlur" :min="0">
           </InputNumber> = 合计应收金额：
           <span class="r-list-money-reset">{{listSearch.SUM_MONEY}}元</span>
       </p>
@@ -159,7 +159,7 @@
                         <span>{{listSearch.REPAIR_ITEM_MONEY}}元</span>
                     </FormItem>
                     <FormItem label="项目优惠金额:" style="width: 100%;">
-                        <InputNumber :min="0" v-model="listSearch.REPAIR_ITEM_DERATE_MONEY" @on-change="accountChange" style="width: 100px;"></InputNumber>
+                        <InputNumber :min="0" v-model="listSearch.REPAIR_ITEM_DERATE_MONEY" @on-change="accountChange" @on-blur="accountBlur" style="width: 100px;"></InputNumber>
                     </FormItem>
                     <FormItem label="合计应收金额:" style="width: 100%;">
                         <span>{{listSearch.SUM_MONEY}}元</span>
@@ -177,10 +177,10 @@
 
     <!--底部按钮组-->
       <div slot="footer">
-          <Button :disabled="buttonStateArr.save" @click="handleSubmit('listSearch')" size="large" type="primary">保存</Button>
-          <Button :disabled="buttonStateArr.doaccount" @click="handleCommit" type="primary">结算</Button>
-          <Button :disabled="buttonStateArr.printAccount" type="primary" @click="printAccountButton">打印结算单</Button>
-          <Button :disabled="buttonStateArr.shoukuan" @click="shoukuanFun" type="primary">收款</Button>
+          <Button v-if="" :disabled="buttonStateArr.save" @click="handleSubmit('listSearch')" size="large" type="primary">保存</Button>
+          <Button v-if="" :disabled="buttonStateArr.doaccount" @click="handleCommit" type="primary">结算</Button>
+          <Button v-if="" :disabled="buttonStateArr.printAccount" type="primary" @click="printAccountButton">打印结算单</Button>
+          <Button v-if="" :disabled="buttonStateArr.shoukuan" @click="shoukuanFun" type="primary">收款</Button>
           <Button  @click="showModal=false;">返回</Button>
       </div>
   </Modal>
@@ -191,7 +191,7 @@
   import { getName, getDictGroup ,getUserInfo} from '@/libs/util.js'
   import { formatDate } from '@/libs/tools.js'
   import selectVehicle from '@/hxx-components/select-vehicle.vue'
-
+  import mixin from '@/hxx-components/mixin'
   import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
   import {printAccountFun} from '@/hxx-components/repairPrintUtil.js'
   import {getLodop} from '@/hxx-components/LodopFuncs.js'
@@ -640,31 +640,17 @@ export default {
                     if(this.selectData.length>0){
                         
 
-                                    if (this.listSearch.VEHICLE_MODEL&&this.listSearch.VIN_NO) {
-              if(this.listSearch.CUSTOMER_NAME){
+                                    
+              
                   this.$Modal.confirm({
                             title:"系统提示!",
                             content:"确定要保存吗？",
                             onOk:this.saveData,
                             
                         })
-              }else{
-                  this.$Modal.confirm({
-                    title: "系统提示!",
-                    content:"车主名称缺失，请先完善客户信息",
-                    onOk:this.perfectCustomerData,
 
-                  })
-              }
               
-            } else {
-              this.$Modal.confirm({
-                title: "系统提示!",
-                content: "请先完善车辆信息",
-                onOk: this.perfectCarData,
 
-              })
-            }
                     }else{
                         this.$Message.info('至少选择一个服务项目')
                     }
@@ -685,7 +671,7 @@ export default {
                 }
             }).then(res => {
                 if (res.success === true) {
-                    this.$Message.info('successful')
+                    this.$Message.info('保存成功')
                     for(let i in this.buttonStateArr){
                         switch(i){
                         case 'save':
@@ -725,7 +711,7 @@ export default {
                 }
             }).then(res => {
                 if (res.success === true) {
-                    this.$Message.info('successful');
+                    // this.$Message.info('successful');
                     this.titleMsg="已结算待收款";
                     this.isOrderSuccess=false;
 
@@ -754,7 +740,7 @@ export default {
                 }
             }).then(res => {
                 if (res.success === true) {
-                    this.$Message.info('successful');
+                    // this.$Message.info('successful');
                     for(let i in res.data[0]){
                         this.listSearch[i]=res.data[0][i];
                     }
@@ -832,6 +818,17 @@ export default {
         //结算金额改变
         accountChange(val){
             this.listSearch.SUM_MONEY=this.listSearch.REPAIR_ITEM_MONEY-val;
+        },
+        accountBlur(){
+            if(this.listSearch.REPAIR_ITEM_DERATE_MONEY>this.listSearch.REPAIR_ITEM_MONEY){
+                this.listSearch.REPAIR_ITEM_DERATE_MONEY=0;
+                this.listSearch.SUM_MONEY=this.listSearch.REPAIR_ITEM_MONEY-this.listSearch.REPAIR_ITEM_DERATE_MONEY;
+                this.$Modal.confirm({
+                    title: "系统提示!",
+                    content:"优惠金额过大",
+
+                  })
+            }
         },
         closeGetList(){
             for(let i in this.buttonStateArr){
@@ -926,6 +923,7 @@ export default {
             }
         }
       },
+      
     }
 	}
 </script>
