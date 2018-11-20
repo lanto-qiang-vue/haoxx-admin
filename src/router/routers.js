@@ -913,6 +913,17 @@ export default [
           access: '100104',
         },
         component: () => import('@/hxx-admin/store-manager/sms-inform.vue')
+      },
+      {
+        path: '/upload-error',
+        name: 'upload-error',
+        meta: {
+          icon: 'md-funnel',
+          title: '未上传档案',
+          lgType: "1001",
+          access: '100105',
+        },
+        component: () => import('@/hxx-admin/store-manager/upload-error.vue')
       }
     ]
   },
@@ -1026,6 +1037,17 @@ export default [
           access: '100201',
         },
         component: () => import('@/hxx-admin/basic-data/source-manage.vue')
+      },
+      {
+        path: '/batch-import',
+        name: 'batch-import',
+        meta: {
+          icon: 'md-funnel',
+          title: '配件批量导入',
+          lgType: "1001",
+          access: '100201',
+        },
+        component: () => import('@/hxx-admin/basic-data/batch-import.vue')
       }
     ]
   },

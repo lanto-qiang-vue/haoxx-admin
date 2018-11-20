@@ -49,8 +49,6 @@
             </FormItem>
           </Form>
         </Panel>
-      </Collapse>
-      <Collapse v-model="value3">
         <Panel name="3">
           其他状况描述:
           <div slot="content">
@@ -79,8 +77,7 @@
     mixins: [mixin],
     data() {
       return {
-        value1: '1',
-        value3: '3',
+        value1: [1,3],
         page: 1,
         limit: 25,
         showModal: false,
