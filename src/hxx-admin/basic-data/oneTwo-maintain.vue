@@ -78,7 +78,8 @@
                 <span slot="close">Off</span>
               </i-switch>
             </FormItem>
-            <FormItem label="门店是否能修改名称" style="width:20%;">
+            <div style="clear:both;"></div>
+            <FormItem label="门店是否能修改名称" v-show="false" style="width:20%;">
               <i-switch v-model="formData.IS_PREINSTALL" size="large">
                 <span slot="open">是</span>
                 <span slot="close">否</span>

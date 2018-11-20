@@ -53,9 +53,15 @@
           {title: '门店地址', key: 'TENANT_ADD', sortable: true, minWidth: 120},
           {title: '联系人姓名', key: 'LINK_MAN', sortable: true, minWidth: 140},
           {title: '联系方式', key: 'LINK_TEL', sortable: true, minWidth: 120},
-          {title: '营业状态', key: 'CREATE_DATE', sortable: true, minWidth: 120},
-          {title: '注册时间', key: 'CREATE_TIME', sortable: true, minWidth: 120},
-          {title: '审核时间', key: 'AUDIT_TIME', sortable: true, minWidth: 120},
+          {title: '营业状态', key: 'STATUS', sortable: true, minWidth: 120,
+            render: (h, params) => h('span',getName(this.list1034,params.row.STATUS))
+          },
+          {title: '注册时间', key: 'CREATE_TIME', sortable: true, minWidth: 120,
+           render:(h,params)=>h('span',params.row.CREATE_TIME.substr(0,10))
+          },
+          {title: '审核时间', key: 'AUDIT_TIME', sortable: true, minWidth: 120,
+            render:(h,params)=>h('span',params.row.AUDIT_TIME.substr(0,10))
+          },
         ],
         search: {
           keyword: '',
@@ -136,6 +142,9 @@
     computed: {
       canDo(){
         return this.list == "";
+      },
+      list1034(){
+        return getDictGroup(this.$store.state.app.dict,'1034');
       }
     }
 
