@@ -46,7 +46,7 @@
     },
     mounted() {
       this.token.access_token = this.$store.state.user.token
-      this.baseUrl = env
+      this.baseUrl = env;
     },
     props: {
       type: {},//默认隐藏
@@ -70,6 +70,11 @@
           return "/resources/excel/customer.xls"
         }
       },
+      TENANT_ID:{
+        default(){
+          return '';
+        }
+      },
       title: {
         type: String, default() {
           return '客户档案导入'
@@ -86,7 +91,8 @@
       type() {
         if(this.type != false) {
           this.filename = "请选择文件";
-          this.show = true
+          this.show = true;
+          if(this.TENANT_ID) this.token['TENANT_ID'] = this.TENANT_ID;
         }else{
           this.show = false;
         }

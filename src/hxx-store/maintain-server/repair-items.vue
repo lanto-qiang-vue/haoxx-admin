@@ -40,6 +40,7 @@
           <Button type="primary" @click="impor()" v-if="accessBtn('export')">导入标准库</Button>
           <Button type="primary" :disabled="isdisabled" @click="add()">新增</Button>
           <Button type="info" :disabled="cando" @click="edit()" v-if="accessBtn('edit')">修改</Button>
+          <Button type="error" :disabled="cando" @click="del()">删除</Button>
         </div>
       </common-table>
       <!-- 导入标准库使用 -->
@@ -324,6 +325,28 @@
       }
     },
     methods: {
+      //删除
+      del(){
+        this.$Modal.confirm({
+          title:'系统提示',
+          content:'确认要删除吗？',
+          onOk:()=>{
+            this.axios.request({
+              url: '/tenant/basedata/repairproject/deleteItem',
+              method: 'post',
+              data: {
+                access_token: this.$store.state.user.token,
+                ids: this.list.ITEM_ID,
+              },
+            }).then(res => {
+              if (res.success === true) {
+                this.$Message.success('删除成功');
+                this.getList();
+              }
+            })
+          }
+        })
+      },
       changeSelect(row) {
         this.importData = row;
       },
@@ -475,7 +498,6 @@
           obj.CLASS_TYPE = this.formData.CLASS_TYPE;
           url = "/tenant/basedata/repairiteminfo/saveitem";
         }
-        alert(this.formData.TYPE_ID);
         obj.TYPE_ID = this.formData.TYPE_ID;
         obj['typeIdHidden-inputEl'] = this.formData.TYPE_ID;
         obj['carTypeRef'] = this.carType;
@@ -488,6 +510,9 @@
         obj.ALIAS4 = this.formData.ALIAS4;
         obj.ALIAS5 = this.formData.ALIAS5;
         obj.REMARK = this.formData.REMARK;
+        if(this.formData.ITEM_ID > 0){
+          obj.STATUS = this.STATUS || "";
+        }
         switch (this.formData.CHARGE_TYPE) {
           case '10141001':
             obj.REPAIR_MONEY = this.number;
