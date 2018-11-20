@@ -82,7 +82,6 @@
       this.obj = row;
       },
       add(){
-        alert(1);
         this.show = Math.random();
         var data = {
         MUST_SAFE_CORP:0,
