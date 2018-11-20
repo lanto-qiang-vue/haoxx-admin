@@ -502,6 +502,12 @@ export const printAccountFun=function(wtdData,listSearch,commitItem,commitItemGr
   }
 
   if(commitOtherItem.length>0){
+    otherString+='<tr class="text-center">'+
+            '<td rowspan="' + '5' + '">其它<br/>费用</td>'+
+            '<td class="w30">序号</td>'+
+            '<td colspan="6">项目</td>'+
+            '<td colspan="2">金额(元)</td>'+
+            '</tr>';
     for(let i=0;i<4;i++){
       otherString+='<tr class="text-center">';
       otherString+='<td>'+(parseInt(i)+1)+'</td>';
@@ -657,14 +663,7 @@ export const printAccountFun=function(wtdData,listSearch,commitItem,commitItemGr
             '<td tdata="Sum" tindex="8" tclass="b" format="0.00" style="border-bottom:2px #000 solid;">'+partsMoney.toFixed(2)+'</td>'+
             '<td colspan="2" style="border-bottom:2px #000 solid;"></td>'+
             '</tr>'+
-            '<tr class="text-center">'+
-            '<td rowspan="' + '5' + '">其它<br/>费用</td>'+
             
-
-            '<td class="w30">序号</td>'+
-            '<td colspan="6">项目</td>'+
-            '<td colspan="2">金额(元)</td>'+
-            '</tr>'+
             otherString+
             // '<tpl for="others">'+
             // '<tr class="text-center">'+
