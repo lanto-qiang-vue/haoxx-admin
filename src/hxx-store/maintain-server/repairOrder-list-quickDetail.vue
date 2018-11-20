@@ -12,7 +12,7 @@
     :transition-names="['', '']"
   >
     <div style="height: 100%;overflow: auto; padding-bottom: 30px;">
-        <div style="font-size: 18px;text-align: right;color: red;padding-right: 30px;">{{titleMsg}}</div>
+    <div class="status">({{titleMsg}})</div>
     <Collapse v-model="collapse">
       <Panel name="1">查询
        <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="110" class="common-form">
@@ -33,7 +33,7 @@
           <FormItem label="送修人:">
               <Input type="text" v-model="listSearch.GIVE_REPAIR_PERSON" placeholder="" > </Input>
           </FormItem>
-          <FormItem label="联系电话:">
+          <FormItem label="联系电话:" prop="TELPHONE">
               <Input type="text" v-model="listSearch.TELPHONE" placeholder="" > </Input>
           </FormItem>
           <FormItem label="维修类型:" >
@@ -43,7 +43,9 @@
               </Select>
           </FormItem>
           <FormItem label="送修里程:" prop="MILEAGE">
-              <InputNumber :min="1" v-model="listSearch.MILEAGE"  placeholder="最大不超过八位数"></InputNumber>
+              <InputNumber :min="0" v-model="listSearch.MILEAGE"  placeholder="最大不超过八位数"
+                    :formatter="value => `${value}公里`" :parser="value => value.replace('公里', '')"
+              ></InputNumber>
           </FormItem>
           <FormItem label="主修人:" >
               <Select v-model="listSearch.REPAIR_PERSON" placeholder="" >
@@ -70,10 +72,14 @@
               </Select>
           </FormItem>
           <FormItem label="进厂日期:">
-              <DatePicker v-model="listSearch.COME_DATE" type="datetime" placeholder="" ></DatePicker>
+              <DatePicker v-model="listSearch.COME_DATE" type="datetime" placeholder="" format="yyyy-MM-dd HH:mm" :options="startTimeOptions"
+                @on-open-change="openStartTime"
+              ></DatePicker>
           </FormItem>
           <FormItem label="计划完工日期:">
-              <DatePicker v-model="listSearch.PLAN_END_DATE" type="datetime" placeholder="" ></DatePicker>
+              <DatePicker v-model="listSearch.PLAN_END_DATE" type="datetime" format="yyyy-MM-dd HH:mm"
+                           placeholder="" :options="endTimeOptions"
+                           @on-open-change="openEndTime"></DatePicker>
           </FormItem>
           
        </Form>
@@ -93,13 +99,15 @@
     <!--//维修项目-->
     <div>
         <h2 style="border-bottom: 1px solid #ccc; margin: 10px 0;padding: 5px 0;">服务项目</h2>
-        <div class="itemBox">
-            <div class="item" v-for="site in getItem" v-bind:class="{ itemClass: singleItem }">
-                <Checkbox v-model="singleItem" @on-change="sTenanceItem" :disabled="!isOrderSuccess">
-                    <span>{{site.NAME}}</span>
-                </Checkbox>
-            </div>
-        </div>
+        <Table
+            class="main-table"
+            ref="tablesMain"
+            :columns="columns"
+            :data="commitItem"
+            :disabled-hover="true"
+            stripe
+            border
+        ></Table>
     </div>
 
     <!--//结算信息-->
@@ -120,18 +128,17 @@
         项目合计费用：
         <span>{{listSearch.REPAIR_ITEM_MONEY}}元</span>
           - 优惠金额：
-          <InputNumber @on-change="computedMoney" :disabled="!isOrderSuccess" v-model="listSearch.REPAIR_ITEM_DERATE_MONEY" :min="0">
+          <InputNumber  :disabled="!isOrderSuccess" v-model="listSearch.REPAIR_ITEM_DERATE_MONEY" @on-change="computItemMoney" :min="0">
           </InputNumber> = 合计应收金额：
           <span class="r-list-money-reset">{{listSearch.SUM_MONEY}}元</span>
       </p>
     </div>
       
       
-      <!--选择车型-->
-      <select-vehicle :showoff="showoff" @selectCar="selectCar">
-      </select-vehicle>
+    <!--选择车型-->
+    <select-vehicle :showoff="showoff" @selectCar="selectCar"></select-vehicle>
 
-        <select-shoukuanOrder :showSelectAccount="showShouKuan" :listSearch="listSearch" :repairPersonArr="repairPersonArr" @closeGetList="closeGetList"></select-shoukuanOrder>
+    <select-shoukuanOrder :showSelectAccount="showShouKuan" :listSearch="listSearch" :repairPersonArr="repairPersonArr" @closeGetList="closeGetList"></select-shoukuanOrder>
     <!--结算框弹出-->
     <Modal
         v-model="showAccount"
@@ -142,25 +149,27 @@
         :transfer= "false"
         :footer-hide="false"
         :mask-closable="false"
+        class="table-modal-detail"
+        :styles="{height:'400px'}"
         :transition-names="['', '']">
         <Collapse v-model="collapse2">
             <Panel name="1">结算信息
-                <Form slot="content" :label-width="120" inline class="detail-form">
-                    <FormItem label="项目合计费用:">
+                <Form slot="content" :label-width="120" class="detail-form">
+                    <FormItem label="项目合计费用:" style="width: 100%;">
                         <span>{{listSearch.REPAIR_ITEM_MONEY}}元</span>
                     </FormItem>
-                    <FormItem label="优惠金额:">
-                        <InputNumber :min="0" v-model="listSearch.REPAIR_ITEM_DERATE_MONEY" @on-change="accountChange"></InputNumber>
+                    <FormItem label="项目优惠金额:" style="width: 100%;">
+                        <InputNumber :min="0" v-model="listSearch.REPAIR_ITEM_DERATE_MONEY" @on-change="accountChange" style="width: 100px;"></InputNumber>
                     </FormItem>
-                    <FormItem label="合计应收金额:">
+                    <FormItem label="合计应收金额:" style="width: 100%;">
                         <span>{{listSearch.SUM_MONEY}}元</span>
                     </FormItem>
                 </Form>
                 </Panel>
         </Collapse>
         <div slot="footer">
-            <Button type="primary" @click="commitdata" style="margin-right: 10px;">结算</Button>
-            <Button  @click="showAccount=false;" style="margin-right:">取消</Button>
+            <Button type="primary" @click="commitdata">结算</Button>
+            <Button  @click="showAccount=false;">取消</Button>
         </div>
     </Modal>
     </div>
@@ -168,11 +177,11 @@
 
     <!--底部按钮组-->
       <div slot="footer">
-          <Button :disabled="buttonStateArr.save" @click="handleSubmit('listSearch')" size="large" type="primary"  style="margin-right: 10px; ">保存</Button>
-          <Button :disabled="buttonStateArr.doaccount" @click="handleCommit" type="primary"  style="margin-right: 10px; ">结算</Button>
-          <Button :disabled="buttonStateArr.printAccount" type="primary"  style="margin-right: 10px; ">打印结算单</Button>
-          <Button :disabled="buttonStateArr.shoukuan" @click="shoukuanFun" type="primary"  style="margin-right: 10px; ">收款</Button>
-          <Button  @click="showModal=false;"  style="margin-right: 10px; ">返回</Button>
+          <Button :disabled="buttonStateArr.save" @click="handleSubmit('listSearch')" size="large" type="primary">保存</Button>
+          <Button :disabled="buttonStateArr.doaccount" @click="handleCommit" type="primary">结算</Button>
+          <Button :disabled="buttonStateArr.printAccount" type="primary" @click="printAccountButton">打印结算单</Button>
+          <Button :disabled="buttonStateArr.shoukuan" @click="shoukuanFun" type="primary">收款</Button>
+          <Button  @click="showModal=false;">返回</Button>
       </div>
   </Modal>
 
@@ -184,15 +193,34 @@
   import selectVehicle from '@/hxx-components/select-vehicle.vue'
 
   import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
+  import {printAccountFun} from '@/hxx-components/repairPrintUtil.js'
+  import {getLodop} from '@/hxx-components/LodopFuncs.js'
 export default {
 	name: "repairOrder-list-quickDetail",
     components: {selectVehicle,selectShoukuanOrder},
     data(){
+        // 联系电话验证
+      const validatePass = (rule, value, callback) => {
+        var p1 = /^1(?:3\d|4[4-9]|5[0-35-9]|6[67]|7[013-8]|8\d|9\d)\d{8}$/;
+        var p2 = /0\d{2,3}-\d{7,8}/;
+        if (p2.test(value) || p1.test(value) || !value) {
+          callback();
+        } else {
+
+          callback(new Error('请输入正确的号码'));
+        }
+      };
+        //校验里程数--------
+      const validatePass1 = (rule, value, callback) => {
+        var value1 = value + '';
+        if (value1.length <= 8) {
+          callback();
+        } else {
+          callback(new Error('最大不超过八位'));
+        }
+      };
       return{
-        
-        singleItem:false,//是否选择项目
         showoff:null,//选择车辆
-        
         showModal: false,//本界面是否显示判断
         showAccount:false,//结算界面弹出
         showShouKuan:false,//收款界面弹出-----
@@ -280,15 +308,65 @@ export default {
             "SUM_MONEY":0,
             "GD_TYPE":"10181002"
         },
-       
+        selectData:[],
+        //维修项目
+        columns: [
+          {
+            title: '序号', minWidth: 80, type: "index",
+          },
+          {
+            title: '维修项目名称', key: 'NAME', sortable: true, minWidth: 170,
+            // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.ORDER_TYPE))
+          },
+          {
+            title: '小计金额', key: 'ITEM_MONEY', sortable: true, minWidth: 120,
+          },
+          {
+            title: '备注', key: 'REMARK', sortable: true, minWidth: 150,
+          },
+          {
+            title: '操作', key: '', sortable: true, width: 120, fixed: 'right',
+            render: (h, params) => {
+              
+                let buttonContent= this.state(params.row)? '取消选择':'选择';
+                let buttonStatus= this.state(params.row)? 'warning':'primary';
+                return h('div', [
+                    h('Button', {
+                        props: {
+                            type: buttonStatus,
+                            size: 'small',
+                            disabled:!this.isOrderSuccess,
+                        },
+                        style: {
+                            width:"80px",
+                            textAlign: "center",
+                            marginRight: '10px',
+                            
+                        },
+                        on: {
+                            click: (index) => {
+                                this.select(params.row)
+                            }
+                        }
+                    }, buttonContent),
+                ]);
+              
+
+            }
+          },
+        ],
 
         ruleValidate: {
             PLATE_NUM: [
                 { required: true, type: 'string', message: '请选择车型', trigger: 'change' }
             ],
             MILEAGE: [
-                { required: true, type: 'number', message: '请选择里程', trigger: 'change' ,min: 1,}
-            ]
+                { required: true, type: 'number', message: '请选择里程', trigger: 'change'},
+                {validator: validatePass1, trigger: 'change'},
+            ],
+            TELPHONE: [
+                {validator: validatePass, trigger: 'change'},
+            ],
         },
         
         titleMsg:'新建未派工',
@@ -305,10 +383,9 @@ export default {
         computedMoneyData:[],
        
         commitItem:[],//提交选择项目
-        repairTypeArr:[],//维修类型数组
+
         repairPersonArr:[],//主修人数组
         serverPersonArr:[],//服务顾问数组
-        vehicleTypeArr:[],//车辆类型数组
         vehicleNumberArr:[],//车辆代号数组
         vehicleNumberArr1:[
             { code: '轿车-排量<1.6升-A', type: '10521001' },
@@ -328,15 +405,23 @@ export default {
             { code: '货车-柴油(0.75吨<载质量≤3.50吨)-T', type: '10521003' },
             { code: '货车-载质量≥8吨-U', type: '10521003' }
         ],//未筛选
-        vehicleTeamArr:[],//机车班组数组-------
         buttonStateArr:{
           save:false,//保存
           doaccount:true,//结算
           shoukuan:true,//收款
           printAccount:true,//打印结算单
         },//按钮状态组数据
-
-        
+        wtdData:null,
+        startTimeOptions: {
+          disabledDate(date) {
+            return date && date.valueOf() < Date.now() - (86400000 * 365);
+          }
+        }, //开始日期设置
+        endTimeOptions: {
+          disabledDate(date) {
+            return date && date.valueOf() > Date.now() + (86400000 * 365);
+          }
+        }, //结束日期设置
 
         
       }
@@ -344,25 +429,23 @@ export default {
     props:['showQuickDetail', 'detailData'],
     watch:{
       showQuickDetail(){
-        console.log('进来的参数：',this.detailData,this.returnData);
+        console.log('进来的参数：',this.detailData);
         this.showModal=true
         //获取项目组数据---------------
-        this.getItemFun();
+        
         //清空公共数据值------
         this.getItem=[];
         this.commitItem=[];
-        this.getShopClassList();
+        this.selectData=[];
         this.getEmployeeList();
-        this.returnData=this.detailData;//赋值返回数据
         //判断进来的参数是否存在---------------------
         if(this.detailData){
+            this.getItemFun(this.detailData.REPAIR_ID);
           //初始化车辆数据----------------
           this.selectCarInitFun(this.detailData.VEHICLE_TYPE,this.detailData.VEHICLE_TYPE_CODE);
-          this.singleItem=true;//选择项目按钮----------
-          for(let key in this.listSearch){
-            if(this.detailData.hasOwnProperty(key)){
+
+          for(let key in this.detailData){
               this.listSearch[key]= this.detailData[key];
-            }
           }
           console.log("listSearch进来的",this.listSearch);
           if(this.detailData['STATUS']=='10201001'){
@@ -403,6 +486,7 @@ export default {
           }
 
         }else{
+            this.getItemFun();
             //搜索框初始化
             for(let key in this.listSearchInit){
                 this.listSearch[key]=this.listSearchInit[key];
@@ -424,7 +508,7 @@ export default {
             ];
             //新建功能表------
             this.titleMsg="新建未派工";
-            this.singleItem=false;
+
             this.single=false;//是否选择开发票
             this.isOrderSuccess=true;
             
@@ -434,33 +518,65 @@ export default {
       }
     },
     mounted () {
-      this.repairTypeArr= getDictGroup(this.$store.state.app.dict, '1019');
-      this.vehicleTypeArr= getDictGroup(this.$store.state.app.dict, '1052');
+      this.wtdData = this.$store.state.user.userInfo.tenant;
       this.cardStateArr=getDictGroup(this.$store.state.app.dict, '1049');
       this.payModeData=getDictGroup(this.$store.state.app.dict, '1010');
     },
+    computed: {
+      work_price() {
+        return parseFloat(getUserInfo(this.$store.state.user.userInfo.params, 'P1001'));
+      },
+      paint_price() {
+        return parseFloat(getUserInfo(this.$store.state.user.userInfo.params, 'P1002'));
+      },
+      //车辆颜色------
+      carColorData() {
+        return getDictGroup(this.$store.state.app.dict, '1013');
+      },
+      //维修类型-----
+      repairTypeArr() {
+        return getDictGroup(this.$store.state.app.dict, '1019');
+      },
+      //车辆类型---
+      vehicleTypeArr() {
+        return getDictGroup(this.$store.state.app.dict, '1052');
+      },
+      //配件单位数据-------
+      partsUnit() {
+        return getDictGroup(this.$store.state.app.dict, '1015');
+      },
+      //配件品牌-----
+      bandTypeFun() {
+        return getDictGroup(this.$store.state.app.dict, '1016');
+      },
+      //配件类型
+      partsTypeFun() {
+        return getDictGroup(this.$store.state.app.dict, '1017');
+      },
+
+
+    },
     methods:{
-        //得到机修班组数据
-        getShopClassList(){
-            this.vehicleTeamArr=[];
-            this.axios.request({
-                url: '/tenant/repair/ttrepairworkorder/getShopClassList',
-                method: 'post',
-                data: {
-                    node: 0,
-                    access_token: this.$store.state.user.token
+        //状态值判断-----
+        state(item){
+            for(let i in this.selectData){
+                if(this.selectData[i].ITEM_ID== item.ITEM_ID){
+                    return true
                 }
-                }).then(res => {
-                if (res.success === true) {
-                    for(let i in res.data){
-                        var obj={code:'',itemId:''};
-                        obj.code=res.data[i].text;
-                        obj.itemId=res.data[i].itemId;
-                        this.vehicleTeamArr.push(obj);
-                    }
-                    console.log("this.vehicleTeamArr",this.vehicleTeamArr);
+            }
+            return false
+        },
+        select(item){
+            let flag=true
+            for(let i in this.selectData){
+                if(this.selectData[i].ITEM_ID== item.ITEM_ID){
+                    this.selectData.splice(i,1)
+                    flag= false
+                    break;
                 }
-            })
+            }
+            if(flag) this.selectData.push(item);
+            this.computItemMoney();
         },
         //得到主修人数据
         getEmployeeList(){
@@ -483,19 +599,23 @@ export default {
                         this.repairPersonArr.push(obj);
                         this.serverPersonArr.push(obj);
                     }
-                    console.log("this.vehicleTeamArr",this.serverPersonArr,this.repairPersonArr);
                 }
             })
         },
         //选择车辆类型初始化
         selectCarInitFun(val,key){
-            this.listSearch.VEHICLE_TYPE_CODE=key||"";
+            
             this.vehicleNumberArr=[];
             // this.listSearch.VEHICLE_TYPE_CODE="";
             for(let i in this.vehicleNumberArr1){
                 if(this.vehicleNumberArr1[i].type==val){
                     this.vehicleNumberArr.push(this.vehicleNumberArr1[i]);
                 }
+            }
+            if(key){
+                this.listSearch.VEHICLE_TYPE_CODE=key;
+            }else{
+                this.listSearch.VEHICLE_TYPE_CODE=this.vehicleNumberArr[0]['code'];
             }
 
         },
@@ -507,24 +627,50 @@ export default {
             this.handleReset("listSearch");
             }
         },
+         perfectCarData() {
+            this.$router.push({path: '/cart-list'});
+        },
+        perfectCustomerData(){
+            this.$router.push({path:'/customer-list'});
+        },
         //保存按钮-----------
         handleSubmit (name) {
-            if(this.singleItem){
-                this.$refs[name].validate((valid) => {
-                    if (valid) {
-                            this.$Modal.confirm({
-                                title:"系统提示!",
-                                content:"确定要保存吗？",
-                                onOk:this.saveData,
-                                
-                            })
-                    } else {
+            this.$refs[name].validate((valid) => {
+                if (valid) {
+                    if(this.selectData.length>0){
+                        
 
-                    }
-                });
-            }else{
-                this.$Message.info('至少选择一个服务项目')
+                                    if (this.listSearch.VEHICLE_MODEL&&this.listSearch.VIN_NO) {
+              if(this.listSearch.CUSTOMER_NAME){
+                  this.$Modal.confirm({
+                            title:"系统提示!",
+                            content:"确定要保存吗？",
+                            onOk:this.saveData,
+                            
+                        })
+              }else{
+                  this.$Modal.confirm({
+                    title: "系统提示!",
+                    content:"车主名称缺失，请先完善客户信息",
+                    onOk:this.perfectCustomerData,
+
+                  })
+              }
+              
+            } else {
+              this.$Modal.confirm({
+                title: "系统提示!",
+                content: "请先完善车辆信息",
+                onOk: this.perfectCarData,
+
+              })
             }
+                    }else{
+                        this.$Message.info('至少选择一个服务项目')
+                    }
+                }
+            });
+            
             
         },
         saveData(){
@@ -534,7 +680,7 @@ export default {
                 method: 'post',
                 data: {
                 data: JSON.stringify(this.listSearch),
-                items:JSON.stringify(this.commitItem),
+                items:JSON.stringify(this.selectData),
                 access_token: this.$store.state.user.token
                 }
             }).then(res => {
@@ -547,7 +693,10 @@ export default {
                         default : this.buttonStateArr[i]= true;
                         }
                     }
-                    this.listSearch['REPAIR_ID']=res.data.REPAIR_ID;
+                    for(let i in res.data){
+                        this.listSearch[i]=res.data[i];
+                    }
+                    
                     this.$emit('closeGetList');
                 }
             })
@@ -606,6 +755,9 @@ export default {
             }).then(res => {
                 if (res.success === true) {
                     this.$Message.info('successful');
+                    for(let i in res.data[0]){
+                        this.listSearch[i]=res.data[0][i];
+                    }
                     this.computedMoneyData=res.data;
                 }
             })
@@ -619,12 +771,12 @@ export default {
             this.$refs[name].resetFields();
         },
         //获取维修项目内容
-        getItemFun(){
+        getItemFun(repairId){
             this.axios.request({
                 url: '/tenant/repair/ttrepairworkorder/getQuickItems',
                 method: 'post',
                 data: {
-                    repairId: '',
+                    repairId: repairId||'',
                     page: 1,
                     start: 0,
                     limit: 25,
@@ -634,146 +786,146 @@ export default {
                 if (res.success === true) {
                     this.getItem=res.data;
                     this.commitItem=res.data;
+                    
+                    for(let i in res.data){
+                        if(res.data[i]['SEL_ID']){
+                            this.selectData.push(res.data[i]);
+                        }
+                    }
+                        
+                    
                 }
             })
         },
 
         //监听选择车辆----
         selectCar(val){
-            this.listSearch["VEHICLE_MODEL"]=val["VEHICLE_MODEL"];
-            this.listSearch["PLATE_NUM"]=val["PLATE_NUM"];
-            this.listSearch["ORDER_PERSON"]=val["CUSTOMER_NAME"];
-            this.listSearch["CUSTOMER_NAME"]=val["CUSTOMER_NAME"];
-            this.listSearch["GIVE_REPAIR_PERSON"]=val["CUSTOMER_NAME"];
-            this.listSearch["TELPHONE"]=val["MOBILE_PHONE"];
-            this.listSearch["VIN_NO"]=val["VIN_NO"];
-            this.listSearch["VEHICLE_ID"]=val["VEHICLE_ID"];
+            this.listSearch["VEHICLE_MODEL"] = val["VEHICLE_MODEL"];
+            this.listSearch["PLATE_NUM"] = val["PLATE_NUM"];
+            this.listSearch["ORDER_PERSON"] = val["CUSTOMER_NAME"];
+            this.listSearch["CUSTOMER_NAME"] = val["CUSTOMER_NAME"];
+            this.listSearch["GIVE_REPAIR_PERSON"] = val["CUSTOMER_NAME"];
+            this.listSearch["TELPHONE"] = val["MOBILE_PHONE"];
+            this.listSearch["VIN_NO"] = val["VIN_NO"];
+            this.listSearch["VEHICLE_ID"] = val["VEHICLE_ID"];
+            this.listSearch["VEHICLE_COLOR"] = val["VEHICLE_COLOR"];
+            this.listSearch["ENGINE_NO"] = val["ENGINE_NO"];
             console.log("selectCar",val,this.listSearch);
         },
-        //获取维修项目数据-------
-        sTenanceItem(val){
-            if(val){
-                    this.commitItem=[];
-                    for(let j in this.getItem){
-                        var listItemsModel={
-                            "DETAIL_ID":"",
-                            "ITEM_ID":"",
-                            "TENANT_ID":"",
-                            "CREATE_TIME":"",
-                            "NAME":"",
-                            "ITEM_NO":"",
-                            "TYPE_ID":"",
-                            "STATUS":"",
-                            "CHARGE_TYPE":"",
-                            "REPAIR_TIME":0,
-                            "REPAIR_MONEY":0,
-                            "PAINT_NUM":0,
-                            "IS_PREINSTALL":"",
-                            "CLASS_NAME":"",
-                            "CLASS_TYPE":"",
-                            "ENGINE_TYPE_NAME":"",
-                            "ENGINE_TYPE":"",
-                            "SORT":"",
-                            "TYPE_NAME":"",
-                            "cartype":"",
-                            "BUSINESS_TYPE":"",
-                            "UPDATE_TIME":null,
-                            "id":"",
-                            "ITEM_MONEY":0,
-                            "ITEM_DERATE_MONEY":0,
-                            "ITEM_LAST_MONEY":0,
-                            "SUM_MONEY":0,
-                            "COME_DATE":null,
-                            "PLAN_END_DATE":null,
-                            "REPAIR_ITEM_MONEY":0,
-                            "REPAIR_PART_MONEY":0,
-                            "REPAIR_ITEM_DERATE_MONEY":0,
-                            "REPAIR_PART_DERATE_MONEY":0,
-                            "ACCOUNT_TIME":null,
-                            "ORDER_DATE":null,
-                            "IS_SEL":true,
-                            "REMARK":"",
-                        }
-                        for(let i in listItemsModel){
-                            if(this.getItem[j][i]){
-                                listItemsModel[i]=this.getItem[j][i];
-                            }else if(i=="ITEM_MONEY"){
-                                
-                                listItemsModel[i]=this.getItem[j]["REPAIR_TIME"]*getUserInfo(this.$store.state.user.userInfo.params, 'P1001')+this.getItem[j]["PAINT_NUM"]*getUserInfo(this.$store.state.user.userInfo.params, 'P1002');
-                            }else if(i=="ITEM_LAST_MONEY"){
-                                listItemsModel[i]=parseInt(this.getItem[j]["REPAIR_TIME"]*getUserInfo(this.$store.state.user.userInfo.params, 'P1001'))+parseInt(this.getItem[j]["PAINT_NUM"]*getUserInfo(this.$store.state.user.userInfo.params, 'P1002'));
-                            }
-                        
-                        }
-                        this.commitItem.push(listItemsModel);
-                    }
-                    this.computItemMoney();
-            }else{
-                    this.listSearch["REPAIR_ITEM_MONEY"]=0;
-                    this.listSearch["REPAIR_ITEM_DERATE_MONEY"]=0;
-                    this.listSearch["SUM_MONEY"]=0;
-                    this.listSearch["REPAIR_PART_MONEY"]=0;
-                    this.listSearch["REPAIR_PART_DERATE_MONEY"]=0;
-            }
-            
-        },
-      
         //计算维修项目类的金额-----------
         computItemMoney(){
             this.listSearch["REPAIR_ITEM_MONEY"]=0;
-            this.listSearch["REPAIR_ITEM_DERATE_MONEY"]=0;
             this.listSearch["SUM_MONEY"]=0;
-            this.listSearch["REPAIR_PART_MONEY"]=0;
-            this.listSearch["REPAIR_PART_DERATE_MONEY"]=0;
-            for(let i in this.commitItem){
-            this.listSearch["REPAIR_ITEM_MONEY"]+=this.commitItem[i]["REPAIR_TIME"]*getUserInfo(this.$store.state.user.userInfo.params, 'P1001')+this.commitItem[i]["PAINT_NUM"]*getUserInfo(this.$store.state.user.userInfo.params, 'P1002');
-            this.listSearch["REPAIR_ITEM_DERATE_MONEY"]+=this.commitItem[i]["ITEM_DERATE_MONEY"];
+
+            for(let i in this.selectData){
+                if(this.selectData[i]['CHARGE_TYPE']=="10141001"){
+                    this.listSearch["REPAIR_ITEM_MONEY"]+=this.selectData[i]["REPAIR_MONEY"];
+                }else if(this.selectData[i]['CHARGE_TYPE']=="10141002"){
+                    this.listSearch["REPAIR_ITEM_MONEY"]+=this.selectData[i]["REPAIR_TIME"]*this.work_price;
+                }else if(this.selectData[i]['CHARGE_TYPE']=="10141003"){
+                    this.listSearch["REPAIR_ITEM_MONEY"]+=this.selectData[i]["PAINT_NUM"]*this.paint_price;
+                }
+                
             }
-            for(let i in this.commitItemGroup){
-            this.listSearch["REPAIR_ITEM_MONEY"]+=this.commitItemGroup[i]["SALES_PRICE"];
-            this.listSearch["REPAIR_ITEM_DERATE_MONEY"]+=this.commitItemGroup[i]["ITEM_DERATE_MONEY"];
-            }
-            for(let i in this.commitParts){
-            this.listSearch["REPAIR_PART_MONEY"]+=this.commitParts[i]["SALES_PRICE"]*(this.commitParts[i]["PART_NUM"]||1);
-            this.listSearch["REPAIR_PART_DERATE_MONEY"]+=this.commitParts[i]["PART_DERATE_MONEY"];
-            }
-            this.listSearch["SUM_MONEY"]=this.listSearch["REPAIR_ITEM_MONEY"]+this.listSearch["REPAIR_PART_MONEY"]-this.listSearch["REPAIR_ITEM_DERATE_MONEY"]-this.listSearch["REPAIR_PART_DERATE_MONEY"];
-        },
-        //手动金额计算值---------------
-        computedMoney(val){
-            console.log('手动金额计算值',val);
-            this.listSearch["REPAIR_ITEM_MONEY"]=0;
-            this.listSearch["REPAIR_ITEM_DERATE_MONEY"]=0;
-            this.listSearch["SUM_MONEY"]=0;
-            for(let i in this.commitItem){
-            this.listSearch["REPAIR_ITEM_MONEY"]+=this.commitItem[i]["REPAIR_TIME"]*getUserInfo(this.$store.state.user.userInfo.params, 'P1001')+this.commitItem[i]["PAINT_NUM"]*getUserInfo(this.$store.state.user.userInfo.params, 'P1002');
-            }
-            for(let i in this.commitItemGroup){
-            this.listSearch["REPAIR_ITEM_MONEY"]+=this.commitItemGroup[i]["SALES_PRICE"];
-            }
-            this.listSearch["REPAIR_ITEM_DERATE_MONEY"]=val;
-            this.listSearch["SUM_MONEY"]=this.listSearch["REPAIR_ITEM_MONEY"]+this.listSearch["REPAIR_PART_MONEY"]-val-this.listSearch["REPAIR_PART_DERATE_MONEY"];
-        },
-        computedMoney1(val){
-            console.log('手动金额计算值',val);
-            this.listSearch["SUM_MONEY"]=0;
-            this.listSearch["REPAIR_PART_MONEY"]=0;
-            this.listSearch["REPAIR_PART_DERATE_MONEY"]=0;
-            for(let i in this.commitParts){
-            this.listSearch["REPAIR_PART_MONEY"]+=this.commitParts[i]["SALES_PRICE"]*(this.commitParts[i]["PART_NUM"]||1);
-            }
-            this.listSearch["REPAIR_PART_DERATE_MONEY"]=val;
-            this.listSearch["SUM_MONEY"]=this.listSearch["REPAIR_ITEM_MONEY"]+this.listSearch["REPAIR_PART_MONEY"]-this.listSearch["REPAIR_ITEM_DERATE_MONEY"]-val;
+            this.listSearch["SUM_MONEY"]=this.listSearch["REPAIR_ITEM_MONEY"]-this.listSearch["REPAIR_ITEM_DERATE_MONEY"];
         },
         //结算金额改变
         accountChange(val){
             this.listSearch.SUM_MONEY=this.listSearch.REPAIR_ITEM_MONEY-val;
         },
         closeGetList(){
-            this.$emit('closeGetList');
-        }
-      
+            for(let i in this.buttonStateArr){
+                switch(i){
+                
+                case 'printAccount': this.buttonStateArr[i]= false; break
+                default : this.buttonStateArr[i]= true;
+                }
+            }
+            this.$emit('closeGetList');//重新请求数据
+            this.titleMsg = "已结清";
+        },
+        //打印结算单部分-------------------
+      printAccountButton() {
 
+
+        // clearTimeout(this.printTime);
+        console.log('打印结算单部分');
+        // if (this.printFlag1 && this.printFlag2 && this.printFlag3 && this.printFlag4) {
+          var temp = null;
+
+          var store = this.$store;
+
+          var listSearch = {};
+          for (let i in this.listSearch) {
+            switch (i) {
+              case'COME_DATE':
+              case'OUT_DATE':
+                listSearch[i] = formatDate(this.listSearch[i]) + ' ' + formatDate(this.listSearch[i], 'hh:mm:ss');
+                break;
+              case'VEHICLE_TYPE':
+
+                listSearch[i] = getName(this.vehicleTypeArr, this.listSearch[i]);
+                break;
+              case'REPAIR_TYPE':
+                listSearch[i] = getName(this.repairTypeArr, this.listSearch[i]);
+                break;
+              default :
+                listSearch[i] = this.listSearch[i];
+            }
+            ;
+
+          }
+          
+          console.log(this.listSearch);
+          let commitItemGroup=[];
+          let commitParts=[];
+          let commitOtherItem=[];
+          
+
+          if (this.$store.state.user.userInfo.tenant && this.$store.state.user.userInfo.tenant.businessType == '10331003') {
+            console.log('三级维修');
+            temp = printAccountFun(this.wtdData, listSearch, this.commitItem, commitItemGroup, commitParts, commitOtherItem, store, 'styleFlag');
+          } else {
+            console.log('不是三级维修');
+            temp = printAccountFun(this.wtdData, listSearch, this.commitItem, commitItemGroup, commitParts, commitOtherItem, store, 'styleFlag');
+          }
+          var LODOP = getLodop();
+          LODOP.SET_PRINT_STYLEA(0, "Alignment", 2);
+          LODOP.ADD_PRINT_TABLE(50, 0, "100%", 1000, temp);
+          //LODOP.SET_PRINT_STYLEA(0,"Offset2Top",-60); //设置次页偏移把区域向上扩
+          LODOP.PREVIEW();
+
+        // } else {
+        //   let self = this;
+        //   this.printTime = setTimeout(function () {
+        //     self.printAccountButton();
+        //   }, 300)
+        // }
+      },
+      openStartTime(val){
+        if(!val){
+          if (new Date(this.listSearch.COME_DATE).getTime() >= new Date(this.listSearch.PLAN_END_DATE).getTime()) {
+            this.$Modal.confirm({
+              title: "系统提示!",
+              content: "进厂日期不可大于计划完工日期",
+            })
+
+            this.listSearch.COME_DATE = new Date();
+          }
+        }
+      },
+      openEndTime(val){
+        console.log(val);
+        if(!val){
+            if (new Date(this.listSearch.PLAN_END_DATE).getTime() <= new Date(this.listSearch.COME_DATE).getTime()) {
+              this.$Modal.confirm({
+                title: "系统提示!",
+                content: "计划完工日期不可小于进厂日期",
+              })
+              this.listSearch.PLAN_END_DATE = new Date();
+            }
+        }
+      },
     }
 	}
 </script>
