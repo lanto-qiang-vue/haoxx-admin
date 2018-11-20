@@ -4,11 +4,12 @@
     title="客户档案详情"
     :transition-names="['', '']"
     v-model="showModal"
-    width="90"
+    width="98"
     @on-visible-change="visibleChange"
     :mask-closable="false"
     :scrollable="false"
-    :transfer="true"
+    :transfer="false"
+    class="table-modal-detail"
   >
 
     <Tabs @on-click="qh" v-model="indexName" class="modal-tabs">
