@@ -3,7 +3,7 @@
   <Modal
     v-model="showModal"
     title="快速开单"
-    width="90"
+    width="98"
     @on-visible-change="visibleChange"
     :scrollable="true"
     :transfer= "false"
@@ -11,7 +11,7 @@
     :mask-closable="false"
     :transition-names="['', '']"
   >
-    <div style="height: 100%;overflow: auto; padding-bottom: 30px;">
+    <div style="height: 100%;overflow: auto;">
     <div class="status">({{titleMsg}})</div>
     <Collapse v-model="collapse">
       <Panel name="1">查询
@@ -128,7 +128,7 @@
         项目合计费用：
         <span>{{listSearch.REPAIR_ITEM_MONEY}}元</span>
           - 优惠金额：
-          <InputNumber  :disabled="!isOrderSuccess" v-model="listSearch.REPAIR_ITEM_DERATE_MONEY" @on-change="accountChange" @on-blur="accountBlur" :min="0">
+          <InputNumber :disabled="!isOrderSuccess" v-model="listSearch.REPAIR_ITEM_DERATE_MONEY" @on-change="accountChange" @on-blur="accountBlur" :min="0">
           </InputNumber> = 合计应收金额：
           <span class="r-list-money-reset">{{listSearch.SUM_MONEY}}元</span>
       </p>
@@ -136,9 +136,9 @@
       
       
     <!--选择车型-->
-    <select-vehicle :showoff="showoff" @selectCar="selectCar"></select-vehicle>
+    <select-vehicle v-if="showFlag" :showoff="showoff" @selectCar="selectCar"></select-vehicle>
 
-    <select-shoukuanOrder :showSelectAccount="showShouKuan" :listSearch="listSearch" :repairPersonArr="repairPersonArr" @closeGetList="closeGetList"></select-shoukuanOrder>
+    <select-shoukuanOrder v-if="showFlag" :showSelectAccount="showShouKuan" :listSearch="listSearch" :repairPersonArr="repairPersonArr" @closeGetList="closeGetList"></select-shoukuanOrder>
     <!--结算框弹出-->
     <Modal
         v-model="showAccount"
@@ -159,7 +159,7 @@
                         <span>{{listSearch.REPAIR_ITEM_MONEY}}元</span>
                     </FormItem>
                     <FormItem label="项目优惠金额:" style="width: 100%;">
-                        <InputNumber :min="0" v-model="listSearch.REPAIR_ITEM_DERATE_MONEY" @on-change="accountChange" @on-blur="accountBlur" style="width: 100px;"></InputNumber>
+                        <InputNumber  :min="0" v-model="listSearch.REPAIR_ITEM_DERATE_MONEY" @on-change="accountChange" @on-blur="accountBlur" style="width: 100px;"></InputNumber>
                     </FormItem>
                     <FormItem label="合计应收金额:" style="width: 100%;">
                         <span>{{listSearch.SUM_MONEY}}元</span>
@@ -220,6 +220,7 @@ export default {
         }
       };
       return{
+          showFlag:false,
         showoff:null,//选择车辆
         showModal: false,//本界面是否显示判断
         showAccount:false,//结算界面弹出
@@ -317,9 +318,6 @@ export default {
           {
             title: '维修项目名称', key: 'NAME', sortable: true, minWidth: 170,
             // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.ORDER_TYPE))
-          },
-          {
-            title: '小计金额', key: 'ITEM_MONEY', sortable: true, minWidth: 120,
           },
           {
             title: '备注', key: 'REMARK', sortable: true, minWidth: 150,
@@ -422,7 +420,7 @@ export default {
             return date && date.valueOf() > Date.now() + (86400000 * 365);
           }
         }, //结束日期设置
-
+        timer:null,
         
       }
     },
@@ -430,6 +428,7 @@ export default {
     watch:{
       showQuickDetail(){
         console.log('进来的参数：',this.detailData);
+        this.showFlag=true;
         this.showModal=true
         //获取项目组数据---------------
         
@@ -778,7 +777,7 @@ export default {
                             this.selectData.push(res.data[i]);
                         }
                     }
-                        
+                        this.computItemMoney();
                     
                 }
             })
@@ -806,10 +805,13 @@ export default {
             for(let i in this.selectData){
                 if(this.selectData[i]['CHARGE_TYPE']=="10141001"){
                     this.listSearch["REPAIR_ITEM_MONEY"]+=this.selectData[i]["REPAIR_MONEY"];
+                    this.selectData[i]["ITEM_MONEY"]=this.selectData[i]["REPAIR_MONEY"];
                 }else if(this.selectData[i]['CHARGE_TYPE']=="10141002"){
                     this.listSearch["REPAIR_ITEM_MONEY"]+=this.selectData[i]["REPAIR_TIME"]*this.work_price;
+                    this.selectData[i]["ITEM_MONEY"]=this.selectData[i]["REPAIR_TIME"]*this.work_price;
                 }else if(this.selectData[i]['CHARGE_TYPE']=="10141003"){
                     this.listSearch["REPAIR_ITEM_MONEY"]+=this.selectData[i]["PAINT_NUM"]*this.paint_price;
+                    this.selectData[i]["ITEM_MONEY"]=this.selectData[i]["PAINT_NUM"]*this.paint_price;
                 }
                 
             }
@@ -817,12 +819,16 @@ export default {
         },
         //结算金额改变
         accountChange(val){
-            this.listSearch.SUM_MONEY=this.listSearch.REPAIR_ITEM_MONEY-val;
+            this.listSearch.SUM_MONEY=(this.listSearch.REPAIR_ITEM_MONEY-val).toFixed(2);
+            clearTimeout(this.timer);
+            this.timer=setTimeout(()=>{
+                this.accountBlur();
+            },1000)
         },
         accountBlur(){
             if(this.listSearch.REPAIR_ITEM_DERATE_MONEY>this.listSearch.REPAIR_ITEM_MONEY){
                 this.listSearch.REPAIR_ITEM_DERATE_MONEY=0;
-                this.listSearch.SUM_MONEY=this.listSearch.REPAIR_ITEM_MONEY-this.listSearch.REPAIR_ITEM_DERATE_MONEY;
+                this.listSearch.SUM_MONEY=(this.listSearch.REPAIR_ITEM_MONEY-this.listSearch.REPAIR_ITEM_DERATE_MONEY).toFixed(2);
                 this.$Modal.confirm({
                     title: "系统提示!",
                     content:"优惠金额过大",
@@ -881,10 +887,10 @@ export default {
 
           if (this.$store.state.user.userInfo.tenant && this.$store.state.user.userInfo.tenant.businessType == '10331003') {
             console.log('三级维修');
-            temp = printAccountFun(this.wtdData, listSearch, this.commitItem, commitItemGroup, commitParts, commitOtherItem, store, 'styleFlag');
+            temp = printAccountFun(this.wtdData, listSearch, this.selectData, commitItemGroup, commitParts, commitOtherItem, store, 'styleFlag');
           } else {
             console.log('不是三级维修');
-            temp = printAccountFun(this.wtdData, listSearch, this.commitItem, commitItemGroup, commitParts, commitOtherItem, store, 'styleFlag');
+            temp = printAccountFun(this.wtdData, listSearch, this.selectData, commitItemGroup, commitParts, commitOtherItem, store, 'styleFlag');
           }
           var LODOP = getLodop();
           LODOP.SET_PRINT_STYLEA(0, "Alignment", 2);
@@ -947,15 +953,17 @@ export default {
   }
   .r-list-money{
     width: 100%;
-    font-size: 18px;
+    font-size: 16px;
     text-align: center;
-
+        margin-bottom: 20px;
+    height: 40px;
+    padding-top: 10px;
     span{
       color:red;
 
     }
     .r-list-money-reset{
-      font-size: 22px;
+      font-size: 16px;
     }
   }
   .r-list-chekbox{

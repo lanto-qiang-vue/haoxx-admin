@@ -209,36 +209,36 @@
 
 
       <!--选择车型-->
-      <select-vehicle :showoff="showoff" @selectCar="selectCar">
+      <select-vehicle v-if="showFlag" :showoff="showoff" @selectCar="selectCar">
       </select-vehicle>
       <!--选择项目-->
-      <select-itemsType :showTenanceItems="showTenanceItems" @sTenanceItem="sTenanceItem" :initGetItem="initGetItem"
+      <select-itemsType v-if="showFlag" :showTenanceItems="showTenanceItems" @sTenanceItem="sTenanceItem" :initGetItem="initGetItem"
                         :initSearch="listSearch">
       </select-itemsType>
       <!--选择配件-->
-      <select-parts :showSelectParts="showSelectParts" @selectPartsItem="selectPartsItem" :initParts="initParts">
+      <select-parts v-if="showFlag" :showSelectParts="showSelectParts" @selectPartsItem="selectPartsItem" :initParts="initParts">
       </select-parts>
       <!--选择配件组-->
-      <select-partsGroup :showSelectPartsGroup="showSelectPartsGroup" @selectPartsGroup="selectPartsGroup"
+      <select-partsGroup v-if="showFlag" :showSelectPartsGroup="showSelectPartsGroup" @selectPartsGroup="selectPartsGroup"
                          :initPartsGroup="initPartsGroup">
       </select-partsGroup>
       <!--选择项目组-->
-      <select-itemPackage :showSelectItemGroup="showSelectItemGroup" @selectItemGroup="selectItemGroup"
+      <select-itemPackage v-if="showFlag" :showSelectItemGroup="showSelectItemGroup" @selectItemGroup="selectItemGroup"
                           :initItemGroup="initItemGroup">
       </select-itemPackage>
       <!--选择工单结算单-->
-      <select-accountOrder :showSelectAccount="showSelectAccount" :showAccountData="listSearch"
+      <select-accountOrder v-if="showFlag" :showSelectAccount="showSelectAccount" :showAccountData="listSearch"
                            :showAccountItem="commitItem" :showItemGroup="commitItemGroup"
                            :showAccountParts="commitParts" :showAccountOther="commitOtherItem"
                            :repairPersonArr="repairPersonArr" @emitAccount="emitAccount"
                            @emitComputedMoney="emitComputedMoney">
       </select-accountOrder>
-      <select-shoukuanOrder :showSelectAccount="showShouKuan" :listSearch="listSearch"
+      <select-shoukuanOrder v-if="showFlag" :showSelectAccount="showShouKuan" :listSearch="listSearch"
                             :repairPersonArr="repairPersonArr" @closeGetList="closeGetList">
 
       </select-shoukuanOrder>
       <!--项目组套餐详情!!!-->
-      <combo-detail :tshow="showItemFlag" :tid="itemDetailId"></combo-detail>
+      <combo-detail v-if="showFlag" :tshow="showItemFlag" :tid="itemDetailId"></combo-detail>
     </div>
 
     <!--底部按钮组-->
@@ -1327,12 +1327,13 @@
         printFlag4: false,
         printTime: null,//打印定时器-----
 
+        showFlag:false,
       }
     },
     props: ['showDetail', 'detailData', 'detailQuery'],
     watch: {
       showDetail() {
-
+        this.showFlag=true;
         this.showModal = true
         //--------------------
         //清空公共数据值------
@@ -2891,6 +2892,8 @@
 
   .r-list-money {
     padding-top: 20px;
+    margin-bottom: 20px;
+    height: 30px;
     width: 100%;
     font-size: 12px;
     text-align: center;

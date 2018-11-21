@@ -159,10 +159,10 @@
       <combo-detail :tshow="showItemFlag" :tid="itemDetailId"></combo-detail>
 
       <div slot="footer">
-        <Button v-if="isButton" @click="handleSubmit('listSearch')" size="large" type="primary"  style="margin-right: 10px;">保存</Button>
-        <Button v-if="isButton" @click="handleCommit('listSearch')" size="large" type="success"  style="margin-right: 10px;">提交</Button>
-        <Button v-if="isCar" @click="handleCar" size="large" type="success" style="margin-right: 10px;" >维修接车</Button>
-        <Button  size="large" type="default" style="margin-right: 10px;" @click="showModal=false;">返回</Button>
+        <Button v-if="isButton" @click="handleSubmit('listSearch')" size="large" type="primary"  >保存</Button>
+        <Button v-if="isButton" @click="handleCommit('listSearch')" size="large" type="success"  >提交</Button>
+        <Button v-if="isCar" @click="handleCar" size="large" type="success" >维修接车</Button>
+        <Button  size="large" type="default" @click="showModal=false;">返回</Button>
       </div>
   </Modal>
 
@@ -1417,6 +1417,8 @@
   }
   .r-list-money {
     padding-top: 20px;
+    margin-bottom: 20px;
+    height: 30px;
     width: 100%;
     font-size: 12px;
     text-align: center;
