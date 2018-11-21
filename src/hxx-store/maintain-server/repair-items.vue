@@ -93,7 +93,7 @@
                 <Input type="text" v-model="formData.NAME"> </Input>
               </FormItem>
               <FormItem label="项目分类:" style="width:30%;" prop="TYPE_ID">
-                <Input type="text" :disabled="true" value="自定义2"></Input>
+                <Input type="text" :disabled="true" value="自定义"></Input>
                 <!--<Select placeholder="" :disabled="true" v-model="formData.TYPE_ID" style="min-width: 100%;">-->
                   <!--<Option v-for="(item, index) in caritems"-->
                           <!--:key="index" :value="item.TYPE_ID">{{item.TYPE_NAME}}-->
