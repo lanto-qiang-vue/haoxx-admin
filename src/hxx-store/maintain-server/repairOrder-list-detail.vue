@@ -2892,6 +2892,8 @@
 
   .r-list-money {
     padding-top: 20px;
+    margin-bottom: 20px;
+    height: 30px;
     width: 100%;
     font-size: 12px;
     text-align: center;

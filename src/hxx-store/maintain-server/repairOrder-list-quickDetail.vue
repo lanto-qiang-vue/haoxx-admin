@@ -3,7 +3,7 @@
   <Modal
     v-model="showModal"
     title="快速开单"
-    width="90"
+    width="98"
     @on-visible-change="visibleChange"
     :scrollable="true"
     :transfer= "false"
@@ -11,7 +11,7 @@
     :mask-closable="false"
     :transition-names="['', '']"
   >
-    <div style="height: 100%;overflow: auto; padding-bottom: 30px;">
+    <div style="height: 100%;overflow: auto;">
     <div class="status">({{titleMsg}})</div>
     <Collapse v-model="collapse">
       <Panel name="1">查询
@@ -318,9 +318,6 @@ export default {
           {
             title: '维修项目名称', key: 'NAME', sortable: true, minWidth: 170,
             // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.ORDER_TYPE))
-          },
-          {
-            title: '小计金额', key: 'ITEM_MONEY', sortable: true, minWidth: 120,
           },
           {
             title: '备注', key: 'REMARK', sortable: true, minWidth: 150,
@@ -780,7 +777,7 @@ export default {
                             this.selectData.push(res.data[i]);
                         }
                     }
-                        
+                        this.computItemMoney();
                     
                 }
             })
@@ -808,10 +805,13 @@ export default {
             for(let i in this.selectData){
                 if(this.selectData[i]['CHARGE_TYPE']=="10141001"){
                     this.listSearch["REPAIR_ITEM_MONEY"]+=this.selectData[i]["REPAIR_MONEY"];
+                    this.selectData[i]["ITEM_MONEY"]=this.selectData[i]["REPAIR_MONEY"];
                 }else if(this.selectData[i]['CHARGE_TYPE']=="10141002"){
                     this.listSearch["REPAIR_ITEM_MONEY"]+=this.selectData[i]["REPAIR_TIME"]*this.work_price;
+                    this.selectData[i]["ITEM_MONEY"]=this.selectData[i]["REPAIR_TIME"]*this.work_price;
                 }else if(this.selectData[i]['CHARGE_TYPE']=="10141003"){
                     this.listSearch["REPAIR_ITEM_MONEY"]+=this.selectData[i]["PAINT_NUM"]*this.paint_price;
+                    this.selectData[i]["ITEM_MONEY"]=this.selectData[i]["PAINT_NUM"]*this.paint_price;
                 }
                 
             }
@@ -887,10 +887,10 @@ export default {
 
           if (this.$store.state.user.userInfo.tenant && this.$store.state.user.userInfo.tenant.businessType == '10331003') {
             console.log('三级维修');
-            temp = printAccountFun(this.wtdData, listSearch, this.commitItem, commitItemGroup, commitParts, commitOtherItem, store, 'styleFlag');
+            temp = printAccountFun(this.wtdData, listSearch, this.selectData, commitItemGroup, commitParts, commitOtherItem, store, 'styleFlag');
           } else {
             console.log('不是三级维修');
-            temp = printAccountFun(this.wtdData, listSearch, this.commitItem, commitItemGroup, commitParts, commitOtherItem, store, 'styleFlag');
+            temp = printAccountFun(this.wtdData, listSearch, this.selectData, commitItemGroup, commitParts, commitOtherItem, store, 'styleFlag');
           }
           var LODOP = getLodop();
           LODOP.SET_PRINT_STYLEA(0, "Alignment", 2);
@@ -953,15 +953,17 @@ export default {
   }
   .r-list-money{
     width: 100%;
-    font-size: 18px;
+    font-size: 16px;
     text-align: center;
-
+        margin-bottom: 20px;
+    height: 40px;
+    padding-top: 10px;
     span{
       color:red;
 
     }
     .r-list-money-reset{
-      font-size: 22px;
+      font-size: 16px;
     }
   }
   .r-list-chekbox{
