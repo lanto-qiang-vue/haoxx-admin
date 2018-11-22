@@ -151,8 +151,8 @@
       <combo-detail :tshow="showItemFlag" :tid="itemDetailId"></combo-detail>
   <!--底部按钮组-->
     <div slot="footer">
-        <Button type="primary" @click="receiveFun" style="margin-right: 10px;">领料出库</Button>
-        <Button type="primary" @click="rejectedFun" style="margin-right: 10px;">退料入库</Button>
+        <Button v-if="accessBtn('clickToOutStock')" type="primary" @click="receiveFun" style="margin-right: 10px;">领料出库</Button>
+        <Button v-if="accessBtn('clickToInStock')" type="primary" @click="rejectedFun" style="margin-right: 10px;">退料入库</Button>
     </div>
   </Modal>
 
@@ -162,10 +162,11 @@
   import { getName, getDictGroup ,getUserInfo} from '@/libs/util.js'
   import { formatDate } from '@/libs/tools.js'
   import comboDetail from '@/hxx-components/combo-detail.vue'
-
+  import mixin from '@/hxx-components/mixin'
 	export default {
 	name: "maintain-pick-detail",
     components: {comboDetail},
+    mixins: [mixin],
     data(){
       return{
           showItemFlag:null,//项目套餐组详情

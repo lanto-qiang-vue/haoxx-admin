@@ -2,7 +2,7 @@
 <template>
   <common-table v-model="tableData" :columns="columns" :total="total" :clearSelect="clearTableSelect"
                 @changePage="changePage" @changePageSize="changePageSize" @onRowClick="onRowClick"
-                @onRowDblclick="onRowDblclick" :show="showTable" :page="page">
+                @onRowDblclick="onRowDblclick" :show="showTable" :page="page" :loading="loading">
     <div slot="search">
       <div class="search-block">
         <Input v-model="search.input" placeholder="工单单号/送修人/联系电话..."></Input>
@@ -39,6 +39,7 @@ export default {
     mixins: [mixin],
     data(){
 		return{
+            loading:false,
             columns: [
                 {title: '序号',  minWidth: 80,
                     render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
@@ -145,6 +146,7 @@ export default {
     },
     methods:{
         getList(){
+            this.loading=true;
             this.axios.request({
                 url: '/tenant/repair/ttrepairgetpart/list',
                 method: 'post',
@@ -159,6 +161,7 @@ export default {
                 if (res.success === true) {
                     this.tableData= res.data
                     this.total= res.total
+                    this.loading=false;
                 }
             })
             this.detailData = null;

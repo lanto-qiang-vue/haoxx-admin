@@ -177,10 +177,10 @@
 
     <!--底部按钮组-->
       <div slot="footer">
-          <Button v-if="" :disabled="buttonStateArr.save" @click="handleSubmit('listSearch')" size="large" type="primary">保存</Button>
-          <Button v-if="" :disabled="buttonStateArr.doaccount" @click="handleCommit" type="primary">结算</Button>
-          <Button v-if="" :disabled="buttonStateArr.printAccount" type="primary" @click="printAccountButton">打印结算单</Button>
-          <Button v-if="" :disabled="buttonStateArr.shoukuan" @click="shoukuanFun" type="primary">收款</Button>
+          <Button v-if="accessBtn('save')" :disabled="buttonStateArr.save" @click="handleSubmit('listSearch')" size="large" type="primary">保存</Button>
+          <Button v-if="accessBtn('doaccount')" :disabled="buttonStateArr.doaccount" @click="handleCommit" type="primary">结算</Button>
+          <Button v-if="accessBtn('printAccount')" :disabled="buttonStateArr.printAccount" type="primary" @click="printAccountButton">打印结算单</Button>
+          <Button v-if="accessBtn('dopay')" :disabled="buttonStateArr.shoukuan" @click="shoukuanFun" type="primary">收款</Button>
           <Button  @click="showModal=false;">返回</Button>
       </div>
   </Modal>
@@ -195,9 +195,12 @@
   import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
   import {printAccountFun} from '@/hxx-components/repairPrintUtil.js'
   import {getLodop} from '@/hxx-components/LodopFuncs.js'
+
+
 export default {
 	name: "repairOrder-list-quickDetail",
     components: {selectVehicle,selectShoukuanOrder},
+    mixins: [mixin],
     data(){
         // 联系电话验证
       const validatePass = (rule, value, callback) => {
