@@ -1,7 +1,6 @@
 <template>
   <common-table v-model="tableData" :columns="columns" @changePageSize="changePageSize" @changePage="changePage"
-                :total="total" :show="showTable" :clearSelect="clearType" @onRowClick="onRowClick"
-                @onRowDblclick="dbclick" :page="page">
+                :total="total" :show="showTable" :clearSelect="clearType" @onRowClick="onRowClick" :page="page">
     <div slot="search">
       <div class="search-block">
         <Input v-model="search.keyword" placeholder="企业名称搜索..."></Input>
@@ -46,6 +45,7 @@
           {title: '门店名称', key: 'TENANT_NAME', sortable: true, minWidth: 140},
           {title: '维修工单单号', key: 'REPAIR_ID', sortable: true, minWidth: 140},
           {title: '门店区域', key: 'AREA_ID', sortable: true, minWidth: 140},
+          {title: '失败原因', key: 'ERROR_RESAON', sortable: true, minWidth: 140},
           {title: '上传失败时间', key: 'CREATE_DATE', sortable: true, minWidth: 140},
         ],
         search: {
