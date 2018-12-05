@@ -124,9 +124,8 @@
         </Card>
         <div style="position: relative;">
         <img src="../assets/images/hxx-ercode.png" style="width: 140%;position: relative;left: -35px;">
-        <div style="width:100%;position:absolute;overflow: hidden;top: 60px;text-align: center;font-size: 14px;line-height: 20px;color: white;">
-          <div style="display: inline-block;margin-right: 15px;width: 28%;"><img src="../assets/images/IOS.png" style="width: 100%;"><span>苹果用户</span></div>
-          <div style="display: inline-block;;margin-left: 15px;width: 28%;"><img src="../assets/images/android.png" style="width: 100%;"><span>安卓用户</span></div>
+        <div style="width:100%;position:absolute;overflow: hidden;top: 60px;text-align: center;font-size: 14px;line-height: 20px;color: white;margin-left:10px;">
+          <div style="display: inline-block;margin-right: 15px;width: 35%;"><img src="../assets/images/appDownload.png" style="width: 100%;"></div>
         </div>
         </div>
       </div>
