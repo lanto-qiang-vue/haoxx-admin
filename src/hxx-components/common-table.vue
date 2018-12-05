@@ -1,12 +1,15 @@
 <template>
 <div class="common-table" ref="commonTable">
-  <Collapse v-model="collapse" v-show="showSearch"  class="table-search" @on-change="changeCollapse">
-    <Panel name="1">{{searchTitle}}
-      <div slot="content" >
-        <slot name="search"></slot>
-      </div>
-    </Panel>
-  </Collapse>
+  <!--<Collapse v-model="collapse" v-show="showSearch"  class="table-search" @on-change="changeCollapse">-->
+    <!--<Panel name="1">{{searchTitle}}-->
+      <!--<div slot="content" >-->
+  <div class="table-search">
+    <slot name="search"></slot>
+  </div>
+
+      <!--</div>-->
+    <!--</Panel>-->
+  <!--</Collapse>-->
   <div class="operate" v-show="showOperate">
     <slot name="operate"></slot>
   </div>
@@ -17,7 +20,7 @@
     class="main-table"
     ref="tablesMain"
     :data="data"
-    :columns="columns"
+    :columns="tableColumns"
     stripe
     border
     :highlight-row="true"
@@ -37,14 +40,15 @@
   </Table>
   <div class="table-bottom" v-show="showPage">
     <div><slot name="footer"></slot></div>
-    <Page :current="page" :page-size="25" show-sizer show-elevator show-total :page-size-opts="[25, 50, 100, 150]"
+    <Page :current="page" size="small" :page-size="25" show-sizer show-elevator show-total :page-size-opts="[25, 50, 100, 150]"
     placement="top" :total="total" @on-change="changePage" @on-page-size-change="changePageSize"/>
-    <Button class="refresh" @click="changePage(page)"><Icon type="md-refresh" size="20"/></Button>
+    <Button size="small" class="refresh" @click="changePage(page)"><Icon type="md-refresh" size="20"/></Button>
   </div>
   <slot></slot>
 </div>
 </template>
 <script>
+  import {deepClone} from "@/libs/util";
 	export default {
 		name: "common-table",
     props: {
@@ -157,6 +161,7 @@
     data(){
 		  return{
         // current: 1,
+        tableColumns:[],
 		    data:[],
         collapse: ['1','2'],
         tableHeight: 500,
@@ -165,6 +170,9 @@
       }
     },
     watch:{
+      columns(thisColumns){
+        this.calcColumns(thisColumns)
+      },
       clearSelect(val){
         this.$refs.tablesMain.clearCurrentRow()
       },
@@ -178,12 +186,22 @@
     mounted() {
 		  let self= this
       // self.resize(1000)
-      // window.onresize = function(){
-		  //   if(window.innerHeight!= self.windowInnerHeight)
-      //     self.resize(200)
-      // }
+      window.onresize = function(){
+		    if(window.innerHeight!= self.windowInnerHeight)
+          self.resize(200)
+      }
+      this.calcColumns(this.columns)
     },
     methods:{
+		  calcColumns(thisColumns){
+        console.log(thisColumns)
+        let arr= deepClone(thisColumns)
+        for (let i in arr){
+          arr[i].ellipsis= true
+          arr[i].tooltip= true
+        }
+        this.tableColumns= arr
+      },
       resize(time){
         let self= this
         let commonTable=this.$refs.commonTable
@@ -192,7 +210,7 @@
           clearTimeout(this.timer);
           this.timer = setTimeout(function () {
             self.windowInnerHeight= window.innerHeight
-            self.tableHeight = commonTable.offsetHeight - 20 -
+            self.tableHeight = commonTable.offsetHeight -
               commonTable.querySelector(".table-search").offsetHeight -
               commonTable.querySelector(".operate").offsetHeight - 10 -
               commonTable.querySelector(".table-bottom").offsetHeight;
@@ -256,14 +274,14 @@
   opacity: 0;
   transition: opacity .2s;
   .table-search{
-    margin-bottom: 10px;
+    /*margin-bottom: 10px;*/
   }
   .operate{
-    margin-bottom: 5px;
+    /*margin-bottom: 5px;*/
     /*margin-bottom: 10px;*/
     /*padding: 15px 15px 10px 15px;*/
     /*border: 1px solid #dcdee2;*/
-    border-radius: 3px;
+    /*border-radius: 3px;*/
   }
   .operate button{
     margin: 0 5px 5px 0;
@@ -288,8 +306,21 @@
     }
   }
   .main-table{
+    .ivu-table-cell{
+      .ivu-table-sort{
+        display: none;
+      }
+    }
+    .ivu-table-cell:hover{
+      .ivu-table-sort{
+        display: inline-block;
+      }
+    }
     .ivu-table-row{
       cursor: default;
+      .ivu-tooltip-rel{
+        vertical-align: top;
+      }
     }
   }
   .table-bottom{

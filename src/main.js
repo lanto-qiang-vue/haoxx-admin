@@ -11,6 +11,7 @@ import importDirective from '@/directive'
 // import 'iview/dist/styles/iview.css'
 // import './index.less'
 import '@/assets/icons/iconfont.css'
+// import '@/assets/custom.less'
 import '@/assets/common.less'
 import '@/assets/icons/font-awesome/css/font-awesome.min.css'
 

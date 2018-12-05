@@ -1,4 +1,5 @@
 @import '~iview/src/styles/index.less';
+@import './styles/index.less';
 @menu-dark-title: #001529;
 @menu-dark-active-bg: #000c17;
 @layout-sider-background: #001529;
@@ -66,6 +67,17 @@
           background-color: white;
           z-index: 5;
         }
+      }
+    }
+  }
+}
+
+.full-height{
+  .ivu-modal-wrap{
+    .ivu-modal{
+      height: 100%;
+      .ivu-modal-header{
+        padding: 0;
       }
     }
   }
