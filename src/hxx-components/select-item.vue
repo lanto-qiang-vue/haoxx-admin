@@ -7,19 +7,25 @@
     :mask-closable="false"
     :scrollable="true"
     :transfer= "false"
-    :footer-hide="true"
+    :footer-hide="false"
     :transition-names="['', '']">
      <common-table v-model="tableData" :columns="columns2" @changePageSize="changePageSize" @changePage="changePage" :total="total"  :show="showTable"  :page="page" :showOperate="false">
       <div slot="search"  >
       <div class="search-block">
         <Input v-model="keyword"  placeholder="项目编号/名称..."></Input>
       </div>
-      <ButtonGroup size="small">
-        <Button type="primary" @click="page=1;getList()"><Icon type="ios-search" size="24"/></Button>
-        <Button type="primary" @click="clear()"><Icon type="ios-undo" size="24"/></Button>
+      <ButtonGroup>
+        <Button type="primary" @click="page=1;getList()">
+          搜索
+        </Button>
+        <!--<Button type="primary" @click="clear()"><Icon type="ios-undo" size="24"/></Button>-->
       </ButtonGroup>
     </div>
      </common-table>
+      <div slot="footer">
+        <Button @click="changeModal=false">取消</Button>
+        <Button @click="changeModal=false" type="primary">确定</Button>
+      </div>
     </Modal>
 </template>
 <script>
@@ -51,7 +57,7 @@
            {title: '操作', key: 'operation', sortable: true, minWidth: 80,fixed: 'right',
                         render: (h, params) => {
                             let buttonContent= '请选择';
-                            let buttonStatus= 'primary';
+                            let buttonStatus= 'warning';
                             let dtype = this.check(params.row.ITEM_ID);
                             return h('div', [
                                 h('Button', {
