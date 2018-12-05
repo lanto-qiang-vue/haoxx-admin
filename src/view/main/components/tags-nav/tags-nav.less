@@ -28,9 +28,9 @@
   }
   .btn-con{
     position: absolute;
-    top: 0px;
+    top: 0;
     height: 100%;
-    background: #fff;
+    background: #F1F1F1;
     //padding-top: 3px;
     z-index: 10;
     button{
@@ -39,7 +39,7 @@
       text-align: center;
     }
     &.left-btn{
-      left: 0px;
+      left: 0;
     }
     &.right-btn{
       right: 32px;
@@ -56,20 +56,21 @@
     .scroll-body{
       height: 100%;
       display: inline-block;
-      padding: 1px 0;
+      //padding: 1px 0;
       position: absolute;
       overflow: visible;
       white-space: nowrap;
       transition: left .3s ease;
       .ivu-tag-dot{
-        height: 32px;
-        line-height: 32px;
-        margin: 0 0 0 2px;
+        height: 34px;
+        line-height: 34px;
+        margin: 0;
         padding: 0 6px;
         border: 0!important;
-        //background-color: #F1F1F1!important;
+        background-color: #F1F1F1!important;
         .ivu-tag-dot-inner{
           transition: background .2s ease;
+          background-color: #C7C7C7;
         }
         .ivu-tag-text{
           line-height: 25px;
@@ -79,8 +80,14 @@
           margin-left: 0!important;
         }
       }
+      .ivu-tag-dot:hover{
+        background-color: white!important;
+      }
       .ivu-tag-primary{
         background-color: white!important;
+        .ivu-tag-dot-inner{
+          background-color: #2D8cF0;
+        }
       }
     }
   }
