@@ -6,19 +6,19 @@
         <Input v-model="search.keyword" placeholder="采购单号/供应商名称..."></Input>
       </div>
       <div class="search-block">
-        <Select v-model="search.status">
+        <Select v-model="search.status" clearable>
           <Option v-for="(item, index) in list1048"
                   :key="index" :value="item.code">{{item.name}}
           </Option>
         </Select>
       </div>
-      <ButtonGroup size="small">
+      <ButtonGroup>
         <Button type="primary" @click="page=1;getList()">
-          <Icon type="ios-search" size="24"/>
+      搜索
         </Button>
-        <Button type="primary" @click="clear()">
-          <Icon type="ios-undo" size="24"/>
-        </Button>
+        <!--<Button type="primary" @click="clear()">-->
+          <!--<Icon type="ios-undo" size="24"/>-->
+        <!--</Button>-->
       </ButtonGroup>
     </div>
     <div slot="operate">
@@ -32,15 +32,17 @@
     </div>
     <Modal
       v-model="showModal"
-      class="table-modal-detail"
+      class="table-modal-detail full-height"
       title="配件采购"
-      width="90"
+      width="100%"
       :mask-closable="false"
       @on-visible-change="visibleChange"
       :scrollable="true"
       :transfer="false"
       :footer-hide="false"
       :transition-names="['', '']">
+      <modal-title slot="header" title="维修项目套餐" :state="''" @clickBack="showModal=false"></modal-title>
+      <div style="height: 100%;overflow: auto; padding-bottom: 30px;">
       <Collapse v-model="value">
         <Panel name="1">
           基本信息
@@ -105,7 +107,7 @@
         </Button>
       </div>
       <div style="float:left;font-size:18px;">合计金额:&nbsp;<span style="color:red;">{{formData.SUM_MONEY}}</span></div>
-      <div style="height:120px;"></div>
+      </div>
       <div slot="footer">
         <Button type="primary" v-show="canShow"  @click="addPost('formData')">保存</Button>
         <Button @click="showModal=false">取消</Button>
@@ -157,13 +159,14 @@
   import unitInput from '@/hxx-components/unit-input.vue'
   import selectPartsGroup from '@/hxx-components/select-partsGroup.vue'
   import {getName, getDictGroup, getCreate} from '@/libs/util.js'
+  import ModalTitle from '@/hxx-components/modal-title.vue'
   import commonTable from '@/hxx-components/common-table.vue'
   import {deepClone} from "../../libs/util"
   import mixin from '@/hxx-components/mixin'
 
   export default {
     name: 'parts-purchase',
-    components: {commonTable, selectSupply, selectPartsGroup, unitInput},
+    components: {commonTable, selectSupply, selectPartsGroup, unitInput,ModalTitle},
     mixins: [mixin],
     activated() {
       let queryData = this.$route.query;
@@ -217,13 +220,13 @@
         },
         columns2: [
           {
-            title: '序号', key: 'STORE_NAME', minWidth: 90,
+            title: '序号', key: 'STORE_NAME', minWidth: 80,align:'center',
             render: (h, params) => h('span', params.index + 1)
           },
-          {title: '配件名称', key: 'NAME', sortable: true, minWidth: 120},
-          {title: '原厂编号', key: 'FACTORY_NO', minWidth: 120},
+          {title: '配件名称', key: 'NAME', sortable: true, minWidth: 120,align:'left'},
+          {title: '原厂编号', key: 'FACTORY_NO', minWidth: 120,align:'left'},
           {
-            title: '数量', key: 'PART_NUM', minWidth: 120,
+            title: '数量', key: 'PART_NUM', minWidth: 120,align:'right',
             render: (h, params) => {
               this.countMoney();
               params.row.SUM_MONEY = params.row.PART_NUM * parseFloat(params.row.PURCHASE_PRICE);
@@ -253,15 +256,15 @@
             }
           },
           {
-            title: '单位', key: 'UNIT', minWidth: 120,
+            title: '单位', key: 'UNIT', minWidth: 120,align:'left',
             render: (h, params) => h('span', getName(this.list1015, params.row.UNIT))
           },
           {
-            title: '品牌', key: 'BRAND', minWidth: 120,
+            title: '品牌', key: 'BRAND', minWidth: 120,align:'left',
             render: (h, params) => h('span', getName(this.list1016, params.row.BRAND))
           },
           {
-            title: '采购单价', key: 'PURCHASE_PRICE', minWidth: 120,
+            title: '采购单价', key: 'PURCHASE_PRICE', minWidth: 120,align:'right',
             render: (h, params) => {
               return h('div', [
                 h(unitInput, {
@@ -287,11 +290,11 @@
             }
           },
           {
-            title: '采购金额', key: 'SUM_MONEY', minWidth: 120
+            title: '采购金额', key: 'SUM_MONEY', minWidth: 120,align:'right'
           },
-          {title: '含税销售价', key: 'SALES_PRICE', minWidth: 120},
+          {title: '含税销售价', key: 'SALES_PRICE', minWidth: 120,align:'right'},
           {
-            title: '销售税率', key: 'RATE', minWidth: 120,
+            title: '销售税率', key: 'RATE', minWidth: 120,align:'right',
             render: (h, params) => {
               return h('div', [
                 h(unitInput, {
@@ -316,8 +319,8 @@
 
             }
           },
-          {title: '销售税额', key: 'TAX', minWidth: 140},
-          {title: '未含税销售价', key: 'NOT_CONTAINS_TAX_SALE_PRICE', minWidth: 140},
+          {title: '销售税额', key: 'TAX', minWidth: 140,align:'right'},
+          {title: '未含税销售价', key: 'NOT_CONTAINS_TAX_SALE_PRICE', minWidth: 140,align:'center'},
           {
             title: '操作', key: 'STORE_NAME', minWidth: 120,
             render: (h, params) => {
@@ -377,19 +380,19 @@
         showTable: false,
         list: '',
         columns: [
-          {title: '序号',  minWidth: 80,
+          {title: '序号',  minWidth: 80,align:'center',
             render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
           },
-          {title: '仓库名称', key: 'STORE_NAME', sortable: true, minWidth: 120},
+          {title: '仓库名称', key: 'STORE_NAME', sortable: true, minWidth: 120,align:'left'},
           {
-            title: '采购日期', key: 'PURCHASE_DATE', sortable: true, minWidth: 120,
+            title: '采购日期', key: 'PURCHASE_DATE', sortable: true, minWidth: 120,align:'left',
             render: (h, params) => h('span', params.row.PURCHASE_DATE.substr(0, 10))
           },
           {
-            title: '订单类型', key: 'PURCHASE_TYPE', sortable: true, minWidth: 120,
+            title: '订单类型', key: 'PURCHASE_TYPE', sortable: true, minWidth: 120,align:'left',
             render: (h, params) => h('span', getName(this.list1024, params.row.PURCHASE_TYPE))
           },
-          {title: '供应商名称', key: 'SUPPLIER_NAME', sortable: true, minWidth: 140,},
+          {title: '供应商名称', key: 'SUPPLIER_NAME', sortable: true, minWidth: 140,align:'left'},
           {title: '采购员', key: 'PURCHASE_PERSON', sortable: true, minWidth: 120},
           {
             title: '采购总金额', key: 'SUM_MONEY', sortable: true, minWidth: 140,
@@ -403,7 +406,7 @@
         ],
         search: {
           keyword: '',
-          status: '0',
+          status: '',
         },
       }
     },
@@ -867,7 +870,7 @@
             limit: this.limit,
             page: this.page,
             KEYWORD: this.search.keyword,
-            STATUS_eq: this.search.status == 0 ? '' : this.search.status,
+            STATUS_eq: this.search.status || '',
           }
         }).then(res => {
           if (res.success === true) {
@@ -886,7 +889,6 @@
       },
       clear() {
         this.search.keyword = '';
-        this.search.status = '0';
       },
       clearsection() {
         this.list = '';
@@ -906,7 +908,7 @@
       },
       list1048() {
         let data = getDictGroup(this.$store.state.app.dict, '1048');
-        data.unshift({code: '0', name: '选择状态...'});
+        // data.unshift({code: '0', name: '选择状态...'});
         return data;
       },
       list1024() {
@@ -968,5 +970,11 @@
     div {
       float: right;
     }
+  }
+</style>
+<style lang="less">
+  .ivu-collapse-header .ivu-icon{
+    float:right;
+    line-height:3;
   }
 </style>

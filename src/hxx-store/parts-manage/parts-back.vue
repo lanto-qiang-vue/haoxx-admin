@@ -6,30 +6,39 @@
       <div class="search-block">
         <Input v-model="search.keyword" placeholder="退货单号/供应商名称..."></Input>
       </div>
-      <div class="search-block">
+      <div class="search-block" clearable>
         <Select v-model="search.status">
           <Option v-for="(item, index) in list1047"
                   :key="index" :value="item.code">{{item.name}}
           </Option>
         </Select>
       </div>
-      <ButtonGroup size="small">
+      <ButtonGroup>
         <Button type="primary" @click="page=1;getList()">
-          <Icon type="ios-search" size="24"/>
+          搜索
         </Button>
-        <Button type="primary" @click="clear()">
-          <Icon type="ios-undo" size="24"/>
-        </Button>
+        <!--<Button type="primary" @click="clear()">-->
+        <!--<Icon type="ios-undo" size="24"/>-->
+        <!--</Button>-->
       </ButtonGroup>
     </div>
     <div slot="operate">
       <Button type="primary" v-if="accessBtn('add')" @click="add">新增</Button>
       <Button type="info" v-if="accessBtn('edit')" :disabled="canDo" @click="edit">修改/查看</Button>
-      <Button type="success" v-if="accessBtn('check')" :disabled="canDo || list.STATUS != '10471001'" @click="check">审核</Button>
-      <Button type="warning" v-if="accessBtn('recheck')" :disabled="canDo || list.STATUS != '10471002'" @click="rcheck">反审核</Button>
-      <Button type="success" v-if="accessBtn('collect')" :disabled="canDo || list.STATUS != '10471002'" @click="collection">收款</Button>
-      <Button type="error" v-if="accessBtn('cancel')" :disabled="canDo || list.STATUS != '10471001'" @click="del">作废</Button>
-      <Button type="primary" v-if="accessBtn('printThd')" :disabled="canDo || list.STATUS == '10471001'" @click="print">打印退货单</Button>
+      <Button type="success" v-if="accessBtn('check')" :disabled="canDo || list.STATUS != '10471001'" @click="check">
+        审核
+      </Button>
+      <Button type="warning" v-if="accessBtn('recheck')" :disabled="canDo || list.STATUS != '10471002'" @click="rcheck">
+        反审核
+      </Button>
+      <Button type="success" v-if="accessBtn('collect')" :disabled="canDo || list.STATUS != '10471002'"
+              @click="collection">收款
+      </Button>
+      <Button type="error" v-if="accessBtn('cancel')" :disabled="canDo || list.STATUS != '10471001'" @click="del">作废
+      </Button>
+      <Button type="primary" v-if="accessBtn('printThd')" :disabled="canDo || list.STATUS == '10471001'" @click="print">
+        打印退货单
+      </Button>
     </div>
     <Modal
       v-model="showModal"
@@ -210,8 +219,8 @@
     mixins: [mixin],
     data() {
       return {
-        showFrame:false,
-        timer:'',
+        showFrame: false,
+        timer: '',
         rule2: {},
         collectionModal: false,
         money: 0,
@@ -576,8 +585,8 @@
       },
       zfb() {
 //支付宝支付
-        if(this.collectionData.MONEY1 <= 0){
-          this.$Modal.info({title:'系统提示',content:'支付金额大于0时才能使用支付宝支付!'});
+        if (this.collectionData.MONEY1 <= 0) {
+          this.$Modal.info({title: '系统提示', content: '支付金额大于0时才能使用支付宝支付!'});
           return;
         }
         this.axios.request({
@@ -613,36 +622,36 @@
           }
         })
       },
-      insertReturn(){
+      insertReturn() {
         this.collectionData.PAYMENT1 = "10101008";
         this.axios.request({
           url: '/tenant/part/tt_part_purchase_return/insert_return',
           method: 'post',
           data: {
             access_token: this.$store.state.user.token,
-            data:JSON.stringify(this.collectionData),
+            data: JSON.stringify(this.collectionData),
             RETURN_NO: this.collectionData.RETURN_NO
           }
         }).then(res => {
           if (res.success === true) {
             clearInterval(this.timer);
-          this.timer = setInterval(()=>{
-            this.axios.request({
-              url: '/tenant/part/tt_part_purchase_return/return_status',
-              method: 'post',
-              data: {
-                access_token: this.$store.state.user.token,
-                RETURN_NO: this.collectionData.RETURN_NO
-              }
-            }).then(res => {
-              if (res.success === true) {
-               if(res.data[0].STATUS == '10471003'){
-                 clearInterval(this.timer);
-                 this.getList();
-               }
-              }
-            })
-          },3000);
+            this.timer = setInterval(() => {
+              this.axios.request({
+                url: '/tenant/part/tt_part_purchase_return/return_status',
+                method: 'post',
+                data: {
+                  access_token: this.$store.state.user.token,
+                  RETURN_NO: this.collectionData.RETURN_NO
+                }
+              }).then(res => {
+                if (res.success === true) {
+                  if (res.data[0].STATUS == '10471003') {
+                    clearInterval(this.timer);
+                    this.getList();
+                  }
+                }
+              })
+            }, 3000);
           }
         })
       },
@@ -746,7 +755,7 @@
                               data: {
                                 access_token: this.$store.state.user.token,
                                 id: this.list.RETURN_ID,
-                                yes_out:1,
+                                yes_out: 1,
                               }
                             }).then(res => {
                               if (res.success === true && res.data == true) {

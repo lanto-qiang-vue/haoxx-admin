@@ -17,13 +17,13 @@
         <div class="search-block">
           <Input v-model="search.keyword" placeholder="供应商编号/名称/联系电话..."></Input>
         </div>
-        <ButtonGroup size="small">
+        <ButtonGroup>
           <Button type="primary" @click="page=1;getList()">
-            <Icon type="ios-search" size="24"/>
+ 搜索
           </Button>
-          <Button type="primary" @click="clear()">
-            <Icon type="ios-undo" size="24"/>
-          </Button>
+          <!--<Button type="primary" @click="clear()">-->
+            <!--<Icon type="ios-undo" size="24"/>-->
+          <!--</Button>-->
         </ButtonGroup>
         <Button style="margin-left:100px;" type="info" @click="goTo">添加供应商</Button>
       </div>
@@ -50,22 +50,22 @@
         list: '',
         columns: [
           {
-            title: '序号', minWidth: 80,
+            title: '序号', minWidth: 80,align:'center',
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
-          {title: '供应商名称', key: 'NAME', sortable: true, minWidth: 140},
+          {title: '供应商名称', key: 'NAME', sortable: true, minWidth: 140,align:'left'},
           {
-            title: '供应商类型', key: 'TYPE', sortable: true, minWidth: 140,
+            title: '供应商类型', key: 'TYPE', sortable: true, minWidth: 140,align:'left',
             render: (h, params) => h('span', getName(this.list1008, params.row.TYPE))
           },
-          {title: '联系人', key: 'LINKMAN', sortable: true, minWidth: 140},
+          {title: '联系人', key: 'LINKMAN', sortable: true, minWidth: 140,align:'left'},
           {
-            title: '结算方式', key: 'BALANCE_TYPE', sortable: true, minWidth: 140,
+            title: '结算方式', key: 'BALANCE_TYPE', sortable: true, minWidth: 140,align:'left',
             render: (h, params) => h('span', getName(this.list1010, params.row.BALANCE_TYPE))
           },
-          {title: '税号', key: 'TAX_NO', sortable: true, minWidth: 140},
+          {title: '税号', key: 'TAX_NO', sortable: true, minWidth: 140,align:'left'},
           {
-            title: '发票类型', key: 'INVOICE_TYPE', sortable: true, minWidth: 140,
+            title: '发票类型', key: 'INVOICE_TYPE', sortable: true, minWidth: 140,align:'center',
             render: (h, params) => h('span', getName(this.list1009, params.row.INVOICE_TYPE))
           }
         ],
