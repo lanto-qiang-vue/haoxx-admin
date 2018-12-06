@@ -15,13 +15,14 @@
             <FormItem :label-width="80" label="项目类别:">
               <Input placeholder="项目编号/名称..." :disabled="true" v-model="TYPE"></Input>
             </FormItem>
-            <ButtonGroup size="small">
+            <ButtonGroup >
               <Button type="primary" @click="page=1;getList()">
-                <Icon type="ios-search" size="24"/>
+                搜索
+                <!--<Icon type="ios-search" size="24"/>-->
               </Button>
-              <Button type="primary" @click="clear()">
-                <Icon type="ios-undo" size="24"/>
-              </Button>
+              <!--<Button type="primary" @click="clear()">-->
+                <!--<Icon type="ios-undo" size="24"/>-->
+              <!--</Button>-->
             </ButtonGroup>
           </Form>
           <!--<div class="search-block">-->
@@ -77,7 +78,7 @@
         v-model="customModal"
         class="table-modal-detail"
         :title="title"
-        width="90"
+        width="80"
         @on-visible-change="visibleChange"
         :mask-closable="false"
         :scrollable="true"
@@ -103,17 +104,14 @@
               <FormItem label="项目编号:" v-if="editType" style="width:30%;" prop="ITEM_NO">
                 <Input type="text" :disabled="true" v-model="formData.ITEM_NO"> </Input>
               </FormItem>
-              <!-- 手动 -->
-              <!-- <div style="height:20px;"></div> -->
-              <!-- 手动 -->
-              <FormItem label="发动机类型:" v-if="isShow" style="width:45%;" prop="ENGINE_TYPE">
+              <FormItem label="发动机类型:" v-if="isShow" style="width:30%;" prop="ENGINE_TYPE">
                 <Select v-model="formData.ENGINE_TYPE" style="min-width: 100%;" >
                   <Option v-for="(item, index) in engine"
                           :key="index" :value="item.ENGINE_TYPE">{{item.ENGINE_TYPE_NAME}}
                   </Option>
                 </Select>
               </FormItem>
-              <FormItem label="汽车参数:" v-if="isShow" style="width:45%;" prop="CLASS_TYPE">
+              <FormItem label="汽车参数:" v-if="isShow" style="width:30%;" prop="CLASS_TYPE">
                 <Select v-model="formData.CLASS_TYPE" style="min-width: 100%;">
                   <Option v-for="(item, index) in parameter"
                           :key="index" :value="item.CLASS_TYPE">{{item.CLASS_NAME}}
@@ -149,17 +147,20 @@
               <FormItem label="别名5:" v-if="isShow" style="width:30%;">
                 <Input type="text" :disabled="editType" v-model="formData.ALIAS5"> </Input>
               </FormItem>
+              <FormItem label="备注描述:"  style="width:100%;">
+                <Input type="textarea" style="width:100%;" v-model="formData.REMARK"> </Input>
+              </FormItem>
             </Form>
           </Panel>
         </Collapse>
-        <Collapse v-model="value2">
-          <Panel name="2">
-            备注描述
-            <Form slot="content" ref="lists" class="common-form">
-              <Input type="textarea" v-model="formData.REMARK" placeholder="请输入故障描述"> </Input>
-            </Form>
-          </Panel>
-        </Collapse>
+        <!--<Collapse v-model="value2">-->
+          <!--<Panel name="2">-->
+            <!--备注描述-->
+            <!--<Form slot="content" ref="lists" class="common-form">-->
+              <!--<Input type="textarea" v-model="formData.REMARK" placeholder="请输入故障描述"> </Input>-->
+            <!--</Form>-->
+          <!--</Panel>-->
+        <!--</Collapse>-->
         <div style="height:60px;"></div>
         <div slot="footer">
           <Button @click="addcancle()">取消</Button>
@@ -227,19 +228,19 @@
         },
         columns: [
           {
-            title: '序号', minWidth: 80,
+            title: '序号', minWidth: 80,align:'center',sortable: true,
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
-          {title: '项目编号', key: 'ITEM_NO', sortable: true, minWidth: 120},
-          {title: '维修项目名称', key: 'NAME', sortable: true, minWidth: 140},
-          {title: '项目分类', key: 'TYPE_NAME', sortable: true, minWidth: 120},
+          {title: '项目编号', key: 'ITEM_NO',align:'left', sortable: true, minWidth: 120},
+          {title: '维修项目名称', key: 'NAME',align:'left', sortable: true, minWidth: 140},
+          {title: '项目分类', key: 'TYPE_NAME', align:'left',sortable: true, minWidth: 120},
           {
-            title: '计费标准', key: 'CHARGE_TYPE', sortable: true, minWidth: 140,
+            title: '计费标准', key: 'CHARGE_TYPE',align:'left', sortable: true, minWidth: 120,
             render: (h, params) => h('span', getName(this.chargetype, params.row.CHARGE_TYPE))
           },
-          {title: '标准金额(元)', key: 'REPAIR_MONEY', sortable: true, minWidth: 140},
-          {title: '标准工时(小时)', key: 'REPAIR_TIME', sortable: true, minWidth: 150},
-          {title: '油漆面数(面)', key: 'PAINT_NUM', sortable: true, minWidth: 140},
+          {title: '标准金额(元)', key: 'REPAIR_MONEY',align:'right', sortable: true, minWidth: 140},
+          {title: '标准工时(小时)', key: 'REPAIR_TIME',align:'right', sortable: true, minWidth: 140},
+          {title: '油漆面数(面)', key: 'PAINT_NUM',align:'right', sortable: true, minWidth: 140},
         ],
         columns1: [
           {type: 'selection', width: 60, align: 'center'},
@@ -745,6 +746,12 @@
     },
   }
 </script>
+<style lang="less">
+  .ivu-collapse-header .ivu-icon{
+    float:right;
+    line-height:3;
+  }
+</style>
 <style scoped lang="less">
   .split {
     border: 1px solid #dcdee2;
