@@ -394,7 +394,7 @@
           {title: '客户名称', key: 'CUSTOMER_NAME', sortable: true, minWidth: 120,},
           {
             title: '退款合计', key: 'RETURN_MONEY', sortable: true, minWidth: 120,align:'right',
-            render: (h, params) => h('span', params.row.RETURN_MONEY.toFixed(2))
+            render: (h, params) => h('span',this.formatMoney(params.row.RETURN_MONEY))
           },
           {
             title: '退货日期', key: 'RETURN_DATE', sortable: true, minWidth: 120,
