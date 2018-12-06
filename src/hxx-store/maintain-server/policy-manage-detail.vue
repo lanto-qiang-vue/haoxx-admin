@@ -168,7 +168,7 @@
                     }
                 },
                 {title: '金额', key: 'MONEY', sortable: true, minWidth: 120,align:'right',
-                    
+                    render: (h, params) => h('span', this.formatMoney(params.row.MONEY))
                 },
                 
             ],

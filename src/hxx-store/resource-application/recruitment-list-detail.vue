@@ -3,15 +3,19 @@
   <Modal
     v-model="showModal"
     title="人员招聘"
-    width="90"
+    width="100"
     @on-visible-change="visibleChange"
     :scrollable="true"
     :transfer= "false"
     :footer-hide="false"
     :transition-names="['', '']"
+    class="table-modal-detail full-height"
+    :closable="false"
   >
-    <Collapse v-model="collapse">
-      <Panel name="1">人员招聘基本信息
+    <!--<Collapse v-model="collapse">
+      <Panel name="1">人员招聘基本信息-->
+          <modal-title slot="header" title="人员招聘基本信息"  @clickBack="showModal=false"></modal-title>
+          <div style="padding: 30px 0;">
        <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="85" inline class="detail-form">
           <FormItem label="岗位名称:" prop="name" style="width:45%;">
               <Input type="text" :disabled='saveFlag' v-model="listSearch.name" placeholder="">
@@ -24,8 +28,9 @@
               <Input type="textarea" :disabled='saveFlag' v-model="listSearch.PostName" placeholder="请输入岗位职责..." style="min-width: 100%;"> </Input>
           </FormItem>
        </Form>
-      </Panel>
-    </Collapse>
+       </div>
+      <!--</Panel>
+    </Collapse>-->
     <div slot="footer">
         <Button type="primary" @click="handleSave('listSearch')" style="margin-right: 10px;" v-show="buttonFlag">保存</Button>
     </div>
@@ -37,10 +42,10 @@
 <script>
   import { getName, getDictGroup ,getUserInfo} from '@/libs/util.js'
   import { formatDate } from '@/libs/tools.js'
-
+  import ModalTitle from '@/hxx-components/modal-title.vue'
 export default {
 	name: "recruitment-list-detail",
-    components: {},
+    components: {ModalTitle},
     data(){
       return{
             showModal:false,

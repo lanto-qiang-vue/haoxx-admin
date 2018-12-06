@@ -16,7 +16,7 @@
     <common-table v-model="tableData" :columns="columns" :total="total" :clearSelect="clearTableSelect"
                 @changePage="changePage" @changePageSize="changePageSize" :show="showDetail" :page="page" :showOperate=false >
     <div slot="search">
-        <Form :label-width="120"  inline class="common-form">
+        <Form :label-width="100"  inline class="common-form">
             <FormItem label="出入库:"  >
                 <Select  placeholder="出库或者入库" v-model="search.select" style="min-width: 100%;" clearable >
                     <Option v-for="(item, index) in getStockType"
