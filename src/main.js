@@ -8,6 +8,7 @@ import iView from 'iview'
 import i18n from '@/locale'
 import config from '@/config'
 import importDirective from '@/directive'
+import { formatMoney} from '@/libs/util.js'
 // import 'iview/dist/styles/iview.css'
 // import './index.less'
 import '@/assets/icons/iconfont.css'
@@ -31,6 +32,7 @@ Vue.config.productionTip = false
  * @description 全局注册应用配置
  */
 Vue.prototype.$config = config
+Vue.prototype.formatMoney = formatMoney
 /**
  * 注册指令
  */

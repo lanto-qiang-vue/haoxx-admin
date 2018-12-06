@@ -12,7 +12,7 @@
         :transition-names="['', '']"
         class="table-modal-detail">
 
-    <common-table v-model="tableData" :columns="columns" :show="showTenanceItems" :total="total" @changePage="changePage" 
+    <common-table v-model="tableData" :columns="columns" :show="showTenanceItems" :total="total" @changePage="changePage"
         @changePageSize="changePageSize" @onRowClick="onRowClick" :showOperate=false>
         <div slot="search">
             <Form  class="common-form">
@@ -36,7 +36,7 @@
                         <Option v-for="(item, index) in carItemType" :key="item.TYPE_ID" :value="item.TYPE_ID">{{item.TYPE_NAME}}</Option>
                     </Select>
                 </FormItem>
-                
+
                 <FormItem >
                     <Input  placeholder="项目编号/名称..." v-model="test5"></Input>
                 </FormItem>
@@ -44,12 +44,12 @@
                     <ButtonGroup size="small">
                         <Button type="primary" title="查询" @click="searchVehicle"><Icon type="ios-search" size="28"/></Button>
                         <Button type="primary" title="重置" @click="resetVehicle" style="margin-right:20px;"><Icon type="ios-undo" size="28"/></Button>
-                        
+
                     </ButtonGroup>
                     <Button type="primary" @click="addItemFun">新增</Button>
                 </FormItem>
            </Form>
-           
+
         </div>
 
     </common-table>
@@ -92,7 +92,7 @@ import commonTable from '@/hxx-components/common-table.vue'
                 showOnoff:false,
                 tableData:[],
                 selectData:[],
-                
+
                 columns: [
                     // {type: 'selection', width: 50, fixed: 'left'},
                     {title: '序号',  minWidth: 80,
@@ -126,14 +126,13 @@ import commonTable from '@/hxx-components/common-table.vue'
                                         size: 'small'
                                     },
                                     style: {
-                                        width:"60px",
                                         textAlign: "center",
                                         marginRight: '10px',
-                                        
+
                                     },
                                     on: {
                                         click: (index) => {
-                                            
+
                                             this.select(params.row)
                                             this.countList(params.row.DETAIL_ID);
                                         }
@@ -144,7 +143,7 @@ import commonTable from '@/hxx-components/common-table.vue'
                     },
                 ],
                 total: 0,
-                
+
                 page: 1,
                 limit: 25,
                 buttonContent:"选择",//自定义按钮内容
@@ -182,30 +181,30 @@ import commonTable from '@/hxx-components/common-table.vue'
                 this.resetVehicle();//首次进来数据重置
                 this.selectData=this.initGetItem;
                 this.flagData=1;
-                
+
 
                 if(this.initSearch){
                     let getCarName=getName(this.vehicleTypeArr,this.initSearch.VEHICLE_TYPE);
                     this.test1=getName(this.carNameArr,getCarName);
-                    
+
                     this.changeCarType(this.test1);
                     this.test4=getName(this.vehicleNumberArr,this.initSearch.VEHICLE_TYPE_CODE);
                     this.isdisabled=true;
                 }else{
                     this.test1=3;
                     this.test4="A";
-                    
+
                     this.changeCarType(this.test1);
 
                     this.isdisabled=false;
                 }
-                
 
-                
-                
-                
 
-                
+
+
+
+
+
                 this.getList();
             }
         },
@@ -317,7 +316,7 @@ import commonTable from '@/hxx-components/common-table.vue'
                             }
                     })
                 // }
-               
+
             },
             //获取汽车类型-----
             getCarType(){
@@ -369,34 +368,34 @@ import commonTable from '@/hxx-components/common-table.vue'
             },
             //改变汽车类型时过滤参数;
             changeCarType(val){
-                
+
 
                 this.carListData=[];
                 this.banJinListData=[];
                 if(val){
-                    
+
                     let carType='';
-                    
+
                     for(let i in this.getCarTypeData){
                         if(this.getCarTypeData[i]['cartype']==val){
                             carType=this.getCarTypeData[i]['CARNAME'];
                             break;
                         }
                     }
-                    
+
                     for(let i in this.getCarListData){
-                        
+
                         if(this.getCarListData[i]['CLASS_NAME'].indexOf(carType)!=-1){
                             this.carListData.push(this.getCarListData[i]);
                         }
                     }
 
                     if(!this.initSearch){
-                        
+
                         this.test4=this.carListData[0]['CLASS_TYPE'];
                     }
 
-                    
+
                     if(val==3){
                         this.banJinListData=[{ENGINE_TYPE: 1, ENGINE_TYPE_NAME: "化油器"},{ENGINE_TYPE: 2, ENGINE_TYPE_NAME: "电喷"}];
                         this.test3=2;
@@ -410,7 +409,7 @@ import commonTable from '@/hxx-components/common-table.vue'
                     }
                     this.getCarData(this.test1);
                 }
-                
+
             },
 
             changePage(page){
@@ -444,12 +443,12 @@ import commonTable from '@/hxx-components/common-table.vue'
                         content:"确认新增吗?",
                         onOk:this.addCheckItem,
                     })
-                    
+
                 }else{
                     this.$Modal.confirm({
                         title:"系统提示!",
                         content:"请在搜索框中添加你需要添加的项目名称",
-                        
+
                     })
                 }
             },
@@ -463,11 +462,11 @@ import commonTable from '@/hxx-components/common-table.vue'
                             }
                         }).then(res => {
                             if (res.success === true) {
-                                
-                                this.addFun();
-                                    
 
-                                
+                                this.addFun();
+
+
+
                             }
                     })
             },
@@ -484,11 +483,11 @@ import commonTable from '@/hxx-components/common-table.vue'
                     }
                 }).then(res => {
                     if (res.success === true) {
-                             this.getList();   
+                             this.getList();
                     }
                 });
             }
-            
+
 
         }
 	}
