@@ -68,7 +68,6 @@
             render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.REPAIR_TYPE))
           },
           {title: '应收金额', key: 'SUM_MONEY', sortable: true, minWidth: 120,
-            // render: (h, params) => h('span', params.row.SUM_MONEY? params.row.SUM_MONEY.toFixed(2): '0.00')
             render: (h, params) => h('span', this.formatMoney(params.row.SUM_MONEY))
           },
           {title: '状态', key: 'STATUS', sortable: true, minWidth: 110,
