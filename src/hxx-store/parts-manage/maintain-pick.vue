@@ -8,16 +8,13 @@
         <Input v-model="search.input" placeholder="工单单号/送修人/联系电话..."></Input>
       </div>
       <div class="search-block">
-        <Select v-model="search.select1" placeholder="选择状态...">
+        <Select v-model="search.select1" placeholder="选择状态..." clearable>
           <Option v-for="(item, index) in searchSelectState1"
                   :key="index" :value="item.code">{{item.name}}</Option>
         </Select>
       </div>
       
-      <ButtonGroup size="small">
-        <Button type="primary" @click="page=1;getList()"><Icon type="ios-search" size="24"/></Button>
-        <Button type="primary" @click="clear()"><Icon type="ios-undo" size="24"/></Button>
-      </ButtonGroup>
+      <Button type="primary" @click="page=1;getList()">搜索</Button>
     </div>
     <div slot="operate">
       <Button type="primary" v-if="accessBtn('getpart')" :disabled='!detailData'  @click="selectPick">领料/退料</Button>
@@ -41,8 +38,8 @@ export default {
 		return{
             loading:false,
             columns: [
-                {title: '序号',  minWidth: 80,
-                    render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
+                {title: '序号',  minWidth: 90,align:'center', sortable: true,type:'index'
+                    // render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
                 },
                 {title: '领料状态', key: 'Status2', sortable: true, minWidth: 120,
                     render: (h, params) => {
@@ -130,12 +127,12 @@ export default {
     mounted () {
       //重置搜索框数据
       this.searchSelectState= getDictGroup(this.$store.state.app.dict, '1020');
-      this.searchSelectState1.push({
-          "code":"",
-          "order":0,
-          "group":"1020",
-          "name":"全部"
-      });
+    //   this.searchSelectState1.push({
+    //       "code":"",
+    //       "order":0,
+    //       "group":"1020",
+    //       "name":"全部"
+    //   });
       for(let i=0;i<this.searchSelectState.length;i++){
         this.searchSelectState1.push(this.searchSelectState[i]);
       }

@@ -8,7 +8,7 @@
         <Input v-model="search.input" placeholder="预约单号/预约人/联系电话..."></Input>
       </div>
       <div class="search-block">
-        <Select v-model="search.select" placeholder="选择状态...">
+        <Select v-model="search.select" placeholder="选择状态..." clearable>
           <Option v-for="(item, index) in searchSelectOption1"
                   :key="index" :value="item.code">{{item.name}}</Option>
         </Select>
@@ -18,10 +18,9 @@
         <DatePicker v-model="search.orderDateIte" format="yyyy-MM-dd" type="date" placeholder="结束时间" style="width: 120px;margin-left: 5px;"></DatePicker>
       </div>
 
-      <ButtonGroup size="small">
-        <Button type="primary" @click="page=1;getList()"><Icon type="ios-search" size="24"/></Button>
-        <Button type="primary" @click="clear()"><Icon type="ios-undo" size="24"/></Button>
-      </ButtonGroup>
+      
+        <Button type="primary" @click="page=1;getList()">搜索</Button>
+      
     </div>
     <div slot="operate">
       <Button type="primary" v-if="accessBtn('add')" @click="detailData=null,showDetail=Math.random()">新增</Button>
@@ -50,8 +49,8 @@
 		  return{
         loading:false,
         columns: [
-          {title: '序号',  minWidth: 80,
-            render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
+          {title: '序号',  minWidth: 90,align:'center', sortable: true,type:'index'
+            // render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
           },
           {title: '预约类别', key: 'ORDER_TYPE', sortable: true, minWidth: 120,
             render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.ORDER_TYPE))
@@ -67,7 +66,7 @@
           {title: '维修类型', key: 'REPAIR_TYPE', sortable: true, minWidth: 120,
             render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.REPAIR_TYPE))
           },
-          {title: '应收金额', key: 'SUM_MONEY', sortable: true, minWidth: 120,
+          {title: '应收金额', key: 'SUM_MONEY', sortable: true, minWidth: 120,align:'right',
             render: (h, params) => h('span', params.row.SUM_MONEY|| '0.00')
           },
           {title: '状态', key: 'STATUS', sortable: true, minWidth: 110,
@@ -97,19 +96,12 @@
     },
     mounted () {
       this.searchSelectOption= getDictGroup(this.$store.state.app.dict, '1042');
-      this.searchSelectOption1.push({
-          "code":"",
-          "order":0,
-          "group":"1042",
-          "name":"全部"
-      });
       for(let i=0;i<this.searchSelectOption.length;i++){
         if(this.searchSelectOption[i].code==="10421004"){
 
         }else{
           this.searchSelectOption1.push(this.searchSelectOption[i]);
         }
-        
       }
       this.getList()
       this.showTable= Math.random()

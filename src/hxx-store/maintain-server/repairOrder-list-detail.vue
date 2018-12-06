@@ -3,20 +3,22 @@
   <Modal
     v-model="showModal"
     title="维修开单"
-    width="98"
+    width="100"
     @on-visible-change="visibleChange"
     :scrollable="true"
     :transfer="false"
     :footer-hide="false"
-    class="table-modal-detail"
+    class="table-modal-detail full-height"
+    :closable="false"
     :mask-closable="false"
     :transition-names="['', '']"
   >
+  <modal-title slot="header" title="维修开单" :state="titleMsg" @clickBack="showModal=false"></modal-title>
     <div style="height: 100%;overflow: auto; padding-bottom: 30px;">
-      <div class="status">({{titleMsg}})</div>
-      <Collapse v-model="collapse">
-        <Panel name="1">查询
-          <Form ref="listSearch" :rules="ruleValidate" :model="listSearch" slot="content" :label-width="100"
+      <!--<div class="status">({{titleMsg}})</div>-->
+      <!--<Collapse v-model="collapse">
+        <Panel name="1">查询-->
+          <Form ref="listSearch" :rules="ruleValidate" :model="listSearch" slot="content" :label-width="110"
                 class="common-form">
             <FormItem label="车牌号码:" prop="PLATE_NUM">
               <Input @on-focus="showoff=Math.random();" type="text" v-model="listSearch.PLATE_NUM" placeholder="请输入车牌号"
@@ -89,21 +91,21 @@
                           :time-picker-options="{steps: [1, 30, 30]}" placeholder="" :options="endTimeOptions"
                            @on-open-change="openEndTime"></DatePicker>
             </FormItem>
-
-          </Form>
-          <Form ref="formInline" slot="content" :label-width="110">
-            <FormItem label="故障描述:">
+            <FormItem label="故障描述:" style="width: 100%">
               <Input type="textarea" v-model="listSearch.FAULT_DESC" placeholder="请输入故障描述"> </Input>
             </FormItem>
-            <FormItem label="客诉内容:">
+            <FormItem label="客诉内容:" style="width: 100%">
               <Input type="textarea" v-model="listSearch.CUSTOMER_INFO" placeholder="请输入客诉内容"> </Input>
             </FormItem>
-            <FormItem label="维修建议:">
+            <FormItem label="维修建议:" style="width: 100%">
               <Input type="textarea" v-model="listSearch.REPAIR_INFO" placeholder="请输入建议内容"> </Input>
             </FormItem>
           </Form>
-        </Panel>
-      </Collapse>
+          <!--<Form ref="formInline" slot="content" :label-width="110">
+            
+          </Form>-->
+        <!--</Panel>
+      </Collapse>-->
       <div class="r-list-chekbox">
         <div>
           <Checkbox v-model="testSingle" @on-change="isItemGroupFun">是否启用维修套餐</Checkbox>
@@ -287,7 +289,7 @@
   import {printWtsFun, printPgdFun, printAccountFun} from '@/hxx-components/repairPrintUtil.js'
   import comboDetail from '@/hxx-components/combo-detail.vue'
   import unitSelect from '@/hxx-components/unit-select.vue'
-
+  import ModalTitle from '@/hxx-components/modal-title.vue'
   export default {
     name: "repairOrder-list-detail",
     components: {
@@ -300,7 +302,8 @@
       selectShoukuanOrder,
       comboDetail,
       columnInput,
-      unitSelect
+      unitSelect,
+      ModalTitle
     },
     mixins: [mixin],
     data() {
@@ -346,7 +349,7 @@
         //维修项目
         columns: [
           {
-            title: '序号', minWidth: 80, type: "index",
+            title: '序号', minWidth: 90,align:'center', sortable: true, type: "index",
           },
           {
             title: '维修项目名称', key: 'NAME', sortable: true, minWidth: 170,
@@ -383,7 +386,7 @@
 
           },
           {
-            title: '标准金额', key: 'REPAIR_MONEY', sortable: true, minWidth: 120,
+            title: '标准金额', key: 'REPAIR_MONEY', sortable: true, minWidth: 120,align:'right',
             render: (h, params) => {
               return h('div', [
                 h('InputNumber', {
@@ -440,10 +443,10 @@
             }
           },
           {
-            title: '小计金额', key: 'ITEM_MONEY', sortable: true, minWidth: 120,
+            title: '小计金额', key: 'ITEM_MONEY', sortable: true, minWidth: 120,align:'right',
           },
           {
-            title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 120,
+            title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 120,align:'right',
             render: (h, params) => {
 
               return h('div', [
@@ -472,7 +475,7 @@
             }
           },
           {
-            title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 130,
+            title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 130,align:'right',
             // render: (h, params) => h('span', (params.row.ITEM_MONEY-params.row.ITEM_DERATE_MONEY))
           },
           {
@@ -572,7 +575,7 @@
         getItem: [],
         //维修配件
         columns1: [
-          {title: '序号', minWidth: 80, type: 'index',},
+          {title: '序号', minWidth: 90,align:'center', sortable: true, type: 'index',},
           {title: '配件编号', key: 'PART_NO', sortable: true, minWidth: 150,},
           {title: '配件名称', key: 'NAME', sortable: true, minWidth: 150},
           {
@@ -608,7 +611,7 @@
             render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.UNIT))
           },
           {
-            title: '单价', key: 'SALES_PRICE', sortable: true, minWidth: 100,
+            title: '单价', key: 'SALES_PRICE', sortable: true, minWidth: 100,align:'right',
 
             render: (h, params) => {
               return h('div', [
@@ -640,11 +643,11 @@
             }
           },
           {
-            title: '小计金额', key: 'PART_MONEY', sortable: true, minWidth: 120,
+            title: '小计金额', key: 'PART_MONEY', sortable: true, minWidth: 120,align:'right',
             render: (h, params) => h('span', params.row.SALES_PRICE * params.row.PART_NUM)
           },
           {
-            title: '优惠金额', key: 'PART_DERATE_MONEY', sortable: true, minWidth: 120,
+            title: '优惠金额', key: 'PART_DERATE_MONEY', sortable: true, minWidth: 120,align:'right',
 
             render: (h, params) => {
               return h('div', [
@@ -711,7 +714,7 @@
             }
           },
           {
-            title: '优惠后金额', key: 'PART_LAST_MONEY', sortable: true, minWidth: 150,
+            title: '优惠后金额', key: 'PART_LAST_MONEY', sortable: true, minWidth: 150,align:'right',
             // render: (h, params) => h('span', params.row.SALES_PRICE*params.row.PART_NUM-params.row.PART_DERATE_MONEY)
           },
 
@@ -799,7 +802,7 @@
         getParts1: [],
         //维修项目套餐
         columns2: [
-          {title: '序号', minWidth: 80, type: 'index',},
+          {title: '序号', minWidth: 90,align:'center', sortable: true, type: 'index',},
           {title: '项目套餐名称', key: 'GROUP_NAME', sortable: true, minWidth: 170,},
           {
             title: '套餐价格', key: 'SALES_PRICE', sortable: true, minWidth: 120,
@@ -830,7 +833,7 @@
             }
           },
           {
-            title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 120,
+            title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 120,align:'right',
 
             render: (h, params) => {
               return h('div', [
@@ -858,7 +861,7 @@
 
           },
           {
-            title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 130,
+            title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 130,align:'right',
             // render: (h, params) => h('span', params.row.SALES_PRICE-params.row.ITEM_DERATE_MONEY)
           },
           {
@@ -983,7 +986,7 @@
             }
           },
           {
-            title: '金额(元)', key: 'REPAIR_MONEY1', sortable: true, minWidth: 110,
+            title: '金额(元)', key: 'REPAIR_MONEY1', sortable: true, minWidth: 110,align:'right',
             render: (h, params) => {
               var moneNum = parseFloat(params.row.REPAIR_MONEY1) || 0;
               return h('div', [
@@ -1033,7 +1036,7 @@
             }
           },
           {
-            title: '金额(元)', key: 'REPAIR_MONEY2', sortable: true, minWidth: 110,
+            title: '金额(元)', key: 'REPAIR_MONEY2', sortable: true, minWidth: 110,align:'right',
             render: (h, params) => {
               var moneNum = parseFloat(params.row.REPAIR_MONEY2) || 0;
               return h('div', [
@@ -1081,7 +1084,7 @@
             }
           },
           {
-            title: '金额(元)', key: 'REPAIR_MONEY3', sortable: true, minWidth: 110,
+            title: '金额(元)', key: 'REPAIR_MONEY3', sortable: true, minWidth: 110,align:'right',
             render: (h, params) => {
               var moneNum = parseFloat(params.row.REPAIR_MONEY3) || 0;
               return h('div', [
@@ -1130,7 +1133,7 @@
             }
           },
           {
-            title: '金额(元)', key: 'REPAIR_MONEY4', sortable: true, minWidth: 110,
+            title: '金额(元)', key: 'REPAIR_MONEY4', sortable: true, minWidth: 110,align:'right',
             render: (h, params) => {
               var moneNum = parseFloat(params.row.REPAIR_MONEY4) || 0;
               return h('div', [
@@ -1160,27 +1163,27 @@
         //结算信息-----
         columns4: [
           {
-            title: '维修项目费用', key: 'itemMoney', minWidth: 130,
+            title: '维修项目费用', key: 'itemMoney', minWidth: 130,align:'right',
 
           },
           {
-            title: '维修配件费用', key: 'partMoney', minWidth: 130,
+            title: '维修配件费用', key: 'partMoney', minWidth: 130,align:'right',
 
           },
           {
-            title: '维修项目优惠金额', key: 'itemDerateMoney', minWidth: 150,
+            title: '维修项目优惠金额', key: 'itemDerateMoney', minWidth: 150,align:'right',
 
           },
           {
-            title: '维修配件优惠金额', key: 'partDerateMoney', minWidth: 140,
+            title: '维修配件优惠金额', key: 'partDerateMoney', minWidth: 140,align:'right',
 
           },
           {
-            title: '其他项目费用', key: 'otherItemMoney', minWidth: 130,
+            title: '其他项目费用', key: 'otherItemMoney', minWidth: 130,align:'right',
 
           },
           {
-            title: '合计应收金额', key: 'sumMoney', minWidth: 130,
+            title: '合计应收金额', key: 'sumMoney', minWidth: 130,align:'right',
 
           },
         ],
@@ -1539,7 +1542,7 @@
             } else if (this.detailData['STATUS'] == '10201005') {
               this.titleMsg = "已结清";
               this.isOrderSuccess = false;
-
+              this.isAccountFlag = false;
               for (let i in this.buttonStateArr) {
                 switch (i) {
                   case 'printAccount':
@@ -2400,8 +2403,9 @@
           for (let i in this.getParts1[j]) {
             commitParts[i] = this.getParts1[j][i];
           }
-          commitParts["PART_MONEY"] = this.getParts1[j]["SALES_PRICE"] * (this.getParts1[j]["PART_NUM"] || 1);
-          commitParts["PART_LAST_MONEY"] = this.getParts1[j]["SALES_PRICE"] * (this.getParts1[j]["PART_NUM"] || 1) - commitParts["PART_DERATE_MONEY"];
+
+          commitParts["PART_MONEY"] = commitParts["SALES_PRICE"] * (commitParts["PART_NUM"] || 1);
+          commitParts["PART_LAST_MONEY"] = commitParts["SALES_PRICE"] * (commitParts["PART_NUM"] || 1) - commitParts["PART_DERATE_MONEY"];
           this.commitParts.push(commitParts);
 
 

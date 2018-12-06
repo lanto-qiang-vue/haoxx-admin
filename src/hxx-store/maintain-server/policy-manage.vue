@@ -8,15 +8,12 @@
         <Input v-model="search.input" placeholder="车牌号码/客户名称..."></Input>
       </div>
       <div class="search-block">
-        <Select v-model="search.select" placeholder="选择状态...">
+        <Select v-model="search.select" placeholder="选择状态..." clearable>
           <Option v-for="(item, index) in searchSelectOption"
                   :key="index" :value="item.code">{{item.name}}</Option>
         </Select>
       </div>
-      <ButtonGroup size="small">
-        <Button type="primary" @click="page=1;getList()"><Icon type="ios-search" size="24"/></Button>
-        <Button type="primary" @click="clear()"><Icon type="ios-undo" size="24"/></Button>
-      </ButtonGroup>
+      <Button type="primary" @click="page=1;getList()">搜索</Button>
     </div>
     <div slot="operate">
       <Button type="primary" v-if="accessBtn('add')" @click="detailData=null,showDetail=Math.random()">新增</Button>
@@ -49,9 +46,9 @@
                 },
                 {title: '客户', key: 'CUSTOMER_NAME', sortable: true, minWidth: 130},
                 {title: '联系电话', key: 'MOBILE_PHONE', sortable: true, minWidth: 140},
-                {title: '车船税', key: 'VEHICLE_TAX', sortable: true, minWidth: 120},
-                {title: '总金额', key: 'SUM_MONEY', sortable: true, minWidth: 130},
-                {title: '提成', key: 'DEDUCT_MONEY', sortable: true, minWidth: 130,
+                {title: '车船税', key: 'VEHICLE_TAX', sortable: true, minWidth: 120,align:'right',},
+                {title: '总金额', key: 'SUM_MONEY', sortable: true, minWidth: 130,align:'right',},
+                {title: '提成', key: 'DEDUCT_MONEY', sortable: true, minWidth: 130,align:'right',
                     // render: (h, params) => h('span', params.row.ORDER_DATE.substr(0, 10))
                 },
                 {title: '投保人', key: 'APPLICANT_PERSON', sortable: true, minWidth: 120},

@@ -16,8 +16,8 @@
     <modal-title slot="header" title="维修服务预约" :state="titleMsg" @clickBack="showModal=false"></modal-title>
     <div style="height: 100%;overflow: auto; padding-bottom: 30px;">
       <!--<div class="status">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;({{titleMsg}})</div>-->
-      <Collapse v-model="collapse">
-        <Panel name="1">基本信息
+      <!--<Collapse v-model="collapse">
+        <Panel name="1">基本信息-->
         <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="120" class="common-form">
             <FormItem label="车牌号码:">
                 <Input @on-focus="showoff=Math.random();"	type="text" v-model="listSearch.PLATE_NUM" placeholder="请输入车牌号" :disabled="listDisabled">
@@ -57,17 +57,18 @@
                     :formatter="value => `${value}公里`" :parser="value => value.replace('公里', '')"
                 ></InputNumber>
             </FormItem>
-        </Form>
-        <Form ref="formInline"  slot="content" :label-width="80">
-            <FormItem label="故障描述:">
+            <FormItem label="故障描述:" style="width: 100%">
                 <Input type="textarea" v-model="listSearch.FAULT_DESC" placeholder="请输入故障描述"> </Input>
             </FormItem>
-            <FormItem label="客诉内容:">
+            <FormItem label="客诉内容:" style="width: 100%">
                 <Input type="textarea" v-model="listSearch.CUSTOMER_INFO" placeholder="请输入客诉内容"> </Input>
             </FormItem>
         </Form>
-        </Panel>
-      </Collapse>
+        <!--<Form ref="formInline"  slot="content" :label-width="80">
+            
+        </Form>-->
+        <!--</Panel>
+      </Collapse>-->
       <div class="r-list-chekbox">
         <div>
             <Checkbox v-model="testSingle" @on-change="isItemGroupFun">是否启用维修套餐</Checkbox>
@@ -235,17 +236,17 @@
         testSingle:false,//判断是否启用维修项目套餐
         //维修项目
         columns: [
-          {title: '序号',  minWidth: 80,type:"index",
+          {title: '序号',  minWidth: 80,type:"index",align:'center'
           },
           {title: '维修项目名称', key: 'NAME', sortable: true, minWidth: 180,
           },
           {title: '标准工时', key: 'REPAIR_TIME', sortable: true, minWidth: 120},
-          {title: '标准金额', key: 'REPAIR_MONEY', sortable: true, minWidth: 120},
+          {title: '标准金额', key: 'REPAIR_MONEY', sortable: true, minWidth: 120,align:'right',},
           {title: '油漆面数', key: 'PAINT_NUM', sortable: true, minWidth: 120},
-          {title: '小计金额', key: 'ITEM_MONEY', sortable: true, minWidth: 120,
+          {title: '小计金额', key: 'ITEM_MONEY', sortable: true, minWidth: 120,align:'right',
             render: (h, params) => h('span', (params.row.REPAIR_TIME*this.work_price+params.row.PAINT_NUM*this.paint_price))
           },
-          {title: '优惠金额', key: 'ITEM_DERATE_MONEY', minWidth: 120,
+          {title: '优惠金额', key: 'ITEM_DERATE_MONEY', minWidth: 120,align:'right',
 
               render: (h, params) => {
                         return h('div',[
@@ -284,7 +285,7 @@
                         ]);
                     }
           },
-          {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 150,
+          {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 150,align:'right',
             // render: (h, params) => h('span', (params.row.REPAIR_TIME*this.work_price+params.row.PAINT_NUM*this.paint_price-params.row.ITEM_DERATE_MONEY))
           },
           {title: '备注', key: 'REMARK', sortable: true, minWidth: 150,
@@ -338,7 +339,7 @@
         commitItem:[],//提交选择项目
         //维修配件
         columns1: [
-          {title: '序号',  minWidth: 80,type:'index',},
+          {title: '序号',  minWidth: 80,type:'index',align:'center',},
           {title: '配件编号', key: 'PART_NO', sortable: true, minWidth: 140,},
           {title: '配件名称', key: 'NAME', sortable: true, minWidth: 150},
           {title: '数量', key: 'PART_NUM', sortable: true, minWidth: 100,
@@ -370,7 +371,7 @@
           {title: '单位', key: 'UNIT', sortable: true, minWidth: 100,
             render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.UNIT))
           },
-          {title: '单价', key: 'SALES_PRICE', sortable: true, minWidth: 100,
+          {title: '单价', key: 'SALES_PRICE', sortable: true, minWidth: 100,align:'right',
                 render: (h, params) => {
                         return h('div',[
                              h(columnInput, {
@@ -401,10 +402,10 @@
 
                     }
           },
-          {title: '小计金额', key: 'PART_MONEY', sortable: true, minWidth: 120,
+          {title: '小计金额', key: 'PART_MONEY', sortable: true, minWidth: 120,align:'right',
                 render: (h, params) => h('span', (params.row.PART_NUM*params.row.SALES_PRICE))
             },
-          {title: '优惠金额', key: 'PART_DERATE_MONEY', sortable: true, minWidth: 120,
+          {title: '优惠金额', key: 'PART_DERATE_MONEY', sortable: true, minWidth: 120,align:'right',
 
 
               render: (h, params) => {
@@ -435,7 +436,7 @@
 
                     }
           },
-          {title: '优惠后金额', key: 'PART_LAST_MONEY', sortable: true, minWidth: 150,
+          {title: '优惠后金额', key: 'PART_LAST_MONEY', sortable: true, minWidth: 150,align:'right',
                 // render: (h, params) => h('span', (params.row.PART_NUM*params.row.SALES_PRICE)-params.row.PART_DERATE_MONEY)
             },
           {title: '备注', key: 'REMARK', sortable: true, minWidth: 150,
@@ -493,9 +494,9 @@
         getParts1:[],
         //维修项目套餐
         columns2: [
-          {title: '序号',  minWidth: 80,type:'index',},
+          {title: '序号',  minWidth: 80,type:'index',align:'center',},
           {title: '项目套餐名称', key: 'GROUP_NAME', sortable: true, minWidth: 180,},
-          {title: '套餐价格', key: 'SALES_PRICE', sortable: true, minWidth: 120,
+          {title: '套餐价格', key: 'SALES_PRICE', sortable: true, minWidth: 120,align:'right',
               render: (h, params) => {
                         return h('div', [
                             h('InputNumber', {
@@ -521,7 +522,7 @@
 
 
           },
-          {title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 120,
+          {title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 120,align:'right',
               render: (h, params) => {
                         return h('div', [
                             h(columnInput, {
@@ -547,7 +548,7 @@
                     }
 
           },
-          {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 150,
+          {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 150,align:'right',
             // render: (h, params) => h('span', params.row.SALES_PRICE-params.row.ITEM_DERATE_MONEY)
           },
           {title: '备注', key: 'REMARK', sortable: true, minWidth: 150,
