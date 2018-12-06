@@ -85,6 +85,7 @@
         :transfer="true"
         :footer-hide="false"
         :transition-names="['', '']">
+        <div style="width: 100%;height:100%;padding-bottom:30px;padding-top:10px;">
         <Collapse v-model="value1">
           <Panel name="1">
             项目基本信息
@@ -161,7 +162,7 @@
             <!--</Form>-->
           <!--</Panel>-->
         <!--</Collapse>-->
-        <div style="height:60px;"></div>
+        </div>
         <div slot="footer">
           <Button @click="addcancle()">取消</Button>
           <Button type="primary" @click="addpost('list')">保存</Button>
@@ -231,11 +232,11 @@
             title: '序号', minWidth: 80,align:'center',sortable: true,
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
-          {title: '项目编号', key: 'ITEM_NO',align:'left', sortable: true, minWidth: 120},
-          {title: '维修项目名称', key: 'NAME',align:'left', sortable: true, minWidth: 140},
-          {title: '项目分类', key: 'TYPE_NAME', align:'left',sortable: true, minWidth: 120},
+          {title: '项目编号', key: 'ITEM_NO', sortable: true, minWidth: 120},
+          {title: '维修项目名称', key: 'NAME', sortable: true, minWidth: 140},
+          {title: '项目分类', key: 'TYPE_NAME',sortable: true, minWidth: 120},
           {
-            title: '计费标准', key: 'CHARGE_TYPE',align:'left', sortable: true, minWidth: 120,
+            title: '计费标准', key: 'CHARGE_TYPE', sortable: true, minWidth: 120,
             render: (h, params) => h('span', getName(this.chargetype, params.row.CHARGE_TYPE))
           },
           {title: '标准金额(元)', key: 'REPAIR_MONEY',align:'right', sortable: true, minWidth: 140},
@@ -245,7 +246,7 @@
         columns1: [
           {type: 'selection', width: 60, align: 'center'},
           {
-            title: '序号', minWidth: 80,
+            title: '序号', minWidth: 80,align:'center',
             render: (h, params) => h('span', (this.page2 - 1) * this.limit2 + params.index + 1)
           },
           {title: '项目名称', key: 'nodeName', sortable: true, minWidth: 120},
@@ -254,9 +255,11 @@
             title: '计费标准', key: 'chargeType', sortable: true, minWidth: 140,
             render: (h, params) => h('span', getName(this.chargetype, params.row.chargeType))
           },
-          {title: '标准金额(元)', key: 'repairMoney', sortable: true, minWidth: 140},
-          {title: '标准工时(小时)', key: 'repairTime', sortable: true, minWidth: 150},
-          {title: '油漆面数(面)', key: 'paintNum', sortable: true, minWidth: 140},
+          {title: '标准金额(元)', key: 'repairMoney',align:'right', sortable: true, minWidth: 140,
+            render: (h, params) => h('span', this.formatMoney(params.row.repairMoney))
+          },
+          {title: '标准工时(小时)', key: 'repairTime',align:'right', sortable: true, minWidth: 150},
+          {title: '油漆面数(面)', key: 'paintNum',align:'right', sortable: true, minWidth: 140},
           {title: '类型1', key: 'engine_type_name', sortable: true, minWidth: 120},
           {title: '类型2', key: 'class_name', sortable: true, minWidth: 120},
         ],

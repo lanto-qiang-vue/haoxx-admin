@@ -6,10 +6,12 @@
     width="90"
     title="车辆新增"
     :mask-closable="false"
+  class="table-modal-detail"
     :scrollable="true"
     :transfer= "true"
     :footer-hide="false">	
     <!-- 车辆车辆档案新增调用 -->
+    <div style="height:20px;"></div>
     <Form :label-width="120" :model="formData" ref="formData" class="common-form" :rules="ruleValidate" inline>
           <FormItem label="车牌号:" style="width:45%;"  prop="PLATE_NUM">
               <Input type="text" v-model="formData.PLATE_NUM"  style="min-width: 100%;"> </Input>

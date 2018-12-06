@@ -6,8 +6,8 @@
       <div class="search-block">
         <Input v-model="search.keyword" placeholder="退货单号/供应商名称..."></Input>
       </div>
-      <div class="search-block" clearable>
-        <Select v-model="search.status">
+      <div class="search-block">
+        <Select v-model="search.status" clearable>
           <Option v-for="(item, index) in list1047"
                   :key="index" :value="item.code">{{item.name}}
           </Option>
@@ -52,7 +52,7 @@
       :footer-hide="false"
       :transition-names="['', '']">
       <modal-title slot="header" title="配件退货" :state="''" @clickBack="showModal=false"></modal-title>
-      <div style="height: 100%;overflow: auto; padding-bottom: 30px;">
+      <div style="height: 100%;overflow: auto; padding-bottom: 30px;padding-top:10px;">
       <Collapse v-model="value">
         <Panel name="1">
           基本信息
@@ -281,16 +281,16 @@
         },
         search: {
           keyword: "",
-          status: '0',
+          status: '',
         },
         columns2: [
           {
             title: '序号', key: 'STORE_NAME', minWidth: 80,align:'center',
             render: (h, params) => h('span', params.index + 1)
           },
-          {title: '仓库', key: 'STORE_NAME', sortable: true, minWidth: 120,align:'left'},
-          {title: '配件名称', key: 'NAME', minWidth: 120,align:'left'},
-          {title: '原厂编号', key: 'FACTORY_NO', minWidth: 120,align:'left'},
+          {title: '仓库', key: 'STORE_NAME', sortable: true, minWidth: 120},
+          {title: '配件名称', key: 'NAME', minWidth: 120,},
+          {title: '原厂编号', key: 'FACTORY_NO', minWidth: 120,},
           {
             title: '数量', key: 'PART_NUM', minWidth: 120,align:'right',
             render: (h, params) => {
@@ -320,11 +320,11 @@
             }
           },
           {
-            title: '单位', key: 'UNIT', minWidth: 120,align:'left',
+            title: '单位', key: 'UNIT', minWidth: 120,
             render: (h, params) => h('span', getName(this.list1015, params.row.UNIT))
           },
           {
-            title: '品牌', key: 'BRAND', minWidth: 120,align:'left',
+            title: '品牌', key: 'BRAND', minWidth: 120,
             render: (h, params) => h('span', getName(this.list1016, params.row.BRAND))
           },
           {
@@ -353,7 +353,9 @@
 
             }
           },
-          {title: '退货金额', key: 'SUM_MONEY', minWidth: 120,align:'left',},
+          {title: '退货金额', key: 'SUM_MONEY', minWidth: 120,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.SUM_MONEY))
+          },
           {
             title: '操作', key: 'FACTORY_NO', minWidth: 120,align:'center',
             render: (h, params) => {
@@ -387,22 +389,22 @@
             title: '序号', minWidth: 80,align:'center',
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
-          {title: '供应商名称', key: 'SUPPLIER_NAME', sortable: true, minWidth: 120,align:'left',},
+          {title: '供应商名称', key: 'SUPPLIER_NAME', sortable: true, minWidth: 120,},
           {
             title: '退货金额', key: 'RETURN_MONEY', sortable: true, minWidth: 120,align:'right',
             render: (h, params) => h('span', params.row.RETURN_MONEY.toFixed(2))
           },
           {
-            title: '退货日期', key: 'RETURN_DATE', sortable: true, minWidth: 120,align:'left',
+            title: '退货日期', key: 'RETURN_DATE', sortable: true, minWidth: 120,
             render: (h, params) => h('span', params.row.RETURN_DATE.substr(0, 10))
           },
-          {title: '退货原因', key: 'RETURN_REASON', sortable: true, minWidth: 140,align:'left'},
+          {title: '退货原因', key: 'RETURN_REASON', sortable: true, minWidth: 140},
           {
-            title: '状态', key: 'STATUS', sortable: true, minWidth: 140,align:'left',
+            title: '状态', key: 'STATUS', sortable: true, minWidth: 140,align:'center',
             render: (h, params) => h('span', getName(this.list1047, params.row.STATUS))
           },
           {
-            title: '退货单号', key: 'RETURN_NO', sortable: true, minWidth: 100,align:'left',
+            title: '退货单号', key: 'RETURN_NO', sortable: true, minWidth: 100,
           },],
         list: '',
         clearType: false,
@@ -786,7 +788,7 @@
       },
       clear() {
         this.search.keyword = "";
-        this.search.status = '0';
+        this.search.status = '';
       },
       clearSection() {
         this.clearType = Math.random();
@@ -976,7 +978,7 @@
             page: this.page,
             limit: this.limit,
             KEYWORD: this.search.keyword,
-            STATUS_eq: this.search.status == 0 ? '' : this.search.status,
+            STATUS_eq: this.search.status || '',
           }
         }).then(res => {
           if (res.success === true) {
@@ -997,7 +999,7 @@
     computed: {
       list1047() {
         let data = getDictGroup(this.$store.state.app.dict, '1047');
-        data.unshift({code: '0', name: '请选择状态...'});
+        // data.unshift({code: '0', name: '请选择状态...'});
         return data;
       },
       canDo() {

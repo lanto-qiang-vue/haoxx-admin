@@ -4,7 +4,7 @@
     v-model="showModal"
     @on-visible-change="visibleChange"
     title="车辆档案详情"
-    width="98"
+    width="80"
     class="table-modal-detail"
     :scrollable="true"
     :transfer="false"

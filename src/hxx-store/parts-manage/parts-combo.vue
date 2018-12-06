@@ -5,7 +5,7 @@
         <Input v-model="search.keyword"  placeholder="配件套餐编号/名称..."></Input>
       </div>
       <div class="search-block">
-                <Select v-model="search.status">
+                <Select v-model="search.status" clearable>
                 <Option v-for="(item, index) in statusList"
                   :key="index" :value="item.code">{{item.name}}</Option>
               </Select>
@@ -23,15 +23,17 @@
     <!-- 配件套餐新增 -->
             <Modal  
     v-model="showModal"
-    class="table-modal-detail"
+    class="table-modal-detail full-height"
     title="配件套餐"
-    width="90"
+    width="100"
     :mask-closable="false"
     @on-visible-change="visibleChange"
     :scrollable="true"
     :transfer= "false"
     :footer-hide="false"
     :transition-names="['', '']">
+              <modal-title slot="header" title="配件套餐" :state="''" @clickBack="showModal=false"></modal-title>
+              <div style="height:100%;padding-top:10px;padding-bottom:30px;">
         <Collapse v-model="value1">
         <Panel name="1">
                 配件套餐基本信息
@@ -79,7 +81,7 @@
                 </div>
               </Panel>
               </Collapse>
-              <div style="height:50px;"></div>
+              </div>
       <div slot="footer">
       <Button @click="addcancle()">取消</Button>
       <Button type="primary" @click="addpost('list')">保存</Button>
@@ -92,11 +94,12 @@
 	import commonTable from '@/hxx-components/common-table.vue'
 	import { getName, getDictGroup, getCreate } from '@/libs/util.js'
   import selectPartsGroup from '@/hxx-components/select-partsGroup.vue'
+  import ModalTitle from '@/hxx-components/modal-title.vue'
   import mixin from '@/hxx-components/mixin'
   import {deepClone} from "../../libs/util";
 	export default{
 		'name':'parts-combo',
-		components:{commonTable,selectPartsGroup},
+		components:{commonTable,selectPartsGroup,ModalTitle},
     mixins: [mixin],
 		 data(){
 		 	return {
@@ -109,7 +112,6 @@
 		 		showModal:false,
 		 		selectData:[],
         selectShow:false,
-		 		columns1:[],
 		 		cleartype:false,
 		 		showTable:false,
 		 		rules:{
@@ -129,8 +131,10 @@
 		  columns: [
           {title: '配件套餐编号', key: 'GROUP_NO', sortable: true, minWidth: 120},
           {title: '配件套餐名称', key: 'GROUP_NAME', sortable: true, minWidth: 120},
-          {title: '套餐销售价元(元)', key: 'SALES_PRICE', sortable: true, minWidth: 170},
-          {title: '状态', key: 'STATUS', sortable: true, minWidth: 150,
+          {title: '套餐销售价元(元)', key: 'SALES_PRICE', sortable: true, minWidth: 170,align:'right',
+            render: (h, params) => h('span', this.formatMoney(params.row.SALES_PRICE))
+          },
+          {title: '状态', key: 'STATUS', sortable: true, minWidth: 150,align:'center',
           render: (h,params) => h('span',getName(this.statusList,params.row.STATUS))
           },
           {title: '创建人', key: 'CREATER', sortable: true, minWidth: 100,
@@ -142,7 +146,7 @@
           columns1: [
           {title: '配件编号', key: 'PART_NO', sortable: true, minWidth: 120},
           {title: '配件名称', key: 'NAME', sortable: true, minWidth: 120},
-          {title: '配件数量', key: 'PART_NUM', sortable: true, minWidth: 120,
+          {title: '配件数量', key: 'PART_NUM', sortable: true, minWidth: 120,align:'right',
                    render: (h, params) => {
                     return h('div', [
                             h('InputNumber', {
@@ -170,9 +174,11 @@
           {title: '包装', key: 'UNIT', sortable: true, minWidth: 120,
             render: (h,params) => h('span',getName(this.unitList,params.row.UNIT))
           },
-          {title: '销售价(元)', key: 'SALES_PRICE', sortable: true, minWidth: 140},
+          {title: '销售价(元)', key: 'SALES_PRICE', sortable: true, minWidth: 140,align:'right',
+            render: (h,params) => h('span',this.formatMoney(params.row.SALES_PRICE))
+          },
           {title: '原厂编号', key: 'FACTORY_NO', sortable: true, minWidth: 120},
-          {title: '操作', sortable: true, minWidth: 120,fixed: 'right',
+          {title: '操作', sortable: true, minWidth: 120,fixed: 'right',align:'center',
                         render: (h, params) => {
                             let buttonContent= '删除';
                             let buttonStatus = 'error';
@@ -261,7 +267,7 @@
           method: 'post',
           data: {access_token: this.$store.state.user.token,
                  KEYWORD:this.search.keyword,
-                 STATUS_eq:this.search.status == 0 ? '' : this.search.status,
+                 STATUS_eq:this.search.status || '',
                  limit:this.limit,
                  page:this.page,
                 }
