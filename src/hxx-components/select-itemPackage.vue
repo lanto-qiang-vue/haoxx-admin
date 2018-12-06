@@ -22,8 +22,8 @@
                 
                     
                     <ButtonGroup size="small">
-                        <Button type="primary" title="查询" @click="searchVehicle"><Icon type="ios-search" size="28"/></Button>
-                        <Button type="primary" title="重置" @click="resetVehicle"><Icon type="ios-undo" size="28"/></Button>
+                        <Button type="primary" title="查询" @click="searchVehicle">搜索</Button>
+                        <!--<Button type="primary" title="重置" @click="resetVehicle"><Icon type="ios-undo" size="28"/></Button>-->
                     </ButtonGroup>
                 
            </Form>
@@ -57,7 +57,7 @@ import commonTable from '@/hxx-components/common-table.vue'
 
                 columns: [
                     // {type: 'selection', width: 50, fixed: 'left'},
-                    {title: '序号',  minWidth: 80,
+                    {title: '序号',  minWidth: 80,align:'center',
                         render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
                     },
                     {title: '项目套餐编号', key: 'GROUP_NO', sortable: true, minWidth: 160,
@@ -66,11 +66,13 @@ import commonTable from '@/hxx-components/common-table.vue'
                     {title: '项目套餐名称', key: 'GROUP_NAME', sortable: true, minWidth: 160,
                         // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.VEHICLE_COLOR))
                     },
-                    {title: '套餐销售价格(元)', key: 'SALES_PRICE', sortable: true, minWidth: 160},
+                    {title: '套餐销售价格(元)', key: 'SALES_PRICE', sortable: true, minWidth: 160,align:'right',
+                        render: (h, params) => h('span', this.formatMoney(params.row.SALES_PRICE))
+                    },
                     {title: '状态', key: 'STATUS', sortable: true, minWidth: 80,
                         render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.STATUS))
                     },
-                    {title: '操作', key: 'operation', sortable: true, minWidth: 80,fixed: 'right',
+                    {title: '操作', key: 'operation', sortable: true, minWidth: 80,fixed: 'right',align:'center',
                         render: (h, params) => {
                             let buttonContent= this.state(params.row)? '取消选择':'选择';
                             let buttonStatus= this.state(params.row)? 'warning':'primary';
@@ -81,9 +83,9 @@ import commonTable from '@/hxx-components/common-table.vue'
                                         size: 'small'
                                     },
                                     style: {
-                                        width:"60px",
+                                        width:"80px",
                                         textAlign: "center",
-                                        marginRight: '10px',
+                                        
                                         
                                     },
                                     on: {

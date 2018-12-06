@@ -2,22 +2,19 @@
 <template>
   <common-table v-model="tableData" :columns="columns" :total="total" :clearSelect="clearTableSelect"
                 @changePage="changePage" @changePageSize="changePageSize" @onRowClick="onRowClick"
-                @onRowDblclick="onRowDblclick" :show="showTable" :page="page">
+                @onRowDblclick="onRowDblclick" :show="showTable" :page="page" :loading="loading">
     <div slot="search">
       <div class="search-block">
         <Input v-model="search.input" placeholder="盘点人/盘点单号..."></Input>
       </div>
       <div class="search-block">
-        <Select v-model="search.select1" placeholder="选择状态...">
+        <Select v-model="search.select1" placeholder="选择状态..." clearable>
           <Option v-for="(item, index) in allCheckStatus"
                   :key="item.code" :value="item.code">{{item.name}}</Option>
         </Select>
       </div>
       
-      <ButtonGroup size="small">
-        <Button type="primary" @click="page=1;getList()"><Icon type="ios-search" size="24"/></Button>
-        <Button type="primary" @click="clear()"><Icon type="ios-undo" size="24"/></Button>
-      </ButtonGroup>
+      <Button type="primary" @click="page=1;getList()">搜索</Button>
     </div>
     <div slot="operate">
       <Button type="primary" v-if="accessBtn('add')" :disabled="buttonStateArr.add"  @click="selectPick">新增</Button>
@@ -42,8 +39,8 @@ export default {
     data(){
 		return{
             columns: [
-                {title: '序号',  minWidth: 80,
-                    render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
+                {title: '序号',  minWidth: 90,align:'center', sortable: true,type:'index'
+                    // render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
                 },
                 {title: '仓库名称', key: 'STORE_NAME', sortable: true, minWidth: 150,
                 },
@@ -89,6 +86,7 @@ export default {
                 ban:true,//作废
             },//按钮状态组数据
             allCheckStatus:[],//选择状态数据
+            loading:false,
       }
     },
     computed:{
@@ -106,6 +104,7 @@ export default {
     methods:{
         //获取列表值-----
         getList(){
+            this.loading=true;
             this.axios.request({
                 url: '/tenant/part/ttpartcheck/list',
                 method: 'post',
@@ -121,6 +120,7 @@ export default {
                     this.tableData= res.data
                     this.total= res.total
                 }
+                this.loading=false;
             })
             this.detailData = null;
             for(let i in this.buttonStateArr){

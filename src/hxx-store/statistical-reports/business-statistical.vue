@@ -2,16 +2,13 @@
 <template>
   <common-table v-model="tableData" :columns="columns" :total="total" :clearSelect="clearTableSelect"
                 @changePage="changePage" @changePageSize="changePageSize" @onRowClick="onRowClick"
-                @onRowDblclick="onRowDblclick" :show="showTable" :page="page" :showOperate=false>
+                @onRowDblclick="onRowDblclick" :show="showTable" :page="page" :showOperate=false :loading="loading">
     <div slot="search">
       <Form ref="search" :rules="ruleValidate"  :model="search" :label-width="85" inline>
           <FormItem label="查询日期:" style="width: 100%; margin-right: 10px;">
               <DatePicker v-model="search.ACCOUNT_TIME_gte" format="yyyy-MM-dd" type="date" placeholder="开始日期" style="width: 120px;"></DatePicker>
               <DatePicker v-model="search.ACCOUNT_TIME_lte" format="yyyy-MM-dd" type="date" placeholder="结束日期" style="width: 120px;margin-left: 5px;"></DatePicker>
-              <ButtonGroup size="small" style="margin-left: 10px;">
-                <Button type="primary" @click="page=1;getList()"><Icon type="ios-search" size="24"/></Button>
-                <Button type="primary" @click="clear()"><Icon type="ios-undo" size="24"/></Button>
-              </ButtonGroup>
+              <Button style="margin-left: 5px;" type="primary" @click="page=1;getList()">搜索</Button>
           </FormItem>
      </Form>
     </div>
@@ -55,12 +52,12 @@ export default {
                         {
                             title: '材料',
                             key: 'sALES_PRICE', sortable: true, minWidth: 120,align: 'center',
-                            
+                            render: (h, params) => h('span', this.formatMoney(params.row.sALES_PRICE))
                         },
                         {
                             title: '产值合计',
                             key: 'total', sortable: true, minWidth: 120,align: 'center',
-                            
+                            render: (h, params) => h('span', this.formatMoney(params.row.total))
                         }
                     ]
 
@@ -70,10 +67,12 @@ export default {
                             {
                                 title: '成本',
                                 key: 'operatingCost', sortable: true, minWidth: 120,align: 'center',
+                                render: (h, params) => h('span', this.formatMoney(params.row.operatingCost))
                             },
                             {
                                 title: '利润',
                                 key: 'pCost', sortable: true, minWidth: 120,align: 'center',
+                                render: (h, params) => h('span', this.formatMoney(params.row.pCost))
                                 
                             },
                         ]
@@ -93,7 +92,7 @@ export default {
             showDetail: false,
             detailData: null,
             clearTableSelect: null,
-
+            loading:false,
             computedMoney:[],//计算合计金额------
             
       }
@@ -111,6 +110,7 @@ export default {
         getList(){
             this.search.ACCOUNT_TIME_gte=formatDate(this.search.ACCOUNT_TIME_gte);
             this.search.ACCOUNT_TIME_lte=formatDate(this.search.ACCOUNT_TIME_lte);
+            this.loading=true;
             this.axios.request({
                 url: '/tenant/report/work_count/work_list',
                 method: 'post',
@@ -128,6 +128,7 @@ export default {
 
                     this.computedList(res.data);
                 }
+                this.loading=false;
             })
             this.detailData = null;
         },
@@ -174,7 +175,7 @@ export default {
                     break;
                     default : 
                         obj.unit='元';
-                        obj.money=siteMoney[i];
+                        obj.money=this.formatMoney(siteMoney[i]);
                         this.computedMoney.push(obj);
                 }
             }

@@ -12,16 +12,16 @@
         class="table-modal-detail"
     >
     <common-table v-model="tableData" :columns="columns" :show="showSelectParts" :total="total" @changePage="changePage" 
-        @changePageSize="changePageSize" @onRowClick="onRowClick" :showOperate="showOperate">
+        @changePageSize="changePageSize" @onRowClick="onRowClick" :page="page" :showOperate="showOperate">
         <div slot="search">
             <Form class="common-form">
                 <FormItem label="配件分类:" :label-width="80">
-                    <Select v-model="test1" >
+                    <Select v-model="test1" clearable>
                         <Option v-for="(item, index) in getSellItem" :key="index" :value="item.TYPE_ID">{{item.TYPE_NAME}}</Option>
                     </Select>
                 </FormItem>
                 <FormItem label="仓库:" v-show='stockFlag' :label-width="60">
-                    <Select v-model="test2">
+                    <Select v-model="test2" clearable>
                         <Option v-for="(item, index) in getAllItem" :key="index" :value="item.STORE_ID">{{item.NAME}}</Option>
                     </Select>
                 </FormItem>
@@ -29,10 +29,7 @@
                     <Input  placeholder="配件编号/名称..." v-model="test3"></Input>
                     
                 </FormItem>
-                <ButtonGroup size="small">
-                    <Button type="primary" title="查询" @click="searchVehicle"><Icon type="ios-search" size="28"/></Button>
-                    <Button type="primary" title="重置" @click="resetVehicle"><Icon type="ios-undo" size="28"/></Button>
-                </ButtonGroup>
+                <Button type="primary" @click="searchVehicle">搜索</Button>
            </Form>
            
         </div>
@@ -117,7 +114,7 @@ import commonTable from '@/hxx-components/common-table.vue'
                 //表格内容数据----
                 columns: [
                     // {type: 'selection', width: 50, fixed: 'left'},
-                    {title: '序号',  minWidth: 80,
+                    {title: '序号',  minWidth: 80,align:'center',
                         render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
                     },
                     {title: '仓库', key: 'STORE_NAME', sortable: true, minWidth: 180,
@@ -130,15 +127,17 @@ import commonTable from '@/hxx-components/common-table.vue'
                     {title: '品牌', key: 'BRAND', sortable: true, minWidth: 150,
                         render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.BRAND))
                     },
-                    {title: '单位成本', key: 'UNIT_COST', sortable: true, minWidth: 130},
-                    {title: '销售建议价', key: 'SALES_PRICE', sortable: true, minWidth: 150,
-                        // render: (h, params) => h('span', params.row.ORDER_DATE.substr(0, 10))
+                    {title: '单位成本', key: 'UNIT_COST', sortable: true, minWidth: 130,align:'right',
+                        render: (h, params) => h('span', this.formatMoney(params.row.UNIT_COST))
+                    },
+                    {title: '销售建议价', key: 'SALES_PRICE', sortable: true, minWidth: 150,align:'right',
+                        render: (h, params) => h('span', this.formatMoney(params.row.SALES_PRICE))
                     },
                     {title: '库存量', key: 'STOCK_NUM', sortable: true, minWidth: 120},
                     {title: '单位', key: 'UNIT', sortable: true, minWidth: 100,
                         render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.UNIT))
                     },
-                    {title: '操作', key: 'operation', sortable: true, minWidth: 100,fixed: 'right',
+                    {title: '操作', key: 'operation', sortable: true, minWidth: 100,fixed: 'right',align:'center',
                         render: (h, params) => {
                             let buttonContent= this.state(params.row)? '取消选择':'选择';
                             let buttonStatus= this.state(params.row)? 'warning':'primary';
@@ -149,9 +148,9 @@ import commonTable from '@/hxx-components/common-table.vue'
                                         size: 'small'
                                     },
                                     style: {
-                                        width:"60px",
+                                        width:"80px",
                                         textAlign: "center",
-                                        marginRight: '10px',
+                                        
                                         
                                     },
                                     on: {

@@ -184,13 +184,18 @@
             // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.ORDER_TYPE))
           },
           {title: '标准工时', key: 'REPAIR_TIME', sortable: true, minWidth: 120},
-          {title: '标准金额', key: 'REPAIR_MONEY', sortable: true, minWidth: 120,align:'right'},
+          {title: '标准金额', key: 'REPAIR_MONEY', sortable: true, minWidth: 120,align:'right',
+            render: (h, params) => h('span', this.formatMoney(params.row.REPAIR_MONEY))
+          },
           {title: '油漆面数', key: 'PAINT_NUM', sortable: true, minWidth: 120},
-          {title: '小计金额', key: 'ITEM_MONEY', sortable: true, minWidth: 120,align:'right'
+          {title: '小计金额', key: 'ITEM_MONEY', sortable: true, minWidth: 120,align:'right',
+            render: (h, params) => h('span', this.formatMoney(params.row.ITEM_MONEY))
           },
-          {title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 120,align:'right'
+          {title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 120,align:'right',
+            render: (h, params) => h('span', this.formatMoney(params.row.ITEM_DERATE_MONEY))
           },
-          {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 150,align:'right'
+          {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 150,align:'right',
+            render: (h, params) => h('span', this.formatMoney(params.row.ITEM_LAST_MONEY))
           },
           {title: '车间班组', key: 'WORK_CLASS_NAME', sortable: true, minWidth: 150,
             
@@ -213,16 +218,24 @@
           {title: '单位', key: 'UNIT', sortable: true, minWidth: 100,
             render: (h, params) => h('span', getName(this.getUnit, params.row.UNIT))
           },
-          {title: '成本单价', key: 'UNIT_COST', sortable: true, minWidth: 120,align:'right',},
+          {title: '成本单价', key: 'UNIT_COST', sortable: true, minWidth: 120,align:'right',
+            render: (h, params) => h('span', this.formatMoney(params.row.UNIT_COST))
+            },
           {title: '成本金额', key: '', sortable: true, minWidth: 120,align:'right',
-            render: (h, params) => h('span', parseFloat(params.row.PART_NUM)*parseFloat(params.row.UNIT_COST))
+            render: (h, params) => h('span', this.formatMoney(parseFloat(params.row.PART_NUM)*parseFloat(params.row.UNIT_COST)))
             },
           {title: '销售税率', key: 'TAX', sortable: true, minWidth: 120,
             
           },
-          {title: '含销售价', key: 'SALES_PRICE', sortable: true, minWidth: 120,align:'right',},
-          {title: '销售税额', key: 'RATE', sortable: true, minWidth: 120,align:'right',},
-          {title: '未含销售价', key: 'NOT_CONTAINS_TAX_SALE_PRICE', sortable: true, minWidth: 150,align:'right',},
+          {title: '含销售价', key: 'SALES_PRICE', sortable: true, minWidth: 120,align:'right',
+            render: (h, params) => h('span', this.formatMoney(params.row.SALES_PRICE))
+            },
+          {title: '销售税额', key: 'RATE', sortable: true, minWidth: 120,align:'right',
+            render: (h, params) => h('span', this.formatMoney(params.row.RATE))
+            },
+          {title: '未含销售价', key: 'NOT_CONTAINS_TAX_SALE_PRICE', sortable: true, minWidth: 150,align:'right',
+            render: (h, params) => h('span', this.formatMoney(params.row.NOT_CONTAINS_TAX_SALE_PRICE))
+            },
           {title: '领/退料人', key: 'GET_PART_PERSON', sortable: true, minWidth: 150,},
           {title: '领/退料时间', key: 'GET_PART_TIME', sortable: true, minWidth: 150,},
           {title: '领料仓库', key: 'STORE_NAME', sortable: true, minWidth: 150,},
@@ -252,11 +265,14 @@
         columns2: [
           {title: '序号',  minWidth: 90,align:'center', sortable: true,type:'index'},
           {title: '项目套餐名称', key: 'GROUP_NAME', sortable: true, minWidth: 200,},
-          {title: '套餐价格', key: 'SALES_PRICE', sortable: true, minWidth: 150,align:'right'},
-          {title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 150,align:'right'
+          {title: '套餐价格', key: 'SALES_PRICE', sortable: true, minWidth: 150,align:'right',
+            render: (h, params) => h('span', this.formatMoney(params.row.SALES_PRICE))
+            },
+          {title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 150,align:'right',
+            render: (h, params) => h('span', this.formatMoney(params.row.ITEM_DERATE_MONEY))
           },
-          {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 150,align:'right'
-            
+          {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 150,align:'right',
+            render: (h, params) => h('span', this.formatMoney(params.row.ITEM_LAST_MONEY))
           },
           {title: '车间班组', key: 'WORK_CLASS_NAME', sortable: true, minWidth: 150,
             

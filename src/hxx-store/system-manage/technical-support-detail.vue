@@ -3,37 +3,43 @@
   <Modal
     v-model="showModal"
     title="技术支持"
-    width="90"
+    width="100"
     @on-visible-change="visibleChange"
     :scrollable="true"
     :transfer= "false"
     :footer-hide="false"
     :transition-names="['', '']"
+    class="table-modal-detail full-height"
+    :closable="false"
   >
-    <Collapse v-model="collapse">
-      <Panel name="1">技术支持基本信息
-       <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="85" inline class="detail-form">
-          <FormItem label="车辆型号:" prop="MODEL_NAME" style="width:45%;">
-              <Input type="text" :disabled='saveFlag' v-model="listSearch.MODEL_NAME" placeholder="" @on-focus="showVehicleModel=true;">
-                <Icon type="ios-search" slot="suffix" @click="showVehicleModel=true;" style="cursor:pointer;"/>
-              </Input>
-          </FormItem>
-          <FormItem label="故障类型:" style="width:45%;">
-              <Input type="text" :disabled='saveFlag' v-model="listSearch.FAULT_TYPE" placeholder=""> </Input>
-          </FormItem>
-          <FormItem label="故障呈现:" prop="FAULT_INFO" style="width:100%;">
-              <Input type="textarea" :disabled='saveFlag' v-model="listSearch.FAULT_INFO" placeholder="请输入故障描述..." style="min-width: 100%;"> </Input>
-          </FormItem>
-          <FormItem label="备注:" style="width:100%;">
-              <Input type="textarea" :disabled='saveFlag' v-model="listSearch.REMARK" placeholder="" style="min-width: 100%;"> </Input>
-          </FormItem>
-          
-          <FormItem label="技术答复:" style="width:100%;" v-show="noSaveFlag">
-              <Input type="textarea" :disabled='saveFlag' v-model="listSearch.FAULT_ANSWER" placeholder="" style="min-width: 100%;"> </Input>
-          </FormItem>
-       </Form>
-      </Panel>
-    </Collapse>
+    <modal-title slot="header" title="技术支持基本信息"  @clickBack="showModal=false"></modal-title>
+    <!--<Collapse v-model="collapse">
+      <Panel name="1">技术支持基本信息-->
+          <div style="padding: 30px;">
+              <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch"  :label-width="85" inline class="detail-form">
+                <FormItem label="车辆型号:" prop="MODEL_NAME" style="width:45%;">
+                    <Input type="text" :disabled='saveFlag' v-model="listSearch.MODEL_NAME" placeholder="" @on-focus="showVehicleModel=true;">
+                        <Icon type="ios-search" slot="suffix" @click="showVehicleModel=true;" style="cursor:pointer;"/>
+                    </Input>
+                </FormItem>
+                <FormItem label="故障类型:" style="width:45%;">
+                    <Input type="text" :disabled='saveFlag' v-model="listSearch.FAULT_TYPE" placeholder=""> </Input>
+                </FormItem>
+                <FormItem label="故障呈现:" prop="FAULT_INFO" style="width:100%;">
+                    <Input type="textarea" :disabled='saveFlag' v-model="listSearch.FAULT_INFO" placeholder="请输入故障描述..." style="min-width: 100%;"> </Input>
+                </FormItem>
+                <FormItem label="备注:" style="width:100%;">
+                    <Input type="textarea" :disabled='saveFlag' v-model="listSearch.REMARK" placeholder="" style="min-width: 100%;"> </Input>
+                </FormItem>
+                
+                <FormItem label="技术答复:" style="width:100%;" v-show="noSaveFlag">
+                    <Input type="textarea" :disabled='saveFlag' v-model="listSearch.FAULT_ANSWER" placeholder="" style="min-width: 100%;"> </Input>
+                </FormItem>
+            </Form>
+          </div>
+       
+      <!--</Panel>
+    </Collapse>-->
     <div slot="footer">
         <Button type="primary" @click="handleSave('listSearch')" style="margin-right: 10px;" v-show="buttonFlag">保存</Button>
     </div>
@@ -58,10 +64,10 @@
   import { getName, getDictGroup ,getUserInfo} from '@/libs/util.js'
   import { formatDate } from '@/libs/tools.js'
   import vehicleModel from '@/hxx-components/vehicle-model.vue'
-
+  import ModalTitle from '@/hxx-components/modal-title.vue'
 export default {
 	name: "technical-support-detail",
-    components: {vehicleModel},
+    components: {vehicleModel,ModalTitle},
     data(){
       return{
             showModal:false,

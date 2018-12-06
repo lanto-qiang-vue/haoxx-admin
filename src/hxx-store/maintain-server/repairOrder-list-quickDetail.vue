@@ -3,19 +3,22 @@
   <Modal
     v-model="showModal"
     title="快速开单"
-    width="98"
+    width="100"
     @on-visible-change="visibleChange"
     :scrollable="true"
     :transfer= "false"
     :footer-hide="false"
     :mask-closable="false"
     :transition-names="['', '']"
+    class="table-modal-detail full-height"
+    :closable="false"
   >
-    <div style="height: 100%;overflow: auto;">
-    <div class="status">({{titleMsg}})</div>
-    <Collapse v-model="collapse">
-      <Panel name="1">查询
-       <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="110" class="common-form">
+    <modal-title slot="header" title="快速开单" :state="titleMsg" @clickBack="showModal=false"></modal-title>
+    <div style="height: 100%;overflow: auto;padding-top: 10px;">
+    <!--<div class="status">({{titleMsg}})</div>-->
+    <!--<Collapse v-model="collapse">
+      <Panel name="1">查询-->
+       <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch"  :label-width="110" class="common-form">
           <FormItem label="车牌号码:" prop="PLATE_NUM">
               <Input @on-focus="showoff=Math.random();"	type="text" v-model="listSearch.PLATE_NUM" placeholder="请输入车牌号" >
                   <Icon type="ios-search" slot="suffix" @click="showoff=Math.random();"/>
@@ -81,8 +84,17 @@
                            placeholder="" :options="endTimeOptions"
                            @on-open-change="openEndTime"></DatePicker>
           </FormItem>
-          
-       </Form>
+          <FormItem label="故障描述:" style="width: 100%">
+              <Input type="textarea" v-model="listSearch.FAULT_DESC" placeholder="请输入故障描述"> </Input>
+          </FormItem>
+          <FormItem label="客诉内容:" style="width: 100%">
+              <Input type="textarea" v-model="listSearch.CUSTOMER_INFO" placeholder="请输入客诉内容"> </Input>
+          </FormItem>
+          <FormItem label="维修建议:" style="width: 100%">
+              <Input type="textarea" v-model="listSearch.REPAIR_INFO" placeholder="请输入建议内容"> </Input>
+          </FormItem>
+          </Form>
+       <!--</Form>
        <Form ref="formInline"  slot="content" :label-width="120">
           <FormItem label="故障描述:">
               <Input type="textarea" v-model="listSearch.FAULT_DESC" placeholder="请输入故障描述"> </Input>
@@ -93,9 +105,9 @@
           <FormItem label="维修建议:">
               <Input type="textarea" v-model="listSearch.REPAIR_INFO" placeholder="请输入建议内容"> </Input>
           </FormItem>
-       </Form>
-      </Panel>
-    </Collapse>
+       </Form>-->
+      <!--</Panel>
+    </Collapse>-->
     <!--//维修项目-->
     <div>
         <h2 style="border-bottom: 1px solid #ccc; margin: 10px 0;padding: 5px 0;">服务项目</h2>
@@ -195,11 +207,11 @@
   import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
   import {printAccountFun} from '@/hxx-components/repairPrintUtil.js'
   import {getLodop} from '@/hxx-components/LodopFuncs.js'
-
+  import ModalTitle from '@/hxx-components/modal-title.vue'
 
 export default {
 	name: "repairOrder-list-quickDetail",
-    components: {selectVehicle,selectShoukuanOrder},
+    components: {selectVehicle,selectShoukuanOrder,ModalTitle},
     mixins: [mixin],
     data(){
         // 联系电话验证
@@ -374,11 +386,14 @@ export default {
         isOrderSuccess:true,//判断是否是派工状态状态---
         //统计费用参数
         columns3:[
-          {title: '项目合计费用', key: 'REPAIR_ITEM_MONEY', sortable: true, minWidth: 200,
+          {title: '项目合计费用', key: 'REPAIR_ITEM_MONEY', sortable: true, minWidth: 200,align:'right',
+            render: (h, params) => h('span', this.formatMoney(params.row.REPAIR_ITEM_MONEY))
           },
-          {title: '优惠金额', key: 'REPAIR_ITEM_DERATE_MONEY', sortable: true, minWidth: 150,
+          {title: '优惠金额', key: 'REPAIR_ITEM_DERATE_MONEY', sortable: true, minWidth: 150,align:'right',
+            render: (h, params) => h('span', this.formatMoney(params.row.REPAIR_ITEM_DERATE_MONEY))
           },
-          {title: '合计应收金额', key: 'SUM_MONEY', sortable: true, minWidth: 200,
+          {title: '合计应收金额', key: 'SUM_MONEY', sortable: true, minWidth: 200,align:'right',
+            render: (h, params) => h('span', this.formatMoney(params.row.SUM_MONEY))
           },
         ],
         computedMoneyData:[],

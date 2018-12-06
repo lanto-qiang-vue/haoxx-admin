@@ -8,10 +8,7 @@
           <FormItem label="查询日期:" style="width: 100%; margin-right: 10px;">
               <DatePicker v-model="search.ACCOUNT_TIME_gte" format="yyyy-MM-dd" type="date" placeholder="开始日期" style="width: 120px;"></DatePicker>
               <DatePicker v-model="search.ACCOUNT_TIME_lte" format="yyyy-MM-dd" type="date" placeholder="结束日期" style="width: 120px;margin-left: 5px;"></DatePicker>
-              <ButtonGroup size="small" style="margin-left: 10px;">
-                <Button type="primary" @click="page=1;getList()"><Icon type="ios-search" size="24"/></Button>
-                <Button type="primary" @click="clear()"><Icon type="ios-undo" size="24"/></Button>
-              </ButtonGroup>
+              <Button style="margin-left: 5px;" type="primary" @click="page=1;getList()">搜索</Button>
           </FormItem>
      </Form>
     </div>
@@ -43,14 +40,15 @@ export default {
             columns: [
                 {title: '业务分类', key: 'Name', sortable: true, minWidth: 150,
                 },
-                {title: '营业额', key: 'Turnover', sortable: true, minWidth: 150,
-                    render: (h, params) => h('span', params.row.Turnover||0)
+                {title: '营业额', key: 'Turnover', sortable: true, minWidth: 150,align:'right',
+                    render: (h, params) => h('span', this.formatMoney(params.row.Turnover)||0)
+                    
                 },
-                {title: '营业成本', key: 'OperatingCost', sortable: true, minWidth: 150,
-                    render: (h, params) => h('span', params.row.OperatingCost||0)
+                {title: '营业成本', key: 'OperatingCost', sortable: true, minWidth: 150,align:'right',
+                    render: (h, params) => h('span', this.formatMoney(params.row.OperatingCost)||0)
                 },
-                {title: '纯利润', key: 'PCost', sortable: true, minWidth: 150,
-                    render: (h, params) => h('span', params.row.PCost||0)
+                {title: '纯利润', key: 'PCost', sortable: true, minWidth: 150,align:'right',
+                    render: (h, params) => h('span', this.formatMoney(params.row.PCost)||0)
                 },
             ],
             tableData: [],
@@ -66,7 +64,7 @@ export default {
             showDetail: false,
             detailData: null,
             clearTableSelect: null,
-            loading:true,//加载进度-----------
+            loading:false,//加载进度-----------
             computedMoney:{
                 "Turnover":0,
                 "OperatingCost":0,
@@ -105,8 +103,9 @@ export default {
                     this.total= res.total
 
                     this.computedList(res.data);
-                    this.loading=false;
+                    
                 }
+                this.loading=false;
             })
             this.detailData = null;
         },
@@ -126,7 +125,10 @@ export default {
                     
                 }
             }
-            console.log(this.computedMoney);
+
+            for(let i in this.computedMoney){
+                this.computedMoney[i]=this.formatMoney(this.computedMoney[i]);
+            }            
         },
         clear(){
             for(var i in this.search){

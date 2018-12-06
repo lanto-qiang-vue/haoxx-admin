@@ -13,7 +13,7 @@
         class="table-modal-detail">
 
     <common-table v-model="tableData" :columns="columns" :show="showTenanceItems" :total="total" @changePage="changePage"
-        @changePageSize="changePageSize" @onRowClick="onRowClick" :showOperate=false>
+        @changePageSize="changePageSize" @onRowClick="onRowClick" :showOperate=false :page="page">
         <div slot="search">
             <Form  class="common-form">
                 <FormItem >
@@ -32,7 +32,7 @@
                     </Select>
                 </FormItem>
                 <FormItem >
-                    <Select  v-model="test2" placeholder="选择项目分类" >
+                    <Select  v-model="test2" placeholder="选择项目分类" clearable>
                         <Option v-for="(item, index) in carItemType" :key="item.TYPE_ID" :value="item.TYPE_ID">{{item.TYPE_NAME}}</Option>
                     </Select>
                 </FormItem>
@@ -42,11 +42,9 @@
                 </FormItem>
                 <FormItem >
                     <ButtonGroup size="small">
-                        <Button type="primary" title="查询" @click="searchVehicle"><Icon type="ios-search" size="28"/></Button>
-                        <Button type="primary" title="重置" @click="resetVehicle" style="margin-right:20px;"><Icon type="ios-undo" size="28"/></Button>
-
+                        <Button type="primary" @click="searchVehicle">搜索</Button>
                     </ButtonGroup>
-                    <Button type="primary" @click="addItemFun">新增</Button>
+                    <Button style="margin-left: 5px;" type="primary" @click="addItemFun">新增</Button>
                 </FormItem>
            </Form>
 
@@ -108,14 +106,16 @@ import commonTable from '@/hxx-components/common-table.vue'
                     {title: '计费标准', key: 'CHARGE_TYPE', sortable: true, minWidth: 150,
                         render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.CHARGE_TYPE))
                     },
-                    {title: '标准金额', key: 'REPAIR_MONEY', sortable: true, minWidth: 120},
+                    {title: '标准金额', key: 'REPAIR_MONEY', sortable: true, minWidth: 120,align:'right',
+                        render: (h, params) => h('span', this.formatMoney(params.row.REPAIR_MONEY))
+                    },
                     {title: '标准工时', key: 'REPAIR_TIME', sortable: true, minWidth: 120,
                         // render: (h, params) => h('span', params.row.ORDER_DATE.substr(0, 10))
                     },
                     {title: '油漆面数', key: 'PAINT_NUM', sortable: true, minWidth: 120},
                     {title: '发动机类型', key: 'ENGINE_TYPE_NAME', sortable: true, minWidth: 170},
                     {title: '汽车排量', key: 'CLASS_NAME', sortable: true, minWidth: 250},
-                    {title: '操作', key: 'operation', sortable: true, minWidth: 120,fixed: 'right',
+                    {title: '操作', key: 'operation', sortable: true, minWidth: 120,fixed: 'right',align:'center',
                         render: (h, params) => {
                             let buttonContent= this.state(params.row)? '取消选择':'选择';
                             let buttonStatus= this.state(params.row)? 'warning':'primary';
@@ -127,8 +127,8 @@ import commonTable from '@/hxx-components/common-table.vue'
                                     },
                                     style: {
                                         textAlign: "center",
-                                        marginRight: '10px',
-
+                                        
+                                        width:"80px",
                                     },
                                     on: {
                                         click: (index) => {

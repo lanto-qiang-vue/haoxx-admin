@@ -14,7 +14,7 @@
     :transition-names="['', '']"
   >
     <modal-title slot="header" title="维修服务预约" :state="titleMsg" @clickBack="showModal=false"></modal-title>
-    <div style="height: 100%;overflow: auto; padding-bottom: 30px;">
+    <div style="height: 100%;overflow: auto; padding: 30px 0;">
       <!--<div class="status">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;({{titleMsg}})</div>-->
       <!--<Collapse v-model="collapse">
         <Panel name="1">基本信息-->
@@ -244,7 +244,7 @@
           {title: '标准金额', key: 'REPAIR_MONEY', sortable: true, minWidth: 120,align:'right',},
           {title: '油漆面数', key: 'PAINT_NUM', sortable: true, minWidth: 120},
           {title: '小计金额', key: 'ITEM_MONEY', sortable: true, minWidth: 120,align:'right',
-            render: (h, params) => h('span', (params.row.REPAIR_TIME*this.work_price+params.row.PAINT_NUM*this.paint_price))
+            render: (h, params) => h('span', this.formatMoney(params.row.REPAIR_TIME*this.work_price+params.row.PAINT_NUM*this.paint_price))
           },
           {title: '优惠金额', key: 'ITEM_DERATE_MONEY', minWidth: 120,align:'right',
 
@@ -286,7 +286,7 @@
                     }
           },
           {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 150,align:'right',
-            // render: (h, params) => h('span', (params.row.REPAIR_TIME*this.work_price+params.row.PAINT_NUM*this.paint_price-params.row.ITEM_DERATE_MONEY))
+            render: (h, params) => h('span', this.formatMoney(params.row.ITEM_LAST_MONEY))
           },
           {title: '备注', key: 'REMARK', sortable: true, minWidth: 150,
             render: (h, params) => {
@@ -307,7 +307,7 @@
                 ]);
             }
           },
-          {title: '操作', key: '', sortable: true, width: 100, fixed: 'right',
+          {title: '操作', key: '', sortable: true, width: 100, fixed: 'right',align:'center',
             render: (h, params) => {
                 if(this.titleMsg=='新建'){
                   return h('div', [
@@ -403,7 +403,7 @@
                     }
           },
           {title: '小计金额', key: 'PART_MONEY', sortable: true, minWidth: 120,align:'right',
-                render: (h, params) => h('span', (params.row.PART_NUM*params.row.SALES_PRICE))
+                render: (h, params) => h('span', this.formatMoney(params.row.PART_NUM*params.row.SALES_PRICE))
             },
           {title: '优惠金额', key: 'PART_DERATE_MONEY', sortable: true, minWidth: 120,align:'right',
 
@@ -437,7 +437,7 @@
                     }
           },
           {title: '优惠后金额', key: 'PART_LAST_MONEY', sortable: true, minWidth: 150,align:'right',
-                // render: (h, params) => h('span', (params.row.PART_NUM*params.row.SALES_PRICE)-params.row.PART_DERATE_MONEY)
+                render: (h, params) => h('span', this.formatMoney(params.row.PART_LAST_MONEY))
             },
           {title: '备注', key: 'REMARK', sortable: true, minWidth: 150,
             render: (h, params) => {
@@ -459,7 +459,7 @@
                 ]);
             }
           },
-          {title: '操作', key: '', sortable: true, width: 100,fixed: 'right',
+          {title: '操作', key: '', sortable: true, width: 100,fixed: 'right',align:'center',
             render: (h, params) => {
 
                 if(this.titleMsg=='新建'){
@@ -550,6 +550,7 @@
           },
           {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 150,align:'right',
             // render: (h, params) => h('span', params.row.SALES_PRICE-params.row.ITEM_DERATE_MONEY)
+            render: (h, params) => h('span', this.formatMoney(params.row.ITEM_LAST_MONEY))
           },
           {title: '备注', key: 'REMARK', sortable: true, minWidth: 150,
             render: (h, params) => {
@@ -573,7 +574,7 @@
             }
 
           },
-          {title: '操作', key: '', sortable: true, width: 100,fixed: 'right',
+          {title: '操作', key: '', sortable: true, width: 100,fixed: 'right',align:'center',
             render: (h, params) => {
 
                 if(this.titleMsg=='新建'){

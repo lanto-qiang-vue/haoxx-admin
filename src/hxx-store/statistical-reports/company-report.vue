@@ -9,10 +9,7 @@
           <FormItem label="查询日期:" style="width: 100%; margin-right: 10px;">
               <DatePicker v-model="search.ACCOUNT_TIME_gte" format="yyyy-MM-dd" type="date" placeholder="开始日期" style="width: 120px;"></DatePicker>
               <DatePicker v-model="search.ACCOUNT_TIME_lte" format="yyyy-MM-dd" type="date" placeholder="结束日期" style="width: 120px;margin-left: 5px;"></DatePicker>
-              <ButtonGroup size="small" style="margin-left: 10px;">
-                <Button type="primary" @click="page=1;getList()"><Icon type="ios-search" size="24"/></Button>
-                <Button type="primary" @click="clear()"><Icon type="ios-undo" size="24"/></Button>
-              </ButtonGroup>
+              <Button style="margin-left: 5px;" type="primary" @click="page=1;getList()">搜索</Button>
           </FormItem>
      </Form>
     </div>

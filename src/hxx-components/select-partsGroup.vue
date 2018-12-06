@@ -13,11 +13,11 @@
         class="table-modal-detail class1"
     >
     <common-table v-model="tableData" :columns="columns" :show="showSelectPartsGroup" :total="total" @changePage="changePage" 
-        @changePageSize="changePageSize" @onRowClick="onRowClick" :showOperate=false>
+        @changePageSize="changePageSize" @onRowClick="onRowClick" :showOperate=false :page="page">
         <div slot="search">
             <Form class="common-form">
-                <FormItem label="配件分类:" :label-width="80" v-show="showSearch">
-                    <Select v-model="test1" >
+                <FormItem label="配件分类:" :label-width="80" v-show="showSearch" >
+                    <Select v-model="test1" clearable>
                         <Option v-for="(item, index) in getSellItem" :key="index" :value="item.TYPE_ID">{{item.TYPE_NAME}}</Option>
                     </Select>
                 </FormItem>
@@ -25,9 +25,9 @@
                     <Input  placeholder="配件编号/名称..." v-model="test3" ></Input>
                 </FormItem>
                 <ButtonGroup size="small" v-show="showOperate">
-                    <Button type="primary" title="查询" @click="searchVehicle"><Icon type="ios-search" size="28"/></Button>
-                    <Button type="primary" title="重置" @click="resetVehicle"><Icon type="ios-undo" size="28"/></Button>
-                    <Button @click="showSelectAddParts=Math.random()" type="primary" style="margin-left: 30px;" v-show="showOperate"><Icon type="md-add" size="28"/>新增配件</Button>
+                    <Button type="primary" @click="searchVehicle">搜索</Button>
+                    <!--<Button type="primary" title="重置" @click="resetVehicle"><Icon type="ios-undo" size="28"/></Button>-->
+                    <Button @click="showSelectAddParts=Math.random()" type="primary" style="margin-left: 5px;" v-show="showOperate"><Icon type="md-add" size="28"/>新增配件</Button>
                 </ButtonGroup>
            </Form>
            
@@ -131,7 +131,7 @@ import selectAddParts from '@/hxx-components/select-addParts.vue'
 
                 columns: [
                     // {type: 'selection', width: 50, fixed: 'left'},
-                    {title: '序号',  minWidth: 80,
+                    {title: '序号',  minWidth: 80,align:'center',
                         render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
                     },
                     {title: '配件名称', key: 'NAME', sortable: true, minWidth: 170,
@@ -148,12 +148,17 @@ import selectAddParts from '@/hxx-components/select-addParts.vue'
                     {title: '包装单位', key: 'UNIT', sortable: true, minWidth: 120,
                         render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.UNIT))
                     },
-                    {title: '采购指导价(元)', key: 'PURCHASE_PRICE', sortable: true, minWidth: 160},
-                    {title: '含税销售价(元)', key: 'SALES_PRICE', sortable: true, minWidth: 160,
-                        // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.UNIT))
+                    {title: '采购指导价(元)', key: 'PURCHASE_PRICE', sortable: true, minWidth: 160,align:'right',
+            
+                        render: (h, params) => h('span', this.formatMoney(params.row.PURCHASE_PRICE))
                     },
-                    {title: '销售建议价(元)', key: 'SALES_PRICE', sortable: true, minWidth: 160,
+                    {title: '含税销售价(元)', key: 'SALES_PRICE', sortable: true, minWidth: 160,align:'right',
                         // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.UNIT))
+                        render: (h, params) => h('span', this.formatMoney(params.row.SALES_PRICE))
+                    },
+                    {title: '销售建议价(元)', key: 'SALES_PRICE', sortable: true, minWidth: 160,align:'right',
+                        // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.UNIT))
+                        render: (h, params) => h('span', this.formatMoney(params.row.SALES_PRICE))
                     },
                     {title: '销售税率', key: 'RATE', sortable: true, minWidth: 120,
                         // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.UNIT))
@@ -164,7 +169,7 @@ import selectAddParts from '@/hxx-components/select-addParts.vue'
                     {title: '状态', key: 'STATUS', sortable: true, minWidth: 100,
                         render: (h, params) => h('span', getName(this.statusArr, params.row.STATUS))
                     },
-                    {title: '操作', key: 'operation', sortable: true, minWidth: 100,fixed: 'right',
+                    {title: '操作', key: 'operation', sortable: true, minWidth: 100,fixed: 'right',align:'center',
                         render: (h, params) => {
                             let buttonContent= this.state(params.row)? '取消选择':'选择';
                             let buttonStatus= this.state(params.row)? 'warning':'primary';
@@ -175,9 +180,9 @@ import selectAddParts from '@/hxx-components/select-addParts.vue'
                                         size: 'small'
                                     },
                                     style: {
-                                        width:"60px",
+                                        width:"80px",
                                         textAlign: "center",
-                                        marginRight: '10px',
+                                        
                                         
                                     },
                                     on: {

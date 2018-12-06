@@ -14,7 +14,7 @@
     :transition-names="['', '']"
   >
   <modal-title slot="header" title="维修开单" :state="titleMsg" @clickBack="showModal=false"></modal-title>
-    <div style="height: 100%;overflow: auto; padding-bottom: 30px;">
+    <div style="height: 100%;overflow: auto; padding-bottom: 30px;padding-top: 10px;">
       <!--<div class="status">({{titleMsg}})</div>-->
       <!--<Collapse v-model="collapse">
         <Panel name="1">查询-->
@@ -370,10 +370,11 @@
                         params.row.REPAIR_TIME = val;
                         params.row.REPAIR_MONEY = 0;
                         params.row.PAINT_NUM = 0;
-                        params.row.ITEM_DERATE_MONEY = 0;
+                        // params.row.ITEM_DERATE_MONEY = 0;
                         this.commitItem[params.index] = params.row;
                         this.commitItem[params.index]['ITEM_MONEY'] = (val * this.work_price + params.row.PAINT_NUM * this.paint_price).toFixed(2);
                         this.commitItem[params.index]['ITEM_LAST_MONEY'] = (this.commitItem[params.index]['ITEM_MONEY'] - params.row.ITEM_DERATE_MONEY).toFixed(2);
+                         console.log(params.row.ITEM_DERATE_MONEY,this.commitItem[params.index]['ITEM_LAST_MONEY']);
                         this.computItemMoney();
                       },
 
@@ -400,10 +401,11 @@
                         params.row.REPAIR_MONEY = parseFloat(val.toFixed(2));
                         params.row.REPAIR_TIME = 0;
                         params.row.PAINT_NUM = 0;
-                        params.row.ITEM_DERATE_MONEY = 0;
+                        // params.row.ITEM_DERATE_MONEY = 0;
                         this.commitItem[params.index] = params.row;
                         this.commitItem[params.index]['ITEM_MONEY'] = parseFloat(val.toFixed(2));
                         this.commitItem[params.index]['ITEM_LAST_MONEY'] = (this.commitItem[params.index]['ITEM_MONEY'] - params.row.ITEM_DERATE_MONEY).toFixed(2);
+                        console.log(params.row.ITEM_DERATE_MONEY,this.commitItem[params.index]['ITEM_LAST_MONEY']);
                         this.computItemMoney('flag');
                       },
 
@@ -429,10 +431,11 @@
                         params.row.REPAIR_TIME = 0;
                         params.row.REPAIR_MONEY = 0;
                         params.row.PAINT_NUM = val;
-                        params.row.ITEM_DERATE_MONEY = 0;
+                        // params.row.ITEM_DERATE_MONEY = 0;
                         this.commitItem[params.index] = params.row;
                         this.commitItem[params.index]['ITEM_MONEY'] = (val * this.paint_price + params.row.PAINT_NUM * this.work_price).toFixed(2);
                         this.commitItem[params.index]['ITEM_LAST_MONEY'] = (this.commitItem[params.index]['ITEM_MONEY'] - params.row.ITEM_DERATE_MONEY).toFixed(2);
+                        console.log(params.row.ITEM_DERATE_MONEY,this.commitItem[params.index]['ITEM_LAST_MONEY']);
                         this.computItemMoney();
                       },
 
@@ -444,6 +447,7 @@
           },
           {
             title: '小计金额', key: 'ITEM_MONEY', sortable: true, minWidth: 120,align:'right',
+            render: (h, params) => h('span', this.formatMoney(params.row.ITEM_MONEY))
           },
           {
             title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 120,align:'right',
@@ -464,8 +468,8 @@
 
                       params.row.ITEM_DERATE_MONEY = val;
                       this.commitItem[params.index] = params.row;
-                      this.commitItem[params.index]['ITEM_LAST_MONEY'] = (params.row.REPAIR_TIME * this.work_price + params.row.PAINT_NUM * this.paint_price - val).toFixed(2);
-                      console.log(this.commitItem[params.index]['ITEM_LAST_MONEY']);
+                      this.commitItem[params.index]['ITEM_LAST_MONEY'] = (params.row.REPAIR_TIME * this.work_price + params.row.PAINT_NUM * this.paint_price+params.row.REPAIR_MONEY - val).toFixed(2);
+                      console.log(params.row.ITEM_DERATE_MONEY,this.commitItem[params.index]['ITEM_LAST_MONEY']);
                       this.computItemMoney();
 
                     },
@@ -477,6 +481,7 @@
           {
             title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 130,align:'right',
             // render: (h, params) => h('span', (params.row.ITEM_MONEY-params.row.ITEM_DERATE_MONEY))
+            render: (h, params) => h('span', this.formatMoney(params.row.ITEM_LAST_MONEY))
           },
           {
             title: '车间班组', key: 'WORK_CLASS_ID', sortable: true, minWidth: 150,
@@ -535,7 +540,7 @@
             }
           },
           {
-            title: '操作', key: '', sortable: true, width: 100, fixed: 'right',
+            title: '操作', key: '', sortable: true, width: 100, fixed: 'right',align:'center',
             render: (h, params) => {
               if (this.titleMsg == '新建未派工') {
                 return h('div', [
@@ -644,7 +649,8 @@
           },
           {
             title: '小计金额', key: 'PART_MONEY', sortable: true, minWidth: 120,align:'right',
-            render: (h, params) => h('span', params.row.SALES_PRICE * params.row.PART_NUM)
+            render: (h, params) => h('span', this.formatMoney(params.row.SALES_PRICE * params.row.PART_NUM))
+            
           },
           {
             title: '优惠金额', key: 'PART_DERATE_MONEY', sortable: true, minWidth: 120,align:'right',
@@ -716,6 +722,7 @@
           {
             title: '优惠后金额', key: 'PART_LAST_MONEY', sortable: true, minWidth: 150,align:'right',
             // render: (h, params) => h('span', params.row.SALES_PRICE*params.row.PART_NUM-params.row.PART_DERATE_MONEY)
+            render: (h, params) => h('span', this.formatMoney(params.row.PART_LAST_MONEY))
           },
 
           {
@@ -766,7 +773,7 @@
             }
           },
           {
-            title: '操作', key: '', sortable: true, width: 100, fixed: 'right',
+            title: '操作', key: '', sortable: true, width: 100, fixed: 'right',aligh:"center",
             render: (h, params) => {
               if (this.titleMsg == '新建未派工') {
                 return h('div', [
@@ -863,6 +870,7 @@
           {
             title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 130,align:'right',
             // render: (h, params) => h('span', params.row.SALES_PRICE-params.row.ITEM_DERATE_MONEY)
+            render: (h, params) => h('span', this.formatMoney(params.row.ITEM_LAST_MONEY))
           },
           {
             title: '车间班组', key: 'WORK_CLASS_ID', sortable: true, minWidth: 150,
@@ -923,7 +931,7 @@
             }
           },
           {
-            title: '操作', key: '', sortable: true, width: 100, fixed: 'right',
+            title: '操作', key: '', sortable: true, width: 100, fixed: 'right',align:'center',
             render: (h, params) => {
               if (this.titleMsg == '新建未派工') {
                 return h('div', [
@@ -1164,27 +1172,27 @@
         columns4: [
           {
             title: '维修项目费用', key: 'itemMoney', minWidth: 130,align:'right',
-
+            render: (h, params) => h('span', this.formatMoney(params.row.itemMoney))
           },
           {
             title: '维修配件费用', key: 'partMoney', minWidth: 130,align:'right',
-
+            render: (h, params) => h('span', this.formatMoney(params.row.partMoney))
           },
           {
             title: '维修项目优惠金额', key: 'itemDerateMoney', minWidth: 150,align:'right',
-
-          },
+            render: (h, params) => h('span', this.formatMoney(params.row.itemDerateMoney))
+          },  
           {
             title: '维修配件优惠金额', key: 'partDerateMoney', minWidth: 140,align:'right',
-
+            render: (h, params) => h('span', this.formatMoney(params.row.partDerateMoney))
           },
           {
             title: '其他项目费用', key: 'otherItemMoney', minWidth: 130,align:'right',
-
+            render: (h, params) => h('span', this.formatMoney(params.row.otherItemMoney))
           },
           {
             title: '合计应收金额', key: 'sumMoney', minWidth: 130,align:'right',
-
+            render: (h, params) => h('span', this.formatMoney(params.row.sumMoney))
           },
         ],
         accountInfo: [],
