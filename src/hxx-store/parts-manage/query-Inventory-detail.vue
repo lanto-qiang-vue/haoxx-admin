@@ -3,43 +3,42 @@
   <Modal
     v-model="showModal"
     title="出入库明细"
-    width="90"
+    width="100"
     @on-visible-change="visibleChange"
     :scrollable="true"
     :transfer= "false"
     :footer-hide="true"
     :transition-names="['', '']"
+    class="table-modal-detail full-height"
+    :closable="false"
   >
-    
+    <modal-title slot="header" title="出入库明细"  @clickBack="showModal=false"></modal-title>
     <common-table v-model="tableData" :columns="columns" :total="total" :clearSelect="clearTableSelect"
                 @changePage="changePage" @changePageSize="changePageSize" :show="showDetail" :page="page" :showOperate=false >
     <div slot="search">
-        <Form :label-width="120"  inline>
-            <FormItem label="出入库:" style="width:30%;" >
-                <Select  placeholder="出库或者入库" v-model="search.select" style="min-width: 100%;">
+        <Form :label-width="120"  inline class="common-form">
+            <FormItem label="出入库:"  >
+                <Select  placeholder="出库或者入库" v-model="search.select" style="min-width: 100%;" clearable >
                     <Option v-for="(item, index) in getStockType"
                     :key="index" :value="item.code">{{item.name}}</Option>
                 </Select>
             </FormItem>
-            <FormItem label="入库类型:" style="width:30%;" >
-                <Select  placeholder="入库类型..." v-model="search.select1" style="min-width: 100%;">
+            <FormItem label="入库类型:"  >
+                <Select  placeholder="入库类型..." v-model="search.select1" style="min-width: 100%;" clearable >
                     <Option v-for="(item, index) in boundType"
                     :key="index" :value="item.code">{{item.name}}</Option>
                 </Select>
             </FormItem>
-            <FormItem label="出库类型:" style="width:30%;">
-                   <Select  placeholder="出库类型..." v-model="search.select2" style="min-width: 100%;">
+            <FormItem label="出库类型:"  >
+                   <Select  placeholder="出库类型..." v-model="search.select2" style="min-width: 100%;" clearable >
                         <Option v-for="(item, index) in maintainType"
                         :key="index" :value="item.code">{{item.name}}</Option>
                     </Select> 
             </FormItem>
-            <FormItem label="出入库日期:" style="width:100%;">
+            <FormItem label="出入库日期:" style="width: 450px">
                     <DatePicker v-model="search.orderDateGte" format="yyyy-MM-dd" type="date" placeholder="开始时间" style="width: 120px;"></DatePicker>
                     <DatePicker v-model="search.orderDateIte" format="yyyy-MM-dd" type="date" placeholder="结束时间" style="width: 120px;margin-left: 5px;"></DatePicker>
-                    <ButtonGroup size="small" style="margin-left: 20px;">
-                        <Button type="primary" @click="page=1;getList()"><Icon type="ios-search" size="24"/></Button>
-                        <Button type="primary" @click="clear()"><Icon type="ios-undo" size="24"/></Button>
-                    </ButtonGroup>
+                    <Button type="primary" @click="page=1;getList()">搜索</Button>
             </FormItem>
 
         </Form>
@@ -54,15 +53,16 @@
   import { getName, getDictGroup ,getUserInfo} from '@/libs/util.js'
   import { formatDate } from '@/libs/tools.js'
   import commonTable from '@/hxx-components/common-table.vue'
+  import ModalTitle from '@/hxx-components/modal-title.vue'
 export default {
 	name: "query-Inventory-detail",
-    components: {commonTable},
+    components: {commonTable,ModalTitle},
     data(){
       return{
             showModal:false,
             columns: [
-                {title: '序号',  minWidth: 80,
-                    render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
+                {title: '序号',  minWidth: 80,align:'center',type:'index'
+                    // render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
                 },
                 {title: '类型', key: 'TYPE', sortable: true, minWidth: 100,
                     render: (h, params) => {

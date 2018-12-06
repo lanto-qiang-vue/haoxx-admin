@@ -1,7 +1,7 @@
 <template>
 <div class="column-input" @click="click">
   <InputNumber v-if="type=='number'" ref="number" :min="min" :max="max" v-model="val" v-show="show=='number'"
-               @on-blur="blurFun"  @on-focus="focusFun" @on-change="change" :disabled='disabled'></InputNumber>
+               @on-blur="blurFun"  @on-focus="focusFun" @on-change="change" :disabled='disabled' style="text-align: right;"></InputNumber>
 </div>
 </template>
 
@@ -27,6 +27,7 @@
 		  console.log(this.params,this.params.column,this.params.column.key);
       let val= this.params.row[this.params.column.key]
       this.val= this.type=='number'? parseInt((val||0)): val
+      this.newVal=this.type=='number'? parseInt((val||0)): val
     },
     methods:{
       click(){

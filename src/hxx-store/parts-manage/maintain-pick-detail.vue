@@ -3,16 +3,18 @@
   <Modal
     v-model="showModal"
     title="维修领料"
-    width="90"
+    width="100"
     @on-visible-change="visibleChange"
     :scrollable="true"
     :transfer= "false"
     :footer-hide="false"
-    class="table-modal-detail"
+    class="table-modal-detail full-height"
+    :closable="false"
     :transition-names="['', '']"
   > 
+  <modal-title slot="header" title="维修领料" :state="titleMsg" @clickBack="showModal=false"></modal-title>
   <div style="overflow: auto;height: 100%;padding-bottom: 30px;">
-      <div style="font-size: 18px;text-align: right;color: red;padding-right: 30px;">工单号:{{listSearch.REPAIR_NO}}</div>
+      <!--<div style="font-size: 18px;text-align: right;color: red;padding-right: 30px;">工单号:{{listSearch.REPAIR_NO}}</div>-->
     <Collapse v-model="collapse">
       <Panel name="1">查询
        <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="120" inline class="detail-form">
@@ -37,19 +39,17 @@
               <Input type="text" disabled v-model="listSearch.FOLLOW_PERSON" placeholder="" style="min-width: 250px;"> </Input>
           </FormItem>
           
-       </Form>
-       <Form ref="formInline"  slot="content" :label-width="80">
-          <FormItem label="客诉内容:">
+       <!--</Form>
+       <Form ref="formInline"  slot="content" :label-width="80">-->
+          <FormItem label="客诉内容:" style="width: 100%">
               <Input type="textarea" disabled v-model="listSearch.CUSTOMER_INFO" placeholder="请输入客诉内容"> </Input>
           </FormItem>
-          <FormItem label="维修建议:">
+          <FormItem label="维修建议:" style="width: 100%">
               <Input type="textarea" disabled v-model="listSearch.REPAIR_INFO" placeholder="请输入建议内容"> </Input>
           </FormItem>
        </Form>
       </Panel>
-    </Collapse>
-    <Collapse v-model="collapse1">
-      <Panel name="1">维修项目/套餐信息
+      <Panel name="2">维修项目/套餐信息
         <div slot="content">
             <div class="r-list-chekbox">
                     <div>
@@ -163,9 +163,10 @@
   import { formatDate } from '@/libs/tools.js'
   import comboDetail from '@/hxx-components/combo-detail.vue'
   import mixin from '@/hxx-components/mixin'
+  import ModalTitle from '@/hxx-components/modal-title.vue'
 	export default {
 	name: "maintain-pick-detail",
-    components: {comboDetail},
+    components: {comboDetail,ModalTitle},
     mixins: [mixin],
     data(){
       return{
@@ -177,19 +178,19 @@
         testSingle:false,//判断是否启用维修项目套餐
         //维修项目
         columns: [
-          {title: '序号',  minWidth: 80,type:"index",
-          },
+          {title: '序号',  minWidth: 90,align:'center', sortable: true,type:'index'},
+          
           {title: '维修项目名称', key: 'NAME', sortable: true, minWidth: 200,
             // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.ORDER_TYPE))
           },
           {title: '标准工时', key: 'REPAIR_TIME', sortable: true, minWidth: 120},
-          {title: '标准金额', key: 'REPAIR_MONEY', sortable: true, minWidth: 120},
+          {title: '标准金额', key: 'REPAIR_MONEY', sortable: true, minWidth: 120,align:'right'},
           {title: '油漆面数', key: 'PAINT_NUM', sortable: true, minWidth: 120},
-          {title: '小计金额', key: 'ITEM_MONEY', sortable: true, minWidth: 120,
+          {title: '小计金额', key: 'ITEM_MONEY', sortable: true, minWidth: 120,align:'right'
           },
-          {title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 120,
+          {title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 120,align:'right'
           },
-          {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 150,
+          {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 150,align:'right'
           },
           {title: '车间班组', key: 'WORK_CLASS_NAME', sortable: true, minWidth: 150,
             
@@ -203,7 +204,7 @@
         ],
         //维修配件
         columns1: [
-          {title: '序号',  minWidth: 80,type:'index',},
+          {title: '序号',  minWidth: 90,align:'center', sortable: true,type:'index'},
           {title: '配件编号', key: 'PART_NO', sortable: true, minWidth: 120,},
           {title: '配件名称', key: 'NAME', sortable: true, minWidth: 120},
           {title: '数量', key: 'PART_NUM', sortable: true, minWidth: 100,
@@ -212,16 +213,16 @@
           {title: '单位', key: 'UNIT', sortable: true, minWidth: 100,
             render: (h, params) => h('span', getName(this.getUnit, params.row.UNIT))
           },
-          {title: '成本单价', key: 'UNIT_COST', sortable: true, minWidth: 120},
-          {title: '成本金额', key: '', sortable: true, minWidth: 120,
+          {title: '成本单价', key: 'UNIT_COST', sortable: true, minWidth: 120,align:'right',},
+          {title: '成本金额', key: '', sortable: true, minWidth: 120,align:'right',
             render: (h, params) => h('span', parseFloat(params.row.PART_NUM)*parseFloat(params.row.UNIT_COST))
             },
           {title: '销售税率', key: 'TAX', sortable: true, minWidth: 120,
             
           },
-          {title: '含销售价', key: 'SALES_PRICE', sortable: true, minWidth: 120,},
-          {title: '销售税额', key: 'RATE', sortable: true, minWidth: 120,},
-          {title: '未含销售价', key: 'NOT_CONTAINS_TAX_SALE_PRICE', sortable: true, minWidth: 150,},
+          {title: '含销售价', key: 'SALES_PRICE', sortable: true, minWidth: 120,align:'right',},
+          {title: '销售税额', key: 'RATE', sortable: true, minWidth: 120,align:'right',},
+          {title: '未含销售价', key: 'NOT_CONTAINS_TAX_SALE_PRICE', sortable: true, minWidth: 150,align:'right',},
           {title: '领/退料人', key: 'GET_PART_PERSON', sortable: true, minWidth: 150,},
           {title: '领/退料时间', key: 'GET_PART_TIME', sortable: true, minWidth: 150,},
           {title: '领料仓库', key: 'STORE_NAME', sortable: true, minWidth: 150,},
@@ -249,12 +250,12 @@
         ],
         //维修项目套餐
         columns2: [
-          {title: '序号',  minWidth: 80,type:'index',},
+          {title: '序号',  minWidth: 90,align:'center', sortable: true,type:'index'},
           {title: '项目套餐名称', key: 'GROUP_NAME', sortable: true, minWidth: 200,},
-          {title: '套餐价格', key: 'SALES_PRICE', sortable: true, minWidth: 150},
-          {title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 150,
+          {title: '套餐价格', key: 'SALES_PRICE', sortable: true, minWidth: 150,align:'right'},
+          {title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 150,align:'right'
           },
-          {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 150,
+          {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 150,align:'right'
             
           },
           {title: '车间班组', key: 'WORK_CLASS_NAME', sortable: true, minWidth: 150,
@@ -266,7 +267,7 @@
           {title: '操作', key: '', sortable: true, minWidth: 150,
           },
         ],
-        collapse: '1',
+        collapse: ["1","2"],
         collapse1:'',
         listSearch:{
            "TENANT_ID":"",
@@ -372,7 +373,7 @@
         allStore:[],//全部仓库
         costMoney:0,//成本金额
         costNumber:0,//成本数量
-
+        titleMsg:'',
 
       }
     },
@@ -385,6 +386,7 @@
             this.listSearch=this.detailData;
             this.listSearch.REPAIR_TYPE=getName(this.getType,this.listSearch.REPAIR_TYPE);
             
+            this.titleMsg="工单号:"+this.listSearch.REPAIR_NO;
             this.getEmployeeList();
             this.getAllStore();
             this.getItemFun(this.detailData.REPAIR_ID);
@@ -704,5 +706,11 @@
     div{
       float:right;
     }
+  }
+</style>
+<style lang="less">
+  .ivu-collapse-header .ivu-icon{
+    float:right;
+    line-height:3;
   }
 </style>

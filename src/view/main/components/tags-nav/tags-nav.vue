@@ -1,7 +1,7 @@
 <template>
   <div class="tags-nav">
     <div class="close-con">
-      <Dropdown transfer @on-click="handleTagsOption" style="margin-top:4px;">
+      <Dropdown transfer @on-click="handleTagsOption">
         <Button size="small" type="text">
           <Icon :size="18" type="ios-close-circle-outline" />
         </Button>

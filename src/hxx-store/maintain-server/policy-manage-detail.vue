@@ -3,14 +3,17 @@
   <Modal
     v-model="showModal"
     title="保单管理"
-    width="90"
+    width="100"
     @on-visible-change="visibleChange"
     :scrollable="true"
     :transfer= "false"
     :footer-hide="false"
     :mask-closable="false"
     :transition-names="['', '']"
+    class="table-modal-detail full-height"
+    :closable="false"
   >
+    <modal-title slot="header" title="保单管理"  @clickBack="showModal=false"></modal-title>
     <div style="height: 100%;overflow: auto;padding-bottom: 30px;">
       
       <Collapse v-model="collapse">
@@ -110,10 +113,11 @@
     import selectVehicle from '@/hxx-components/select-vehicle.vue'
     import commonTable from '@/hxx-components/common-table.vue'
     import policyDetailEdit from './policy-detail-edit.vue'
+    import ModalTitle from '@/hxx-components/modal-title.vue'
     export default {
 		name: "policy-manage-detail",
         mixins: [mixin],
-        components: {commonTable,selectVehicle,policyDetailEdit},
+        components: {commonTable,selectVehicle,policyDetailEdit,ModalTitle},
         data(){
         return{
             showoff:null,//选择车辆
@@ -163,7 +167,7 @@
                         ]);
                     }
                 },
-                {title: '金额', key: 'MONEY', sortable: true, minWidth: 120,
+                {title: '金额', key: 'MONEY', sortable: true, minWidth: 120,align:'right',
                     
                 },
                 
@@ -484,4 +488,10 @@
 
 <style scoped lang="less">
   
+</style>
+<style lang="less">
+  .ivu-collapse-header .ivu-icon{
+    float:right;
+    line-height:3;
+  }
 </style>
