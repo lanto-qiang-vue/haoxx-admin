@@ -42,15 +42,17 @@
     </div>
     <Modal
       v-model="showModal"
-      class="table-modal-detail"
+      class="table-modal-detail full-height"
       title="配件退货"
-      width="90"
+      width="100"
       :mask-closable="false"
       @on-visible-change="visibleChange"
       :scrollable="true"
       :transfer="false"
       :footer-hide="false"
       :transition-names="['', '']">
+      <modal-title slot="header" title="配件退货" :state="''" @clickBack="showModal=false"></modal-title>
+      <div style="height: 100%;overflow: auto; padding-bottom: 30px;">
       <Collapse v-model="value">
         <Panel name="1">
           基本信息
@@ -106,7 +108,7 @@
         </Button>
       </div>
       <div style="float:left;font-size:18px;">合计金额:&nbsp;<span style="color:red;">{{formData.RETURN_MONEY}}</span></div>
-      <div style="height:120px;"></div>
+      </div>
       <div slot="footer">
         <Button type="primary" @click="addPost('formData')" v-show="canShow">保存</Button>
         <Button @click="showModal=false">取消</Button>
@@ -210,12 +212,13 @@
   import selectPurchaseNo from '@/hxx-components/select-PurchaseNo.vue'
   import selectParts from '@/hxx-components/select-parts.vue'
   import {getName, getDictGroup, getCreate} from '@/libs/util.js'
+  import ModalTitle from '@/hxx-components/modal-title.vue'
   import mixin from '@/hxx-components/mixin'
   import {deepClone} from "../../libs/util";
 
   export default {
     name: "parts-back",
-    components: {commonTable, selectSupply, selectPurchaseNo, selectParts, unitInput},
+    components: {commonTable, selectSupply, selectPurchaseNo, selectParts, unitInput,ModalTitle},
     mixins: [mixin],
     data() {
       return {
@@ -282,14 +285,14 @@
         },
         columns2: [
           {
-            title: '序号', key: 'STORE_NAME', minWidth: 80,
+            title: '序号', key: 'STORE_NAME', minWidth: 80,align:'center',
             render: (h, params) => h('span', params.index + 1)
           },
-          {title: '仓库', key: 'STORE_NAME', sortable: true, minWidth: 120},
-          {title: '配件名称', key: 'NAME', minWidth: 120},
-          {title: '原厂编号', key: 'FACTORY_NO', minWidth: 120},
+          {title: '仓库', key: 'STORE_NAME', sortable: true, minWidth: 120,align:'left'},
+          {title: '配件名称', key: 'NAME', minWidth: 120,align:'left'},
+          {title: '原厂编号', key: 'FACTORY_NO', minWidth: 120,align:'left'},
           {
-            title: '数量', key: 'PART_NUM', minWidth: 120,
+            title: '数量', key: 'PART_NUM', minWidth: 120,align:'right',
             render: (h, params) => {
               this.countMoney();
               params.row.SUM_MONEY = params.row.PART_NUM * parseFloat(params.row.PURCHASE_PRICE);
@@ -317,15 +320,15 @@
             }
           },
           {
-            title: '单位', key: 'UNIT', minWidth: 120,
+            title: '单位', key: 'UNIT', minWidth: 120,align:'left',
             render: (h, params) => h('span', getName(this.list1015, params.row.UNIT))
           },
           {
-            title: '品牌', key: 'BRAND', minWidth: 120,
+            title: '品牌', key: 'BRAND', minWidth: 120,align:'left',
             render: (h, params) => h('span', getName(this.list1016, params.row.BRAND))
           },
           {
-            title: '退货单价', key: 'PURCHASE_PRICE', minWidth: 120,
+            title: '退货单价', key: 'PURCHASE_PRICE', minWidth: 120,align:'right',
             render: (h, params) => {
               return h('div', [
                 h(unitInput, {
@@ -350,9 +353,9 @@
 
             }
           },
-          {title: '退货金额', key: 'SUM_MONEY', minWidth: 120},
+          {title: '退货金额', key: 'SUM_MONEY', minWidth: 120,align:'left',},
           {
-            title: '操作', key: 'FACTORY_NO', minWidth: 120,
+            title: '操作', key: 'FACTORY_NO', minWidth: 120,align:'center',
             render: (h, params) => {
               let buttonContent = "删除";
               let buttonStatus = "error";
@@ -381,25 +384,25 @@
         data2: [],
         columns: [
           {
-            title: '序号', minWidth: 80,
+            title: '序号', minWidth: 80,align:'center',
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
-          {title: '供应商名称', key: 'SUPPLIER_NAME', sortable: true, minWidth: 120},
+          {title: '供应商名称', key: 'SUPPLIER_NAME', sortable: true, minWidth: 120,align:'left',},
           {
-            title: '退货金额', key: 'RETURN_MONEY', sortable: true, minWidth: 120,
+            title: '退货金额', key: 'RETURN_MONEY', sortable: true, minWidth: 120,align:'right',
             render: (h, params) => h('span', params.row.RETURN_MONEY.toFixed(2))
           },
           {
-            title: '退货日期', key: 'RETURN_DATE', sortable: true, minWidth: 120,
+            title: '退货日期', key: 'RETURN_DATE', sortable: true, minWidth: 120,align:'left',
             render: (h, params) => h('span', params.row.RETURN_DATE.substr(0, 10))
           },
-          {title: '退货原因', key: 'RETURN_REASON', sortable: true, minWidth: 140,},
+          {title: '退货原因', key: 'RETURN_REASON', sortable: true, minWidth: 140,align:'left'},
           {
-            title: '状态', key: 'STATUS', sortable: true, minWidth: 140,
+            title: '状态', key: 'STATUS', sortable: true, minWidth: 140,align:'left',
             render: (h, params) => h('span', getName(this.list1047, params.row.STATUS))
           },
           {
-            title: '退货单号', key: 'RETURN_NO', sortable: true, minWidth: 100,
+            title: '退货单号', key: 'RETURN_NO', sortable: true, minWidth: 100,align:'left',
           },],
         list: '',
         clearType: false,
@@ -952,7 +955,12 @@
           }
         }).then(res => {
           if (res.success === true) {
-            this.initParts = this.data2 = res.data;
+            let data = res.data;
+            for(let i in data){
+              data[i].PURCHASE_PRICE = data[i].PURCHASE_PRICE || 0;
+              data[i].SUM_MONEY = data[i].SUM_MONEY || 0;
+            }
+            this.initParts = this.data2 = data;
           }
         })
       },
