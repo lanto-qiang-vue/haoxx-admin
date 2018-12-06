@@ -66,14 +66,10 @@
           {title: '维修类型', key: 'REPAIR_TYPE', sortable: true, minWidth: 120,
             render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.REPAIR_TYPE))
           },
-<<<<<<< HEAD
-          {title: '应收金额', key: 'SUM_MONEY', sortable: true, minWidth: 120,align:'right',
-            render: (h, params) => h('span', params.row.SUM_MONEY|| '0.00')
-=======
           {title: '应收金额', key: 'SUM_MONEY', sortable: true, minWidth: 120,
             // render: (h, params) => h('span', params.row.SUM_MONEY? params.row.SUM_MONEY.toFixed(2): '0.00')
             render: (h, params) => h('span', this.formatMoney(params.row.SUM_MONEY))
->>>>>>> 466c5ac13aae8a8fea794f4e7b3b9f4b2d679cb3
+
           },
           {title: '状态', key: 'STATUS', sortable: true, minWidth: 110,
             render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.STATUS))
@@ -108,10 +104,6 @@
         }else{
           this.searchSelectOption1.push(this.searchSelectOption[i]);
         }
-<<<<<<< HEAD
-=======
-
->>>>>>> 466c5ac13aae8a8fea794f4e7b3b9f4b2d679cb3
       }
       this.getList()
       this.showTable= Math.random()
