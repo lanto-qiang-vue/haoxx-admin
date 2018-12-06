@@ -3,16 +3,19 @@
   <Modal
     v-model="showModal"
     title="仓库盘点单"
-    width="98"
-    class="table-modal-detail"
+    width="100"
+    
     @on-visible-change="visibleChange"
     :scrollable="true"
     :transfer= "false"
     :footer-hide="false"
     :transition-names="['', '']"
+    class="table-modal-detail full-height"
+    :closable="false"
   >
+    <modal-title slot="header" title="仓库盘点单" :state="titleMsg" @clickBack="showModal=false"></modal-title>
     <div style="height: 100%;overflow: auto; padding-bottom: 30px;">
-        <div class="status">&nbsp;&nbsp;&nbsp;&nbsp;({{this.titleMsg}})</div>
+        <!--<div class="status">&nbsp;&nbsp;&nbsp;&nbsp;({{this.titleMsg}})</div>-->
     <Collapse v-model="collapse">
       <Panel name="1">查询
        <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="85" inline class="detail-form">
@@ -86,10 +89,10 @@
   import {printPdd} from '@/hxx-components/repairPrintUtil.js'
   import selectParts from '@/hxx-components/select-parts.vue'
   import {getLodop} from '@/hxx-components/LodopFuncs.js'
-
+  import ModalTitle from '@/hxx-components/modal-title.vue'
 export default {
 	name: "warehouse-check-detail",
-    components: {selectParts},
+    components: {selectParts,ModalTitle},
     data(){
       return{
             showModal:false,
@@ -102,7 +105,7 @@ export default {
             transferFlag:true,//判断界面是否出现在body
             //维修配件
             columns: [
-                {title: '序号',  minWidth: 80,type:'index',},
+                {title: '序号',  minWidth: 80,type:'index',align:'center'},
                 {title: '配件名称', key: 'NAME', sortable: true, minWidth: 120},
                 {title: '原厂编号', key: 'FACTORY_NO', sortable: true, minWidth: 120,
                 },
@@ -160,7 +163,7 @@ export default {
                         ]);
                     }
                 },
-                {title: '操作', key: '', sortable: true, minWidth: 100,fixed: 'right',
+                {title: '操作', key: '', sortable: true, minWidth: 100,fixed: 'right',align:'center',
                     render: (h, params) => {
                         
                         if(this.titleMsg=='新建'){

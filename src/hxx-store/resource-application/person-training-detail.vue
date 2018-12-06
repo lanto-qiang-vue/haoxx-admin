@@ -3,19 +3,21 @@
   <Modal
     v-model="showModal"
     title="人员培训"
-    width="90"
+    width="100"
     @on-visible-change="visibleChange"
     :scrollable="true"
     :transfer= "false"
     :footer-hide="true"
     :transition-names="['', '']"
+    class="table-modal-detail full-height"
+    :closable="false"
   >
-    <Collapse v-model="collapse">
-      <Panel name="1">人员培训基本信息
-       <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="85" inline class="detail-form">
-          <FormItem label="培训内容:" style="width:100%;">
-              <Input type="textarea" :disabled='saveFlag' v-model="listSearch.trainingContent" placeholder="" style="min-width: 100%;"> </Input>
-          </FormItem>
+    <modal-title slot="header" title="人员培训基本信息"  @clickBack="showModal=false"></modal-title>
+    <!--<Collapse v-model="collapse">
+      <Panel name="1">人员培训基本信息-->
+        <div style="padding: 30px 0;">
+          <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="85" inline class="detail-form">
+          
           <FormItem label="培训时间:" style="width:45%;">
               <Input type="text" :disabled='saveFlag' v-model="listSearch.time" placeholder="">
               </Input>
@@ -24,12 +26,18 @@
               <Input type="text" :disabled='saveFlag' v-model="listSearch.cost" placeholder="">
               </Input>
           </FormItem>
+          
           <FormItem label="培训地点:" style="width:100%;">
               <Input type="textarea" :disabled='saveFlag' v-model="listSearch.place" placeholder="" style="min-width: 100%;"> </Input>
           </FormItem>
+          <FormItem label="培训内容:" style="width:100%;">
+              <Input type="textarea" :disabled='saveFlag' v-model="listSearch.trainingContent" placeholder="" style="min-width: 100%;"> </Input>
+          </FormItem>
        </Form>
-      </Panel>
-    </Collapse>
+        </div>
+       
+      <!--</Panel>
+    </Collapse>-->
     
   </Modal>
 
@@ -38,10 +46,10 @@
 <script>
   import { getName, getDictGroup ,getUserInfo} from '@/libs/util.js'
   import { formatDate } from '@/libs/tools.js'
-
+  import ModalTitle from '@/hxx-components/modal-title.vue'
 export default {
 	name: "person-training-detail",
-    components: {},
+    components: {ModalTitle},
     data(){
       return{
             showModal:false,

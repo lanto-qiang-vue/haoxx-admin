@@ -11,7 +11,7 @@
     :footer-hide="false"
     :transition-names="['', '']"
   >
-    <div style="height: 100%;overflow: auto; padding-bottom: 30px;">
+    <div style="height: 100%;overflow: auto; padding-bottom: 30px;padding-top:10px;">
     <div class="status" v-show="title.length == 4">&nbsp;&nbsp;({{titleMsg}})</div>
       <div class="status" v-show="title.length == 6">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;({{titleMsg}})</div>
       <div class="status" v-show="title.length == 8">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;({{titleMsg}})</div>
@@ -539,9 +539,9 @@
     },
     props:['showDetail', 'detailData'],
     watch:{
-      showDetail(){
-      this.showModal = true;
-      },
+      // showDetail(){
+      // this.showModal = true;
+      // },
       detailData(){
       this.serviceId = this.detailData.RECORD_ID;
       this.getInfo();
@@ -609,10 +609,19 @@
                 }
         }).then(res => {
           if (res.success === true) {
+              this.showModal = true;
               this.base = res.data;
               this.base.REPAIR_TYPE = getName(this.$store.state.app.dict,this.base.REPAIR_TYPE);
               this.base.VEHICLE_TYPE = getName(this.$store.state.app.dict,this.base.VEHICLE_TYPE);
               this.titleMsg = getName(this.$store.state.app.dict,this.base.STATUS);
+          }else{
+            //     console.log(JSON.stringify(res));
+            // setTimeout(()=>{
+            //   this.$Modal.error({
+            //     title:'系统提示',
+            //     content:res.title,
+            //   });
+            // },300);
           }
         })
      // 获取详情维修配件
@@ -685,7 +694,7 @@
                 }
         }).then(res => {
           if (res.success === true) {
-          this.accountType = res.data[0];
+          this.accountType = res.data[0] || {};
           }
         })
           break;
@@ -700,6 +709,7 @@
                 }
         }).then(res => {
           if (res.success === true) {
+            this.showModal = true;
           this.retire = res.data;
           this.titleMsg = getName(this.$store.state.app.dict,this.retire.STATUS);
           // this.title = getName(this.$store.state.app.dict,this.retire.RECORD_TYPE);
@@ -745,6 +755,7 @@
                 }
         }).then(res => {
           if (res.success === true) {
+            this.showModal = true;
           this.sellinfo = res.data;
           this.titleMsg = getName(this.$store.state.app.dict,this.sellinfo.STATUS);
           // this.title = getName(this.$store.state.app.dict,this.sellinfo.RECORD_TYPE);
@@ -792,6 +803,7 @@
                 }
         }).then(res => {
           if (res.success === true) {
+            this.showModal = true;
           this.shopinfo = res.data;
           // this.title = getName(this.$store.state.app.dict,this.shopinfo.RECORD_TYPE);
           this.titleMsg = getName(this.$store.state.app.dict,this.shopinfo.STATUS);
@@ -851,6 +863,7 @@
                 }
         }).then(res => {
           if (res.success === true) {
+            this.showModal = true;
           this.returninfo = res.data;
           this.titleMsg = getName(this.$store.state.app.dict,this.returninfo.STATUS);
           // this.title = getName(this.$store.state.app.dict,this.returninfo.RECOR_TYPE);

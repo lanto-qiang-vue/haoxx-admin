@@ -6,13 +6,13 @@
       <div class="search-block">
         <Input v-model="search.keyword" placeholder="仓库编号/名称..."></Input>
       </div>
-      <ButtonGroup size="small">
+      <ButtonGroup>
         <Button type="primary" @click="page=1;getList()">
-          <Icon type="ios-search" size="24"/>
+        搜索
         </Button>
-        <Button type="primary" @click="clear()">
-          <Icon type="ios-undo" size="24"/>
-        </Button>
+        <!--<Button type="primary" @click="clear()">-->
+          <!--<Icon type="ios-undo" size="24"/>-->
+        <!--</Button>-->
       </ButtonGroup>
     </div>
     <div slot="operate">
@@ -22,15 +22,17 @@
     </div>
     <Modal
       v-model="showModal"
-      class="table-modal-detail"
+      class="table-modal-detail full-height"
       title="仓库管理"
-      width="90"
+      width="100"
       :mask-closable="false"
       @on-visible-change="visibleChange"
       :scrollable="true"
       :transfer="false"
       :footer-hide="false"
       :transition-names="['', '']">
+      <modal-title slot="header" title="仓库管理" :state="''" @clickBack="showModal=false"></modal-title>
+      <div style="height: 100%;overflow-x:hidden; padding-bottom: 30px;padding-top:10px;">
       <Collapse v-model="value1">
         <Panel name="1">
           仓库基本信息
@@ -47,17 +49,13 @@
                 <span slot="close">否</span>
               </i-switch>
             </FormItem>
+            <FormItem label="其他状况描述:" style="width:100%;">
+              <Input v-model="formData.REMARK" type="textarea"> </Input>
+            </FormItem>
           </Form>
         </Panel>
-        <Panel name="3">
-          其他状况描述:
-          <div slot="content">
-            <Form slot="content" ref="lists" class="common-form">
-              <Input type="textarea" v-model="formData.REMARK" placeholder="请输入备注信息..."> </Input>
-            </Form>
-          </div>
-        </Panel>
       </Collapse>
+      </div>
       <div slot="footer">
         <Button @click="addcancle()">取消</Button>
         <Button type="primary" @click="addpost('list')">保存</Button>
@@ -70,10 +68,10 @@
   import {getName, getDictGroup, getCreate} from '@/libs/util.js'
   import mixin from '@/hxx-components/mixin'
   import {deepClone} from "../../libs/util";
-
+  import ModalTitle from '@/hxx-components/modal-title.vue'
   export default {
     name: 'warehouse-manage',
-    components: {commonTable},
+    components: {commonTable,ModalTitle},
     mixins: [mixin],
     data() {
       return {
@@ -102,7 +100,7 @@
           {title: '仓库名称', key: 'NAME', sortable: true, minWidth: 140},
           {title: '所在地', key: 'ADDRESS', sortable: true, minWidth: 140},
           {
-            title: '是否默认仓库', key: 'IS_DEFAULT', sortable: true, minWidth: 140,
+            title: '是否默认仓库', key: 'IS_DEFAULT', sortable: true, minWidth: 140,align:'center',
             render: (h, params) => h('span', getName(this.defaultList, params.row.IS_DEFAULT))
           },
         ],

@@ -7,7 +7,7 @@
         <Input v-model="search.keyword" placeholder="员工账号/员工姓名/手机号码..."></Input>
       </div>
       <div class="search-block">
-        <Select placeholder="" v-model="search.status" style="min-width: 100%;">
+        <Select placeholder="" v-model="search.status" style="min-width: 100%;" clearable>
           <Option v-for="(item, index) in statusList"
                   :key="index" :value="item.code">{{item.name}}
           </Option>
@@ -48,15 +48,17 @@
     </Modal>
     <Modal
       v-model="showModal"
-      class="table-modal-detail"
+      class="table-modal-detail full-height"
       title="员工管理"
-      width="90"
+      width="100"
       :mask-closable="false"
       @on-visible-change="visibleChange"
       :scrollable="true"
       :transfer="false"
       :footer-hide="false"
       :transition-names="['', '']">
+      <modal-title slot="header" title="员工管理" :state="''" @clickBack="showModal=false"></modal-title>
+      <div style="height: 100%;width:100%;overflow-x:hidden; padding-bottom: 30px;padding-top:10px;">
       <Split v-model="split" :min="0.3" :max="0.7" class="split">
         <div slot="left" class="split-pane" style="overflow: auto;height:100%;">
           <Form slot="content" :model="formData" ref="list" :rules="rules" :label-width="100" class="common-form">
@@ -128,6 +130,7 @@
           <Spin fix v-show="formData.USER_TYPE == '10021001'">你不能修改当前用户权限</Spin>
         </div>
       </Split>
+      </div>
       <div slot="footer">
         <Button @click="addcancle()">取消</Button>
         <Button type="primary" @click="addpost('list')">保存</Button>
@@ -137,6 +140,7 @@
 </template>
 <script>
   import commonTable from '@/hxx-components/common-table.vue'
+  import ModalTitle from '@/hxx-components/modal-title.vue'
   import {getName, getDictGroup, getCreate} from '@/libs/util.js'
   import mixin from '@/hxx-components/mixin'
   import {getBtns} from '@/libs/util.js'
@@ -144,7 +148,7 @@
 
   export default {
     name: 'staff-manage',
-    components: {commonTable},
+    components: {commonTable,ModalTitle},
     mixins: [mixin],
     data() {
       const validatePWD = (rule, value, callback) => {
@@ -251,7 +255,7 @@
           },
           {title: '身份证号', key: 'CERT_NO', sortable: true, minWidth: 140},
           {
-            title: '员工账号状态', key: 'STATUS', sortable: true, minWidth: 140,
+            title: '员工账号状态', key: 'STATUS', sortable: true, minWidth: 140,align:'center',
             render: (h, params) => h('span', getName(this.statusList, params.row.STATUS))
           },
 
@@ -405,7 +409,7 @@
             limit: this.limit,
             page: this.page,
             KEYWORD: this.search.keyword,
-            STATUS_eq: this.search.status == 0 ? '' : this.search.status,
+            STATUS_eq: this.search.status || '',
           }
         }).then(res => {
           if (res.success === true) {

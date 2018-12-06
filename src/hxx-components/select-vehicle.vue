@@ -11,14 +11,13 @@
         :transition-names="['', '']"
     >
     <common-table v-model="tableData" :columns="columns" :show="showoff" :total="total" @changePage="changePage"
-        @changePageSize="changePageSize" @onRowClick="onRowClick" :showOperate=false>
+        @changePageSize="changePageSize" @onRowClick="onRowClick" :showOperate=false :page="page">
         <div slot="search">
            <div class="search-block">
                 <Input  placeholder="客户名称/车牌号码/联系电话..." v-model="search.input"></Input>
            </div>
             
-                <Button type="primary" @click="searchVehicle" size="small"><Icon type="ios-search" size="24"/></Button>
-                <Button type="primary" @click="resetVehicle" size="small"><Icon type="ios-undo" size="24"/></Button>
+                <Button type="primary" @click="page=1;getList()" size="small">搜索</Button>
                 
             
                 <Button type="primary" @click="showAddVehicle=Math.random()" size="small" style="margin-left: 20px;">添加客户车辆</Button>
@@ -47,7 +46,7 @@ import { getName, getDictGroup } from '@/libs/util.js'
                 tableData:[],
                 columns: [
                     // {type: 'selection', width: 50, fixed: 'left'},
-                    {title: '序号',  minWidth: 80,
+                    {title: '序号',  minWidth: 80,align:'center',
                         render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
                     },
                     {title: '车牌号', key: 'PLATE_NUM', sortable: true, minWidth: 120,

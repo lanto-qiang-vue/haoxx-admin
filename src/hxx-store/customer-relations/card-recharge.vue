@@ -10,19 +10,19 @@
         <Input v-model="search.PLATE_NUM" placeholder="车牌号码..."></Input>
       </div>
       <div class="search-block">
-        <Select v-model="type">
+        <Select v-model="type" clearable>
           <Option v-for="(item, index) in typegroup"
                   :key="index" :value="item.code">{{item.name}}
           </Option>
         </Select>
       </div>
-      <ButtonGroup size="small">
+      <ButtonGroup>
         <Button type="primary" @click="page=1;getList()">
-          <Icon type="ios-search" size="24"/>
+         搜索
         </Button>
-        <Button type="primary" @click="clear()">
-          <Icon type="ios-undo" size="24"/>
-        </Button>
+        <!--<Button type="primary" @click="clear()">-->
+          <!--<Icon type="ios-undo" size="24"/>-->
+        <!--</Button>-->
       </ButtonGroup>
     </div>
     <div slot="operate">
@@ -36,17 +36,19 @@
       <Button type="primary" v-if="accessBtn('printRechargeDoc')" @click="xPrint" :disabled="canDo || list.STATUS == '10471001'">打印充值单</Button>
     </div>
     <Modal
-      class="table-modal-detail"
+      class="table-modal-detail full-height"
       :transition-names="['', '']"
       v-model="showModal"
       :closable="false"
       @on-visible-change="visibleChange"
       title="储值卡充值"
-      width="90"
+      width="100"
       :scrollable="true"
       on-visible-change
       :transfer="false"
     >
+      <modal-title slot="header" title="储值卡充值" :state="''" @clickBack="showModal=false"></modal-title>
+      <div style="height:100%;padding-top:10px;padding-bottom:30px;">
       <Collapse value="1">
         <Panel name="1">
           基本信息
@@ -83,6 +85,7 @@
           </div>
         </Panel>
       </Collapse>
+      </div>
       <div slot="footer">
         <Button type="primary" v-show="this.editType == 1 || this.formData.STATUS == '10471001'" @click="save('formData')" style="margin-left:10px;">保存</Button>
         <Button type="primary" @click="showModal = false">返回</Button>
@@ -100,6 +103,7 @@
       on-visible-change
       :transfer="false"
     >
+      <div style="height:100%;padding-top:10px;padding-bottom:30px;">
       <Collapse v-model="valueList">
         <Panel name="1">
           结算信息
@@ -165,6 +169,7 @@
           </Form>
         </Panel>
       </Collapse>
+      </div>
       <div slot="footer">
         <Button type="primary" @click="doCollection('collectionData')">收款</Button>
         <Button @click="collectionModal=false">关闭</Button>
@@ -174,6 +179,7 @@
   </common-table>
 </template>
 <script>
+  import ModalTitle from '@/hxx-components/modal-title.vue'
   import commonTable from '@/hxx-components/common-table.vue'
   import {getLodop} from '@/hxx-components/LodopFuncs.js'
   import {getName, getDictGroup, getCreate} from '@/libs/util.js'
@@ -183,7 +189,7 @@
 
   export default {
     name: 'card-recharge',
-    components: {commonTable, selectCustomer},
+    components: {commonTable, selectCustomer,ModalTitle},
     mixins: [mixin],
     data() {
       const person = (rule, value, callback) => {
@@ -243,7 +249,7 @@
           IS_GIVE_INVOICE: "10041002",
           REMARK: "",
         },
-        type: 0,
+        type: '',
         person: [],
         cardGroup: [],
         MEMBER_CARD_NO: '',
@@ -271,10 +277,10 @@
         columns: [
           // {type: 'selection', width: 50, fixed: 'left'},
           {
-            title: '序号', minWidth: 80,
+            title: '序号', minWidth: 80,align:'center',
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
-          {title: '客户名称', key: 'CUSTOMER_NAME', sortable: true, minWidth: 120},
+          {title: '客户名称', key: 'CUSTOMER_NAME', sortable: true, minWidth: 120,},
           {title: '会员卡号', key: 'MEMBER_CARD_NO', sortable: true, minWidth: 140},
           {title: '联系电话', key: 'MOBILE_PHONE', sortable: true, minWidth: 140},
           {
@@ -282,12 +288,18 @@
             render: (h, params) => h('span', params.row.RECHARGE_TIME.substr(0, 10))
           },
           {title: '充值卡产品', key: 'CARD_NAME', sortable: true, minWidth: 150},
-          {title: '售价', key: 'SALES_MONEY', sortable: true, minWidth: 100},
-          {title: '赠送价值', key: 'DERATE_MONEY', sortable: true, minWidth: 120},
-          {title: '总价值', key: 'SUM_MONEY', sortable: true, minWidth: 120},
+          {title: '售价', key: 'SALES_MONEY', sortable: true, minWidth: 100,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.SALES_MONEY))
+          },
+          {title: '赠送价值', key: 'DERATE_MONEY', sortable: true, minWidth: 120,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.DERATE_MONEY))
+          },
+          {title: '总价值', key: 'SUM_MONEY', sortable: true, minWidth: 120,
+            render: (h, params) => h('span',this.formatMoney(params.row.SUM_MONEY))
+          },
           {title: '办理人', key: 'FOLLOW_PERSON', sortable: true, minWidth: 120},
           {
-            title: '状态', key: 'STATUS', sortable: true, minWidth: 100,
+            title: '状态', key: 'STATUS', sortable: true, minWidth: 100,align:'center',
             render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.STATUS))
           }
         ],
@@ -553,7 +565,7 @@
             PLATE_NUM: this.search.PLATE_NUM,
             page: this.page,
             limit: this.limit,
-            STATUS_eq: this.type == 0 ? '' : this.type
+            STATUS_eq: this.type || '',
           }
         }).then(res => {
           if (res.success === true) {
@@ -745,7 +757,7 @@
     mounted() {
       this.showTable = Math.random();
       var group = getDictGroup(this.$store.state.app.dict, '1047');
-      this.typegroup.push({name: '请选择...', code: 0, order: 0, group: '1047'});
+      // this.typegroup.push({name: '请选择...', code: 0, order: 0, group: '1047'});
       for (var i in group) {
         this.typegroup.push(group[i]);
       }

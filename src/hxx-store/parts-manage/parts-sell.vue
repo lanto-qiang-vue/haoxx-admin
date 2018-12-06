@@ -7,41 +7,52 @@
         <Input v-model="search.keyword" placeholder="销售单号/客户名称..."></Input>
       </div>
       <div class="search-block">
-        <Select v-model="search.status">
+        <Select v-model="search.status" clearable>
           <Option v-for="(item, index) in list1047"
                   :key="index" :value="item.code">{{item.name}}
           </Option>
         </Select>
       </div>
-      <ButtonGroup size="small">
+      <ButtonGroup>
         <Button type="primary" @click="page=1;getList()">
-          <Icon type="ios-search" size="24"/>
+          搜索
         </Button>
-        <Button type="primary" @click="clear()">
-          <Icon type="ios-undo" size="24"/>
-        </Button>
+        <!--<Button type="primary" @click="clear()">-->
+        <!--<Icon type="ios-undo" size="24"/>-->
+        <!--</Button>-->
       </ButtonGroup>
     </div>
     <div slot="operate">
       <Button type="primary" v-if="accessBtn('add')" @click="add">新增</Button>
       <Button type="info" v-if="accessBtn('edit')" :disabled="canDo" @click="edit">修改/查看</Button>
-      <Button type="success" v-if="accessBtn('check')" :disabled="canDo || list.STATUS != '10471001'" @click="check">审核</Button>
-      <Button type="warning" v-if="accessBtn('recheck')" :disabled="canDo || list.STATUS != '10471002'" @click="rcheck">反审核</Button>
-      <Button type="success" v-if="accessBtn('collect')" :disabled="canDo || list.STATUS != '10471002'" @click="collection">收款</Button>
-      <Button type="error" v-if="accessBtn('ban')" :disabled="canDo || list.STATUS != '10471001'" @click="del">作废</Button>
-      <Button type="primary" v-if="accessBtn('printSalesDoc')" :disabled="canDo || list.STATUS == '10471001'" @click="print">打印销售单</Button>
+      <Button type="success" v-if="accessBtn('check')" :disabled="canDo || list.STATUS != '10471001'" @click="check">
+        审核
+      </Button>
+      <Button type="warning" v-if="accessBtn('recheck')" :disabled="canDo || list.STATUS != '10471002'" @click="rcheck">
+        反审核
+      </Button>
+      <Button type="success" v-if="accessBtn('collect')" :disabled="canDo || list.STATUS != '10471002'"
+              @click="collection">收款
+      </Button>
+      <Button type="error" v-if="accessBtn('ban')" :disabled="canDo || list.STATUS != '10471001'" @click="del">作废
+      </Button>
+      <Button type="primary" v-if="accessBtn('printSalesDoc')" :disabled="canDo || list.STATUS == '10471001'"
+              @click="print">打印销售单
+      </Button>
     </div>
     <Modal
       v-model="showModal"
-      class="table-modal-detail"
+      class="table-modal-detail full-height"
       title="配件销售"
-      width="90"
+      width="100"
       :mask-closable="false"
       @on-visible-change="visibleChange"
       :scrollable="true"
       :transfer="false"
       :footer-hide="false"
       :transition-names="['', '']">
+      <modal-title slot="header" title="配件销售" :state="''" @clickBack="showModal=false"></modal-title>
+      <div style="height: 100%;overflow: auto; padding-bottom: 30px;padding-top:10px;">
       <Collapse v-model="value">
         <Panel name="1">
           基本信息
@@ -112,7 +123,7 @@
       <div style="float:left;font-size:18px;">合计金额:&nbsp;<span style="color:red;">{{formData.SUM_MONEY}}</span>&nbsp;&nbsp;-&nbsp;&nbsp;优惠金额:<span
         style="color:red;">{{formData.LESS_MONEY}}</span>&nbsp;&nbsp;=&nbsp;&nbsp;应收金额:<span style="color:red">{{formData.REAL_MONEY}}</span>
       </div>
-      <div style="height:120px;"></div>
+      </div>
       <div slot="footer">
         <Button type="primary" @click="addPost('formData')" v-show="canShow">保存</Button>
         <Button @click="showModal=false">取消</Button>
@@ -243,6 +254,7 @@
 </template>
 <script>
   import commonTable from '@/hxx-components/common-table.vue'
+  import ModalTitle from '@/hxx-components/modal-title.vue'
   import {getLodop} from '@/hxx-components/LodopFuncs.js'
   import unitInput from '@/hxx-components/unit-input.vue'
   import selectCustomer from '@/hxx-components/select-customer.vue'
@@ -252,9 +264,10 @@
   import {getName, getDictGroup, getCreate} from '@/libs/util.js'
   import mixin from '@/hxx-components/mixin'
   import {deepClone} from "../../libs/util";
+
   export default {
     name: "parts-sell",
-    components: {commonTable, selectCustomer, selectVehicle, selectParts, unitInput, selectValueCard},
+    components: {commonTable, selectCustomer, selectVehicle, selectParts, unitInput, selectValueCard,ModalTitle},
     mixins: [mixin],
     data() {
       const personRule = (rule, value, callback) => {
@@ -280,12 +293,12 @@
       }
       return {
         rule2: {
-          INVOICE_NO: [{required:true,message:'发票编号必填'},{validator: billRule, trigger: 'change,blur'}],
+          INVOICE_NO: [{required: true, message: '发票编号必填'}, {validator: billRule, trigger: 'change,blur'}],
           FOLLOW_PERSON: [{validator: personRule2, trigger: 'change,blur'}],
         },
         collectionModal: false,
         showCard: false,
-        timer:'',
+        timer: '',
         money: 0,
         valueList: [1, 2, 3],
         have: false,
@@ -367,18 +380,18 @@
         },
         search: {
           keyword: "",
-          status: '0',
+          status: '',
         },
         columns2: [
           {
-            title: '序号', key: 'STORE_NAME', minWidth: 90,
+            title: '序号', key: 'STORE_NAME', minWidth: 90,align:'center',
             render: (h, params) => h('span', params.index + 1)
           },
-          {title: '仓库', key: 'STORE_NAME', sortable: true, minWidth: 120},
-          {title: '配件名称', key: 'NAME', minWidth: 120},
-          {title: '原厂编号', key: 'FACTORY_NO', minWidth: 120},
+          {title: '仓库', key: 'STORE_NAME', sortable: true, minWidth: 120,},
+          {title: '配件名称', key: 'NAME', minWidth: 120,},
+          {title: '原厂编号', key: 'FACTORY_NO', minWidth: 120,},
           {
-            title: '数量', key: 'PART_NUM', minWidth: 120,
+            title: '数量', key: 'PART_NUM', minWidth: 120,align:'right',
             render: (h, params) => {
               params.row.SUM_MONEY = parseInt(params.row.PART_NUM) * parseFloat(params.row.SALES_PRICE);
               params.row.REAL_MONEY = params.row.SUM_MONEY - params.row.LESS_MONEY;
@@ -411,10 +424,11 @@
             render: (h, params) => h('span', getName(this.list1015, params.row.UNIT))
           },
           {
-            title: '单位成本', key: 'PART_COST', minWidth: 120
+            title: '单位成本', key: 'PART_COST', minWidth: 120,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.PART_COST))
           },
           {
-            title: '单价', key: 'SALES_PRICE', minWidth: 120,
+            title: '单价', key: 'SALES_PRICE', minWidth: 120,align:'right',
             render: (h, params) => {
               return h('div', [
                 h(unitInput, {
@@ -439,9 +453,11 @@
 
             }
           },
-          {title: '小计金额', key: 'SUM_MONEY', minWidth: 120},
+          {title: '小计金额', key: 'SUM_MONEY', minWidth: 120,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.SUM_MONEY))
+          },
           {
-            title: '优惠金额', key: 'LESS_MONEY', minWidth: 120,
+            title: '优惠金额', key: 'LESS_MONEY', minWidth: 120,align:'right',
             render: (h, params) => {
               return h('div', [
                 h(unitInput, {
@@ -450,7 +466,7 @@
                       data: params.row,
                       min: 0,
                       type: 'float',
-                      switchType:4,
+                      switchType: 4,
                       time: 200,
                     },
                     on: {
@@ -466,9 +482,11 @@
 
             }
           },
-          {title: '应收金额', key: 'REAL_MONEY', minWidth: 120},
+          {title: '应收金额', key: 'REAL_MONEY', minWidth: 120,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.REAL_MONEY))
+          },
           {
-            title: '操作', key: 'FACTORY_NO', minWidth: 120,
+            title: '操作', key: 'FACTORY_NO', minWidth: 120,align:'center',
             render: (h, params) => {
               let buttonContent = "删除";
               let buttonStatus = "error";
@@ -497,10 +515,10 @@
         data2: [],
         columns: [
           {
-            title: '序号', minWidth: 80,
+            title: '序号', minWidth: 80,align:'center',
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
-          {title: '客户名称', key: 'CUSTOMER_NAME', sortable: true, minWidth: 120},
+          {title: '客户名称', key: 'CUSTOMER_NAME', sortable: true, minWidth: 120,},
           {
             title: '车牌号码', key: 'PLATE_NUM', sortable: true, minWidth: 120,
           },
@@ -509,19 +527,19 @@
             render: (h, params) => h('span', params.row.SALES_DATE.substr(0, 10))
           },
           {
-            title: '合计金额', key: 'SUM_MONEY', sortable: true, minWidth: 120,
+            title: '合计金额', key: 'SUM_MONEY', sortable: true, minWidth: 120,align:'right',
             render: (h, params) => h('span', parseFloat(params.row.SUM_MONEY).toFixed(2))
           },
           {
-            title: '优惠金额', key: 'LESS_MONEY', sortable: true, minWidth: 120,
+            title: '优惠金额', key: 'LESS_MONEY', sortable: true, minWidth: 120,align:'right',
             render: (h, params) => h('span', params.row.LESS_MONEY.toFixed(2))
           },
           {
-            title: '应收金额', key: 'REAL_MONEY', sortable: true, minWidth: 120,
-            render: (h, params) => h('span', params.row.REAL_MONEY.toFixed(2))
+            title: '应收金额', key: 'REAL_MONEY', sortable: true, minWidth: 120,align:'right',
+            render: (h, params) => h('span', this.formatMoney(params.row.REAL_MONEY))
           },
           {
-            title: '状态', key: 'STATUS', sortable: true, minWidth: 80,
+            title: '状态', key: 'STATUS', sortable: true, minWidth: 80,align:'center',
             render: (h, params) => h('span', getName(this.list1047, params.row.STATUS))
           },
           {
@@ -644,17 +662,17 @@
                 '<td><div align="right">' + data[i].REAL_MONEY.toFixed(2) + '</div></td>' +
                 '</tr>';
             }
-            temp += '<tr>'+
-              '<td colspan="3"><div align="center"><strong>数量汇总</strong></div></td>'+
-              '<td><div align="right">'+countNumber+'</div></td>'+
-              '<td colspan="2"><div align="center"><strong>金额汇总</strong></div></td>'+
-              '<td><div align="right">'+ countMoney.toFixed(2)+'</div></td>'+
-              '<td><div align="right">'+ countless.toFixed(2)+'</div></td>'+
-              '<td><div align="right">'+ countreal.toFixed(2)+'</div></td>'+
+            temp += '<tr>' +
+              '<td colspan="3"><div align="center"><strong>数量汇总</strong></div></td>' +
+              '<td><div align="right">' + countNumber + '</div></td>' +
+              '<td colspan="2"><div align="center"><strong>金额汇总</strong></div></td>' +
+              '<td><div align="right">' + countMoney.toFixed(2) + '</div></td>' +
+              '<td><div align="right">' + countless.toFixed(2) + '</div></td>' +
+              '<td><div align="right">' + countreal.toFixed(2) + '</div></td>' +
               '</tr>';
-              temp += '</tbody>' +
-                '</table>' +
-                '</div>';
+            temp += '</tbody>' +
+              '</table>' +
+              '</div>';
             let LODOP = getLodop();
             LODOP.SET_PRINT_STYLEA(0, "FontSize", 20);
             LODOP.SET_PRINT_STYLEA(0, "Alignment", 2);
@@ -755,8 +773,8 @@
       },
       zfb() {
 //支付宝支付
-        if(this.collectionData.MONEY1 <= 0){
-          this.$Modal.info({title:'系统提示',content:'支付金额大于0时才能使用支付宝支付'});
+        if (this.collectionData.MONEY1 <= 0) {
+          this.$Modal.info({title: '系统提示', content: '支付金额大于0时才能使用支付宝支付'});
           return;
         }
         this.axios.request({
@@ -792,20 +810,20 @@
           }
         })
       },
-      insertSales(){
+      insertSales() {
         this.collectionData.PAYMENT1 = "10101008";
         this.axios.request({
           url: '/tenant/part/tt_part_sales/insert_sales',
           method: 'post',
           data: {
             access_token: this.$store.state.user.token,
-            data:JSON.stringify(this.collectionData),
+            data: JSON.stringify(this.collectionData),
             SALES_NO: this.collectionData.SALES_NO
           }
         }).then(res => {
           if (res.success === true) {
             clearInterval(this.timer);
-            this.timer = setInterval(()=>{
+            this.timer = setInterval(() => {
               this.axios.request({
                 url: '/tenant/part/tt_part_sales/get_status',
                 method: 'post',
@@ -815,13 +833,13 @@
                 }
               }).then(res => {
                 if (res.success === true) {
-                  if(res.data[0].STATUS == '10471003'){
+                  if (res.data[0].STATUS == '10471003') {
                     clearInterval(this.timer);
                     this.getList();
                   }
                 }
               })
-            },3000);
+            }, 3000);
           }
         })
       },
@@ -831,7 +849,7 @@
       },
       collection() {
         //重置发票状态...
-        this.valueList = [1,2,3];
+        this.valueList = [1, 2, 3];
         this.have = false;
         this.collectionData = deepClone(this.storeCollectionData);
         this.collectionData.CUSTOMER_ID = this.list.CUSTOMER_ID;
@@ -921,7 +939,7 @@
                 if (res.success === true && res.data == true) {
                   this.$Message.success("审核成功");
                   this.getList();
-                }else{
+                } else {
                   let self = this;
                   let value;
                   let data = this.$store.state.user.userInfo.params;
@@ -946,7 +964,7 @@
                               data: {
                                 access_token: this.$store.state.user.token,
                                 id: this.list.SALES_ID,
-                                yes_out:1,
+                                yes_out: 1,
                               }
                             }).then(res => {
                               if (res.success === true && res.data == true) {
@@ -1188,7 +1206,7 @@
             page: this.page,
             limit: this.limit,
             KEYWORD: this.search.keyword,
-            STATUS_eq: this.search.status == 0 ? '' : this.search.status,
+            STATUS_eq: this.search.status || '',
           }
         }).then(res => {
           if (res.success === true) {
@@ -1218,7 +1236,7 @@
     computed: {
       list1047() {
         let data = getDictGroup(this.$store.state.app.dict, '1047');
-        data.unshift({code: '0', name: '请选择状态...'});
+        // data.unshift({code: '0', name: '请选择状态...'});
         return data;
       },
       canDo() {

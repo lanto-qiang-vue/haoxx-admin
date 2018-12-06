@@ -49,14 +49,14 @@ export default {
                     render: (h, params) => h('span', getName(this.getBrand, params.row.BRAND))
                 },
                 {title: '库存量', key: 'STOCK_NUM', sortable: true, minWidth: 200},
-                {title: '单位成本', key: 'UNIT_COST', sortable: true, minWidth: 150,align:'right'
-                    
+                {title: '单位成本', key: 'UNIT_COST', sortable: true, minWidth: 150,align:'right',
+                    render: (h, params) => h('span', this.formatMoney(params.row.UNIT_COST))
                 },
-                {title: '采购指导价', key: 'PURCHASE_PRICE', sortable: true, minWidth: 150,align:'right'
-                    
+                {title: '采购指导价', key: 'PURCHASE_PRICE', sortable: true, minWidth: 150,align:'right',
+                    render: (h, params) => h('span', this.formatMoney(params.row.PURCHASE_PRICE))
                 },
-                {title: '建议销售价', key: 'SALES_PRICE', sortable: true, minWidth: 150,align:'right'
-                    
+                {title: '建议销售价', key: 'SALES_PRICE', sortable: true, minWidth: 150,align:'right',
+                    render: (h, params) => h('span', this.formatMoney(params.row.SALES_PRICE))
                 },
                 {title: '单位', key: 'UNIT', sortable: true, minWidth: 150,
                     render: (h, params) => h('span', getName(this.getUnit, params.row.UNIT))

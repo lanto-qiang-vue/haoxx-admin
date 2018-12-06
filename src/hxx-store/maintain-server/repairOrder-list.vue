@@ -80,6 +80,7 @@
           },
           {title: '应收金额', key: 'SUM_MONEY', sortable: true, minWidth: 120,align:'right',
             // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.REPAIR_TYPE))
+            render: (h, params) => h('span', this.formatMoney(params.row.SUM_MONEY))
           },
           {title: '主修人', key: 'REPAIR_PERSON', sortable: true, minWidth: 110,
             // render: (h, params) => h('span', params.row.SUM_MONEY|| '0.00')

@@ -5,13 +5,13 @@
       <div class="search-block">
         <Input v-model="search.keyword" placeholder="客户名称/手机号..."></Input>
       </div>
-      <ButtonGroup size="small">
+      <ButtonGroup>
         <Button type="primary" @click="page=1;getList()">
-          <Icon type="ios-search" size="24"/>
+       搜索
         </Button>
-        <Button type="primary" @click="clear()">
-          <Icon type="ios-undo" size="24"/>
-        </Button>
+        <!--<Button type="primary" @click="clear()">-->
+          <!--<Icon type="ios-undo" size="24"/>-->
+        <!--</Button>-->
       </ButtonGroup>
     </div>
   </common-table>
@@ -34,7 +34,7 @@
         showTable: false,
         list: '',
         columns: [
-          {title: '序号',  minWidth: 80,
+          {title: '序号',  minWidth: 80,align:'center',sortable: true,
             render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
           },
           {title: '消费日期', key: 'USE_DATE', sortable: true, minWidth: 140,
@@ -43,11 +43,11 @@
           {title: '会员卡号', key: 'MEMBER_CARD_NO', sortable: true, minWidth: 140},
           {title: '客户名称', key: 'CUSTOMER_NAME', sortable: true, minWidth: 140},
           {title: '联系电话', key: 'MOBILE_PHONE', sortable: true, minWidth: 140},
-          {title: '消费金额', key: 'USE_MONEY', sortable: true, minWidth: 140,
+          {title: '消费金额', key: 'USE_MONEY', sortable: true, minWidth: 140,align:'right',
             render: (h, params) => h('span',params.row.USE_MONEY.toFixed(2))
           },
           {
-            title: '消费类型', key: 'RECORD_TYPE', sortable: true, minWidth: 140,
+            title: '消费类型', key: 'RECORD_TYPE', sortable: true, minWidth: 140,align:'center',
             render: (h, params) => h('span', getName(this.defaultList, params.row.RECORD_TYPE))
           },
           {

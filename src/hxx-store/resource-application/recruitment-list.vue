@@ -8,10 +8,7 @@
           <FormItem label="创建时间:" style="width: 100%; margin-right: 10px;">
               <DatePicker v-model="search.ACCOUNT_TIME_gte" format="yyyy-MM-dd" type="date" placeholder="开始日期" style="width: 120px;"></DatePicker>
               <DatePicker v-model="search.ACCOUNT_TIME_lte" format="yyyy-MM-dd" type="date" placeholder="结束日期" style="width: 120px;margin-left: 5px;"></DatePicker>
-              <ButtonGroup size="small" style="margin-left: 10px;">
-                <Button type="primary" @click="page=1;getList()"><Icon type="ios-search" size="24"/></Button>
-                <Button type="primary" @click="clear()"><Icon type="ios-undo" size="24"/></Button>
-              </ButtonGroup>
+              <Button style="margin-left: 5px;" type="primary" @click="page=1;getList()">搜索</Button>
           </FormItem>
           
        </Form>
@@ -39,8 +36,8 @@ export default {
     data(){
 		return{
             columns: [
-                {title: '序号',  minWidth: 60,
-                    render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
+                {title: '序号',  minWidth: 90,align:'center', sortable: true,type:'index'
+                    // render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
                 },
                 {title: '岗位名称', key: 'name', sortable: true, minWidth: 150,
                 },

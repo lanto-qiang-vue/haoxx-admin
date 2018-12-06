@@ -2,16 +2,13 @@
 <template>
   <common-table v-model="tableData" :columns="columns" :total="total" :clearSelect="clearTableSelect"
                 @changePage="changePage" @changePageSize="changePageSize" @onRowClick="onRowClick"
-                @onRowDblclick="onRowDblclick" :show="showTable" :page="page">
+                @onRowDblclick="onRowDblclick" :show="showTable" :page="page" :loading="loading">
     <div slot="search">
       <Form ref="search" :rules="ruleValidate"  :model="search" :label-width="85" inline>
           <FormItem label="创建时间:" style="width: 100%; margin-right: 10px;">
               <DatePicker v-model="search.ACCOUNT_TIME_gte" format="yyyy-MM-dd" type="date" placeholder="开始日期" style="width: 120px;"></DatePicker>
               <DatePicker v-model="search.ACCOUNT_TIME_lte" format="yyyy-MM-dd" type="date" placeholder="结束日期" style="width: 120px;margin-left: 5px;"></DatePicker>
-              <ButtonGroup size="small" style="margin-left: 10px;">
-                <Button type="primary" @click="page=1;getList()"><Icon type="ios-search" size="24"/></Button>
-                <Button type="primary" @click="clear()"><Icon type="ios-undo" size="24"/></Button>
-              </ButtonGroup>
+              <Button type="primary" @click="page=1;getList()" style="margin-left: 5px;">搜索</Button>
           </FormItem>
           
        </Form>
@@ -39,8 +36,8 @@ export default {
     data(){
 		return{
             columns: [
-                {title: '序号',  minWidth: 80,
-                    render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
+                {title: '序号',  minWidth: 90,align:'center', sortable: true,type:'index'
+                    // render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
                 },
                 {title: '车型信息', key: 'mODEL_NAME', sortable: true, minWidth: 150,
                 },
@@ -88,7 +85,7 @@ export default {
             showDetail: false,
             detailData: null,
             clearTableSelect: null,
-            
+            loading:false,
       }
     },
     computed:{
@@ -104,6 +101,7 @@ export default {
         getList(){
             this.search.ACCOUNT_TIME_gte=formatDate(this.search.ACCOUNT_TIME_gte);
             this.search.ACCOUNT_TIME_lte=formatDate(this.search.ACCOUNT_TIME_lte);
+            this.loading=true;
             this.axios.request({
                 url: '/tenant/support/tt_technical_support/list',
                 method: 'post',
@@ -119,6 +117,7 @@ export default {
                     this.tableData= res.data
                     this.total= res.total
                 }
+                this.loading=false;
             })
             this.detailData = null;
         },

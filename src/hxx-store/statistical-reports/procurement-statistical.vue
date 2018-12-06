@@ -2,16 +2,13 @@
 <template>
   <common-table v-model="tableData" :columns="columns" :total="total" :clearSelect="clearTableSelect"
                 @changePage="changePage" @changePageSize="changePageSize" @onRowClick="onRowClick"
-                @onRowDblclick="onRowDblclick" :show="showTable" :page="page">
+                @onRowDblclick="onRowDblclick" :show="showTable" :page="page" :loading="loading">
     <div slot="search">
       <Form ref="search" :rules="ruleValidate"  :model="search" :label-width="85" inline>
           <FormItem label="查询日期:" style="width: 100%; margin-right: 10px;">
               <DatePicker v-model="search.ACCOUNT_TIME_gte" format="yyyy-MM-dd" type="date" placeholder="开始日期" style="width: 120px;"></DatePicker>
               <DatePicker v-model="search.ACCOUNT_TIME_lte" format="yyyy-MM-dd" type="date" placeholder="结束日期" style="width: 120px;margin-left: 5px;"></DatePicker>
-              <ButtonGroup size="small" style="margin-left: 10px;">
-                <Button type="primary" @click="page=1;getList()"><Icon type="ios-search" size="24"/></Button>
-                <Button type="primary" @click="clear()"><Icon type="ios-undo" size="24"/></Button>
-              </ButtonGroup>
+              <Button style="margin-left: 5px;" type="primary" @click="page=1;getList()">搜索</Button>
           </FormItem>
      </Form>
     </div>
@@ -50,11 +47,13 @@ export default {
                 },
                 {title: '供应商地址', key: 'ADDRESS', sortable: true, minWidth: 140,
                 },
-                {title: '进货单价', key: 'PURCHASE_PRICE', sortable: true, minWidth: 120,
+                {title: '进货单价', key: 'PURCHASE_PRICE', sortable: true, minWidth: 120,align:'right',
+                    render: (h, params) => h('span', this.formatMoney(params.row.PURCHASE_PRICE)||0)
                 },
                 {title: '数量', key: 'PART_NUM', sortable: true, minWidth: 100,
                 },
-                {title: '金额', key: 'total', sortable: true, minWidth: 100,
+                {title: '金额', key: 'total', sortable: true, minWidth: 100,align:'right',
+                    render: (h, params) => h('span', this.formatMoney(params.row.total)||0)
                 },
                 {title: '配件类型', key: 'TYPE_NAME', sortable: true, minWidth: 120,
                 },
@@ -72,6 +71,7 @@ export default {
             showDetail: false,
             detailData: null,
             clearTableSelect: null,
+            loading:false,
       }
     },
     computed:{
@@ -87,6 +87,7 @@ export default {
         getList(){
             this.search.ACCOUNT_TIME_gte=formatDate(this.search.ACCOUNT_TIME_gte);
             this.search.ACCOUNT_TIME_lte=formatDate(this.search.ACCOUNT_TIME_lte);
+            this.loading=true;
             this.axios.request({
                 url: '/tenant/report/purchasebook/list',
                 method: 'post',
@@ -104,6 +105,7 @@ export default {
 
                     
                 }
+                this.loading=false;
             })
             this.detailData = null;
         },

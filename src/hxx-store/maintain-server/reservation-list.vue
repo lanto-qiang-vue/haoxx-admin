@@ -66,7 +66,8 @@
           {title: '维修类型', key: 'REPAIR_TYPE', sortable: true, minWidth: 120,
             render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.REPAIR_TYPE))
           },
-          {title: '应收金额', key: 'SUM_MONEY', sortable: true, minWidth: 120,
+          {title: '应收金额', key: 'SUM_MONEY', sortable: true, minWidth: 120,align:'right',
+
             render: (h, params) => h('span', this.formatMoney(params.row.SUM_MONEY))
 
           },
