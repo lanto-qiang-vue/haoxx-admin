@@ -8,16 +8,13 @@
         <Input v-model="search.input" placeholder="配件名称/原厂编号..."></Input>
       </div>
       <div class="search-block">
-        <Select v-model="search.select1" placeholder="选择仓库...">
+        <Select v-model="search.select1" placeholder="选择仓库..." clearable>
           <Option v-for="(item, index) in allStore"
                   :key="index" :value="item.id">{{item.code}}</Option>
         </Select>
       </div>
       
-      <ButtonGroup size="small">
-        <Button type="primary" @click="page=1;getList()"><Icon type="ios-search" size="24"/></Button>
-        <Button type="primary" @click="clear()"><Icon type="ios-undo" size="24"/></Button>
-      </ButtonGroup>
+      <Button type="primary" @click="page=1;getList()">搜索</Button>
     </div>
     <div slot="operate">
       <Button type="primary" v-if="accessBtn('outdetail')" :disabled='!detailData' @click="selectPick">出入库明细</Button>
@@ -40,8 +37,8 @@ export default {
     data(){
 		return{
             columns: [
-                {title: '序号',  minWidth: 80,
-                    render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
+                {title: '序号',  minWidth: 90,align:'center', sortable: true,type:'index'
+                    // render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
                 },
                 {title: '仓库', key: 'STORE_NAME', sortable: true, minWidth: 150,
                 },
@@ -52,13 +49,13 @@ export default {
                     render: (h, params) => h('span', getName(this.getBrand, params.row.BRAND))
                 },
                 {title: '库存量', key: 'STOCK_NUM', sortable: true, minWidth: 200},
-                {title: '单位成本', key: 'UNIT_COST', sortable: true, minWidth: 150,
+                {title: '单位成本', key: 'UNIT_COST', sortable: true, minWidth: 150,align:'right'
                     
                 },
-                {title: '采购指导价', key: 'PURCHASE_PRICE', sortable: true, minWidth: 150,
+                {title: '采购指导价', key: 'PURCHASE_PRICE', sortable: true, minWidth: 150,align:'right'
                     
                 },
-                {title: '建议销售价', key: 'SALES_PRICE', sortable: true, minWidth: 150,
+                {title: '建议销售价', key: 'SALES_PRICE', sortable: true, minWidth: 150,align:'right'
                     
                 },
                 {title: '单位', key: 'UNIT', sortable: true, minWidth: 150,
