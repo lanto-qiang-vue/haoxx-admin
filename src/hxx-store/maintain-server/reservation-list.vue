@@ -27,13 +27,13 @@
       <Button type="primary" v-if="accessBtn('add')" @click="detailData=null,showDetail=Math.random()">新增</Button>
       <Button type="info" v-if="accessBtn('edit')" @click="showDetail=Math.random()" :disabled="!detailData">编辑/查看</Button>
       <Button type="error" v-if="accessBtn('ban')"  @click="deleteDetailData" :disabled="isOrderSuccess">作废</Button>
-      
+
     </div>
     <!--预约详情单-->
     <reservation-list-detail class="table-modal-detail" :showDetail="showDetail"
                              :detailData="detailData" @closeDetail="closeDetail" @closeGetList="closeGetList"
       ></reservation-list-detail>
-      
+
   </common-table>
 </template>
 <script>
@@ -68,7 +68,8 @@
             render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.REPAIR_TYPE))
           },
           {title: '应收金额', key: 'SUM_MONEY', sortable: true, minWidth: 120,
-            render: (h, params) => h('span', params.row.SUM_MONEY|| '0.00')
+            // render: (h, params) => h('span', params.row.SUM_MONEY? params.row.SUM_MONEY.toFixed(2): '0.00')
+            render: (h, params) => h('span', this.formatMoney(params.row.SUM_MONEY))
           },
           {title: '状态', key: 'STATUS', sortable: true, minWidth: 110,
             render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.STATUS))
@@ -92,7 +93,7 @@
         detailData: null,
         clearTableSelect: null,
         isOrderSuccess:true,//判断是不是预约成功
-        
+
       }
     },
     mounted () {
@@ -109,7 +110,7 @@
         }else{
           this.searchSelectOption1.push(this.searchSelectOption[i]);
         }
-        
+
       }
       this.getList()
       this.showTable= Math.random()
@@ -192,7 +193,7 @@
                   title:"系统提示!",
                   content:"确定要作废吗？",
                   onOk:this.del,
-                  
+
               })
           }
       },
@@ -212,10 +213,10 @@
             }
           })
       },
-      
+
 
     },
-    
+
 	}
 </script>
 

@@ -24,7 +24,7 @@
     position: absolute;
     height: 100%;
     .ivu-modal{
-      height: 98%;
+      height: 90%;
       overflow: hidden;
       top: 50%;
       transform: translateY(-50%);
@@ -33,19 +33,30 @@
         height: 100%;
         .ivu-modal-close{
           z-index: 6;
+          top: 3px;
+          .ivu-icon-ios-close{
+            color: white;
+          }
         }
         .ivu-modal-header{
           position: absolute;
+          padding: 0 16px;
+          background-color: @primary-color;
+          height: 40px;
           left: 0;
           top: 0;
           width: 100%;
-          background-color: white;
           z-index: 5;
+          .ivu-modal-header-inner{
+            line-height: 40px;
+            height: 40px;
+            color: white;
+          }
         }
         .ivu-modal-body{
           height: 100%;
           overflow: auto;
-          padding-top: 60px;
+          padding-top: 40px;
           padding-bottom: 60px;
           position: relative;
           .status{
@@ -80,8 +91,11 @@
   .ivu-modal-wrap{
     .ivu-modal{
       height: 100%;
-      .ivu-modal-header{
-        padding: 0;
+      .ivu-modal-content{
+        .ivu-modal-header{
+          background-color: white;
+          padding: 0;
+        }
       }
     }
   }
@@ -112,6 +126,19 @@
       width: 100%;
       min-width: auto!important;
     }
+  }
+}
+
+.ivu-page.mini{
+  .ivu-page-total{
+    vertical-align: top;
+  }
+  .ivu-page-item-active a, .ivu-page-item-active:hover a {
+    color: white;
+    background-color: #1890FF;
+    margin: 0;
+    padding: 0 6px;
+    border-radius: 2px;
   }
 }
 
@@ -149,12 +176,27 @@
   }
 }
 
+.btn() {
+  height: 32px;
+  line-height: 32px;
+  > span{
+    line-height: 30px;
+    vertical-align: text-bottom;
+  }
+}
+
 .ivu-collapse > .ivu-collapse-item > .ivu-collapse-header{
   height: 32px;
   line-height: 32px;
   font-weight: 600;
 }
 
+.ivu-input-number input{
+  text-align: right;
+}
+.ivu-input-number:hover input{
+  padding-right: 25px;
+}
 
 #print_style table{border:2px #000 solid;border-collapse: collapse; display: block;}
 #print_style th,#print_style td{border: 1px solid #000;}
