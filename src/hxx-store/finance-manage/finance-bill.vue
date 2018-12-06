@@ -11,7 +11,7 @@
     :footer-hide="false"
     :transition-names="['', '']"
   >
-    <div style="height: 100%;overflow: auto; padding-bottom: 30px;">
+    <div style="height: 100%;overflow: auto; padding-bottom: 30px;padding-top:10px;">
     <div class="status" v-show="title.length == 4">&nbsp;&nbsp;({{titleMsg}})</div>
       <div class="status" v-show="title.length == 6">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;({{titleMsg}})</div>
       <div class="status" v-show="title.length == 8">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;({{titleMsg}})</div>

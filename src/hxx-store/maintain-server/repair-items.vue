@@ -496,6 +496,8 @@
         obj.ITEM_ID = this.formData.ITEM_ID;
         if (obj.ITEM_ID != '') {
           obj.DETAIL_ID = this.formData.DETAIL_ID;
+          obj.ENGINE_TYPE = this.formData.ENGINE_TYPE;//发动机类型
+          obj.CLASS_TYPE = this.formData.CLASS_TYPE;
           url = "/tenant/basedata/repairiteminfo/save";
         } else {
           obj.ENGINE_TYPE = this.formData.ENGINE_TYPE;//发动机类型
@@ -716,6 +718,7 @@
         this.formData.CHARGE_TYPE = this.group[0]['code'];
       },
       edit() {
+        this.$refs.list.resetFields();
         this.title = "自定义修改";
         this.editType = true;
         this.getbase(false);

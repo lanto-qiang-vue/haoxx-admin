@@ -331,7 +331,7 @@
         },
         columns: [
           {
-            title: '序号', minWidth: 80,
+            title: '序号', minWidth: 80,align:'center',
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
           {title: '车牌号', key: 'PLATE_NUM', sortable: true, minWidth: 120},

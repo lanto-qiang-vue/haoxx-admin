@@ -4,13 +4,14 @@
     v-model="showModal"
     @on-visible-change="visibleChange"
     title="车辆档案详情"
-    width="80"
-    class="table-modal-detail"
+    width="100"
+    class="table-modal-detail full-height"
     :scrollable="true"
     :transfer="false"
     :mask-closable="false"
     :footer-hide="false"
   >
+    <modal-title slot="header" title="车辆档案详情" :state="''" @clickBack="showModal=false"></modal-title>
     <!-- @on-click="qh" v-model="indexName" -->
     <Tabs @on-click="qh" v-model="indexName" class="modal-tabs">
       <!-- 基本信息 -->
@@ -205,10 +206,10 @@
   import commonTable from '@/hxx-components/common-table.vue'
   import vehicleModel from '@/hxx-components/vehicle-model.vue'
   import serviceRecord from '@/hxx-components/service-record.vue'
-
+  import ModalTitle from '@/hxx-components/modal-title.vue'
   export default {
     name: 'cart-modal',
-    components: {selectCustomer, commonTable, vehicleModel, serviceRecord},
+    components: {selectCustomer, commonTable, vehicleModel, serviceRecord,ModalTitle},
     computed: {
       cando() {
         var flag = this.obj == '' ? true : false;
@@ -301,23 +302,24 @@
         columns: [
           // {type: 'selection', width: 50, fixed: 'left'},
           {
-            title: '序号', minWidth: 80,
+            title: '序号', minWidth: 80,align:'center',
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
           {title: '进厂日期', key: 'COME_DATE', sortable: true, minWidth: 120},
           {
-            title: '维修类型', key: 'REPAIR_TYPE', sortable: true, minWidth: 120,
+            title: '维修类型', key: 'REPAIR_TYPE', sortable: true, minWidth: 120,align:'center',
             render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.REPAIR_TYPE))
           },
           {title: '故障描述', key: 'FAULT_DESC', sortable: true, minWidth: 120},
           {
-            title: '应收金额', key: 'SUM_MONEY', sortable: true, minWidth: 120
+            title: '应收金额', key: 'SUM_MONEY', sortable: true, minWidth: 120,align:'right',
+            render: (h, params) => h('span', this.formatMoney(params.row.SUM_MONEY))
           },
           {
             title: '主修人', key: 'REPAIR_PERSON', sortable: true, minWidth: 100
           },
           {
-            title: '状态', key: 'STATUS', sortable: true, minWidth: 100,
+            title: '状态', key: 'STATUS', sortable: true, minWidth: 100,align:'center',
             render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.STATUS))
           },
           {

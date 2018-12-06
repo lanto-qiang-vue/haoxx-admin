@@ -5,7 +5,7 @@
       <Button type="primary" @click="addwork()" :disabled="canadd" style="margin-left:5px;" v-if="accessBtn('add_class')">添加班组</Button>
       <Button type="info" :disabled="cando" @click="edit()" style="margin-left:5px;" v-if="accessBtn('edit')">修改</Button>
       <div
-        style="width:100%;line-height:30px;border-top:1px solid black;border-bottom:1px solid black;text-align: center;">
+        style="width:100%;line-height:30px;border-top:1px solid black;border-bottom:1px solid black;text-align: center;margin-top:10px;">
         车间名称
       </div>
       <Tree :data="data2" @on-select-change="getnode"></Tree>
@@ -27,6 +27,7 @@
           :transfer="false"
           :footer-hide="false"
           :transition-names="['', '']">
+          <div style="height: 100%;overflow-x:hidden; padding-bottom: 30px;padding-top:10px;">
           <Collapse v-model="value1">
             <Panel name="1">
               基本信息
@@ -34,17 +35,21 @@
                 <FormItem :label="labelname" style="width:100%;" prop="SHOP_NAME">
                   <Input v-model="formData.SHOP_NAME" type="text"> </Input>
                 </FormItem>
+                <FormItem label="其他状况描述" style="width:100%;">
+                  <Input v-model="formData.REMARK" type="textarea" placeholder="请输入备注信息..."> </Input>
+                </FormItem>
               </Form>
             </Panel>
           </Collapse>
-          <Collapse v-model="value3">
-            <Panel name="3">
-              其他状况描述:
-              <Form slot="content" ref="lists" class="common-form">
-                <Input type="textarea" v-model="formData.REMARK" placeholder="请输入备注信息..."> </Input>
-              </Form>
-            </Panel>
-          </Collapse>
+          <!--<Collapse v-model="value3">-->
+            <!--<Panel name="3">-->
+              <!--其他状况描述:-->
+              <!--<Form slot="content" ref="lists" class="common-form">-->
+                <!--<Input type="textarea" v-model="formData.REMARK" placeholder="请输入备注信息..."> </Input>-->
+              <!--</Form>-->
+            <!--</Panel>-->
+          <!--</Collapse>-->
+          </div>
           <div slot="footer">
             <Button @click="addcancle()">取消</Button>
             <Button type="primary" @click="addpost('list')">保存</Button>
@@ -61,11 +66,13 @@
           :transfer="false"
           :footer-hide="false"
           :transition-names="['', '']">
+          <div style="height: 100%;width:100%;overflow-x:hidden; padding-bottom: 30px;padding-top:10px;">
           <Transfer
             :data="data1"
             :target-keys="targetKeys"
             :titles="titles"
             @on-change="handleChange1"></Transfer>
+          </div>
           <div slot="footer">
             <Button @click="setcancle()">取消</Button>
             <Button type="primary" @click="setconfirm()">保存</Button>
@@ -448,5 +455,14 @@
     .highlight{
       color: red;
     }
+  }
+  .ivu-transfer{
+    height:100%;
+    min-width:800px;
+  }
+  .ivu-transfer-list{
+    width:35%;
+    min-width:300px;
+    height:80%;
   }
 </style>

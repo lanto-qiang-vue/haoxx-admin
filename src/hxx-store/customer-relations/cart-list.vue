@@ -1,18 +1,18 @@
 <template>
   <common-table v-model="tableData" :columns="columns" @changePageSize="changePageSize" @changePage="changePage" :total="total" :page="page"  :show="showTable" :clearSelect="cleartype" @onRowClick="rowclick" @changeSelect="changeSelect" @onRowDblclick="dbclick">
-    <div slot="search"  >
+    <div slot="search">
       <div class="search-block">
         <Input v-model="search.keyword"  placeholder="客户名称/车牌号码/联系电话..."></Input>
       </div>
       <div class="search-block">
-                <Select v-model="search.color">
+                <Select v-model="search.color" clearable>
                 <Option v-for="(item, index) in color"
                   :key="index" :value="item.code">{{item.name}}</Option>
               </Select>
      </div>
-      <ButtonGroup size="small">
-        <Button type="primary" @click="page=1;getList()"><Icon type="ios-search" size="24"/></Button>
-        <Button type="primary" @click="clear()"><Icon type="ios-undo" size="24"/></Button>
+      <ButtonGroup>
+        <Button type="primary" @click="page=1;getList()">搜索</Button>
+        <!--<Button type="primary" @click="clear()"><Icon type="ios-undo" size="24"/></Button>-->
       </ButtonGroup>
     </div>
     <div slot="operate">
@@ -48,11 +48,11 @@
 				showTable:false,
         info:[],
 				search:{
-          color:0,
+          color:'',
           keyword:'',
 				},
           columns: [
-          {title: '序号',  minWidth: 80,
+          {title: '序号',  minWidth: 80,align:'center',
             render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
           },
            {title: '车牌号', key: 'PLATE_NUM', sortable: true, minWidth: 120},
@@ -125,7 +125,7 @@
           method: 'post',
           data: {access_token: this.$store.state.user.token,
                  KEYWORD:this.search.keyword,
-                 VEHICLE_COLOR_eq:this.search.color == 0 ? '' : this.search.color,
+                 VEHICLE_COLOR_eq:this.search.color || '',
                  limit:this.limit,
                  page:this.page,
                 }
@@ -198,7 +198,7 @@
     mounted(){
       this.showTable = Math.random();
       var group = getDictGroup(this.$store.state.app.dict,'1013');
-      this.color.push({'code':0,'order':0,'group':'1013','name':'选择颜色...'});
+      // this.color.push({'code':0,'order':0,'group':'1013','name':'选择颜色...'});
       for(var i in group){
       this.color.push(group[i]);
       }

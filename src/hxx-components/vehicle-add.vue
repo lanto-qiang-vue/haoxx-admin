@@ -6,7 +6,7 @@
     width="90"
     title="车辆新增"
     :mask-closable="false"
-  class="table-modal-detail"
+    class="table-modal-detail"
     :scrollable="true"
     :transfer= "true"
     :footer-hide="false">	

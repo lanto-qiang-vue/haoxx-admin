@@ -6,19 +6,19 @@
         <Input v-model="search.keyword" placeholder="供应商编号/名称/联系电话..."></Input>
       </div>
       <div class="search-block">
-        <Select v-model="search.status">
+        <Select v-model="search.status" clearable>
           <Option v-for="(item, index) in defaultList"
                   :key="index" :value="item.code">{{item.name}}
           </Option>
         </Select>
       </div>
-      <ButtonGroup size="small">
+      <ButtonGroup>
         <Button type="primary" @click="page=1;getList()">
-          <Icon type="ios-search" size="24"/>
+          搜索
         </Button>
-        <Button type="primary" @click="clear()">
-          <Icon type="ios-undo" size="24"/>
-        </Button>
+        <!--<Button type="primary" @click="clear()">-->
+          <!--<Icon type="ios-undo" size="24"/>-->
+        <!--</Button>-->
       </ButtonGroup>
     </div>
     <div slot="operate">
@@ -28,15 +28,17 @@
     </div>
     <Modal
       v-model="showModal"
-      class="table-modal-detail"
+      class="table-modal-detail full-height"
       title="供应商管理"
-      width="90"
+      width="100"
       :mask-closable="false"
       @on-visible-change="visibleChange"
       :scrollable="true"
       :transfer="false"
       :footer-hide="false"
       :transition-names="['', '']">
+      <modal-title slot="header" title="供应商管理" :state="''" @clickBack="showModal=false"></modal-title>
+      <div style="height: 100%;overflow-x:hidden; padding-bottom: 30px;padding-top:10px;">
       <Collapse value="1">
         <Panel name="1">
           供应商基本信息
@@ -104,7 +106,7 @@
           </Form>
         </Panel>
       </Collapse>
-      <div style="height:60px;"></div>
+      </div>
       <div slot="footer">
         <Button type="primary" @click="addPost('formData')">保存</Button>
         <Button @click="showModal=false">取消</Button>
@@ -116,10 +118,11 @@
   import commonTable from '@/hxx-components/common-table.vue'
   import {getName, getDictGroup, getCreate} from '@/libs/util.js'
   import {deepClone} from "../../libs/util";
+  import ModalTitle from '@/hxx-components/modal-title.vue'
 
   export default {
     name: 'supplier-profile',
-    components: {commonTable},
+    components: {commonTable,ModalTitle},
     activated(){
       this.getRouterData();
     },
@@ -189,7 +192,7 @@
         },
         columns: [
           {
-            title: '序号', minWidth: 80,
+            title: '序号', minWidth: 80,align:'center',
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
           {title: '供应商名称', key: 'NAME', sortable: true, minWidth: 140},
@@ -331,7 +334,7 @@
             limit: this.limit,
             page: this.page,
             KEYWORD: this.search.keyword,
-            STATUS_eq: this.search.status == 0 ? '' : this.search.status
+            STATUS_eq: this.search.status || '',
           }
         }).then(res => {
           if (res.success === true) {
@@ -383,7 +386,7 @@
       },
       defaultList() {
         let data = getDictGroup(this.$store.state.app.dict, '1001');
-        data.unshift({code: '0', name: '请选择状态...'})
+        // data.unshift({code: '0', name: '请选择状态...'})
         return data;
       }
     }

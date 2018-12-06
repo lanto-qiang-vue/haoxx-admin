@@ -6,13 +6,13 @@
       <div class="search-block">
         <Input v-model="search.keyword" placeholder="充值卡名称..."></Input>
       </div>
-      <ButtonGroup size="small">
+      <ButtonGroup>
         <Button type="primary" @click="page=1;getList()">
-          <Icon type="ios-search" size="24"/>
+        搜索
         </Button>
-        <Button type="primary" @click="clear()">
-          <Icon type="ios-undo" size="24"/>
-        </Button>
+        <!--<Button type="primary" @click="clear()">-->
+          <!--<Icon type="ios-undo" size="24"/>-->
+        <!--</Button>-->
       </ButtonGroup>
     </div>
     <div slot="operate">
@@ -22,21 +22,22 @@
     </div>
     <!-- 产品新增 -->
     <Modal
-      class="table-modal-detail"
+      class="table-modal-detail full-height"
       :transition-names="['', '']"
       v-model="showModal"
-      title="储值卡产品新增"
-      width="90"
+      title="储值卡产品"
+      width="100"
       :scrollable="true"
       :transfer="false"
       :footer-hide="false"
       @on-visible-change="visibleChange"
     >
+      <modal-title slot="header" title="储值卡产品" :state="''" @clickBack="showModal=false"></modal-title>
       <!--       <div class="operate">
             <Button type="primary" @click="showModal = false">返回</Button>
             <Button type="primary" @click="save('formData')" style="margin-left:10px;">保存</Button>
           </div> -->
-      <div style="height:10px;"></div>
+      <div style="height:20px;"></div>
       <Form ref="formData" :model="formData" :label-width="120" :rules="ruleValidate" class="common-form" inline>
         <FormItem label="充值卡产品名称" style="width:30%;" prop="CARD_NAME">
           <Input type="text" v-model="formData.CARD_NAME" style="min-width: 100%;"> </Input>
@@ -90,11 +91,12 @@
 </template>
 <script>
   import commonTable from '@/hxx-components/common-table.vue'
+  import ModalTitle from '@/hxx-components/modal-title.vue'
   import {formatDate} from '@/libs/tools.js'
   import mixin from '@/hxx-components/mixin'
   export default {
     name: 'card-product',
-    components: {commonTable},
+    components: {commonTable,ModalTitle},
     mixins: [mixin],
     computed: {
       cando() {
@@ -131,14 +133,19 @@
         },
         columns: [
           {
-            title: '序号', minWidth: 80,
+            title: '序号', minWidth: 80,align:'center',
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
           {title: '储值卡名称', key: 'CARD_NAME', sortable: true, minWidth: 150},
-          {title: '售价', key: 'SALES_MONEY', sortable: true, minWidth: 100},
-          {title: '赠送价值', key: 'DERATE_MONEY', sortable: true, minWidth: 120},
+          {title: '售价', key: 'SALES_MONEY', sortable: true, minWidth: 100,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.SALES_MONEY))
+          },
+          {title: '赠送价值', key: 'DERATE_MONEY', sortable: true, minWidth: 120,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.DERATE_MONEY))
+          },
           {
-            title: '总价值', key: 'SUM_MONEY', sortable: true, minWidth: 100
+            title: '总价值', key: 'SUM_MONEY', sortable: true, minWidth: 100,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.SUM_MONEY))
           },
           {
             title: '有效期开始', key: 'START_DATE', sortable: true, minWidth: 150,
