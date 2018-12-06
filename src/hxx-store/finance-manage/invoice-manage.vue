@@ -5,13 +5,13 @@
       <div class="search-block">
         <Input v-model="search.keyword" placeholder="开票公司/发票编号..."></Input>
       </div>
-      <ButtonGroup size="small">
+      <ButtonGroup>
         <Button type="primary" @click="page=1;getList()">
-          <Icon type="ios-search" size="24"/>
+          搜索
         </Button>
-        <Button type="primary" @click="clear()">
-          <Icon type="ios-undo" size="24"/>
-        </Button>
+        <!--<Button type="primary" @click="clear()">-->
+          <!--<Icon type="ios-undo" size="24"/>-->
+        <!--</Button>-->
       </ButtonGroup>
     </div>
     <div slot="operate">
@@ -19,15 +19,17 @@
     </div>
     <Modal
       v-model="showModal"
-      class="table-modal-detail"
+      class="table-modal-detail full-height"
       title="发票管理"
-      width="90"
+      width="100"
       :mask-closable="false"
       @on-visible-change="visibleChange"
       :scrollable="true"
       :transfer="false"
       :footer-hide="false"
       :transition-names="['', '']">
+      <modal-title slot="header" title="发票管理" :state="''" @clickBack="showModal=false"></modal-title>
+      <div style="height: 100%;overflow-x:hidden; padding-bottom: 30px;padding-top:10px;">
       <Collapse v-model="value1">
         <Panel name="1">
           基本信息
@@ -47,6 +49,7 @@
           </Form>
         </Panel>
       </Collapse>
+      </div>
       <div slot="footer">
         <Button @click="addcancle()">取消</Button>
         <Button type="primary" @click="addpost('list')">保存</Button>
@@ -59,12 +62,13 @@
   import commonTable from '@/hxx-components/common-table.vue'
   import selectInvoice from '@/hxx-components/select-invoice.vue'
   import {getName, getDictGroup, getCreate} from '@/libs/util.js'
+  import ModalTitle from '@/hxx-components/modal-title.vue'
   import mixin from '@/hxx-components/mixin'
   import {deepClone} from "../../libs/util";
 
   export default {
     name: 'warehouse-manage',
-    components: {commonTable,selectInvoice},
+    components: {commonTable,selectInvoice,ModalTitle},
     mixins: [mixin],
     data() {
       return {
@@ -95,19 +99,21 @@
         },
         columns: [
           {
-            title: '序号', minWidth: 70,
+            title: '序号', minWidth: 70,align:'center',
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
           {title: '发票编号', key: 'INVOICE_NO', sortable: true, minWidth: 140},
           {title: '开票日期', key: 'INVOICE_DATE', sortable: true, minWidth: 140,
             render: (h, params) => h('span',params.row.INVOICE_DATE.substr(0,10))
           },
-          {title: '服务类型', key: 'TYPE', sortable: true, minWidth: 140,
+          {title: '服务类型', key: 'TYPE', sortable: true, minWidth: 140,align:'center',
             render: (h, params) => h('span',getName(this.list1027,params.row.TYPE))
           },
           {title: '开票公司', key: 'CORP_NAME', sortable: true, minWidth: 140},
           {title: '税号', key: 'TAX_NO', sortable: true, minWidth: 140},
-          {title: '开票金额', key: 'SUM_MONEY', sortable: true, minWidth: 140},
+          {title: '开票金额', key: 'SUM_MONEY', sortable: true, minWidth: 140,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.SUM_MONEY))
+          },
           {title: '办理人', key: 'FOLLOW_PERSON', sortable: true, minWidth: 140},
         ],
         search: {

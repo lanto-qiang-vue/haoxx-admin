@@ -42,7 +42,7 @@
       :footer-hide="false"
       :transition-names="['', '']">
       <modal-title slot="header" title="维修项目套餐" :state="''" @clickBack="showModal=false"></modal-title>
-      <div style="height: 100%;overflow: auto; padding-bottom: 30px;">
+      <div style="height: 100%;overflow: auto; padding-bottom: 30px;padding-top:10px;">
       <Collapse v-model="value">
         <Panel name="1">
           基本信息
@@ -223,8 +223,8 @@
             title: '序号', key: 'STORE_NAME', minWidth: 80,align:'center',
             render: (h, params) => h('span', params.index + 1)
           },
-          {title: '配件名称', key: 'NAME', sortable: true, minWidth: 120,align:'left'},
-          {title: '原厂编号', key: 'FACTORY_NO', minWidth: 120,align:'left'},
+          {title: '配件名称', key: 'NAME', sortable: true, minWidth: 120,},
+          {title: '原厂编号', key: 'FACTORY_NO', minWidth: 120,},
           {
             title: '数量', key: 'PART_NUM', minWidth: 120,align:'right',
             render: (h, params) => {
@@ -256,11 +256,11 @@
             }
           },
           {
-            title: '单位', key: 'UNIT', minWidth: 120,align:'left',
+            title: '单位', key: 'UNIT', minWidth: 120,
             render: (h, params) => h('span', getName(this.list1015, params.row.UNIT))
           },
           {
-            title: '品牌', key: 'BRAND', minWidth: 120,align:'left',
+            title: '品牌', key: 'BRAND', minWidth: 120,
             render: (h, params) => h('span', getName(this.list1016, params.row.BRAND))
           },
           {
@@ -290,9 +290,12 @@
             }
           },
           {
-            title: '采购金额', key: 'SUM_MONEY', minWidth: 120,align:'right'
+            title: '采购金额', key: 'SUM_MONEY', minWidth: 120,align:'right',
+            render: (h, params) => h('span', this.formatMoney(params.row.SUM_MONEY))
           },
-          {title: '含税销售价', key: 'SALES_PRICE', minWidth: 120,align:'right'},
+          {title: '含税销售价', key: 'SALES_PRICE', minWidth: 120,align:'right',
+            render: (h, params) => h('span', this.formatMoney(params.row.SALES_PRICE))
+          },
           {
             title: '销售税率', key: 'RATE', minWidth: 120,align:'right',
             render: (h, params) => {
@@ -319,10 +322,14 @@
 
             }
           },
-          {title: '销售税额', key: 'TAX', minWidth: 140,align:'right'},
-          {title: '未含税销售价', key: 'NOT_CONTAINS_TAX_SALE_PRICE', minWidth: 140,align:'center'},
+          {title: '销售税额', key: 'TAX', minWidth: 140,align:'right',
+            render: (h, params) => h('span', this.formatMoney(params.row.TAX))
+          },
+          {title: '未含税销售价', key: 'NOT_CONTAINS_TAX_SALE_PRICE', minWidth: 140,align:'right',
+            render: (h, params) => h('span', this.formatMoney(params.row.NOT_CONTAINS_TAX_SALE_PRICE))
+          },
           {
-            title: '操作', key: 'STORE_NAME', minWidth: 120,
+            title: '操作', key: 'STORE_NAME', minWidth: 120,align:'center',
             render: (h, params) => {
               let buttonContent = "删除";
               let buttonStatus = "error";
@@ -383,23 +390,23 @@
           {title: '序号',  minWidth: 80,align:'center',
             render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
           },
-          {title: '仓库名称', key: 'STORE_NAME', sortable: true, minWidth: 120,align:'left'},
+          {title: '仓库名称', key: 'STORE_NAME', sortable: true, minWidth: 120,},
           {
-            title: '采购日期', key: 'PURCHASE_DATE', sortable: true, minWidth: 120,align:'left',
+            title: '采购日期', key: 'PURCHASE_DATE', sortable: true, minWidth: 120,
             render: (h, params) => h('span', params.row.PURCHASE_DATE.substr(0, 10))
           },
           {
-            title: '订单类型', key: 'PURCHASE_TYPE', sortable: true, minWidth: 120,align:'left',
+            title: '订单类型', key: 'PURCHASE_TYPE', sortable: true, minWidth: 120,
             render: (h, params) => h('span', getName(this.list1024, params.row.PURCHASE_TYPE))
           },
-          {title: '供应商名称', key: 'SUPPLIER_NAME', sortable: true, minWidth: 140,align:'left'},
+          {title: '供应商名称', key: 'SUPPLIER_NAME', sortable: true, minWidth: 140},
           {title: '采购员', key: 'PURCHASE_PERSON', sortable: true, minWidth: 120},
           {
-            title: '采购总金额', key: 'SUM_MONEY', sortable: true, minWidth: 140,
+            title: '采购总金额', key: 'SUM_MONEY', sortable: true, minWidth: 140,align:'right',
             render: (h, params) => h('span', (params.row.SUM_MONEY.toFixed(2) || 0))
           },
           {
-            title: '状态', key: 'STATUS', sortable: true, minWidth: 100,
+            title: '状态', key: 'STATUS', sortable: true, minWidth: 100,align:'center',
             render: (h, params) => h('span', getName(this.list1048, params.row.STATUS))
           },
           {title: '采购单号', key: 'PURCHASE_NO', sortable: true, minWidth: 140},

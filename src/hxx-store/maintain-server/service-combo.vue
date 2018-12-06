@@ -37,7 +37,7 @@
       :footer-hide="false"
       :transition-names="['', '']">
       <modal-title slot="header" title="维修项目套餐" :state="''" @clickBack="showModal=false"></modal-title>
-      <div style="height: 100%;overflow: auto; padding-bottom: 30px;">
+      <div style="height: 100%;overflow-x:hidden; padding-bottom: 30px;padding-top:10px;">
         <Collapse v-model="value1">
           <Panel name="1">
             项目基本信息
@@ -95,7 +95,8 @@
             <!--</div>-->
           <!--</Panel>-->
         </Collapse>
-      </div>
+      <!--</div>-->
+     </div>
       <div slot="footer">
         <Button @click="addcancle()">取消</Button>
         <Button type="primary" @click="addpost('list')">保存</Button>
@@ -144,23 +145,25 @@
             title: '序号', minWidth: 80, align: 'center',sortable: true,
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
-          {title: '项目套餐编号', key: 'GROUP_NO', sortable: true,align: 'left', minWidth: 140},
-          {title: '项目套餐名称', key: 'GROUP_NAME', sortable: true,align:'left', minWidth: 140},
-          {title: '套餐销售价(元)', key: 'SALES_PRICE', sortable: true,align:'right', minWidth: 150},
+          {title: '项目套餐编号', key: 'GROUP_NO', sortable: true, minWidth: 140},
+          {title: '项目套餐名称', key: 'GROUP_NAME', sortable: true, minWidth: 140},
+          {title: '套餐销售价(元)', key: 'SALES_PRICE', sortable: true,align:'right', minWidth: 150,
+            render: (h, params) => h('span',this.formatMoney(params.row.SALES_PRICE))
+          },
           {
-            title: '是否预设项目', key: 'IS_PREINSTALL', sortable: true,align: 'left', minWidth: 140,
+            title: '是否预设项目', key: 'IS_PREINSTALL', sortable: true,align: 'center', minWidth: 140,
             render: (h, params) => h('span', getName(this.isorno, params.row.IS_PREINSTALL))
           },
           {
-            title: '状态', key: 'STATUS', sortable: true, minWidth: 100,align: 'left',
+            title: '状态', key: 'STATUS', sortable: true, minWidth: 100,align: 'center',
             render: (h, params) => h('span', getName(this.statuslist, params.row.STATUS))
           },
           {
-            title: '创建人', key: 'CREATER', sortable: true, minWidth: 100,align: 'left',
+            title: '创建人', key: 'CREATER', sortable: true, minWidth: 100,
             render: (h, params) => h('span', getCreate(this.$store.state.app.tenant, params.row.CREATER))
           },
           {
-            title: '创建时间', key: 'CREATE_TIME', sortable: true,align: 'left', minWidth: 100
+            title: '创建时间', key: 'CREATE_TIME', sortable: true,minWidth: 100
           },
         ],
         columns1: [
@@ -168,22 +171,24 @@
             title: '序号', minWidth: 80,align:'center',
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
-          {title: '项目套餐编号', key: 'ITEM_NO',align:'left', sortable: true, minWidth: 150},
-          {title: '项目套餐名称', key: 'NAME', sortable: true,align:'left', minWidth: 150},
-          {title: '项目分类', key: 'TYPE_NAME',align:'left', sortable: true, minWidth: 150},
+          {title: '项目套餐编号', key: 'ITEM_NO', sortable: true, minWidth: 150},
+          {title: '项目套餐名称', key: 'NAME', sortable: true, minWidth: 150},
+          {title: '项目分类', key: 'TYPE_NAME', sortable: true, minWidth: 150},
           {
-            title: '计费标准', key: 'CHARGE_TYPE', sortable: true,align:'left', minWidth: 150,
+            title: '计费标准', key: 'CHARGE_TYPE', sortable: true, minWidth: 150,
             render: (h, params) => h('span', getName(this.counttype, params.row.CHARGE_TYPE))
           },
-          {title: '标准金额(元)', key: 'REPAIR_MONEY',align:'right', sortable: true, minWidth: 150},
+          {title: '标准金额(元)', key: 'REPAIR_MONEY',align:'right', sortable: true, minWidth: 150,
+            render: (h, params) => h('span', this.formatMoney(params.row.REPAIR_MONEY))
+          },
           {title: '标准工时(小时)', key: 'REPAIR_TIME',align:'right', sortable: true, minWidth: 150},
           {title: '油漆面数(面)', key: 'PAINT_NUM',align:'right', sortable: true, minWidth: 150},
           {
-            title: '是否预设项目', key: 'IS_PREINSTALL',align:'true', sortable: true, minWidth: 150,
+            title: '是否预设项目', key: 'IS_PREINSTALL',align:'center', sortable: true, minWidth: 150,
             render: (h, params) => h('span', getName(this.isorno, params.row.IS_PREINSTALL))
           },
           {
-            title: '状态', key: 'STATUS', sortable: true,align:'left', minWidth: 100,
+            title: '状态', key: 'STATUS', sortable: true,align:'center', minWidth: 100,
             render: (h, params) => h('span', getName(this.statuslist, params.row.STATUS))
           }, {
             title: '操作', key: 'operation', sortable: true, minWidth: 120, fixed: 'right',align:'center',

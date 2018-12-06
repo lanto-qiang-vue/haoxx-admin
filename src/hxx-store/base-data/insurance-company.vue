@@ -6,18 +6,18 @@
         <Input v-model="search.keyword" placeholder="公司编号/公司名称..."></Input>
       </div>
       <div class="search-block">
-        <Select v-model="search.status">
+        <Select v-model="search.status" clearable>
           <Option v-for="(item, index) in defaultList"
                   :key="index" :value="item.code">{{item.name}}</Option>
         </Select>
       </div>
-      <ButtonGroup size="small">
+      <ButtonGroup>
         <Button type="primary" @click="page=1;getList()">
-          <Icon type="ios-search" size="24"/>
+          搜索
         </Button>
-        <Button type="primary" @click="clear()">
-          <Icon type="ios-undo" size="24"/>
-        </Button>
+        <!--<Button type="primary" @click="clear()">-->
+          <!--<Icon type="ios-undo" size="24"/>-->
+        <!--</Button>-->
       </ButtonGroup>
     </div>
   </common-table>
@@ -45,7 +45,7 @@
           {title: '传真', key: 'FAX', sortable: true, minWidth: 140},
           {title: '邮箱', key: 'EMAIL', sortable: true, minWidth: 140},
           {
-            title: '状态', key: 'STATUS', sortable: true, minWidth: 140,
+            title: '状态', key: 'STATUS', sortable: true, minWidth: 140,align:'center',
             render: (h, params) => h('span', getName(this.defaultList, params.row.STATUS))
           },
         ],

@@ -5,13 +5,16 @@
     @on-visible-change="visibleChange"
     title="维修记录"
     width="80"
+    class="table-modal-detail"
     :mask-closable="false"
     :scrollable="true"
     :transfer= "true"
     :footer-hide="false"
     :transition-names="['', '']"
   >
-    <div style="font-size: 18px;text-align: right;color: red;padding-right: 30px;">{{titleMsg}}</div>
+    <!--<div style="font-size: 18px;text-align: right;color: red;padding-right: 30px;">{{titleMsg}}</div>-->
+      <div style="height: 100%;overflow: auto; padding-bottom: 30px;padding-top:10px;">
+        <div class="status">({{titleMsg}})</div>
     <Collapse v-model="collapse">
       <Panel name="1">详情
        <Form ref="listSearch"   slot="content" :label-width="120" inline class="detail-form">
@@ -125,6 +128,7 @@
           <span class="r-list-money-reset">{{base.SUM_MONEY}}元</span>
       </p>
     </div>
+    </div>
     <combo-detail :tshow="tcshow" :tid="tcid"></combo-detail>
     <div slot="footer" style="text-align: center; font-size: 18px;">
     <Button type="primary" @click="showModal = false">返回</Button>
@@ -135,12 +139,13 @@
 
 <script>
   import { getName, getDictGroup ,getUserInfo} from '@/libs/util.js'
+  import ModalTitle from '@/hxx-components/modal-title.vue'
   import { formatDate } from '@/libs/tools.js'
   import commonModal6 from '@/hxx-components/common-modal6.vue'
   import comboDetail from '@/hxx-components/combo-detail.vue'
 	export default {
 		name: "service-record",
-    components: {commonModal6,comboDetail},
+    components: {commonModal6,comboDetail,ModalTitle},
     data(){
       return{
         parts:'',

@@ -7,19 +7,19 @@
         <Input v-model="search.keyword" placeholder="销售单号/客户名称..."></Input>
       </div>
       <div class="search-block">
-        <Select v-model="search.status">
+        <Select v-model="search.status" clearable>
           <Option v-for="(item, index) in list1048"
                   :key="index" :value="item.code">{{item.name}}
           </Option>
         </Select>
       </div>
-      <ButtonGroup size="small">
+      <ButtonGroup>
         <Button type="primary" @click="page=1;getList()">
-          <Icon type="ios-search" size="24"/>
+          搜索
         </Button>
-        <Button type="primary" @click="clear()">
-          <Icon type="ios-undo" size="24"/>
-        </Button>
+        <!--<Button type="primary" @click="clear()">-->
+          <!--<Icon type="ios-undo" size="24"/>-->
+        <!--</Button>-->
       </ButtonGroup>
     </div>
     <div slot="operate">
@@ -33,15 +33,17 @@
     </div>
     <Modal
       v-model="showModal"
-      class="table-modal-detail"
+      class="table-modal-detail full-height"
       title="配件销售退货"
-      width="90"
+      width="100"
       :mask-closable="false"
       @on-visible-change="visibleChange"
       :scrollable="true"
       :transfer="false"
       :footer-hide="false"
       :transition-names="['', '']">
+      <modal-title slot="header" title="配件销售退货" :state="''" @clickBack="showModal=false"></modal-title>
+      <div style="height:100%;padding-top:10px;padding-bottom:30px;">
       <Collapse v-model="value">
         <Panel name="1">
           基本信息
@@ -103,7 +105,7 @@
         </Button>
       </div>
       <div style="float:left;font-size:18px;">合计金额:&nbsp;<span style="color:red;">{{formData.RETURN_MONEY}}</span></div>
-      <div style="height:120px;"></div>
+      </div>
       <div slot="footer">
         <Button type="primary" @click="addPost('formData')" v-show="canShow">保存</Button>
         <Button @click="showModal=false">取消</Button>
@@ -166,12 +168,13 @@
   import selectParts from '@/hxx-components/select-parts.vue'
   import selectValueCard from '@/hxx-components/select-valueCard.vue'
   import {getName, getDictGroup, getCreate} from '@/libs/util.js'
+  import ModalTitle from '@/hxx-components/modal-title.vue'
   import mixin from '@/hxx-components/mixin'
   import {deepClone} from "../../libs/util";
 
   export default {
     name: "sales-return",
-    components: {commonTable, selectCustomer, selectParts, unitInput, selectValueCard, selectSalesNo},
+    components: {commonTable, selectCustomer, selectParts, unitInput, selectValueCard, selectSalesNo,ModalTitle},
     mixins: [mixin],
     data() {
       const personRule = (rule, value, callback) => {
@@ -273,17 +276,17 @@
         },
         search: {
           keyword: "",
-          status: '0',
+          status: '',
         },
         columns2: [
           {
-            title: '序号', key: 'STORE_NAME', minWidth: 90,
+            title: '序号', key: 'STORE_NAME', minWidth: 90,align:'center',
             render: (h, params) => h('span', params.index + 1)
           },
-          {title: '配件名称', key: 'NAME', minWidth: 120},
-          {title: '原厂编号', key: 'FACTORY_NO', minWidth: 120},
+          {title: '配件名称', key: 'NAME', minWidth: 120,},
+          {title: '原厂编号', key: 'FACTORY_NO', minWidth: 120,},
           {
-            title: '数量', key: 'PART_NUM', minWidth: 120,
+            title: '数量', key: 'PART_NUM', minWidth: 120,align:'right',
             render: (h, params) => {
               params.row.SUM_MONEY = parseInt(params.row.PART_NUM) * parseFloat(params.row.SALES_PRICE);
               this.countMoney();
@@ -319,10 +322,11 @@
             render: (h, params) => h('span', getName(this.list1016, params.row.BRAND))
           },
           {
-            title: '单位成本', key: 'PART_COST', minWidth: 120
+            title: '单位成本', key: 'PART_COST', minWidth: 120,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.PART_COST))
           },
           {
-            title: '退货单价', key: 'SALES_PRICE', minWidth: 120,
+            title: '退货单价', key: 'SALES_PRICE', minWidth: 120,align:'right',
             render: (h, params) => {
               return h('div', [
                 h(unitInput, {
@@ -347,12 +351,15 @@
 
             }
           },
-          {title: '小计金额', key: 'SUM_MONEY', minWidth: 120},
-          {
-            title: '单位成本', key: 'PART_COST', minWidth: 120
+          {title: '小计金额', key: 'SUM_MONEY', minWidth: 120,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.SUM_MONEY))
           },
           {
-            title: '操作', key: 'FACTORY_NO', minWidth: 120,
+            title: '单位成本', key: 'PART_COST', minWidth: 120,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.SUM_MONEY))
+          },
+          {
+            title: '操作', key: 'FACTORY_NO', minWidth: 120,align:'center',
             render: (h, params) => {
               let buttonContent = "删除";
               let buttonStatus = "error";
@@ -381,12 +388,12 @@
         data2: [],
         columns: [
           {
-            title: '序号', minWidth: 80,
+            title: '序号', minWidth: 80,align:'center',
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
-          {title: '客户名称', key: 'CUSTOMER_NAME', sortable: true, minWidth: 120},
+          {title: '客户名称', key: 'CUSTOMER_NAME', sortable: true, minWidth: 120,},
           {
-            title: '退款合计', key: 'RETURN_MONEY', sortable: true, minWidth: 120,
+            title: '退款合计', key: 'RETURN_MONEY', sortable: true, minWidth: 120,align:'right',
             render: (h, params) => h('span', params.row.RETURN_MONEY.toFixed(2))
           },
           {
@@ -397,7 +404,7 @@
             title: '退货原因', key: 'RETURN_REASON', sortable: true, minWidth: 120,
           },
           {
-            title: '状态', key: 'STATUS', sortable: true, minWidth: 80,
+            title: '状态', key: 'STATUS', sortable: true, minWidth: 80,align:'center',
             render: (h, params) => h('span', getName(this.list1048, params.row.STATUS))
           },
           {
@@ -943,7 +950,7 @@
             page: this.page,
             limit: this.limit,
             KEYWORD: this.search.keyword,
-            STATUS_eq: this.search.status == 0 ? '' : this.search.status,
+            STATUS_eq: this.search.status || '',
           }
         }).then(res => {
           if (res.success === true) {
@@ -978,7 +985,7 @@
       },
       list1048() {
         let data = getDictGroup(this.$store.state.app.dict, '1048');
-        data.unshift({code: '0', name: '请选择状态...'});
+        // data.unshift({code: '0', name: '请选择状态...'});
         return data;
       },
       canDo() {

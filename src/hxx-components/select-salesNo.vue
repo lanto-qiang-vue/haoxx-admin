@@ -15,13 +15,13 @@
       <div class="search-block">
         <Input v-model="search.keyword" placeholder="采购单号/供应商名称..."></Input>
       </div>
-      <ButtonGroup size="small">
+      <ButtonGroup>
         <Button type="primary" @click="page=1;getList()">
-          <Icon type="ios-search" size="24"/>
+    搜索
         </Button>
-        <Button type="primary" @click="clear()">
-          <Icon type="ios-undo" size="24"/>
-        </Button>
+        <!--<Button type="primary" @click="clear()">-->
+          <!--<Icon type="ios-undo" size="24"/>-->
+        <!--</Button>-->
       </ButtonGroup>
     </div>
   </common-table>
@@ -48,7 +48,7 @@
         },
         columns: [
         {
-          title: '序号', minWidth: 80,
+          title: '序号', minWidth: 80,align:'center',sortable: true,
           render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
         },
         {title: '客户名称', key: 'CUSTOMER_NAME', sortable: true, minWidth: 120},
@@ -60,15 +60,15 @@
           render: (h, params) => h('span', params.row.SALES_DATE.substr(0, 10))
         },
         {
-          title: '合计金额', key: 'SUM_MONEY', sortable: true, minWidth: 120,
+          title: '合计金额', key: 'SUM_MONEY', sortable: true, minWidth: 120,align:'right',
           render: (h, params) => h('span', params.row.SUM_MONEY.toFixed(2))
         },
         {
-          title: '优惠金额', key: 'LESS_MONEY', sortable: true, minWidth: 120,
+          title: '优惠金额', key: 'LESS_MONEY', sortable: true, minWidth: 120,align:'right',
           render: (h, params) => h('span', params.row.LESS_MONEY.toFixed(2))
         },
         {
-          title: '应收金额', key: 'REAL_MONEY', sortable: true, minWidth: 120,
+          title: '应收金额', key: 'REAL_MONEY', sortable: true, minWidth: 120,align:'right',
           render: (h, params) => h('span', params.row.REAL_MONEY.toFixed(2))
         },
         {

@@ -4,14 +4,14 @@
     title="客户档案详情"
     :transition-names="['', '']"
     v-model="showModal"
-    width="98"
+    width="100"
     @on-visible-change="visibleChange"
     :mask-closable="false"
     :scrollable="false"
     :transfer="false"
-    class="table-modal-detail"
+    class="table-modal-detail full-height"
   >
-
+    <modal-title slot="header" title="客户档案详情" :state="''" @clickBack="showModal=false"></modal-title>
     <Tabs @on-click="qh" v-model="indexName" class="modal-tabs">
 
       <!-- 基本信息 -->
@@ -152,13 +152,13 @@
     <Modal
       v-model="cardModal"
       :mask-closable="false"
-      class="member"
       :styles="{height:'200px'}"
       title="会员卡编辑"
+      class="table-modal-detail"
       width="400"
-      :transfer="false"
+      :transfer="true"
       :transition-names="['', '']">
-      <div style="height:10px;"></div>
+      <div style="height:30px;"></div>
       <Form :model="memberData" ref="memberData" :rules="rule3" :label-width="120" class="common-form">
         <FormItem label="会员卡编号:" style="width:100%;" prop="MEMBER_CARD_NO">
           <Input v-model="memberData.MEMBER_CARD_NO"></Input>
@@ -175,8 +175,10 @@
       title="会员卡停用"
       :styles="{height:'200px'}"
       width="400"
-      :transfer="false"
+      class="table-modal-detail"
+      :transfer="true"
       :transition-names="['', '']">
+      <div style="height:10px;"></div>
       <Form :model="memberData" ref="memberData2" :rules="rule4" :label-width="120" class="common-form">
         <FormItem label="停用原因:" style="width:100%;" prop="CARD_STOP_REASON">
           <Input type="textarea" v-model="memberData.CARD_STOP_REASON"></Input>
@@ -209,6 +211,7 @@
 <script>
   import commonTable from '@/hxx-components/common-table.vue'
   import {getName, getDictGroup, getCreate} from '@/libs/util.js'
+  import ModalTitle from '@/hxx-components/modal-title.vue'
   import {formatDate} from '@/libs/tools.js'
   import vehicleAdd from '@/hxx-components/vehicle-add.vue'
   import cartModal from '@/hxx-store/customer-relations/cart-modal.vue'
@@ -217,7 +220,7 @@
 
   export default {
     name: "customer-list-detail",
-    components: {commonTable, vehicleAdd, cartModal},
+    components: {commonTable, vehicleAdd, cartModal,ModalTitle},
     mixins: [mixin],
     data() {
       return {
@@ -328,7 +331,7 @@
         },
         columns: [
           {
-            title: '序号', minWidth: 80,
+            title: '序号', minWidth: 80,align:'center',
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
           {title: '车牌号', key: 'PLATE_NUM', sortable: true, minWidth: 120},

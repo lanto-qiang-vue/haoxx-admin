@@ -29,6 +29,7 @@
     title="用户新增"
     :transition-names="['', '']"
     v-model="showModal"
+    class="table-modal-detail"
     width="80"
     :mask-closable="false"
     :scrollable="false"
@@ -104,7 +105,7 @@
               <Input type="text" v-model="formData.TAX_NO"  style="min-width: 100%;"> </Input>
           </FormItem>
     </Form>
-           <Form ref="formDatas" :label-width="80">
+           <Form ref="formDatas" :label-width="120">
           <FormItem label="备注:">
               <Input type="textarea" v-model="formData.REMARK"  placeholder="请输入备注信息"> </Input>
           </FormItem>

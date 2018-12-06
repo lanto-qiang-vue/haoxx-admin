@@ -15,6 +15,23 @@
   float:right;
   line-height:3;
 }
+.ivu-modal-header{
+  padding: 0 16px;
+  background-color: @primary-color;
+  .ivu-modal-header-inner{
+    line-height: 40px;
+    height: 40px;
+    color: white;
+  }
+}
+
+.ivu-modal-close{
+  top: 3px;
+  .ivu-icon-ios-close{
+    color: white;
+  }
+}
+
 .table-modal-detail{
   max-height: 100%;
   .ivu-modal-mask{
@@ -88,11 +105,11 @@
 }
 
 .full-height{
-  .ivu-modal-wrap{
-    .ivu-modal{
+  >.ivu-modal-wrap{
+    >.ivu-modal{
       height: 100%;
-      .ivu-modal-content{
-        .ivu-modal-header{
+      >.ivu-modal-content{
+        >.ivu-modal-header{
           background-color: white;
           padding: 0;
         }
@@ -129,18 +146,18 @@
   }
 }
 
-.ivu-page.mini{
-  .ivu-page-total{
-    vertical-align: top;
-  }
-  .ivu-page-item-active a, .ivu-page-item-active:hover a {
-    color: white;
-    background-color: #1890FF;
-    margin: 0;
-    padding: 0 6px;
-    border-radius: 2px;
-  }
-}
+//.ivu-page.mini{
+//  .ivu-page-total{
+//    vertical-align: top;
+//  }
+//  .ivu-page-item-active a, .ivu-page-item-active:hover a {
+//    color: white;
+//    background-color: #1890FF;
+//    margin: 0;
+//    padding: 0 6px;
+//    border-radius: 2px;
+//  }
+//}
 
 .search-block {
   display: inline-block;

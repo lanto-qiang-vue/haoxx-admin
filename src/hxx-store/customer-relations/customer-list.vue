@@ -8,9 +8,9 @@
       <div class="search-block">
         <Input v-model="search.number" placeholder="车牌号码..."></Input>
       </div>
-      <ButtonGroup size="small">
-        <Button type="primary" @click="page=1;getList()"><Icon type="ios-search" size="24"/></Button>
-        <Button type="primary" @click="clear()"><Icon type="ios-undo" size="24"/></Button>
+      <ButtonGroup>
+        <Button type="primary" @click="page=1;getList()">搜索</Button>
+        <!--<Button type="primary" @click="clear()"><Icon type="ios-undo" size="24"/></Button>-->
       </ButtonGroup>
     </div>
     <div slot="operate">
@@ -42,7 +42,7 @@
       return{
         cardModal:false,
         columns: [
-          {title: '序号',  minWidth: 80,
+          {title: '序号',  minWidth: 80,align:'center',
             render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1)
           },
            {title: '客户编号', key: 'CODE', sortable: true, minWidth: 120},
