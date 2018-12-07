@@ -5,7 +5,7 @@
     width="80"
     :scrollable="true"
     :mask-closable="false"
-    :transfer= "false"
+    :transfer= "true"
     :footer-hide="true"
     :transition-names="['', '']"
     >

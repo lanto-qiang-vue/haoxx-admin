@@ -13,7 +13,7 @@
     :transition-names="['', '']"
   >
     <!--<div style="font-size: 18px;text-align: right;color: red;padding-right: 30px;">{{titleMsg}}</div>-->
-      <div style="height: 100%;overflow: auto; padding-bottom: 30px;padding-top:10px;">
+      <!--<div style="height: 100%;overflow: auto; padding-bottom: 30px;padding-top:10px;">-->
         <div class="status">({{titleMsg}})</div>
     <Collapse v-model="collapse">
       <Panel name="1">详情
@@ -128,7 +128,7 @@
           <span class="r-list-money-reset">{{base.SUM_MONEY}}元</span>
       </p>
     </div>
-    </div>
+    <!--</div>-->
     <combo-detail :tshow="tcshow" :tid="tcid"></combo-detail>
     <div slot="footer" style="text-align: center; font-size: 18px;">
     <Button type="primary" @click="showModal = false">返回</Button>
