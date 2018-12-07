@@ -166,7 +166,12 @@
         collapse: ['1','2'],
         tableHeight: 500,
         timer: null,
-        windowInnerHeight: window.innerHeight
+        // windowInnerHeight: window.innerHeight
+      }
+    },
+    computed:{
+      windowInnerHeight: function(){
+        return this.$store.state.app.windowInnerHeight
       }
     },
     watch:{
@@ -182,14 +187,18 @@
       value(data){
         this.data= data
       },
+      windowInnerHeight(){
+        this.resize(200)
+      }
     },
     mounted() {
 		  let self= this
-      // self.resize(1000)
+      // self.resize(500)
       window.onresize = function(){
-		    console.log('window.onresize')
+		    // console.log('window.onresize')
 		    if(window.innerHeight!= self.windowInnerHeight)
-          self.resize(200)
+          // self.resize(200)
+          self.$store.commit('setWindowInnerHeight', window.innerHeight)
       }
       this.calcColumns(this.columns)
     },
@@ -215,7 +224,7 @@
               commonTable.querySelector(".operate").offsetHeight - 10 -
               commonTable.querySelector(".table-bottom").offsetHeight;
             commonTable.style.opacity = 1
-            self.windowInnerHeight= window.innerHeight
+            // self.windowInnerHeight= window.innerHeight
             console.log(".common-table", commonTable.offsetHeight)
             console.log(".table-search", commonTable.querySelector(".table-search").offsetHeight)
             console.log(".operate", commonTable.querySelector(".operate").offsetHeight)
