@@ -36,7 +36,7 @@ export default {
     data(){
 		return{
             columns: [
-                {title: '序号',  minWidth: 90,align:'center', sortable: true,type:'index'
+                {title: '序号',  width: 70,align:'center', sortable: true,type:'index'
                     // render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
                 },
                 {title: '岗位名称', key: 'name', sortable: true, minWidth: 150,
@@ -47,7 +47,7 @@ export default {
                 {title: '申请时间', key: 'cREATE_TIME', sortable: true, minWidth: 150,
                     render: (h, params) => h('span', params.row.cREATE_TIME.substr(0, 16))
                 },
-                {title: '人数', key: 'num', sortable: true, minWidth: 120,
+                {title: '人数', key: 'num', sortable: true, minWidth: 120,align:'right'
                     
                 },
                 {title: '状态', key: 'state', sortable: true, minWidth: 100,

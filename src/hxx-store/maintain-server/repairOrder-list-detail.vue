@@ -349,7 +349,7 @@
         //维修项目
         columns: [
           {
-            title: '序号', minWidth: 90,align:'center', sortable: true, type: "index",
+            title: '序号',  width: 70,align:'center', sortable: true, type: "index",
           },
           {
             title: '维修项目名称', key: 'NAME', sortable: true, minWidth: 170,
@@ -580,7 +580,7 @@
         getItem: [],
         //维修配件
         columns1: [
-          {title: '序号', minWidth: 90,align:'center', sortable: true, type: 'index',},
+          {title: '序号',  width: 70,align:'center', sortable: true, type: 'index',},
           {title: '配件编号', key: 'PART_NO', sortable: true, minWidth: 150,},
           {title: '配件名称', key: 'NAME', sortable: true, minWidth: 150},
           {
@@ -809,7 +809,7 @@
         getParts1: [],
         //维修项目套餐
         columns2: [
-          {title: '序号', minWidth: 90,align:'center', sortable: true, type: 'index',},
+          {title: '序号',  width: 70,align:'center', sortable: true, type: 'index',},
           {title: '项目套餐名称', key: 'GROUP_NAME', sortable: true, minWidth: 170,},
           {
             title: '套餐价格', key: 'SALES_PRICE', sortable: true, minWidth: 120,

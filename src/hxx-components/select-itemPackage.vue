@@ -57,7 +57,7 @@ import commonTable from '@/hxx-components/common-table.vue'
 
                 columns: [
                     // {type: 'selection', width: 50, fixed: 'left'},
-                    {title: '序号',  minWidth: 80,align:'center',
+                    {title: '序号',  width: 70,align:'center',
                         render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
                     },
                     {title: '项目套餐编号', key: 'GROUP_NO', sortable: true, minWidth: 160,
@@ -75,7 +75,7 @@ import commonTable from '@/hxx-components/common-table.vue'
                     {title: '操作', key: 'operation', sortable: true, minWidth: 80,fixed: 'right',align:'center',
                         render: (h, params) => {
                             let buttonContent= this.state(params.row)? '取消选择':'选择';
-                            let buttonStatus= this.state(params.row)? 'warning':'primary';
+                            let buttonStatus= this.state(params.row)? 'default':'warning';
                             return h('div', [
                                 h('Button', {
                                     props: {
