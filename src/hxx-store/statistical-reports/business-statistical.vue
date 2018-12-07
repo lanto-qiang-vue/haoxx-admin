@@ -16,8 +16,8 @@
     <div slot="footer">
       <table  width='100%' cellpadding='5' cellspacing='0'>
             <tr>
-                <td style="min-width:120px; height:30px;padding:0 18px; text-align: center;">合计：</td>
-                <td style="min-width:120px; height:30px;padding:0 18px;text-align: center;" v-for="site in computedMoney">{{site.money}}{{site.unit}}</td>
+                <td style="width: 14.2%; height:30px;padding:0 18px;">合计：</td>
+                <td style="width: 14.2%; height:30px;padding:0 18px;text-align: right;" v-for="site in computedMoney">{{site.money}}{{site.unit}}</td>
                 
             </tr>
         </table>
@@ -38,25 +38,25 @@ export default {
     data(){
 		return{
             columns: [
-                {title: '业务类型', key: 'rEPAIR_NAME', sortable: true, minWidth: 120,align: 'center',
+                {title: '业务类型', key: 'rEPAIR_NAME', sortable: true, minWidth: 120,
                 },
-                {title: '结算台次', key: 'rEPAIR_TYPE', sortable: true, minWidth: 120,align: 'center',
+                {title: '结算台次', key: 'rEPAIR_TYPE', sortable: true, minWidth: 120,align: 'right',
                     
                 },
                 {title: '实际产值', align: 'center',
                     children: [
                         {
                             title: '工时',
-                            key: 'rEPAIR_TIME', sortable: true, minWidth: 120,align: 'center',
+                            key: 'rEPAIR_TIME', sortable: true, minWidth: 120,align: 'right',
                         },
                         {
                             title: '材料',
-                            key: 'sALES_PRICE', sortable: true, minWidth: 120,align: 'center',
+                            key: 'sALES_PRICE', sortable: true, minWidth: 120,align: 'right',
                             render: (h, params) => h('span', this.formatMoney(params.row.sALES_PRICE))
                         },
                         {
                             title: '产值合计',
-                            key: 'total', sortable: true, minWidth: 120,align: 'center',
+                            key: 'total', sortable: true, minWidth: 120,align: 'right',
                             render: (h, params) => h('span', this.formatMoney(params.row.total))
                         }
                     ]
@@ -66,12 +66,12 @@ export default {
                      children: [
                             {
                                 title: '成本',
-                                key: 'operatingCost', sortable: true, minWidth: 120,align: 'center',
+                                key: 'operatingCost', sortable: true, minWidth: 120,align: 'right',
                                 render: (h, params) => h('span', this.formatMoney(params.row.operatingCost))
                             },
                             {
                                 title: '利润',
-                                key: 'pCost', sortable: true, minWidth: 120,align: 'center',
+                                key: 'pCost', sortable: true, minWidth: 120,align: 'right',
                                 render: (h, params) => h('span', this.formatMoney(params.row.pCost))
                                 
                             },
