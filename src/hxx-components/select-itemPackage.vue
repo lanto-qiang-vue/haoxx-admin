@@ -12,22 +12,22 @@
         :footer-hide="false"
         class="table-modal-detail"
     >
-    <common-table v-model="tableData" :columns="columns" :show="showSelectItemGroup" :total="total" @changePage="changePage" 
+    <common-table v-model="tableData" :columns="columns" :show="showSelectItemGroup" :total="total" @changePage="changePage"
         @changePageSize="changePageSize" @onRowClick="onRowClick" :showOperate=false>
         <div slot="search">
             <Form class="common-form">
                 <FormItem>
                     <Input  placeholder="项目套餐编号/名称..." v-model="test1"></Input>
                 </FormItem>
-                
-                    
+
+
                     <ButtonGroup size="small">
                         <Button type="primary" title="查询" @click="searchVehicle">搜索</Button>
                         <!--<Button type="primary" title="重置" @click="resetVehicle"><Icon type="ios-undo" size="28"/></Button>-->
                     </ButtonGroup>
-                
+
            </Form>
-           
+
         </div>
     </common-table>
     <div slot="footer">
@@ -85,8 +85,8 @@ import commonTable from '@/hxx-components/common-table.vue'
                                     style: {
                                         width:"80px",
                                         textAlign: "center",
-                                        
-                                        
+
+
                                     },
                                     on: {
                                         click: (index) => {
@@ -113,7 +113,7 @@ import commonTable from '@/hxx-components/common-table.vue'
             }
         },
         mounted() {
-            
+
         },
         methods:{
             state(item){
@@ -154,7 +154,7 @@ import commonTable from '@/hxx-components/common-table.vue'
                         this.tableData= res.data.filter((value)=>{
                             return value.STATUS=="10011001";
                         });
-                        
+
                         this.total= this.tableData.length;
 
                     }
@@ -170,7 +170,7 @@ import commonTable from '@/hxx-components/common-table.vue'
             },
             onRowClick( row, index){
                 console.log(row);
-                
+
             },
             searchVehicle(){
                 this.page=1;
@@ -181,7 +181,7 @@ import commonTable from '@/hxx-components/common-table.vue'
                 this.page=1;
                 this.getList();
             },
-            
+
 
         }
 	}
@@ -193,32 +193,5 @@ import commonTable from '@/hxx-components/common-table.vue'
         width: 200px;
         margin-right: 10px;
     }
-    .common-table{
-        padding: 10px;
-        background-color: white;
-        height: 100%;
-        overflow: hidden;
-        position: relative;
-        .table-search{
-        }
-        .operate{
-            margin-top: 10px;
-            padding: 15px;
-            border: 1px solid #dcdee2;
-            border-radius: 3px;
-        }
-        .main-table{
-            margin-top: 10px;
-        }
-        .table-bottom{
-            position: absolute;
-            height: 52px;
-            padding: 10px;
-            width: 100%;
-            left: 0;
-            bottom: 0;
-            background-color: white;
-            z-index: 4;
-        }
-    }
+
 </style>

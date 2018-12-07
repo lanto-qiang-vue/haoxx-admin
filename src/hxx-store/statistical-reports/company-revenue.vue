@@ -16,8 +16,8 @@
     <div slot="footer">
       <table  width='100%' cellpadding='5' cellspacing='0'>
             <tr>
-                <td style="min-width:150px; height:30px;padding:0 18px;">合计：</td>
-                <td style="min-width:150px; height:30px;padding:0 18px;" v-for="(value, key) in computedMoney">{{value}}元</td>
+                <td style="width: 25%; height:30px;padding:0 18px;">合计：</td>
+                <td style="width: 25%; height:30px;padding:0 18px;text-align: right;" v-for="(value, key) in computedMoney">{{value}}元</td>
                 
             </tr>
         </table>

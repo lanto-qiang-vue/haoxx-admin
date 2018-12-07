@@ -166,7 +166,12 @@
         collapse: ['1','2'],
         tableHeight: 500,
         timer: null,
-        windowInnerHeight: window.innerHeight
+        // windowInnerHeight: window.innerHeight
+      }
+    },
+    computed:{
+      windowInnerHeight: function(){
+        return this.$store.state.app.windowInnerHeight
       }
     },
     watch:{
@@ -182,13 +187,18 @@
       value(data){
         this.data= data
       },
+      windowInnerHeight(){
+        this.resize(200)
+      }
     },
     mounted() {
 		  let self= this
-      // self.resize(1000)
+      // self.resize(500)
       window.onresize = function(){
+		    // console.log('window.onresize')
 		    if(window.innerHeight!= self.windowInnerHeight)
-          self.resize(200)
+          // self.resize(200)
+          self.$store.commit('setWindowInnerHeight', window.innerHeight)
       }
       this.calcColumns(this.columns)
     },
@@ -209,13 +219,12 @@
         if(commonTable.offsetHeight) {
           clearTimeout(this.timer);
           this.timer = setTimeout(function () {
-            self.windowInnerHeight= window.innerHeight
             self.tableHeight = commonTable.offsetHeight -
               commonTable.querySelector(".table-search").offsetHeight -
               commonTable.querySelector(".operate").offsetHeight - 10 -
               commonTable.querySelector(".table-bottom").offsetHeight;
             commonTable.style.opacity = 1
-
+            // self.windowInnerHeight= window.innerHeight
             console.log(".common-table", commonTable.offsetHeight)
             console.log(".table-search", commonTable.querySelector(".table-search").offsetHeight)
             console.log(".operate", commonTable.querySelector(".operate").offsetHeight)
@@ -266,7 +275,7 @@
 
 <style lang="less" scoped>
 .common-table{
-  padding: 10px 20px;
+  padding: 0 20px;
   background-color: white;
   height: 100%;
   overflow: hidden;
@@ -274,6 +283,7 @@
   opacity: 0;
   transition: opacity .2s;
   .table-search{
+    padding-top: 10px;
     padding-bottom: 6px;
   }
   .operate{
@@ -323,6 +333,7 @@
         vertical-align: top;
       }
     }
+
   }
   .table-bottom{
     .ivu-page{

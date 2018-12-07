@@ -8,7 +8,7 @@
         :transfer= "showTransfer"
         :footer-hide="false"
         :mask-closable="false"
-        
+
         class="table-modal-detail"
         :transition-names="['', '']"
     >
@@ -23,7 +23,7 @@
         </div>
     </common-table>
 
-    
+
   </Modal>
 </template>
 
@@ -49,12 +49,12 @@ import { getName, getDictGroup } from '@/libs/util.js'
                         //render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.ORDER_TYPE))
                     },
                     {title: '移动电话', key: 'MOBILE_PHONE', sortable: true, minWidth: 150,
-                        
+
                     },
                     {title: '储值卡余额', key: 'SURPLUS_MONEY', sortable: true, minWidth: 150,
                         render: (h, params) => h('span', params.row.SURPLUS_MONEY||0)
                     },
-                    
+
                 ],
                 total: 0,
                 search:{
@@ -129,32 +129,5 @@ import { getName, getDictGroup } from '@/libs/util.js'
         width: 200px;
         margin-right: 10px;
     }
-    .common-table{
-        padding: 10px;
-        background-color: white;
-        height: 100%;
-        overflow: hidden;
-        position: relative;
-        .table-search{
-        }
-        .operate{
-            margin-top: 10px;
-            padding: 15px;
-            border: 1px solid #dcdee2;
-            border-radius: 3px;
-        }
-        .main-table{
-            margin-top: 10px;
-        }
-        .table-bottom{
-            position: absolute;
-            height: 52px;
-            padding: 10px;
-            width: 100%;
-            left: 0;
-            bottom: 0;
-            background-color: white;
-            z-index: 4;
-        }
-    }
+
 </style>

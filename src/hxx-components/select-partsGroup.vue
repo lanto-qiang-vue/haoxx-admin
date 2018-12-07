@@ -12,7 +12,7 @@
         :transition-names="['', '']"
         class="table-modal-detail class1"
     >
-    <common-table v-model="tableData" :columns="columns" :show="showSelectPartsGroup" :total="total" @changePage="changePage" 
+    <common-table v-model="tableData" :columns="columns" :show="showSelectPartsGroup" :total="total" @changePage="changePage"
         @changePageSize="changePageSize" @onRowClick="onRowClick" :showOperate=false :page="page">
         <div slot="search">
             <Form class="common-form">
@@ -30,7 +30,7 @@
                     <Button @click="showSelectAddParts=Math.random()" type="primary" style="margin-left: 5px;" v-show="showOperate"><Icon type="md-add" size="28"/>新增配件</Button>
                 </ButtonGroup>
            </Form>
-           
+
         </div>
     </common-table>
     <select-addParts :showSelectAddParts="showSelectAddParts">
@@ -62,7 +62,7 @@ import selectAddParts from '@/hxx-components/select-addParts.vue'
                 default:true
             },//控制新增配件是否显示
         },
-        
+
         components: {commonTable,selectAddParts},
         data(){
             return{
@@ -149,7 +149,7 @@ import selectAddParts from '@/hxx-components/select-addParts.vue'
                         render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.UNIT))
                     },
                     {title: '采购指导价(元)', key: 'PURCHASE_PRICE', sortable: true, minWidth: 160,align:'right',
-            
+
                         render: (h, params) => h('span', this.formatMoney(params.row.PURCHASE_PRICE))
                     },
                     {title: '含税销售价(元)', key: 'SALES_PRICE', sortable: true, minWidth: 160,align:'right',
@@ -182,8 +182,8 @@ import selectAddParts from '@/hxx-components/select-addParts.vue'
                                     style: {
                                         width:"80px",
                                         textAlign: "center",
-                                        
-                                        
+
+
                                     },
                                     on: {
                                         click: (index) => {
@@ -255,7 +255,7 @@ import selectAddParts from '@/hxx-components/select-addParts.vue'
                     }
                 }).then(res => {
                     if (res.success === true) {
-                        
+
                         this.tableData= res.data
                         this.total= res.total
 
@@ -274,7 +274,7 @@ import selectAddParts from '@/hxx-components/select-addParts.vue'
                     }
                 }).then(res => {
                     if (res.success === true) {
-                        
+
                         this.getSellItem=res.data;
                     }
               })
@@ -289,7 +289,7 @@ import selectAddParts from '@/hxx-components/select-addParts.vue'
             },
             onRowClick( row, index){
                 // console.log(row);
-                
+
             },
             searchVehicle(){
                 this.page=1;
@@ -302,7 +302,7 @@ import selectAddParts from '@/hxx-components/select-addParts.vue'
                 this.page=1;
                 this.getList();
             },
-            
+
 
         }
 	}
@@ -314,32 +314,5 @@ import selectAddParts from '@/hxx-components/select-addParts.vue'
         width: 200px;
         margin-right: 10px;
     }
-    .common-table{
-        padding: 10px;
-        background-color: white;
-        height: 100%;
-        overflow: hidden;
-        position: relative;
-        .table-search{
-        }
-        .operate{
-            margin-top: 10px;
-            padding: 15px;
-            border: 1px solid #dcdee2;
-            border-radius: 3px;
-        }
-        .main-table{
-            margin-top: 10px;
-        }
-        .table-bottom{
-            position: absolute;
-            height: 52px;
-            padding: 10px;
-            width: 100%;
-            left: 0;
-            bottom: 0;
-            background-color: white;
-            z-index: 4;
-        }
-    }
+
 </style>

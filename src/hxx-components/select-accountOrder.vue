@@ -24,14 +24,14 @@
                                     </FormItem>
                                     <FormItem label="维修配件费用:">
                                         <span>{{shoukuanSearch.REPAIR_PART_MONEY}}元</span>
-                                        
+
                                     </FormItem>
                                     <FormItem label="其他项目费用:">
                                         <span>{{shoukuanSearch.OTHER_MONEY}}元</span>
-                                        
+
                                     </FormItem>
                                     <FormItem label="项目优惠金额:">
-                                        <InputNumber v-model="shoukuanSearch.REPAIR_ITEM_DERATE_MONEY" @on-change="itemComputedFun" 
+                                        <InputNumber v-model="shoukuanSearch.REPAIR_ITEM_DERATE_MONEY" @on-change="itemComputedFun"
                                             :formatter="value => `${value}元`" :parser="value => value.replace('元', '')" :disabled="jiesuanButton"
                                         ></InputNumber>
                                     </FormItem>
@@ -54,7 +54,7 @@
                                         <DatePicker v-model="shoukuanSearch.OUT_DATE" type="datetime" placeholder="" :disabled="jiesuanButton"></DatePicker>
                                     </FormItem>
                                    <FormItem label="出厂里程:" prop="OUT_MILEAGE">
-                                        
+
                                         <InputNumber :min="0" v-model="shoukuanSearch.OUT_MILEAGE" @on-change="outMileageFun"
                                             :formatter="value => `${value}公里`" :parser="value => value.replace('公里', '')" :disabled="jiesuanButton"
                                         ></InputNumber>
@@ -68,9 +68,9 @@
                                         <Input type="text" v-model="shoukuanSearch.ZY_PART" placeholder="" :disabled="jiesuanButton"> </Input>
                                     </FormItem>
                                     <FormItem label="质量保证期:">
-                                        
+
                                         <InputNumber :min="0" v-model="shoukuanSearch.ZY_PART_BZQ" @on-change="bzqFun" :disabled="jiesuanButton"
-                                            
+
                                         ></InputNumber>
                                     </FormItem>
                                 </Form>
@@ -82,17 +82,17 @@
                         <Collapse v-model="collapse">
                             <Panel name="1">结算单预览
                                 <div slot="content" style="width: 700px;" id="ggggg">
-                                    
+
                                 </div>
                             </Panel>
                         </Collapse>
-                        
+
                     </div>
                 </Split>
             </div>
 
             <select-shoukuanOrder :showSelectAccount="showShouKuan" :listSearch="listSearch" :repairPersonArr="repairPersonArr" @closeGetList="closeGetList"></select-shoukuanOrder>
-            
+
         </div>
         <!--底部按钮组-->
       <div slot="footer" >
@@ -214,7 +214,7 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                 for(let key in this.listSearch){
                     switch (key){
                         case 'MILEAGE':
-                        case 'OTHER_MONEY':              
+                        case 'OTHER_MONEY':
                         case 'REPAIR_ITEM_MONEY':
                         case 'REPAIR_PART_MONEY':
                         case 'REPAIR_ITEM_DERATE_MONEY':
@@ -265,7 +265,7 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
             this.bandTypeFun=getDictGroup(this.$store.state.app.dict, '1016');
             this.partsType=getDictGroup(this.$store.state.app.dict, '1017');
 
-            
+
         },
         methods:{
             //读取进来的数据
@@ -300,7 +300,7 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                     };
                 }
                 this.formatDataFun(true);
-            
+
             },
             //保存数据----
             saveAccountFun(name){
@@ -310,7 +310,7 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                             title:"系统提示!",
                             content:"确定要结算吗？",
                             onOk:this.saveAccount,
-                            
+
                         })
                     } else {
 
@@ -330,11 +330,11 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                     }
                 }).then(res => {
                     if (res.success === true) {
-                        
+
                         this.jiesuanButton=true;
                         this.shoukuanButton=false;
                         this.getAccountFun();
-                        
+
 
                     }else{
                         setTimeout(()=>{
@@ -343,7 +343,7 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                                 content:res.Exception.message,
                             })
                         },200);
-                        
+
                         this.shoukuanSearch.OUT_DATE=newDate;
                         // this.$Message.error(res.Exception.message)
                     }
@@ -375,7 +375,7 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                             this.$emit('emitAccount',newArr);//重新请求数据
                             this.formatDataFun(true);
                         }
-                        
+
                     }
                 })
            },
@@ -391,10 +391,10 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
            formatDataFun(flag){
                var temp=null;
                var LODOP=document.getElementById('ggggg');
-                    
+
                if(flag){
                    var listSearch={};
-                   
+
                     for(let i in this.listSearch){
                             switch(i){
                                 case'COME_DATE':
@@ -429,7 +429,7 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                         };
                     }
 
-                    
+
                     var wtdData=this.$store.state.user.userInfo.tenant;
                     console.log('结算预览',wtdData);
                     var store=this.$store;
@@ -445,7 +445,7 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                    temp='';
                    LODOP.innerHTML=temp;
                }
-               
+
            },
            //界面窗口变化
             visibleChange(status){
@@ -462,7 +462,7 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                         onOk:this.itemComputedReset,
                         onCancel:this.itemComputedReset,
                     })
-                    
+
                 }
 
                 this.shoukuanSearch.REPAIR_ITEM_DERATE_MONEY=parseFloat(value.toFixed(2));
@@ -507,7 +507,7 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                     this.$Modal.confirm({
                         title:"系统提示!",
                         content:"里程数最大位数为八位",
-                        
+
                     })
                     this.shoukuanSearch.OUT_MILEAGE=0;
                 }
@@ -518,7 +518,7 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                     this.$Modal.confirm({
                         title:"系统提示!",
                         content:"质量保证期最大位数为八位",
-                        
+
                     })
 
                     this.shoukuanSearch.ZY_PART_BZQ=0;
@@ -535,71 +535,7 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
         width: 200px;
         margin-right: 10px;
     }
-    .common-table{
-        padding: 10px;
-        background-color: white;
-        height: 100%;
-        overflow: hidden;
-        position: relative;
-        .table-search{
-        }
-        .operate{
-            margin-top: 10px;
-            padding: 15px;
-            border: 1px solid #dcdee2;
-            border-radius: 3px;
-        }
-        .main-table{
-            margin-top: 10px;
-        }
-        .table-bottom{
-            position: absolute;
-            height: 52px;
-            padding: 10px;
-            width: 100%;
-            left: 0;
-            bottom: 0;
-            background-color: white;
-            z-index: 4;
-        }
-    }
-/*#print_style table{border:2px #000 solid;border-collapse: collapse; display: block;} 
-#print_style th,#print_style td{border: 1px solid #000;} 
-#print_style .noBorder th,#print_style .noBorder td{border:none;} 
-#print_style .noRTLBorder th,#print_style .noRTLBorder td{border-right:none;border-top:none;border-left:none;} 
-#print_style .noRLBorder th,#print_style .noRLBorder td{border-right:none;border-left:none;}
-#print_style th,#print_style td {padding: 2px; line-height: 16px; text-align: center; vertical-align: middle;font-size:12px; } 
-#print_style td{text-align: left;} 
-#print_style .text-center,#print_style .text-center th,#print_style .text-center td{text-align:center;} 
-#print_style .text-right,#print_style .text-right th,#print_style .text-right td{text-align:right;}
-#print_style .w100{width:100px;} 
-#print_style .w110{width:110px;} 
-#print_style .w130{width:130px;} 
-#print_style .w200{ width:200px;} 
-#print_style .h30{ height:30px;line-height:25px;} 
-#print_style .w30{width:30px;} 
-#print_style .w70{width:70px;} 
-#print_style .w80{width:80px;} 
-#print_style .w400{width:700px;}
-#print_style .text-left{text-align:left;}*/
 
-/*table{border:2px #000 solid;border-collapse: collapse;} 
-th,td{border: 1px solid #000;} 
-.noBorder th,.noBorder td{border:none;} 
-.noRTLBorder th,.noRTLBorder td{border-right:none;border-top:none;border-left:none;} 
-.noRLBorder th,.noRLBorder td{border-right:none;border-left:none;}
-th,td {padding: 2px; line-height: 16px; text-align: center; vertical-align: middle;font-size:13px; } 
-td{text-align: left;} .text-center,.text-center th,.text-center td{text-align:center;} 
-.text-right,.text-right th,.text-right td{text-align:right;}
-.w100{width:100px;} 
-.w110{width:110px;} 
-.w130{width:130px;} 
-.w200{ width:200px;} 
-.h30{ height:30px;line-height:25px;} 
-.w30{width:30px;} 
-.w70{width:70px;} 
-.w80{width:80px;}
-.text-left{text-align:left;} */
 </style>
 
 

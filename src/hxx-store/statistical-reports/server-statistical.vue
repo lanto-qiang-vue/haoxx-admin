@@ -18,7 +18,7 @@
             <tr>
                 <!--<td style="min-width:120px;height:30px;"></td>-->
                 <td style="min-width:120px; height:30px;padding: 0 18px;">合计：</td>
-                <td style="min-width:120px; height:30px;padding: 0 18px;" v-for="site in computedMoney">{{site.money}}{{site.unit}}</td>
+                <td style="min-width:120px; height:30px;padding: 0 18px;text-align: right;" v-for="site in computedMoney">{{site.money}}{{site.unit}}</td>
                 
             </tr>
         </table>
@@ -44,18 +44,20 @@ export default {
                 // },
                 {title: '维修技师', key: 'FOLLOW_PERSON', sortable: true, minWidth: 120,
                 },
-                {title: '进厂台次', key: 'REPAIR_IN', sortable: true, minWidth: 120,
-                    
+                {title: '进厂台次', key: 'REPAIR_IN', sortable: true, minWidth: 120,align:'right',
+                    render: (h, params) => h('span', this.formatMoney(params.row.REPAIR_IN))
                 },
-                {title: '结算台次', key: 'REPAIR_TYPE', sortable: true, minWidth: 120},
-                {title: '结算金额', key: 'SUM_MONEY', sortable: true, minWidth: 120,
+                {title: '结算台次', key: 'REPAIR_TYPE', sortable: true, minWidth: 120,align:'right',
+                    render: (h, params) => h('span', this.formatMoney(params.row.REPAIR_TYPE))
+                },
+                {title: '结算金额', key: 'SUM_MONEY', sortable: true, minWidth: 120,align:'right',
                     render: (h, params) => h('span', this.formatMoney(params.row.SUM_MONEY)||0)
                     
                 },
-                {title: '成本', key: 'OperatingCost', sortable: true, minWidth: 120,
+                {title: '成本', key: 'OperatingCost', sortable: true, minWidth: 120,align:'right',
                     render: (h, params) => h('span', this.formatMoney(params.row.OperatingCost)||0)
                 },
-                {title: '利润', key: 'PCost', sortable: true, minWidth: 120,
+                {title: '利润', key: 'PCost', sortable: true, minWidth: 120,align:'right',
                     render: (h, params) => h('span', this.formatMoney(params.row.PCost)||0)
                 },
             ],
@@ -141,12 +143,12 @@ export default {
                     case 'REPAIR_IN':
                     case 'REPAIR_TYPE':
                         obj.unit='台';
-                        obj.money=siteMoney[i];
+                        obj.money=this.formatMoney(siteMoney[i]);
                         this.computedMoney.push(obj);
                     break;
                     default : 
                         obj.unit='元';
-                        obj.money=siteMoney[i];
+                        obj.money=this.formatMoney(siteMoney[i]);
                         this.computedMoney.push(obj);
                 }
             }
