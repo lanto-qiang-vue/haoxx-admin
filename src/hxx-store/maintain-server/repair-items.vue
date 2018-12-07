@@ -583,56 +583,7 @@
           for (var i = 0; i < data.children.length; i++) {
             this.machine1(data.children[i]);
           }
-          data['render']= (h, { root, node, data }) => {
-            return h('span', {
-              style: {
-                cursor: 'pointer'
-              },
-              on: {
-                click: ()=>{
-                  // console.log('ios-folder-outline', [data])
-                  this.getnode([data])
-                }
-              }
-            },[
-                h('Icon', {
-                  props: {
-                    type: 'ios-folder-outline',
-                    color: '#4A90E2'
-                  },
-                  style: {
-                    marginRight: '8px'
-                  }
-                }),
-                h('span', data.title)
-              ])
-          }
         } else {
-          data['render']= (h, { root, node, data }) => {
-            return h('span',{
-              style: {
-                cursor: 'pointer'
-              },
-              on: {
-                click: ()=>{
-                  // console.log('ios-paper-outline', [data])
-                  this.getnode([data])
-                }
-              }
-            }, [
-              h('Icon', {
-                props: {
-                  type: 'ios-paper-outline',
-                  color: '#4A90E2'
-                },
-                style: {
-                  marginRight: '8px'
-                }
-              }),
-              h('span', data.title)
-            ])
-
-          }
         }
         return data;
       },
@@ -814,7 +765,7 @@
     border: 1px solid #dcdee2;
     background-color: white;
     .split-pane {
-      padding: 10px;
+      /*padding: 10px;*/
       height: 100%;
       overflow: auto;
       position: relative;

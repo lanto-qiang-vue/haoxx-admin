@@ -221,7 +221,7 @@
           this.timer = setTimeout(function () {
             self.tableHeight = commonTable.offsetHeight -
               commonTable.querySelector(".table-search").offsetHeight -
-              commonTable.querySelector(".operate").offsetHeight - 10 -
+              commonTable.querySelector(".operate").offsetHeight -
               commonTable.querySelector(".table-bottom").offsetHeight;
             commonTable.style.opacity = 1
             // self.windowInnerHeight= window.innerHeight

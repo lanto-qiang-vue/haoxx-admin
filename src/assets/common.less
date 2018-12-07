@@ -6,8 +6,8 @@
 //@font-size-small: 14px;
 //@btn-font-size: 14px;
 //@tag-font-size: 14px;
-@table-td-hover-bg: #bfe9ff;
-@table-td-highlight-bg: #bfe9ff;
+@table-td-hover-bg: #e6f7ff;
+@table-td-highlight-bg: #e6f7ff;
 .ivu-table-small{
   font-size: 12px;
 }
@@ -22,7 +22,9 @@
   padding: 0 16px;
   background-color: @primary-color;
   height: auto;
+  border: 0;
   .ivu-modal-header-inner{
+    display: block;
     line-height: 40px;
     height: 40px;
     color: white;
@@ -86,7 +88,7 @@
           >div{
             width: 100%;
             padding: 0 20px;
-            overflow: hidden;
+            overflow: visible;
           }
         }
         .ivu-modal-footer{
@@ -103,6 +105,9 @@
 }
 
 .full-height{
+  >.ivu-modal-mask{
+    background-color: white;
+  }
   >.ivu-modal-wrap{
     >.ivu-modal{
       height: 100%;
@@ -135,23 +140,7 @@
   }
 }
 
-.modal-tabs{
-  height: 100%;
-  .ivu-tabs-bar{
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 1;
-  }
-  .ivu-tabs-content{
-    height: 100%;
-    padding-top: 40px;
-    .ivu-tabs-tabpane{
-      overflow: auto;
-    }
-  }
-}
+
 
 .detail-form{
   .ivu-form-item{
@@ -188,8 +177,8 @@
   .ivu-form-item{
     display: inline-block;
     vertical-align: top;
-    width: 250px;
-    margin: 0 10px 6px 0;
+    width: 280px;
+    margin: 0 10px 16px 0;
     position: relative;
     .ivu-form-item-label{
       float: none;
@@ -211,12 +200,43 @@
   }
 }
 
+.ivu-form .ivu-form-item-label{
+  color: #4a4a4a;
+}
+
+.modal-tabs{
+  height: 100%;
+  overflow: hidden!important;
+  .ivu-tabs-bar{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1;
+  }
+  .ivu-tabs-content{
+    height: 100%;
+    padding-top: 40px;
+    .ivu-tabs-tabpane{
+      overflow: auto;
+    }
+  }
+}
+
 .btn() {
   height: 32px;
   line-height: 32px;
   > span{
     line-height: 30px;
     vertical-align: text-bottom;
+  }
+  &-small {
+    height: 26px;
+    line-height: 24px;
+    padding: 0 15px;
+    > span{
+      line-height: 24px;
+    }
   }
 }
 .button-variant(@color; @background; @border) {
