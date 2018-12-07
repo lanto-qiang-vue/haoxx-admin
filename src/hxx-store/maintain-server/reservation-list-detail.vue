@@ -14,7 +14,7 @@
     :transition-names="['', '']"
   >
     <modal-title slot="header" title="维修服务预约" :state="titleMsg" @clickBack="showModal=false"></modal-title>
-    <div style="height: 100%;overflow: auto; padding: 30px 0;">
+    <div>
       <!--<div class="status">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;({{titleMsg}})</div>-->
       <!--<Collapse v-model="collapse">
         <Panel name="1">基本信息-->
@@ -65,7 +65,7 @@
             </FormItem>
         </Form>
         <!--<Form ref="formInline"  slot="content" :label-width="80">
-            
+
         </Form>-->
         <!--</Panel>
       </Collapse>-->

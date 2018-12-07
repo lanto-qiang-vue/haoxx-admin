@@ -20,7 +20,7 @@
                         </FormItem>
                         <FormItem label="储值卡号:" v-if="disFlag">
                             <span>{{shoukuanData.MEMBER_CARD_NO}}</span>
-                            
+
                         </FormItem>
                         <FormItem label="更换储值卡:" v-if="disFlag">
                             <Button type="primary" @click="showCard=Math.random();">更换</Button>
@@ -49,7 +49,7 @@
                         </FormItem>
                         <FormItem label="合计优惠金额:">
                             <span>{{shoukuanSearch.LESS_MONEY}}元</span>
-                            
+
                         </FormItem>
                         <FormItem label="合计应收金额:">
                             <span>{{shoukuanSearch.SUM_MONEY}}元</span>
@@ -71,13 +71,13 @@
                             <Tooltip content="功能正在完善中" placement="top">
                                 <Button  type="primary" >微信支付</Button>
                             </Tooltip>
-                            
+
                         </FormItem>
                         <FormItem label="短信账单收款:">
                             <Tooltip content="功能正在完善中" placement="top">
                                 <Button  type="primary" >短信账单收款</Button>
                             </Tooltip>
-                            
+
                         </FormItem>
                         <FormItem label="其他方式:" prop="PAYMENT1">
                             <Select v-model="shoukuanSearch.PAYMENT1" placeholder="" style="min-width: 250px;">
@@ -116,7 +116,7 @@
                 <Button type="primary" @click="savePay('shoukuanSearch')" style="margin-right: 10px;">收款</Button>
                 <Button @click="showShouKuan=false;" style="margin-right: 10px;">取消</Button>
             </div>
-            
+
         </Modal>
 </template>
 
@@ -134,21 +134,21 @@ export default {
                     if (value) {
                         callback();
                     }else{
-                            
+
                         callback(new Error('必选'));
                     }
              }else{
-                    
+
                     if (!value) {
                         callback();
                     }else{
                         callback(new Error('请选择是否开具发票'));
                     }
              }
-            
+
         };
         return{
-            
+
             single:false,//是否选择开发票
             isInvoice:{
                 "INVOICE_NO":'',
@@ -195,9 +195,9 @@ export default {
                     { required: true, message: '必填',},
                     { validator: validatePass, trigger: 'change'},
                 ],
-                
+
             },
-            
+
             payModeData:[],
             timer:null,
             disFlag:true,
@@ -215,7 +215,7 @@ export default {
             var arr=[];
             for(let i in this.payModeData){
                 if(this.payModeData[i].order==7||this.payModeData[i].order==8){
-                    
+
                 }else{
                     arr.push(this.payModeData[i]);
                 }
@@ -265,8 +265,8 @@ export default {
         },
     },
     mounted() {
-       
-        
+
+
     },
     computed:{
         cardStateArr(){
@@ -284,7 +284,7 @@ export default {
                     }
                 }).then(res => {
                     if (res.success === true) {
-                        
+
                         for(let i in res.data){
                             if(this.shoukuanSearch.hasOwnProperty(i)){
                                 this.shoukuanSearch[i]=res.data[i];
@@ -295,14 +295,14 @@ export default {
 
                         this.showCardData.MEMBER_TYPE=res.data['MEMBER_TYPE'];
                         this.showCardData.MEMBER_CARD_STATUS=res.data['MEMBER_CARD_STATUS'];
-                        
+
                     }
                 })
         },
         //保存数据
         savePay(name){
             if(this.shoukuanSearch['IS_GIVE_INVOICE']=="10041001"){
-                
+
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                             this.$refs["isInvoice"].validate((valid) => {
@@ -329,7 +329,7 @@ export default {
                                         for(let i in this.isInvoice){
                                             commitData[i]=this.isInvoice[i];
                                         }
-                                        
+
                                         this.axios.request({
                                             url: '/tenant/repair/ttrepairworkorder/savePay',
                                             method: 'post',
@@ -351,15 +351,15 @@ export default {
                                                     this.$Modal.confirm({
                                                         title:"系统提示!",
                                                         content:res.Exception.message,
-                                                        
+
                                                     })
-                                                }   
-                                                
+                                                }
+
                                             }
                                         })
                                 }
                             });
-                            
+
                     }
                 });
             }else{
@@ -384,8 +384,8 @@ export default {
                         for(let key in commitData){
                             commitData[key]=this.shoukuanSearch[key];
                         }
-                        
-                        
+
+
                         this.axios.request({
                             url: '/tenant/repair/ttrepairworkorder/savePay',
                             method: 'post',
@@ -407,16 +407,16 @@ export default {
                                     this.$Modal.confirm({
                                         title:"系统提示!",
                                         content:res.Exception.message,
-                                        
+
                                     })
-                                }   
+                                }
                             }
-                        }) 
+                        })
                     }
                 });
-                
+
             }
-            
+
         },
         getAccountData(val){
             this.axios.request({
@@ -489,7 +489,7 @@ export default {
                         var s = ' target="_blank" ';//定义一个属性，让其在打开支付界面时，重新打开一个浏览器窗口
                         var first = strHtml.substring(0,6);
                         var last = strHtml.substring(6,strHtml.length);
-                        var newStr = first + s + last; 
+                        var newStr = first + s + last;
                         if(strHtml.indexOf('商家未签约') >= 0){
                             this.$Modal.confirm({
                                 title:"系统提示!",
@@ -497,7 +497,7 @@ export default {
                             })
                         }else{
                             console.log(newStr)
-                            
+
                             //将接口返回的html代码直接添加到页面上
                             var bodyobj=document.body;
                             var oDiv = document.createElement("div");
@@ -511,16 +511,16 @@ export default {
                                 var obj=document.getElementById('xxx');
                                 document.body.removeChild(obj);
                             },500);
-                            
+
                             this.insertData();
                         }
                     }
-                }) 
+                })
             }else{
                 this.$Modal.confirm({
                     title:"系统提示!",
                     content:'使用支付宝支付金额不能小于或等于0元,请重新确认支付金额是否正确！',
-                    
+
                 })
             }
 
@@ -558,7 +558,7 @@ export default {
                         },2000);
                     }
                 }
-            }) 
+            })
         },
         //请求状态--------
         getStatus(){
@@ -580,7 +580,7 @@ export default {
                     if(res.data){
 
                         var repairStatus = res.data[0].STATUS;
-                        
+
                         if(repairStatus == '10201005' || repairStatus == 10201005){
                             window.clearInterval(this.timer);
                             this.showShouKuan=false;
@@ -588,7 +588,7 @@ export default {
                         }
                     }
                 }
-            }) 
+            })
         },
         //界面窗口变化
             visibleChange(status){
@@ -599,7 +599,7 @@ export default {
                 }
             },
 
-    
+
     }
 }
 </script>
@@ -610,34 +610,7 @@ export default {
         width: 200px;
         margin-right: 10px;
     }
-    .common-table{
-        padding: 10px;
-        background-color: white;
-        height: 100%;
-        overflow: hidden;
-        position: relative;
-        .table-search{
-        }
-        .operate{
-            margin-top: 10px;
-            padding: 15px;
-            border: 1px solid #dcdee2;
-            border-radius: 3px;
-        }
-        .main-table{
-            margin-top: 10px;
-        }
-        .table-bottom{
-            position: absolute;
-            height: 52px;
-            padding: 10px;
-            width: 100%;
-            left: 0;
-            bottom: 0;
-            background-color: white;
-            z-index: 4;
-        }
-    }
+
 
 </style>
 

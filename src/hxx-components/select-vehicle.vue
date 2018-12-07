@@ -16,10 +16,10 @@
            <div class="search-block">
                 <Input  placeholder="客户名称/车牌号码/联系电话..." v-model="search.input"></Input>
            </div>
-            
+
                 <Button type="primary" @click="page=1;getList()" size="small">搜索</Button>
-                
-            
+
+
                 <Button type="primary" @click="showAddVehicle=Math.random()" size="small" style="margin-left: 20px;">添加客户车辆</Button>
         </div>
     </common-table>
@@ -140,32 +140,5 @@ import { getName, getDictGroup } from '@/libs/util.js'
         width: 200px;
         margin-right: 10px;
     }
-    .common-table{
-        padding: 10px;
-        background-color: white;
-        height: 100%;
-        overflow: hidden;
-        position: relative;
-        .table-search{
-        }
-        .operate{
-            margin-top: 10px;
-            padding: 15px;
-            border: 1px solid #dcdee2;
-            border-radius: 3px;
-        }
-        .main-table{
-            margin-top: 10px;
-        }
-        .table-bottom{
-            position: absolute;
-            height: 52px;
-            padding: 10px;
-            width: 100%;
-            left: 0;
-            bottom: 0;
-            background-color: white;
-            z-index: 4;
-        }
-    }
+
 </style>

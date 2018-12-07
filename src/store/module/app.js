@@ -10,7 +10,8 @@ export default {
     dict: getDict() || '',
     tenant: getTenant() || '',
     outStatus: getOutStatus() || 0,
-    pickingNumber: 0
+    pickingNumber: 0,
+    windowInnerHeight: window.innerHeight
   },
   getters: {
     // menuList: (state, getters, rootState) => getMenuByRouter(routers, rootState.user.access)
@@ -67,6 +68,9 @@ export default {
     },
     setPickingNumber(state,num){
       state.pickingNumber = num
+    },
+    setWindowInnerHeight(state,num){
+      state.windowInnerHeight = num
     }
   },
   actions: {
