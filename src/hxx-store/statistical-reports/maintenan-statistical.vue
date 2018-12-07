@@ -18,7 +18,7 @@
             <tr>
                 <!--<td style="min-width:120px;height:30px;"></td>-->
                 <td style="min-width:120px; height:30px;padding:0 18px;">合计：</td>
-                <td style="min-width:120px; height:30px;padding:0 18px;" v-for="site in computedMoney">{{site.money}}{{site.unit}}</td>
+                <td style="min-width:120px; height:30px;padding:0 18px;text-align: right;" v-for="site in computedMoney">{{site.money}}{{site.unit}}</td>
                 
             </tr>
         </table>
@@ -44,18 +44,23 @@ export default {
                 // },
                 {title: '维修技师', key: 'user_name', sortable: true, minWidth: 120,
                 },
-                {title: '工时金额', key: 'repair_money', sortable: true, minWidth: 120,
-                    
+                {title: '工时金额', key: 'repair_money', sortable: true, minWidth: 120,align:'right',
+                    render: (h, params) => h('span', this.formatMoney(params.row.repair_money))
                 },
-                {title: '工时', key: 'repair_time', sortable: true, minWidth: 120},
-                {title: '材料金额', key: 'amount', sortable: true, minWidth: 120,
-                    
+                {title: '工时', key: 'repair_time', sortable: true, minWidth: 120,align:'right',
+                    render: (h, params) => h('span', this.formatMoney(params.row.repair_time))
                 },
-                {title: '营业额', key: 'outputValue', sortable: true, minWidth: 120,
+                {title: '材料金额', key: 'amount', sortable: true, minWidth: 120,align:'right',
+                    render: (h, params) => h('span', this.formatMoney(params.row.amount))
                 },
-                {title: '成本', key: 'cost', sortable: true, minWidth: 120,
+                {title: '营业额', key: 'outputValue', sortable: true, minWidth: 120,align:'right',
+                    render: (h, params) => h('span', this.formatMoney(params.row.outputValue))
                 },
-                {title: '利润', key: 'pcost', sortable: true, minWidth: 120,
+                {title: '成本', key: 'cost', sortable: true, minWidth: 120,align:'right',
+                    render: (h, params) => h('span', this.formatMoney(params.row.cost))
+                },
+                {title: '利润', key: 'pcost', sortable: true, minWidth: 120,align:'right',
+                    render: (h, params) => h('span', this.formatMoney(params.row.pcost))
                 },
             ],
             tableData: [],
@@ -145,12 +150,12 @@ export default {
                     
                     case 'repair_time':
                         obj.unit='工时';
-                        obj.money=siteMoney[i];
+                        obj.money=this.formatMoney(siteMoney[i]);
                         this.computedMoney.push(obj);
                     break;
                     default : 
                         obj.unit='元';
-                        obj.money=siteMoney[i];
+                        obj.money=this.formatMoney(siteMoney[i]);
                         this.computedMoney.push(obj);
                 }
             }
