@@ -14,7 +14,7 @@
     :transition-names="['', '']"
   >
   <modal-title slot="header" title="维修开单" :state="titleMsg" @clickBack="showModal=false"></modal-title>
-    <div style="height: 100%;overflow: auto; padding-bottom: 30px;padding-top: 10px;">
+    <div>
       <!--<div class="status">({{titleMsg}})</div>-->
       <!--<Collapse v-model="collapse">
         <Panel name="1">查询-->

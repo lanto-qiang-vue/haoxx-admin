@@ -4,17 +4,18 @@
     :title="title"
     @on-visible-change="visibleChange"
     :mask-closable="false"
-    class="table-modal-detail"
-    width="80"
+    class="table-modal-detail full-height"
+    width="100%"
     :scrollable="true"
-    :transfer= "true"
+    :transfer= "false"
     :footer-hide="false"
     :transition-names="['', '']"
   >
-    <div style="height: 100%;overflow: auto; padding-bottom: 30px;padding-top:10px;">
-    <div class="status" v-show="title.length == 4">&nbsp;&nbsp;({{titleMsg}})</div>
-      <div class="status" v-show="title.length == 6">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;({{titleMsg}})</div>
-      <div class="status" v-show="title.length == 8">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;({{titleMsg}})</div>
+    <modal-title slot="header" :title="title" :state="titleMsg" @clickBack="showModal=false"></modal-title>
+    <!--<div style="height: 100%;overflow: auto; padding-bottom: 30px;padding-top:10px;">-->
+    <!--<div class="status" v-show="title.length == 4">&nbsp;&nbsp;({{titleMsg}})</div>-->
+      <!--<div class="status" v-show="title.length == 6">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;({{titleMsg}})</div>-->
+      <!--<div class="status" v-show="title.length == 8">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;({{titleMsg}})</div>-->
       <!--<div class="status">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;({{titleMsg}})</div>-->
     <Collapse v-model="collapse">
       <Panel name="1">详情
@@ -352,7 +353,7 @@
         <p style="float:left;"><span class="bold">合计金额：<span>{{returninfo.RETURN_MONEY}}</span>  </span></p>
       </div>
     <div style="height:60px;"></div>
-    </div>
+    <!--</div>-->
     <div slot="footer" style="text-align: center; font-size: 18px;">
     <!--<div v-if="tem == 2" style="float:left;">合计金额:<span style="color:red;"><b>{{retire.RETURN_MONEY}}</b></span></div>-->
     <!--<div v-if="tem == 4" style="float:left;">合计金额:<span style="color:red;"><b>{{shopinfo.SUM_MONEY}}</b></span></div>-->
@@ -367,9 +368,10 @@
   import { formatDate } from '@/libs/tools.js'
   import commonModal6 from '@/hxx-components/common-modal6.vue'
   import comboDetail from '@/hxx-components/combo-detail.vue'
+  import ModalTitle from '@/hxx-components/modal-title.vue'
 	export default {
 		name: "finance-bill",
-    components: {commonModal6,comboDetail},
+    components: {commonModal6,comboDetail,ModalTitle},
     data(){
       return{
         parts:'',

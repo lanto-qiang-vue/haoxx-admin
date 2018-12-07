@@ -155,12 +155,12 @@
       :styles="{height:'200px'}"
       title="会员卡编辑"
       class="table-modal-detail"
-      width="400"
+      width="500"
       :transfer="true"
       :transition-names="['', '']">
-      <div style="height:30px;"></div>
+      <div style="height:30%;"></div>
       <Form :model="memberData" ref="memberData" :rules="rule3" :label-width="120" class="common-form">
-        <FormItem label="会员卡编号:" style="width:100%;" prop="MEMBER_CARD_NO">
+        <FormItem label="会员卡编号:" style="width:80%;" prop="MEMBER_CARD_NO">
           <Input v-model="memberData.MEMBER_CARD_NO"></Input>
         </FormItem>
       </Form>
@@ -173,14 +173,14 @@
       v-model="stopModal"
       :mask-closable="false"
       title="会员卡停用"
-      :styles="{height:'200px'}"
-      width="400"
+      :styles="{height:'250px'}"
+      width="500"
       class="table-modal-detail"
       :transfer="true"
       :transition-names="['', '']">
       <div style="height:10px;"></div>
       <Form :model="memberData" ref="memberData2" :rules="rule4" :label-width="120" class="common-form">
-        <FormItem label="停用原因:" style="width:100%;" prop="CARD_STOP_REASON">
+        <FormItem label="停用原因:" style="width:80%;" prop="CARD_STOP_REASON">
           <Input type="textarea" v-model="memberData.CARD_STOP_REASON"></Input>
         </FormItem>
       </Form>
@@ -624,8 +624,14 @@
       },
       vehicleLook() {
         this.rows = this.objlist;
-        this.hidetype = 2;
-        this.showLook = Math.random();
+        let queryData = {
+          data:this.rows,
+          hidetype:2,
+        };
+        this.$router.push({path:'/cart-list',query:queryData});
+
+        // this.hidetype = 2;
+        // this.showLook = Math.random();
       },
       dpost() {
         var person;

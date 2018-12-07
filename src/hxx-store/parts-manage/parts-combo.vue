@@ -33,7 +33,7 @@
     :footer-hide="false"
     :transition-names="['', '']">
               <modal-title slot="header" title="配件套餐" :state="''" @clickBack="showModal=false"></modal-title>
-              <div style="height:100%;padding-top:10px;padding-bottom:30px;">
+              <!--<div style="height:100%;padding-top:10px;padding-bottom:30px;">-->
         <Collapse v-model="value1">
         <Panel name="1">
                 配件套餐基本信息
@@ -81,7 +81,7 @@
                 </div>
               </Panel>
               </Collapse>
-              </div>
+              <!--</div>-->
       <div slot="footer">
       <Button @click="addcancle()">取消</Button>
       <Button type="primary" @click="addpost('list')">保存</Button>

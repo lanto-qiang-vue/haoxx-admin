@@ -32,6 +32,12 @@
 		name:'cart-list',
 		components:{commonTable,cartModal},
     mixins: [mixin],
+    activated(){
+      let obj = this.$route.query.data;
+      this.info = obj;
+      this.hidetype = this.$route.query.hidetype;
+      this.show = Math.random();
+    },
 		data(){
 			return {
 			  cardModal:false,

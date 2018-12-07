@@ -15,9 +15,10 @@
     <modal-title slot="header" title="技术支持基本信息"  @clickBack="showModal=false"></modal-title>
     <!--<Collapse v-model="collapse">
       <Panel name="1">技术支持基本信息-->
-          <div style="padding: 30px;">
-              <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch"  :label-width="85" inline class="common-form">
-                <FormItem label="车辆型号:" prop="MODEL_NAME" >
+
+          <div>
+              <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch"  :label-width="85" inline class="detail-form">
+                <FormItem label="车辆型号:" prop="MODEL_NAME">
                     <Input type="text" :disabled='saveFlag' v-model="listSearch.MODEL_NAME" placeholder="" @on-focus="showVehicleModel=true;">
                         <Icon type="ios-search" slot="suffix" @click="showVehicleModel=true;" style="cursor:pointer;"/>
                     </Input>

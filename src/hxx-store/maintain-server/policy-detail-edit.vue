@@ -11,7 +11,7 @@
     :mask-closable="false"
     :transition-names="['', '']"
   >
-    <div style="height: 100%;overflow: auto;padding-bottom: 30px;">
+    <div >
             <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="120" class="common-form">
                 <FormItem label="保单号:" prop="GUAR_NO">
                     <Input type="text"  v-model="listSearch.GUAR_NO" placeholder=""></Input>

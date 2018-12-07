@@ -190,9 +190,11 @@
     <Modal
       :transition-names="['', '']"
       v-model="vehicleShow"
-      width="90"
+      title="选择车型"
+      width="80"
       :scrollable="true"
-      :transfer="false"
+      class="table-modal-detail"
+      :transfer="true"
       :footer-hide="true"
     >
       <vehicle-model :show="vehicleShow" @onRowClick="onRowClick"></vehicle-model>
@@ -240,6 +242,7 @@
         serviceShow: false,
         detailData: [],
         xhide:false,
+        myTransfer:true,
         store: [],
         tableData: [],
         vehicleShow: false,//选车型

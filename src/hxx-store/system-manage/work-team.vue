@@ -27,7 +27,7 @@
           :transfer="false"
           :footer-hide="false"
           :transition-names="['', '']">
-          <div style="height: 100%;overflow-x:hidden; padding-bottom: 30px;padding-top:10px;">
+          <!--<div style="height: 100%;overflow-x:hidden; padding-bottom: 30px;padding-top:10px;">-->
           <Collapse v-model="value1">
             <Panel name="1">
               基本信息
@@ -49,7 +49,7 @@
               <!--</Form>-->
             <!--</Panel>-->
           <!--</Collapse>-->
-          </div>
+          <!--</div>-->
           <div slot="footer">
             <Button @click="addcancle()">取消</Button>
             <Button type="primary" @click="addpost('list')">保存</Button>
@@ -66,13 +66,13 @@
           :transfer="false"
           :footer-hide="false"
           :transition-names="['', '']">
-          <div style="height: 100%;width:100%;overflow-x:hidden; padding-bottom: 30px;padding-top:10px;">
+          <!--<div style="height: 100%;width:100%;overflow-x:hidden; padding-bottom: 30px;padding-top:10px;">-->
           <Transfer
             :data="data1"
             :target-keys="targetKeys"
             :titles="titles"
             @on-change="handleChange1"></Transfer>
-          </div>
+          <!--</div>-->
           <div slot="footer">
             <Button @click="setcancle()">取消</Button>
             <Button type="primary" @click="setconfirm()">保存</Button>
