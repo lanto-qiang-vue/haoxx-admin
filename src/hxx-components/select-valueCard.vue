@@ -3,9 +3,9 @@
     <Modal
         v-model="showOnoff"
         title="选择储值卡"
-        width="90"
+        width="80"
         :scrollable="true"
-        :transfer= "showTransfer"
+        :transfer= "true"
         :footer-hide="false"
         :mask-closable="false"
 

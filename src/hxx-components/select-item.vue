@@ -3,10 +3,10 @@
     v-model="changeModal"
     class="table-modal-detail"
     title="维修项目选择"
-    width="90"
+    width="80"
     :mask-closable="false"
     :scrollable="true"
-    :transfer= "false"
+    :transfer= "true"
     :footer-hide="false"
     :transition-names="['', '']">
      <common-table v-model="tableData" :columns="columns2" @changePageSize="changePageSize" @changePage="changePage" :total="total"  :show="showTable"  :page="page" :showOperate="false">

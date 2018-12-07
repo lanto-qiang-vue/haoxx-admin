@@ -48,7 +48,7 @@
       :transfer="false"
     >
       <modal-title slot="header" title="储值卡充值" :state="''" @clickBack="showModal=false"></modal-title>
-      <div style="height:100%;padding-top:10px;padding-bottom:30px;">
+      <!--<div style="height:100%;padding-top:10px;padding-bottom:30px;">-->
       <Collapse value="1">
         <Panel name="1">
           基本信息
@@ -85,7 +85,7 @@
           </div>
         </Panel>
       </Collapse>
-      </div>
+      <!--</div>-->
       <div slot="footer">
         <Button type="primary" v-show="this.editType == 1 || this.formData.STATUS == '10471001'" @click="save('formData')" style="margin-left:10px;">保存</Button>
         <Button type="primary" @click="showModal = false">返回</Button>
@@ -103,7 +103,7 @@
       on-visible-change
       :transfer="false"
     >
-      <div style="height:100%;padding-top:10px;padding-bottom:30px;">
+      <!--<div style="height:100%;padding-top:10px;padding-bottom:30px;">-->
       <Collapse v-model="valueList">
         <Panel name="1">
           结算信息
@@ -169,7 +169,7 @@
           </Form>
         </Panel>
       </Collapse>
-      </div>
+      <!--</div>-->
       <div slot="footer">
         <Button type="primary" @click="doCollection('collectionData')">收款</Button>
         <Button @click="collectionModal=false">关闭</Button>

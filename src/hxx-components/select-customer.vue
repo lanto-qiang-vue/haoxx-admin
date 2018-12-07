@@ -4,9 +4,9 @@
     v-model="showOnoff"
     class="table-modal-detail"
     title="选择客户"
-    width="90"
+    width="80"
     :scrollable="true"
-    :transfer="false"
+    :transfer="true"
     :footer-hide="true"
   >
     <common-table v-model="tableData" :columns="columns" :show="showoff" :total="total" @changePage="changePage"
