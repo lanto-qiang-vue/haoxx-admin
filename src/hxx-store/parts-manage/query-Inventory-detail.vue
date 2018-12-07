@@ -120,10 +120,10 @@ export default {
                         var bgNum='+'
                         if(params.row.TYPE==10501002){
                             bgColor='red';
-                            bgNum='-'+params.row.MONEY
+                            bgNum='-'+this.formatMoney(params.row.MONEY)
                         }else{
                             bgColor='green';
-                            bgNum='+'+params.row.MONEY
+                            bgNum='+'+this.formatMoney(params.row.MONEY)
                         }
                         return h('div', {
                                 style: {
