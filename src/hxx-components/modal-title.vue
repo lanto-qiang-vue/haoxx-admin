@@ -18,8 +18,8 @@
 .modal-title{
   /*width: 100%;*/
   margin: 0 15px;
-  height: 40px;
-  padding-top: 10px;
+  height: 44px;
+  padding-top: 14px;
   *{
     vertical-align: baseline;
     line-height: 20px;

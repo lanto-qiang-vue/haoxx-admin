@@ -266,7 +266,7 @@
 
 <style lang="less" scoped>
 .common-table{
-  padding: 10px;
+  padding: 10px 20px;
   background-color: white;
   height: 100%;
   overflow: hidden;
@@ -274,7 +274,7 @@
   opacity: 0;
   transition: opacity .2s;
   .table-search{
-    /*margin-bottom: 10px;*/
+    padding-bottom: 6px;
   }
   .operate{
     /*margin-bottom: 5px;*/
@@ -282,6 +282,7 @@
     /*padding: 15px 15px 10px 15px;*/
     /*border: 1px solid #dcdee2;*/
     /*border-radius: 3px;*/
+    padding-bottom: 5px;
   }
   .operate button{
     margin: 0 5px 5px 0;
@@ -289,7 +290,7 @@
   .table-bottom{
     position: absolute;
     /*height: 52px;*/
-    padding: 10px;
+    padding: 10px 20px;
     width: 100%;
     left: 0;
     bottom: 0;

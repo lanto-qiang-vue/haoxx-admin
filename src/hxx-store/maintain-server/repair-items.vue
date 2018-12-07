@@ -566,6 +566,7 @@
         })
       },
       getnode(num) {
+        // console.log(num)
         if (num.length > 0) {
           this.TYPE = num[0].title == '全部车型' ? '全部' : num[0].title;
           this.carType = num[0].cartype;
@@ -582,8 +583,56 @@
           for (var i = 0; i < data.children.length; i++) {
             this.machine1(data.children[i]);
           }
+          data['render']= (h, { root, node, data }) => {
+            return h('span', {
+              style: {
+                cursor: 'pointer'
+              },
+              on: {
+                click: ()=>{
+                  // console.log('ios-folder-outline', [data])
+                  this.getnode([data])
+                }
+              }
+            },[
+                h('Icon', {
+                  props: {
+                    type: 'ios-folder-outline',
+                    color: '#4A90E2'
+                  },
+                  style: {
+                    marginRight: '8px'
+                  }
+                }),
+                h('span', data.title)
+              ])
+          }
         } else {
+          data['render']= (h, { root, node, data }) => {
+            return h('span',{
+              style: {
+                cursor: 'pointer'
+              },
+              on: {
+                click: ()=>{
+                  // console.log('ios-paper-outline', [data])
+                  this.getnode([data])
+                }
+              }
+            }, [
+              h('Icon', {
+                props: {
+                  type: 'ios-paper-outline',
+                  color: '#4A90E2'
+                },
+                style: {
+                  marginRight: '8px'
+                }
+              }),
+              h('span', data.title)
+            ])
 
+          }
         }
         return data;
       },
