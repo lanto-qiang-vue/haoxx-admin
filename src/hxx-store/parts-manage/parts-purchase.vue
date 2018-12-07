@@ -41,7 +41,7 @@
       :transfer="false"
       :footer-hide="false"
       :transition-names="['', '']">
-      <modal-title slot="header" title="维修项目套餐" :state="''" @clickBack="showModal=false"></modal-title>
+      <modal-title slot="header" title="配件采购" :state="''" @clickBack="showModal=false"></modal-title>
       <div style="height: 100%;overflow: auto; padding-bottom: 30px;padding-top:10px;">
       <Collapse v-model="value">
         <Panel name="1">
