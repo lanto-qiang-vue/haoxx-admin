@@ -11,7 +11,7 @@
         :footer-hide="false"
         :mask-closable="false"
         :transition-names="['', '']"
-        
+
     >
     <Collapse v-model="collapse">
       <Panel name="1">车辆基本信息
@@ -89,7 +89,7 @@
             :footer-hide="false"
             :mask-closable="false"
             :transition-names="['', '']"
-            
+
         >
             <vehicle-model @onRowClick="onRowClick" :show="showVehicleModel"></vehicle-model>
         </Modal>
@@ -111,7 +111,7 @@
                 if (!p1.test(value) || value.length !== 17) {
                     callback(new Error('大写字母和数字组成,长度不超过17位'));
                 }else{
-                        
+
                 	  callback();
                 }
             };
@@ -187,7 +187,7 @@
                     }else{
                         this.listSearch[i]=this.initList[i];
                     }
-                    
+
                 }
 
             }
@@ -207,13 +207,13 @@
                             title:"系统提示!",
                             content:"确定要保存吗？",
                             onOk:this.saveData,
-                            
+
                         })
                     } else {
                         this.$Message.error('请填写必选项...');
                     }
                 });
- 
+
             },
             saveData(){
                 this.listSearch["LEAVE_FACTORY_DATE"]=formatDate(this.listSearch["LEAVE_FACTORY_DATE"]);
@@ -230,7 +230,7 @@
                         this.$Message.info('successful')
                         this.showOnoff=false;
                         this.$emit('selectAddVehicleFun');
-                        
+
                     }else{
                         this.$Message.info(res.title);
                     }
@@ -278,32 +278,5 @@
         width: 200px;
         margin-right: 10px;
     }
-    .common-table{
-        padding: 10px;
-        background-color: white;
-        height: 100%;
-        overflow: hidden;
-        position: relative;
-        .table-search{
-        }
-        .operate{
-            margin-top: 10px;
-            padding: 15px;
-            border: 1px solid #dcdee2;
-            border-radius: 3px;
-        }
-        .main-table{
-            margin-top: 10px;
-        }
-        .table-bottom{
-            position: absolute;
-            height: 52px;
-            padding: 10px;
-            width: 100%;
-            left: 0;
-            bottom: 0;
-            background-color: white;
-            z-index: 4;
-        }
-    }
+
 </style>

@@ -266,7 +266,7 @@
 
 <style lang="less" scoped>
 .common-table{
-  padding: 10px 20px;
+  padding: 0 20px;
   background-color: white;
   height: 100%;
   overflow: hidden;
@@ -274,6 +274,7 @@
   opacity: 0;
   transition: opacity .2s;
   .table-search{
+    padding-top: 10px;
     padding-bottom: 6px;
   }
   .operate{

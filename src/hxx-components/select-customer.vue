@@ -364,32 +364,5 @@
     margin-right: 10px;
   }
 
-  .common-table {
-    padding: 10px;
-    background-color: white;
-    height: 100%;
-    overflow: hidden;
-    position: relative;
-    .table-search {
-    }
-    .operate {
-      margin-top: 10px;
-      padding: 15px;
-      border: 1px solid #dcdee2;
-      border-radius: 3px;
-    }
-    .main-table {
-      margin-top: 10px;
-    }
-    .table-bottom {
-      position: absolute;
-      height: 52px;
-      padding: 10px;
-      width: 100%;
-      left: 0;
-      bottom: 0;
-      background-color: white;
-      z-index: 4;
-    }
-  }
+
 </style>
