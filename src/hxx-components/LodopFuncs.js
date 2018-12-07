@@ -8,24 +8,24 @@ function needCLodop(){
 	if (ua.match(/iPhone|iPod/i) != null) return true;
 	if (ua.match(/Android/i) != null) return true;
 	if (ua.match(/Edge\D?\d+/i) != null) return true;
-	
+
 	var verTrident=ua.match(/Trident\D?\d+/i);
 	var verIE=ua.match(/MSIE\D?\d+/i);
 	var verOPR=ua.match(/OPR\D?\d+/i);
 	var verFF=ua.match(/Firefox\D?\d+/i);
 	var x64=ua.match(/x64/i);
-	if ((verTrident==null)&&(verIE==null)&&(x64!==null)) 
+	if ((verTrident==null)&&(verIE==null)&&(x64!==null))
 		return true; else
 	if ( verFF !== null) {
 		verFF = verFF[0].match(/\d+/);
 		if ((verFF[0]>= 41)||(x64!==null)) return true;
-	} else 
+	} else
 	if ( verOPR !== null) {
 		verOPR = verOPR[0].match(/\d+/);
 		if ( verOPR[0] >= 32 ) return true;
-	} else 
+	} else
 	if ((verTrident==null)&&(verIE==null)) {
-		var verChrome=ua.match(/Chrome\D?\d+/i);		
+		var verChrome=ua.match(/Chrome\D?\d+/i);
 		if ( verChrome !== null ) {
 			verChrome = verChrome[0].match(/\d+/);
 			if (verChrome[0]>=41) return true;
@@ -77,13 +77,13 @@ export const getLodop=function(oOBJECT,oEMBED){
                         return;
             } else {
 
-	         if (CLODOP.CVERSION<"3.0.2.9") { 
+	         if (CLODOP.CVERSION<"3.0.2.9") {
 			if (isIE) obj("系统提示",strCLodopUpdate); else
             alertStr=strCLodopUpdate+alertStr;
             obj("系统提示",alertStr);
          };
 		 if (oEMBED && oEMBED.parentNode) oEMBED.parentNode.removeChild(oEMBED);
-		 if (oOBJECT && oOBJECT.parentNode) oOBJECT.parentNode.removeChild(oOBJECT);	
+		 if (oOBJECT && oOBJECT.parentNode) oOBJECT.parentNode.removeChild(oOBJECT);
 	    };
         } else {
             var is64IE  = isIE && (navigator.userAgent.indexOf('x64')>=0);
@@ -105,18 +105,21 @@ export const getLodop=function(oOBJECT,oEMBED){
                  if (navigator.userAgent.indexOf('Chrome')>=0){
                     alertStr=strHtmChrome+alertStr;
                     obj("系统提示",alertStr);
-                 } 
+                 }
                  if (navigator.userAgent.indexOf('Firefox')>=0){
                     alertStr=strHtmFireFox+alertStr;
                     obj("系统提示",alertStr);
                  }
-                     
+
                  if (is64IE) obj("系统提示",strHtm64_Install); else
                  if (isIE)    obj("系统提示",strHtmInstall);   else{
                     alertStr=strHtmInstall+alertStr;
                     obj("系统提示",alertStr);
                  }
-                     
+
+              Modal.confirm({
+                title:"请耐心等待打印服务启动"
+              })
                  return LODOP;
             };
         };
@@ -131,6 +134,9 @@ export const getLodop=function(oOBJECT,oEMBED){
         };
         //===如下空白位置适合调用统一功能(如注册语句、语言选择等):===
         //===========================================================
+      Modal.confirm({
+        title:"请耐心等待打印服务启动"
+      })
         return LODOP;
     } catch(err) {obj("getLodop出错:"+err);};
 };
