@@ -16,7 +16,7 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="primary" v-if="accessBtn('add')" @click="add()">新增</Button>
+      <Button type="success" v-if="accessBtn('add')" @click="add()">新增</Button>
       <Button type="info" v-if="accessBtn('edit')" :disabled="cando" @click="edit()">修改</Button>
       <Button type="error" v-if="accessBtn('ban')" :disabled="cando" @click="remove()">作废</Button>
     </div>

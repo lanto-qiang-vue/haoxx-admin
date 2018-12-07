@@ -34,7 +34,7 @@
     <div slot="operate">
       <Button type="primary" :disabled="!detailData" @click="edit">查看/编辑</Button>
       <Button type="success" :disabled="!detailData || detailData.CHECK_STATUS != '10351002'" @click="showRecordInfo">
-        添加电子健康档案账号
+        新增电子健康档案账号
       </Button>
       <Button type="error" v-show="!detailData || detailData.CHECK_STATUS!='10351004'"
               :disabled="!detailData || detailData.CHECK_STATUS != '10351002'" @click="updateCheckStatus">门店停用
@@ -46,7 +46,7 @@
       <Button type="primary" :disabled="canReset" @click="resetStore">重置健康档案账号</Button>
     </div>
 
-    <Modal v-model="showAddModal" @on-visible-change="visibleChange" title="添加电子健康档案账号" :width="400">
+    <Modal v-model="showAddModal" @on-visible-change="visibleChange" title="新增电子健康档案账号" :width="400">
       <Form ref="form" :rules="ruleValidate" :model="recordInfo" :label-width="80">
         <FormItem label="门店名称">
           <span>{{storeName}}</span>

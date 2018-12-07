@@ -10,12 +10,12 @@
               <DatePicker v-model="search.ACCOUNT_TIME_lte" format="yyyy-MM-dd" type="date" placeholder="结束日期" style="width: 120px;margin-left: 5px;"></DatePicker>
               <Button type="primary" @click="page=1;getList()" style="margin-left: 5px;">搜索</Button>
           </FormItem>
-          
+
        </Form>
-      
+
     </div>
     <div slot="operate">
-      <Button type="primary" v-if="" @click="selectPick">新增</Button>
+      <Button type="success" v-if="" @click="selectPick">新增</Button>
       <Button type="info" v-if="" @click="editButton">查看详情</Button>
     </div>
     <!--详情-->
@@ -42,19 +42,19 @@ export default {
                 {title: '车型信息', key: 'mODEL_NAME', sortable: true, minWidth: 150,
                 },
                 {title: '申请人', key: 'aPPLY_PERSON', sortable: true, minWidth: 150,
-                    
+
                 },
                 {title: '故障呈现', key: 'fAULT_INFO', sortable: true, minWidth: 150},
                 {title: '故障类型', key: 'fAULT_TYPE', sortable: true, minWidth: 120,
-                    
+
                 },
                 {title: '备注', key: 'rEMARK', sortable: true, minWidth: 120,tooltip:true
-                    
+
                 },
                 {title: '技术答复', key: 'fAULT_ANSWER', sortable: true, minWidth: 120,tooltip:true,
                 },
                 {title: '答复时间', key: 'aNSWER_TIME', sortable: true, minWidth: 120,
-                    
+
                 },
                 {title: '状态', key: 'sTATE', sortable: true, minWidth: 100,
                     render: (h, params) => {
@@ -89,12 +89,12 @@ export default {
       }
     },
     computed:{
-        
+
     },
     mounted () {
       this.getList();
       this.showTable= Math.random();
-      
+
     },
     methods:{
         //获取列表值-----
@@ -125,7 +125,7 @@ export default {
             for(var i in this.search){
                 this.search[i]= ''
             }
-            
+
             this.page=1;
             this.getList();
         },

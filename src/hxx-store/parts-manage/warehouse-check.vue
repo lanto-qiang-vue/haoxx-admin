@@ -13,12 +13,12 @@
                   :key="item.code" :value="item.code">{{item.name}}</Option>
         </Select>
       </div>
-      
+
       <Button type="primary" @click="page=1;getList()">搜索</Button>
     </div>
     <div slot="operate">
-      <Button type="primary" v-if="accessBtn('add')" :disabled="buttonStateArr.add"  @click="selectPick">新增</Button>
-      
+      <Button type="success" v-if="accessBtn('add')" :disabled="buttonStateArr.add"  @click="selectPick">新增</Button>
+
       <Button type="error" v-if="accessBtn('ban')" :disabled="buttonStateArr.ban" @click="doBantitle">作废</Button>
       <Button type="info" v-if="accessBtn('edit')" :disabled="buttonStateArr.edit" @click="editButton">修改/查看</Button>
     </div>
@@ -50,10 +50,10 @@ export default {
                 },
                 {title: '盘点日期', key: 'CHECK_DATE', sortable: true, minWidth: 150,
                     render: (h, params) => h('span', params.row.CHECK_DATE.substr(0, 10))
-                
+
                 },
                 {title: '盘点人', key: 'CHECK_PERSON', sortable: true, minWidth: 100,
-                    
+
                 },
                 {title: '状态', key: 'STATUS', sortable: true, minWidth: 150,
                     render: (h, params) => h('span', getName(this.allCheckStatus, params.row.STATUS))
@@ -62,10 +62,10 @@ export default {
                     render: (h, params) => h('span', getCreate(this.$store.state.app.tenant, params.row.CREATER))
                 },
                 {title: '备注', key: 'REMARK', sortable: true, minWidth: 100,
-                    
+
                 },
                 {title: '盘点单号', key: 'CHECK_NO', sortable: true, minWidth: 150,
-                    
+
                 },
             ],
             tableData: [],
@@ -95,7 +95,7 @@ export default {
         getCheckType(){
             return getDictGroup(this.$store.state.app.dict, '1043');
         },
-        
+
     },
     mounted () {
       this.getList();
@@ -160,9 +160,9 @@ export default {
                 }
             }else{
                 for(let i in this.buttonStateArr){
-                    
+
                     this.buttonStateArr[i]= false;
-                    
+
                 }
             }
             this.buttonStateArr.edit=false;
@@ -196,7 +196,7 @@ export default {
                 title:"系统提示!",
                 content:"确定要作废吗？",
                 onOk:this.doBan,
-                
+
             })
         },
         doBan(){

@@ -20,7 +20,7 @@
                 <Button type="primary" @click="page=1;getList()" size="small">搜索</Button>
 
 
-                <Button type="primary" @click="showAddVehicle=Math.random()" size="small" style="margin-left: 20px;">添加客户车辆</Button>
+                <Button type="success" @click="showAddVehicle=Math.random()" size="small" style="margin-left: 20px;">新增客户车辆</Button>
         </div>
     </common-table>
 

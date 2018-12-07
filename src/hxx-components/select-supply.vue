@@ -25,7 +25,7 @@
             <!--<Icon type="ios-undo" size="24"/>-->
           <!--</Button>-->
         </ButtonGroup>
-        <Button style="margin-left:100px;" type="info" @click="goTo">添加供应商</Button>
+        <Button style="margin-left:100px;" type="info" @click="goTo">新增供应商</Button>
       </div>
     </common-table>
   </Modal>

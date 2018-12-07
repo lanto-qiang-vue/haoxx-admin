@@ -1,8 +1,8 @@
 <template>
   <Split v-model="split" :min="0.1" :max="0.5" class="split">
     <div slot="left" class="split-pane">
-      <Button type="primary" @click="workshop()" style="margin-left:5px;" v-if="accessBtn('add_shop')">添加车间</Button>
-      <Button type="primary" @click="addwork()" :disabled="canadd" style="margin-left:5px;" v-if="accessBtn('add_class')">添加班组</Button>
+      <Button type="success" @click="workshop()" style="margin-left:5px;" v-if="accessBtn('add_shop')">新增车间</Button>
+      <Button type="success" @click="addwork()" :disabled="canadd" style="margin-left:5px;" v-if="accessBtn('add_class')">新增班组</Button>
       <Button type="info" :disabled="cando" @click="edit()" style="margin-left:5px;" v-if="accessBtn('edit')">修改</Button>
       <div
         style="width:100%;line-height:30px;border-top:1px solid black;border-bottom:1px solid black;text-align: center;margin-top:10px;">

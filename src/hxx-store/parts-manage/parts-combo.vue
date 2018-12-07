@@ -16,12 +16,12 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="primary" @click="add()" v-if="accessBtn('add')">新增</Button>
+      <Button type="success" @click="add()" v-if="accessBtn('add')">新增</Button>
       <Button type="error" :disabled="cando" @click="confirm()" v-if="accessBtn('cancel')">作废</Button>
       <Button type="info" :disabled="cando" @click="edit()" v-if="accessBtn('edit')">编辑/查看</Button>
     </div>
     <!-- 配件套餐新增 -->
-            <Modal  
+            <Modal
     v-model="showModal"
     class="table-modal-detail full-height"
     title="配件套餐"
@@ -61,7 +61,7 @@
               	套餐内配件信息
               	<div slot="content">
               	<div style="padding-bottom: 10px;">
-              	<Button type="primary" @click="changeadd()">添加</Button>
+              	<Button type="success" @click="changeadd()">新增</Button>
               	</div>
                     <Table
                     class="main-table"
@@ -158,12 +158,12 @@
                                     "on-change":(e)=>{
                                      this.initParts[params.index]['PART_NUM'] = e;
                                     },
-                                    
+
                                 }
                             },
                             )
                         ]);
-     
+
                     }
           },
           {title: '配件分类', key: 'TYPE_NAME', sortable: true, minWidth: 120},

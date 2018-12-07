@@ -15,7 +15,7 @@
   >
     <modal-title slot="header" title="保单管理"  @clickBack="showModal=false"></modal-title>
     <div >
-      
+
       <Collapse v-model="collapse">
         <Panel name="1">保单基本信息
             <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="120" class="common-form">
@@ -74,14 +74,14 @@
                 </FormItem>
             </Form>
         </Panel>
-      
+
         <Panel name="2">保单详细信息
             <div slot="content" style="height: 500px;">
                 <common-table v-model="tableData" :columns="columns1" :total="total" :clearSelect="clearTableSelect"
                 @changePage="changePage" @changePageSize="changePageSize" @onRowClick="onRowClick"
                  :show="showTable" :page="page" :showSearch=false >
                         <div slot="operate">
-                            <Button type="primary" v-if="accessBtn('add')" @click="showDetail1=Math.random();tableDetailData=null;" :disabled="!isButton">新增</Button>
+                            <Button type="success" v-if="accessBtn('add')" @click="showDetail1=Math.random();tableDetailData=null;" :disabled="!isButton">新增</Button>
                             <Button type="info" v-if="accessBtn('edit')" @click="showDetail1=Math.random();" :disabled="editFlag">修改/查看</Button>
                             <Button type="error" v-if="accessBtn('del')"  @click="delTableData" :disabled="delFlag">作废</Button>
                         </div>
@@ -91,9 +91,9 @@
             </div>
         </Panel>
       </Collapse>
-      
+
     </div>
-    
+
       <!--选择车型-->
       <select-vehicle :showoff="showoff" @selectCar="selectCar" :showTransfer='selectCarTransfer' class="table-modal-detail">
       </select-vehicle>
@@ -124,13 +124,13 @@
             selectCarTransfer:true,//选择车辆是否放在body
 
             tableData: [
-                
+
             ],
             page: 1,
             limit: 25,
             total: 0,
             showTable:false,
-            
+
             clearTableSelect: null,
             showModal: false,//本界面是否显示判断
             showDetail1:null,
@@ -141,7 +141,7 @@
                     render: (h, params) => h('span', getName(this.searchOrderType,params.row.TYPE))
                 },
                 {title: '保险公司', key: 'CORP_NAME', sortable: true, minWidth: 150,
-                    
+
                 },
                 {title: '购买日期', key: 'BUY_DATE', sortable: true, minWidth: 140,
                     render: (h, params) => {
@@ -170,7 +170,7 @@
                 {title: '金额', key: 'MONEY', sortable: true, minWidth: 120,align:'right',
                     render: (h, params) => h('span', this.formatMoney(params.row.MONEY))
                 },
-                
+
             ],
             collapse: ['1','2'],
             listSearch:{
@@ -198,7 +198,7 @@
             ruleValidate: {
                 PLATE_NUM:[
                     { required: true, message: '车牌号码必填', },
-                    
+
                 ],
                 VEHICLE_TAX: [
                     { required: true,  message: '车船税必填',}
@@ -220,7 +220,7 @@
             tableIndex:null,//删除index
 
         }
-        
+
         },
     props:['showDetail', 'detailData'],
     watch:{
@@ -269,9 +269,9 @@
             this.tableData=[];
             this.isButton=true;
 
-            
+
         }
-        
+
       }
     },
     mounted () {
@@ -326,7 +326,7 @@
                 }
             })
 
-            
+
         },
         //监听窗口状态------
         visibleChange(status){
@@ -348,7 +348,7 @@
                     }else{
                         this.$Message.error('至少有一条明细')
                     }
-                    
+
                 }
             });
         },
@@ -372,7 +372,7 @@
         handleReset (name) {
             this.$refs[name].resetFields();
         },
-        
+
         //监听选择车辆----
         selectCar(val){
             console.log(val);
@@ -393,7 +393,7 @@
                 this.page= page
                 this.getList()
             }
-                
+
         },
         changePageSize(size){
                 this.limit= size
@@ -449,14 +449,14 @@
             }else{
                 this.tableData.push(oldValue);
             }
-            
 
-            
+
+
             //关闭清除状态
             this.computedMoney();
 
             this.closeDetail();
-            
+
         },
         //选择金额------
         selectMoney(val){
@@ -487,7 +487,7 @@
 </script>
 
 <style scoped lang="less">
-  
+
 </style>
 <style lang="less">
   .ivu-collapse-header .ivu-icon{

@@ -39,7 +39,7 @@
         </div>
         <div slot="operate">
           <Button type="primary" @click="impor()" v-if="accessBtn('export')">导入标准库</Button>
-          <Button type="primary" :disabled="isdisabled" @click="add()">新增</Button>
+          <Button type="success" :disabled="isdisabled" @click="add()">新增</Button>
           <Button type="error" :disabled="cando" @click="del()">删除</Button>
           <Button type="info" :disabled="cando" @click="edit()" v-if="accessBtn('edit')">修改</Button>
         </div>

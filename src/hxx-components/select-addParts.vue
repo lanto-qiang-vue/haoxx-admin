@@ -32,7 +32,7 @@
           </Input>
         <!-- </a> -->
         <DropdownMenu slot="list">
-                    <Tree :data="data1" @on-select-change="selectChangeTree" 
+                    <Tree :data="data1" @on-select-change="selectChangeTree"
                     style="width: 100%;max-height: 300px;overflow: auto;"></Tree>
         </DropdownMenu>
     </Dropdown>
@@ -41,7 +41,7 @@
           <FormItem style="width:30%;" label="采购指导价:">
               <InputNumber :min="0" style="width:100%;" v-model="listSearch.PURCHASE_PRICE"             :formatter="value => `${value}元`"
             :parser="value => value.replace('元', '')" placeholder="">
-                    
+
               </InputNumber>
           </FormItem>
           <FormItem label="销售建议价:" style="width:30%;" prop="SALES_PRICE">
@@ -83,7 +83,7 @@
               <Input type="text" v-model="listSearch.FORMAT" placeholder="" style="width:100%;" >
               </Input>
           </FormItem>
-          
+
           <FormItem label="三包期:" style="width:30%;">
               <InputNumber :min="0" v-model="listSearch.THREE_EXPIRATION_DATE" style="width:100%;" placeholder=""             :formatter="value => `${value}月`"
             :parser="value => value.replace('月', '')"></InputNumber>
@@ -128,7 +128,7 @@
           <FormItem label="最高库存:" style="width:30%;">
               <InputNumber  :min="0" v-model="listSearch.MAX_STOCK_NUM" style="width:100%;" placeholder=""></InputNumber>
           </FormItem>
-          
+
        </Form>
       </Panel>
     </Collapse>
@@ -151,7 +151,7 @@
         </div>
     </Modal> -->
     </div>
-    
+
     <div slot="footer">
         <Button @click="saveData('listSearch');" size="large" type="primary"  style="margin-right: 10px;">保存</Button>
 
@@ -277,7 +277,7 @@
                         "MAX_STOCK_NUM":0,
                         "TYPE_ID":'',
                     };
-                   
+
                 }
                 this.selectPartsType();
             },
@@ -314,7 +314,7 @@
                                     title:"系统提示!",
                                     content:"确定要保存吗？",
                                     onOk:this.del,
-                                    
+
                                 })
                     } else {
                         this.$Message.error('请填写必选项...');
@@ -324,7 +324,7 @@
             },
             salesPriceFun(val){
                 this.listSearch.SALES_PRICE=val;
-                
+
                 this.listSearch.NOT_CONTAINS_TAX_SALE_PRICE=(val/(this.listSearch.RATE+1)).toFixed(2);
                 this.listSearch.TAX=(this.listSearch.NOT_CONTAINS_TAX_SALE_PRICE*this.listSearch.RATE).toFixed(2);
             },
@@ -333,7 +333,7 @@
                 this.listSearch.TAX=(this.listSearch.NOT_CONTAINS_TAX_SALE_PRICE*this.listSearch.RATE).toFixed(2);
             },
             del(){
-              //这里是添加操作 就服你名字都不换....社会我鑫哥....人狠话不多....
+              //这里是新增操作 就服你名字都不换....社会我鑫哥....人狠话不多....
                 this.axios.request({
                     url: '/tenant/basedata/partinfo/save',
                     method: 'post',
@@ -370,7 +370,7 @@
                         data[i]["title"]=data[i].nodeName;
                         this.getNameFun(data[i].children);
                     } else {
-                        
+
                     }
                 }
                 this.data1=data;

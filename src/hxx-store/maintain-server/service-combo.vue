@@ -22,7 +22,7 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="primary" @click="add()" v-if="accessBtn('add')">新增</Button>
+      <Button type="success" @click="add()" v-if="accessBtn('add')">新增</Button>
       <Button type="info" :disabled="cando" v-if="accessBtn('edit')" @click="edit()">修改</Button>
     </div>
     <Modal
@@ -75,7 +75,7 @@
             套餐内维修项目信息
             <div slot="content">
               <div style="padding-bottom:10px;">
-                <Button type="primary" @click="changeadd()">添加</Button>
+                <Button type="success" @click="changeadd()">新增</Button>
               </div>
               <Table
                 class="main-table"
@@ -277,7 +277,7 @@
       addpost(name) {
         this.$refs[name].validate((valid) => {
           if (this.selectData.length < 1) {
-            this.$Message.info("请添加维修项目");
+            this.$Message.info("请新增维修项目");
             return;
           }
           ;

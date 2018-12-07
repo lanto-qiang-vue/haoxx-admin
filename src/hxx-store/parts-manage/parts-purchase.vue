@@ -22,7 +22,7 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="primary" v-if="accessBtn('add')" @click="add">新增</Button>
+      <Button type="success" v-if="accessBtn('add')" @click="add">新增</Button>
       <Button type="success" v-if="accessBtn('check')" :disabled="canDo || list.STATUS != '10481001'" @click="check">审核</Button>
       <Button type="warning" v-if="accessBtn('recheck')" :disabled="canDo || list.STATUS != '10481002'" @click="rcheck">反审核</Button>
       <Button type="success" v-if="accessBtn('pay_money')" :disabled="canDo || list.STATUS != '10481002'" @click="payment">付款</Button>

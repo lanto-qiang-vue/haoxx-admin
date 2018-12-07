@@ -5,7 +5,7 @@
         <div slot="content">
           <Button @click="expandAll">{{expandName}}</Button>
           <Button @click="changeData" style="margin-left:10px;">刷新</Button>
-          <Button type="primary" @click="addNode" :disabled="cando" style="margin-left:10px;">添加</Button>
+          <Button type="success" @click="addNode" :disabled="cando" style="margin-left:10px;">新增</Button>
           <Button type="info" @click="editNode" :disabled="cando" style="margin-left:10px;">修改</Button>
           <Button type="error" @click="deleteNode" :disabled="cando" style="margin-left:10px;">删除</Button>
           <div style="height:10px;"></div>
@@ -221,7 +221,7 @@
           this.formData.TYPE_ID = "";
           this.formData.REMARK = "";
         }else{
-          this.$Modal.info({title:'系统提示',content:'不能再添加下一级分类了'});
+          this.$Modal.info({title:'系统提示',content:'不能再新增下一级分类了'});
         }
       },
       expandAll() {

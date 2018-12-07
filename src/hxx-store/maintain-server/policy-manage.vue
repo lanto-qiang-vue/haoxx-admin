@@ -16,8 +16,8 @@
       <Button type="primary" @click="page=1;getList()">搜索</Button>
     </div>
     <div slot="operate">
-      <Button type="primary" v-if="accessBtn('add')" @click="detailData=null,showDetail=Math.random()">新增</Button>
-      
+      <Button type="success" v-if="accessBtn('add')" @click="detailData=null,showDetail=Math.random()">新增</Button>
+
       <Button type="info" v-if="" @click="auditButton" :disabled="buttonStateArr.audit">审核</Button>
       <Button type="info" v-if="" @click="reAuditButton" :disabled="buttonStateArr.reAudit">反审核</Button>
       <Button type="error" v-if="accessBtn('del')"  @click="deleteDetailData" :disabled="buttonStateArr.ban">作废</Button>
@@ -27,7 +27,7 @@
     <policy-manage-detail class="table-modal-detail" :showDetail="showDetail"
                              :detailData="detailData" @closeDetail="closeDetail" @closeGetList="closeGetList"
       ></policy-manage-detail>
-      
+
   </common-table>
 </template>
 <script>
@@ -61,7 +61,7 @@
                 {title: '状态', key: 'STATUS', sortable: true, minWidth: 110,
                     render: (h, params) => h('span', getName(this.searchSelectOption, params.row.STATUS))
                 },
-                
+
             ],
             tableData: [],
             searchSelectOption:[],
@@ -112,7 +112,7 @@
             })
 
             this.detailData= null
-            
+
         },
         clear(){
                 for(let i in this.search){
@@ -170,7 +170,7 @@
                 title:"系统提示!",
                 content:"确定要审核吗？",
                 onOk:this.auditFun,
-                
+
             })
         },
         auditFun(){
@@ -194,7 +194,7 @@
                 title:"系统提示!",
                 content:"确定要作废吗？",
                 onOk:this.del,
-                
+
             })
         },
         del(){
@@ -237,8 +237,8 @@
             })
         },
 
-      
-      
+
+
 
     }
 	}

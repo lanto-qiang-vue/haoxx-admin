@@ -29,7 +29,7 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="primary" :disabled="cando" @click="add()">添加维修项目</Button>
+      <Button type="success" :disabled="cando" @click="add()">新增维修项目</Button>
       <Button type="error" :disabled="cando" @click="edit()">删除维修项目</Button>
     </div>
     <Modal

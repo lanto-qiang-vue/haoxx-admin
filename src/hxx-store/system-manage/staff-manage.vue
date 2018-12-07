@@ -23,7 +23,7 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="primary" @click="add()" v-if="accessBtn('add')">新增</Button>
+      <Button type="success" @click="add()" v-if="accessBtn('add')">新增</Button>
       <Button type="info" :disabled="cando" @click="edit()" v-if="accessBtn('edit')">修改</Button>
       <Button type="error" :disabled="cando" @click="remove()" v-if="accessBtn('delete')">作废</Button>
       <Button type="success" :disabled="cando" @click="reset()" v-if="accessBtn('reset_pass')">重置密码</Button>
