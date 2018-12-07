@@ -414,7 +414,7 @@
           {title: '备注', key: 'REMARK', sortable: true, minWidth:120}
         ],
         columns1: [
-          {title: '序号',  minWidth: 100,type:'index',},
+          {title: '序号',  width: 100,type:'index',},
           {title: '配件编号', key: 'PART_NO', sortable: true, minWidth: 200,},
           {title: '配件名称', key: 'NAME', sortable: true, minWidth: 150},
           {title: '数量', key: 'PART_NUM', sortable: true, minWidth: 150},
@@ -432,7 +432,7 @@
         ],
         //维修项目套餐
         columns2: [
-          {title: '序号',  minWidth: 80,type:'index',},
+          {title: '序号',  width: 70,type:'index',},
           {title: '项目套餐名称', key: 'GROUP_NAME', sortable: true, minWidth: 200,},
           {title: '套餐价格', key: 'SALES_PRICE', sortable: true, minWidth: 150},
           {title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 150},
@@ -479,7 +479,7 @@
           {title: '收款人', key: 'FOLLOW_PERSON', sortable: true, minWidth: 150},
         ],
          columns6: [
-          {title: '序号',  minWidth: 80,type:'index'},
+          {title: '序号',  width: 70,type:'index'},
           {title: '仓库', key: 'STORE_NAME', sortable: true, minWidth: 150},
           {title: '配件名称', key: 'NAME', sortable: true, minWidth: 150},
           {title: '原厂编号', key: 'FACTORY_NO', sortable: true, minWidth: 150},
@@ -494,7 +494,7 @@
           {title: '应收金额', key: 'REAL_MONEY', sortable: true, minWidth: 150},
          ],
           columns7: [
-          {title: '序号',  minWidth: 80,type:'index'},
+          {title: '序号',  width: 70,type:'index'},
           {title: '配件名称', key: 'NAME', sortable: true, minWidth: 150},
           {title: '原厂编号', key: 'FACTORY_NO', sortable: true, minWidth: 150},
           {title: '数量', key: 'PART_NUM', sortable: true, minWidth: 150},
@@ -519,7 +519,7 @@
           {title: '付款人', key: 'FOLLOW_PERSON', sortable: true, minWidth: 150}
          ],
           columns9: [
-          {title: '序号',  minWidth: 80,type:'index'},
+          {title: '序号',  width: 70,type:'index'},
           {title: '配件名称', key: 'NAME', sortable: true, minWidth: 150},
           {title: '原厂编号', key: 'FACTORY_NO', sortable: true, minWidth: 150},
           {title: '数量', key: 'PART_NUM', sortable: true, minWidth: 150},

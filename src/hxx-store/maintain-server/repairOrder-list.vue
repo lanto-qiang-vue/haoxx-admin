@@ -29,11 +29,12 @@
     <div slot="operate">
       <Button type="primary" v-if="accessBtn('add')" :disabled="buttonStateArr.add" @click="detailData=null,showDetail=Math.random()">维修开单</Button>
       <Button type="success" v-if="accessBtn('quickAdd')" @click="detailData=null,showQuickDetail=Math.random()" :disabled="buttonStateArr.quickAdd" class="button-distance">快速开单</Button>
-      <Button type="info" v-if="accessBtn('edit')"  @click="showEditFun" :disabled="buttonStateArr.edit" class="button-distance">编辑/查看</Button>
+      
       <Button type="warning" v-if="accessBtn('reFinish')" @click="reSubmitFun" :disabled="buttonStateArr.rePg" class="button-distance">反派工</Button>
       <Button type="warning"  v-if="accessBtn('reSubmit')"  @click="reFinishFun" :disabled="buttonStateArr.reFinish" class="button-distance">反完工</Button>
       <Button type="warning" v-if="accessBtn('reAccount')" @click="reAccountFun" :disabled="buttonStateArr.reAccount" class="button-distance">反结算</Button>
       <Button type="error" v-if="accessBtn('ban')"  @click="deleteDetailData" :disabled="buttonStateArr.ban" class="button-distance">作废</Button>
+      <Button type="info" v-if="accessBtn('edit')"  @click="showEditFun" :disabled="buttonStateArr.edit" class="button-distance">编辑/查看</Button>
     </div>
     <repairOrder-list-detail class="table-modal-detail" :showDetail="showDetail"
                              :detailData="detailData" :detailQuery="detailQuery" @closeDetail="closeDetail" @closeGetList="closeGetList" 
@@ -62,7 +63,7 @@
         showQuickDetail:null,//快速开单框
         columns: [
           // {type: 'selection', width: 50, fixed: 'left'},
-          {title: '序号',  minWidth: 90,align:'center', sortable: true,type:'index'
+          {title: '序号',  width: 70,align:'center', sortable: true,type:'index'
             // render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
           },
           {title: '送修人', key: 'GIVE_REPAIR_PERSON', sortable: true, minWidth: 120,

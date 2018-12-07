@@ -328,7 +328,7 @@ export default {
         //维修项目
         columns: [
           {
-            title: '序号', minWidth: 80, type: "index",
+            title: '序号', width: 70, type: "index",align:"center"
           },
           {
             title: '维修项目名称', key: 'NAME', sortable: true, minWidth: 170,
@@ -342,7 +342,7 @@ export default {
             render: (h, params) => {
               
                 let buttonContent= this.state(params.row)? '取消选择':'选择';
-                let buttonStatus= this.state(params.row)? 'warning':'primary';
+                let buttonStatus= this.state(params.row)? 'default':'warning';
                 return h('div', [
                     h('Button', {
                         props: {
@@ -704,9 +704,43 @@ export default {
                 }
             })
         },
+        saveData1(){
+            //提交维修项目套餐
+            this.axios.request({
+                url: '/tenant/repair/ttrepairworkorder/saveOrSubmit',
+                method: 'post',
+                data: {
+                data: JSON.stringify(this.listSearch),
+                items:JSON.stringify(this.selectData),
+                access_token: this.$store.state.user.token
+                }
+            }).then(res => {
+                if (res.success === true) {
+                    
+                    
+                    for(let i in res.data){
+                        this.listSearch[i]=res.data[i];
+                    }
+                    
+                    this.showAccount=true;
+                }
+            })
+        },
+        handleSubmit1 (name) {
+            this.$refs[name].validate((valid) => {
+                if (valid) {
+                    if(this.selectData.length>0){
+                        this.saveData1();
+                    }else{
+                        this.$Message.info('至少选择一个服务项目')
+                    }
+                }
+            });
+        },
         //结算按钮----------------
         handleCommit(){
-            this.showAccount=true;
+            this.handleSubmit1('listSearch');
+            
         },
         commitdata(){
             this.showAccount=false;

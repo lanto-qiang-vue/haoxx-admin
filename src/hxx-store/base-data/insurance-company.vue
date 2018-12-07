@@ -39,13 +39,17 @@
         showTable: false,
         list: '',
         columns: [
+          {
+            title: '序号', width: 70,align:'center',
+            render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
+          },
           {title: '公司编号', key: 'CORP_NO', sortable: true, minWidth: 140},
           {title: '公司名称', key: 'CORP_NAME', sortable: true, minWidth: 140},
           {title: '联系电话', key: 'TELPHONE', sortable: true, minWidth: 140},
           {title: '传真', key: 'FAX', sortable: true, minWidth: 140},
           {title: '邮箱', key: 'EMAIL', sortable: true, minWidth: 140},
           {
-            title: '状态', key: 'STATUS', sortable: true, minWidth: 140,align:'center',
+            title: '状态', key: 'STATUS', sortable: true, minWidth: 140,
             render: (h, params) => h('span', getName(this.defaultList, params.row.STATUS))
           },
         ],

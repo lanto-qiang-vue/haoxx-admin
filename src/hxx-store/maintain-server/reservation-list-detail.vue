@@ -236,13 +236,13 @@
         testSingle:false,//判断是否启用维修项目套餐
         //维修项目
         columns: [
-          {title: '序号',  minWidth: 80,type:"index",align:'center'
+          {title: '序号',  width: 70,type:"index",align:'center'
           },
           {title: '维修项目名称', key: 'NAME', sortable: true, minWidth: 180,
           },
-          {title: '标准工时', key: 'REPAIR_TIME', sortable: true, minWidth: 120},
+          {title: '标准工时', key: 'REPAIR_TIME', sortable: true, minWidth: 120,align:'right'},
           {title: '标准金额', key: 'REPAIR_MONEY', sortable: true, minWidth: 120,align:'right',},
-          {title: '油漆面数', key: 'PAINT_NUM', sortable: true, minWidth: 120},
+          {title: '油漆面数', key: 'PAINT_NUM', sortable: true, minWidth: 120,align:'right'},
           {title: '小计金额', key: 'ITEM_MONEY', sortable: true, minWidth: 120,align:'right',
             render: (h, params) => h('span', this.formatMoney(params.row.REPAIR_TIME*this.work_price+params.row.PAINT_NUM*this.paint_price))
           },
@@ -339,7 +339,7 @@
         commitItem:[],//提交选择项目
         //维修配件
         columns1: [
-          {title: '序号',  minWidth: 80,type:'index',align:'center',},
+          {title: '序号',  width: 70,type:'index',align:'center',},
           {title: '配件编号', key: 'PART_NO', sortable: true, minWidth: 140,},
           {title: '配件名称', key: 'NAME', sortable: true, minWidth: 150},
           {title: '数量', key: 'PART_NUM', sortable: true, minWidth: 100,
@@ -494,7 +494,7 @@
         getParts1:[],
         //维修项目套餐
         columns2: [
-          {title: '序号',  minWidth: 80,type:'index',align:'center',},
+          {title: '序号',  width: 70,type:'index',align:'center',},
           {title: '项目套餐名称', key: 'GROUP_NAME', sortable: true, minWidth: 180,},
           {title: '套餐价格', key: 'SALES_PRICE', sortable: true, minWidth: 120,align:'right',
               render: (h, params) => {

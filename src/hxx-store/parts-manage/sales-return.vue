@@ -24,12 +24,12 @@
     </div>
     <div slot="operate">
       <Button type="primary" v-if="accessBtn('add')" @click="add">新增</Button>
-      <Button type="info" v-if="accessBtn('edit')" :disabled="canDo" @click="edit">修改/查看</Button>
       <Button type="success" v-if="accessBtn('check')" :disabled="canDo || list.STATUS != '10481001'" @click="check">审核</Button>
       <Button type="warning" v-if="accessBtn('recheck')" :disabled="canDo || list.STATUS != '10481002'" @click="rcheck">反审核</Button>
       <Button type="success" v-if="accessBtn('pay_money')" :disabled="canDo || list.STATUS != '10481002'" @click="collection">付款</Button>
       <Button type="error" v-if="accessBtn('cancel')" :disabled="canDo || list.STATUS != '10481001'" @click="del">作废</Button>
       <Button type="primary" v-if="accessBtn('printSalesReturnDoc')" :disabled="canDo || list.STATUS == '10481001'" @click="print">打印销售单</Button>
+      <Button type="info" v-if="accessBtn('edit')" :disabled="canDo" @click="edit">修改/查看</Button>
     </div>
     <Modal
       v-model="showModal"
@@ -280,7 +280,7 @@
         },
         columns2: [
           {
-            title: '序号', key: 'STORE_NAME', minWidth: 90,align:'center',
+            title: '序号', key: 'STORE_NAME', width: 70,align:'center',
             render: (h, params) => h('span', params.index + 1)
           },
           {title: '配件名称', key: 'NAME', minWidth: 120,},
@@ -388,7 +388,7 @@
         data2: [],
         columns: [
           {
-            title: '序号', minWidth: 80,align:'center',
+            title: '序号', width: 70,align:'center',
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
           {title: '客户名称', key: 'CUSTOMER_NAME', sortable: true, minWidth: 120,},

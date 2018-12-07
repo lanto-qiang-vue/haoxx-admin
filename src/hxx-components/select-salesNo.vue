@@ -48,7 +48,7 @@
         },
         columns: [
         {
-          title: '序号', minWidth: 80,align:'center',sortable: true,
+          title: '序号', width: 70,align:'center',sortable: true,
           render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
         },
         {title: '客户名称', key: 'CUSTOMER_NAME', sortable: true, minWidth: 120},
@@ -61,15 +61,15 @@
         },
         {
           title: '合计金额', key: 'SUM_MONEY', sortable: true, minWidth: 120,align:'right',
-          render: (h, params) => h('span', params.row.SUM_MONEY.toFixed(2))
+          render: (h, params) => h('span',this.formatMoney(params.row.SUM_MONEY))
         },
         {
           title: '优惠金额', key: 'LESS_MONEY', sortable: true, minWidth: 120,align:'right',
-          render: (h, params) => h('span', params.row.LESS_MONEY.toFixed(2))
+          render: (h, params) => h('span',this.formatMoney(params.row.LESS_MONEY))
         },
         {
           title: '应收金额', key: 'REAL_MONEY', sortable: true, minWidth: 120,align:'right',
-          render: (h, params) => h('span', params.row.REAL_MONEY.toFixed(2))
+          render: (h, params) => h('span',this.formatMoney(params.row.REAL_MONEY))
         },
         {
           title: '状态', key: 'STATUS', sortable: true, minWidth: 80,

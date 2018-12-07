@@ -277,7 +277,7 @@
         columns: [
           // {type: 'selection', width: 50, fixed: 'left'},
           {
-            title: '序号', minWidth: 80,align:'center',
+            title: '序号', width: 70,align:'center',
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
           {title: '客户名称', key: 'CUSTOMER_NAME', sortable: true, minWidth: 120,},
@@ -294,7 +294,7 @@
           {title: '赠送价值', key: 'DERATE_MONEY', sortable: true, minWidth: 120,align:'right',
             render: (h, params) => h('span',this.formatMoney(params.row.DERATE_MONEY))
           },
-          {title: '总价值', key: 'SUM_MONEY', sortable: true, minWidth: 120,
+          {title: '总价值', key: 'SUM_MONEY', sortable: true, minWidth: 120,align:'right',
             render: (h, params) => h('span',this.formatMoney(params.row.SUM_MONEY))
           },
           {title: '办理人', key: 'FOLLOW_PERSON', sortable: true, minWidth: 120},

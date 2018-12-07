@@ -24,7 +24,6 @@
     </div>
     <div slot="operate">
       <Button type="primary" v-if="accessBtn('add')" @click="add">新增</Button>
-      <Button type="info" v-if="accessBtn('edit')" :disabled="canDo" @click="edit">修改/查看</Button>
       <Button type="success" v-if="accessBtn('check')" :disabled="canDo || list.STATUS != '10471001'" @click="check">
         审核
       </Button>
@@ -32,13 +31,14 @@
         反审核
       </Button>
       <Button type="success" v-if="accessBtn('collect')" :disabled="canDo || list.STATUS != '10471002'"
-              @click="collection">收款
+      @click="collection">收款
       </Button>
       <Button type="error" v-if="accessBtn('cancel')" :disabled="canDo || list.STATUS != '10471001'" @click="del">作废
       </Button>
       <Button type="primary" v-if="accessBtn('printThd')" :disabled="canDo || list.STATUS == '10471001'" @click="print">
         打印退货单
       </Button>
+      <Button type="info" v-if="accessBtn('edit')" :disabled="canDo" @click="edit">修改/查看</Button>
     </div>
     <Modal
       v-model="showModal"
@@ -126,6 +126,7 @@
       on-visible-change
       :transfer="false"
     >
+      <div style="height: 100%;overflow: auto; padding-bottom: 30px;padding-top:10px;">
       <Collapse v-model="valueList">
         <Panel name="1">
           结算信息
@@ -186,6 +187,7 @@
           </Form>
         </Panel>
       </Collapse>
+      </div>
       <div slot="footer">
         <Button type="primary" @click="doCollection('collectionData')">收款</Button>
         <Button @click="collectionModal=false">关闭</Button>
@@ -285,7 +287,7 @@
         },
         columns2: [
           {
-            title: '序号', key: 'STORE_NAME', minWidth: 80,align:'center',
+            title: '序号', key: 'STORE_NAME', width: 70,align:'center',
             render: (h, params) => h('span', params.index + 1)
           },
           {title: '仓库', key: 'STORE_NAME', sortable: true, minWidth: 120},
@@ -386,13 +388,13 @@
         data2: [],
         columns: [
           {
-            title: '序号', minWidth: 80,align:'center',
+            title: '序号', width: 80,align:'center',
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
           {title: '供应商名称', key: 'SUPPLIER_NAME', sortable: true, minWidth: 120,},
           {
             title: '退货金额', key: 'RETURN_MONEY', sortable: true, minWidth: 120,align:'right',
-            render: (h, params) => h('span', params.row.RETURN_MONEY.toFixed(2))
+            render: (h, params) => h('span', this.formatMoney(params.row.RETURN_MONEY))
           },
           {
             title: '退货日期', key: 'RETURN_DATE', sortable: true, minWidth: 120,

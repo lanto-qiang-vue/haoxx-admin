@@ -1,7 +1,7 @@
 <template>
   <div>
-    <Modal :transition-names="['', '']" v-model="show" :mask-closable="false" width="360" @on-cancel="uploadClose">
-      <p slot="header" style="color:#f60;text-align:left;">
+    <Modal :transition-names="['', '']" v-model="show" :mask-closable="false" width="400" @on-cancel="uploadClose">
+      <p slot="header" style="color:white;text-align:left;height:30px;line-height:30px;">
         <span>{{title}}</span>
       </p>
       <div style="text-align:left;">

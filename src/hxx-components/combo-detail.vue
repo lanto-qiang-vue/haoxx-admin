@@ -9,6 +9,7 @@
     :footer-hide="true"
     :transition-names="['', '']"
     >
+        <div style="height:100%;padding-top:10px;padding-bottom:30px;">
             <Table
           class="main-table"
           ref="tablesMain"
@@ -17,6 +18,7 @@
           stripe
           border
         ></Table>
+        </div>
     </Modal>
 </template>
 <script>
@@ -30,14 +32,16 @@
                 // tshow:false,
                 // tcid:'',
                 columns10: [
-                {title: '序号',  minWidth: 80,type:'index'},
+                {title: '序号',  width: 70,type:'index'},
                 {title: '维修项目编号', key: 'ITEM_NO', sortable: true, minWidth: 150},
                 {title: '维修项目名称', key: 'NAME', sortable: true, minWidth: 150},
                 {title: '项目分类', key: 'TYPE_NAME', sortable: true, minWidth: 150},
                 {title: '计费标准', key: 'CODE_DESC', sortable: true, minWidth: 150},
-                {title: '标准金额(元)', key: 'REPAIR_MONEY', sortable: true, minWidth: 150},
-                {title: '标准工时(小时)', key: 'REPAIR_TIME', sortable: true, minWidth: 150},
-                {title: '油漆面数(面)', key: 'PAINT_NUM', sortable: true, minWidth: 150},
+                {title: '标准金额(元)', key: 'REPAIR_MONEY', sortable: true, minWidth: 150,align:'right',
+                  render: (h, params) => h('span',this.formatMoney(params.row.REPAIR_MONEY))
+                },
+                {title: '标准工时(小时)', key: 'REPAIR_TIME', sortable: true, minWidth: 150,align:'right',},
+                {title: '油漆面数(面)', key: 'PAINT_NUM', sortable: true, minWidth: 150,align:'right'},
          ],
 			}
 		},

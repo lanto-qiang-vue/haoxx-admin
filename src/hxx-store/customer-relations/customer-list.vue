@@ -15,10 +15,10 @@
     </div>
     <div slot="operate">
       <Button type="primary" @click="add()" v-if="accessBtn('add')">新增</Button>
-      <Button type="info" :disabled="cando" @click="edit()" v-if="accessBtn('edit')">编辑/查看</Button>
       <Button type="error" :disabled="cando" @click="remove()" v-if="accessBtn('del')">作废</Button>
       <Button type="success" @click="lead()" v-if="accessBtn('import')">导入</Button>
       <Button type="primary" @click="expor()" v-if="accessBtn('export')">导出</Button>
+      <Button type="info" :disabled="cando" @click="edit()" v-if="accessBtn('edit')">编辑/查看</Button>
     </div>
     <!-- 添加查询修改-->
     <!-- class="table-modal-detail" -->
@@ -42,7 +42,7 @@
       return{
         cardModal:false,
         columns: [
-          {title: '序号',  minWidth: 80,align:'center',
+          {title: '序号',  width: 70,align:'center',
             render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1)
           },
            {title: '客户编号', key: 'CODE', sortable: true, minWidth: 120},

@@ -93,7 +93,7 @@ import commonTable from '@/hxx-components/common-table.vue'
 
                 columns: [
                     // {type: 'selection', width: 50, fixed: 'left'},
-                    {title: '序号',  minWidth: 80,
+                    {title: '序号',  width: 70,
                         render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
                     },
                     {title: '项目编号', key: 'ITEM_NO', sortable: true, minWidth: 150,
@@ -109,16 +109,16 @@ import commonTable from '@/hxx-components/common-table.vue'
                     {title: '标准金额', key: 'REPAIR_MONEY', sortable: true, minWidth: 120,align:'right',
                         render: (h, params) => h('span', this.formatMoney(params.row.REPAIR_MONEY))
                     },
-                    {title: '标准工时', key: 'REPAIR_TIME', sortable: true, minWidth: 120,
+                    {title: '标准工时', key: 'REPAIR_TIME', sortable: true, minWidth: 120,align:'right',
                         // render: (h, params) => h('span', params.row.ORDER_DATE.substr(0, 10))
                     },
-                    {title: '油漆面数', key: 'PAINT_NUM', sortable: true, minWidth: 120},
+                    {title: '油漆面数', key: 'PAINT_NUM', sortable: true, minWidth: 120,align:'right',},
                     {title: '发动机类型', key: 'ENGINE_TYPE_NAME', sortable: true, minWidth: 170},
                     {title: '汽车排量', key: 'CLASS_NAME', sortable: true, minWidth: 250},
                     {title: '操作', key: 'operation', sortable: true, minWidth: 120,fixed: 'right',align:'center',
                         render: (h, params) => {
                             let buttonContent= this.state(params.row)? '取消选择':'选择';
-                            let buttonStatus= this.state(params.row)? 'warning':'primary';
+                            let buttonStatus= this.state(params.row)? 'default':'warning';
                             return h('div', [
                                 h('Button', {
                                     props: {
