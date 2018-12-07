@@ -52,7 +52,7 @@
       :footer-hide="false"
       :transition-names="['', '']">
       <modal-title slot="header" title="采购退货" :state="''" @clickBack="showModal=false"></modal-title>
-      <div style="height: 100%;overflow: auto; padding-bottom: 30px;padding-top:10px;">
+      <!--<div style="height: 100%;overflow: auto; padding-bottom: 30px;padding-top:10px;">-->
       <Collapse v-model="value">
         <Panel name="1">
           基本信息
@@ -108,7 +108,7 @@
         </Button>
       </div>
       <div style="float:left;font-size:18px;">合计金额:&nbsp;<span style="color:red;">{{formData.RETURN_MONEY}}</span></div>
-      </div>
+      <!--</div>-->
       <div slot="footer">
         <Button type="primary" @click="addPost('formData')" v-show="canShow">保存</Button>
         <Button @click="showModal=false">取消</Button>
@@ -121,12 +121,11 @@
       :closable="false"
       @on-visible-change="visibleChange"
       title="收款"
-      width="90"
+      width="80"
       :scrollable="true"
       on-visible-change
-      :transfer="false"
+      :transfer="true"
     >
-      <div style="height: 100%;overflow: auto; padding-bottom: 30px;padding-top:10px;">
       <Collapse v-model="valueList">
         <Panel name="1">
           结算信息
@@ -187,7 +186,7 @@
           </Form>
         </Panel>
       </Collapse>
-      </div>
+
       <div slot="footer">
         <Button type="primary" @click="doCollection('collectionData')">收款</Button>
         <Button @click="collectionModal=false">关闭</Button>
@@ -196,9 +195,9 @@
     <Modal>
     </Modal>
     <Modal v-model="showFrame">
-      <iframe id="ifrID" src="http://www.baidu.com" frameBorder="0" width="100%" scrolling="yes" height="100%">
+      <!--<iframe id="ifrID" src="http://www.baidu.com" frameBorder="0" width="100%" scrolling="yes" height="100%">-->
 
-      </iframe>
+      <!--</iframe>-->
     </Modal>
     <select-supply @transmit="transmit" :showType="showType" :switchType="2" :refresh="refreshType"></select-supply>
     <select-purchase-no :showType="selectType" @selectCallback="selectCallback"></select-purchase-no>

@@ -3,7 +3,7 @@
     v-model="showModal"
     class="table-modal-detail"
     title="选择供应商"
-    width="90"
+    width="80"
     :mask-closable="false"
     @on-visible-change="visibleChange"
     :scrollable="true"

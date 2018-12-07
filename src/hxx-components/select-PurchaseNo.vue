@@ -3,10 +3,10 @@
     v-model="showModal"
     class="table-modal-detail"
     title="选择配件采购单"
-    width="90"
+    width="80"
     :mask-closable="false"
     :scrollable="true"
-    :transfer="false"
+    :transfer="true"
     :footer-hide="false"
     :transition-names="['', '']">
   <common-table v-model="tableData" :columns="columns" @changePageSize="changePageSize" @changePage="changePage"
