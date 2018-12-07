@@ -99,7 +99,7 @@
         },
         columns: [
           {
-            title: '序号', minWidth: 70,align:'center',
+            title: '序号', width: 70,align:'center',
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
           {title: '发票编号', key: 'INVOICE_NO', sortable: true, minWidth: 140},

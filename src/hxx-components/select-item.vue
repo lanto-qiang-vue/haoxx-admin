@@ -37,7 +37,7 @@
 		data(){
 		return{
 			         columns2: [
-          {title: '序号',  minWidth: 80,
+          {title: '序号',  width: 70,align:'center',
             render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
           },
            {title: '项目套餐编号', key: 'ITEM_NO', sortable: true, minWidth: 150},
@@ -46,15 +46,17 @@
            {title: '计费标准', key: 'CHARGE_TYPE', sortable: true, minWidth: 150,
             render: (h,params) => h('span',getName(this.counttype,params.row.CHARGE_TYPE))
            },
-           {title: '标准金额(元)', key: 'REPAIR_MONEY', sortable: true, minWidth: 150},
-           {title: '标准工时(小时)', key: 'REPAIR_TIME', sortable: true, minWidth: 150},
-           {title: '油漆面数(面)', key: 'PAINT_NUM', sortable: true, minWidth: 150},
+           {title: '标准金额(元)', key: 'REPAIR_MONEY', sortable: true, minWidth: 150,align:'right',
+             render: (h,params) => h('span',this.formatMoney(params.row.REPAIR_MONEY))
+           },
+           {title: '标准工时(小时)', key: 'REPAIR_TIME', sortable: true, minWidth: 150,align:'right'},
+           {title: '油漆面数(面)', key: 'PAINT_NUM', sortable: true, minWidth: 150,align:'right'},
            {title: '是否预设项目', key: 'IS_PREINSTALL', sortable: true, minWidth: 150,
            render: (h,params) => h('span',getName(this.isorno,params.row.IS_PREINSTALL))},
            {title: '状态', key: 'STATUS', sortable: true, minWidth: 80,
            	render: (h,params) => h('span',getName(this.statuslist,params.row.STATUS))
            },
-           {title: '操作', key: 'operation', sortable: true, minWidth: 80,fixed: 'right',
+           {title: '操作', key: 'operation', sortable: true, minWidth: 80,fixed: 'right',align:'center',
                         render: (h, params) => {
                             let buttonContent= '请选择';
                             let buttonStatus= 'warning';

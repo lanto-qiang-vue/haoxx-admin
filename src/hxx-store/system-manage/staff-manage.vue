@@ -33,7 +33,7 @@
       :mask-closable="false"
       @on-visible-change="visibleChange"
       :transition-names="['', '']">
-      <div slot="header" style="font-weight: bold;font-size: 18px;">
+      <div slot="header" style="font-weight: bold;font-size: 18px;height:35px;line-height:35px;color:white;">
         重置[<span style="color:blue;">{{title}}</span>]的登录密码
       </div>
       <Form :model="formData1" ref="list1" :rules="rule1" :label-width="120">
@@ -241,6 +241,10 @@
           ],
         },
         columns: [
+          {
+            title: '序号', width: 80,align:'center',
+            render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
+          },
           {title: '员工账号', key: 'USER_CODE', sortable: true, minWidth: 140},
           {title: '员工姓名', key: 'USER_NAME', sortable: true, minWidth: 140},
           {title: '员工角色', key: 'ROLE_NAME', sortable: true, minWidth: 140},
@@ -255,7 +259,7 @@
           },
           {title: '身份证号', key: 'CERT_NO', sortable: true, minWidth: 140},
           {
-            title: '员工账号状态', key: 'STATUS', sortable: true, minWidth: 140,align:'center',
+            title: '员工账号状态', key: 'STATUS', sortable: true, minWidth: 140,
             render: (h, params) => h('span', getName(this.statusList, params.row.STATUS))
           },
 

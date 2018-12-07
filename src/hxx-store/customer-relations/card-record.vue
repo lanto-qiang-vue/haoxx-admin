@@ -34,7 +34,7 @@
         showTable: false,
         list: '',
         columns: [
-          {title: '序号',  minWidth: 80,align:'center',sortable: true,
+          {title: '序号',  width: 70,align:'center',sortable: true,
             render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
           },
           {title: '消费日期', key: 'USE_DATE', sortable: true, minWidth: 140,
@@ -44,7 +44,7 @@
           {title: '客户名称', key: 'CUSTOMER_NAME', sortable: true, minWidth: 140},
           {title: '联系电话', key: 'MOBILE_PHONE', sortable: true, minWidth: 140},
           {title: '消费金额', key: 'USE_MONEY', sortable: true, minWidth: 140,align:'right',
-            render: (h, params) => h('span',params.row.USE_MONEY.toFixed(2))
+            render: (h, params) => h('span',this.formatMoney(params.row.USE_MONEY))
           },
           {
             title: '消费类型', key: 'RECORD_TYPE', sortable: true, minWidth: 140,align:'center',

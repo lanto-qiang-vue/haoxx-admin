@@ -40,8 +40,8 @@
         <div slot="operate">
           <Button type="primary" @click="impor()" v-if="accessBtn('export')">导入标准库</Button>
           <Button type="primary" :disabled="isdisabled" @click="add()">新增</Button>
-          <Button type="info" :disabled="cando" @click="edit()" v-if="accessBtn('edit')">修改</Button>
           <Button type="error" :disabled="cando" @click="del()">删除</Button>
+          <Button type="info" :disabled="cando" @click="edit()" v-if="accessBtn('edit')">修改</Button>
         </div>
       </common-table>
       <!-- 导入标准库使用 -->
@@ -229,7 +229,7 @@
         },
         columns: [
           {
-            title: '序号', minWidth: 80,align:'center',sortable: true,
+            title: '序号', width: 70,align:'center',sortable: true,
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
           {title: '项目编号', key: 'ITEM_NO', sortable: true, minWidth: 120},
@@ -239,14 +239,16 @@
             title: '计费标准', key: 'CHARGE_TYPE', sortable: true, minWidth: 120,
             render: (h, params) => h('span', getName(this.chargetype, params.row.CHARGE_TYPE))
           },
-          {title: '标准金额(元)', key: 'REPAIR_MONEY',align:'right', sortable: true, minWidth: 140},
+          {title: '标准金额(元)', key: 'REPAIR_MONEY',align:'right', sortable: true, minWidth: 140,
+            render: (h, params) => h('span', this.formatMoney(params.row.REPAIR_MONEY))
+          },
           {title: '标准工时(小时)', key: 'REPAIR_TIME',align:'right', sortable: true, minWidth: 140},
           {title: '油漆面数(面)', key: 'PAINT_NUM',align:'right', sortable: true, minWidth: 140},
         ],
         columns1: [
           {type: 'selection', width: 60, align: 'center'},
           {
-            title: '序号', minWidth: 80,align:'center',
+            title: '序号', width: 70,align:'center',
             render: (h, params) => h('span', (this.page2 - 1) * this.limit2 + params.index + 1)
           },
           {title: '项目名称', key: 'nodeName', sortable: true, minWidth: 120},

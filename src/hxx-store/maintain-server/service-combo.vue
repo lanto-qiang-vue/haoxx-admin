@@ -142,7 +142,7 @@
         changeModal: false,
         columns: [
           {
-            title: '序号', minWidth: 80, align: 'center',sortable: true,
+            title: '序号', width: 70, align: 'center',sortable: true,
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
           {title: '项目套餐编号', key: 'GROUP_NO', sortable: true, minWidth: 140},
@@ -168,7 +168,7 @@
         ],
         columns1: [
           {
-            title: '序号', minWidth: 80,align:'center',
+            title: '序号', width: 70,align:'center',
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
           {title: '项目套餐编号', key: 'ITEM_NO', sortable: true, minWidth: 150},

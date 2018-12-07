@@ -24,7 +24,6 @@
     </div>
     <div slot="operate">
       <Button type="primary" v-if="accessBtn('add')" @click="add">新增</Button>
-      <Button type="info" v-if="accessBtn('edit')" :disabled="canDo" @click="edit">修改/查看</Button>
       <Button type="success" v-if="accessBtn('check')" :disabled="canDo || list.STATUS != '10471001'" @click="check">
         审核
       </Button>
@@ -39,6 +38,7 @@
       <Button type="primary" v-if="accessBtn('printSalesDoc')" :disabled="canDo || list.STATUS == '10471001'"
               @click="print">打印销售单
       </Button>
+      <Button type="info" v-if="accessBtn('edit')" :disabled="canDo" @click="edit">修改/查看</Button>
     </div>
     <Modal
       v-model="showModal"
@@ -141,6 +141,7 @@
       on-visible-change
       :transfer="false"
     >
+      <div style="height: 100%;overflow: auto; padding-bottom: 30px;padding-top:10px;">
       <Collapse v-model="valueList">
         <Panel name="3">
           会员卡信息
@@ -238,7 +239,7 @@
           </Form>
         </Panel>
       </Collapse>
-      <div style="height:60px;"></div>
+      </div>
       <div slot="footer">
         <Button type="primary" @click="showCard=Math.random()">更换会员卡</Button>
         <Button type="primary" @click="doCollection('collectionData')">收款</Button>
@@ -384,7 +385,7 @@
         },
         columns2: [
           {
-            title: '序号', key: 'STORE_NAME', minWidth: 90,align:'center',
+            title: '序号', key: 'STORE_NAME', width: 70,align:'center',
             render: (h, params) => h('span', params.index + 1)
           },
           {title: '仓库', key: 'STORE_NAME', sortable: true, minWidth: 120,},
@@ -515,7 +516,7 @@
         data2: [],
         columns: [
           {
-            title: '序号', minWidth: 80,align:'center',
+            title: '序号', width: 70,align:'center',
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
           {title: '客户名称', key: 'CUSTOMER_NAME', sortable: true, minWidth: 120,},
@@ -528,11 +529,11 @@
           },
           {
             title: '合计金额', key: 'SUM_MONEY', sortable: true, minWidth: 120,align:'right',
-            render: (h, params) => h('span', parseFloat(params.row.SUM_MONEY).toFixed(2))
+            render: (h, params) => h('span',this.formatMoney(params.row.SUM_MONEY))
           },
           {
             title: '优惠金额', key: 'LESS_MONEY', sortable: true, minWidth: 120,align:'right',
-            render: (h, params) => h('span', params.row.LESS_MONEY.toFixed(2))
+            render: (h, params) => h('span',this.formatMoney(params.row.LESS_MONEY))
           },
           {
             title: '应收金额', key: 'REAL_MONEY', sortable: true, minWidth: 120,align:'right',

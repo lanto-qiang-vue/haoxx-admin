@@ -17,8 +17,8 @@
     </div>
     <div slot="operate">
       <Button type="primary" @click="add()" v-if="accessBtn('add')">新增</Button>
-      <Button type="info" :disabled="cando" @click="edit()" v-if="accessBtn('edit')">编辑/查看</Button>
       <Button type="error" :disabled="cando" @click="confirm()" v-if="accessBtn('cancel')">作废</Button>
+      <Button type="info" :disabled="cando" @click="edit()" v-if="accessBtn('edit')">编辑/查看</Button>
     </div>
     <!-- 配件套餐新增 -->
             <Modal  

@@ -17,8 +17,8 @@
     </div>
     <div slot="operate">
       <Button type="primary" @click="add()" v-if="accessBtn('add')">新增</Button>
-      <Button type="info" :disabled="cando" @click="edit()" v-if="accessBtn('edit')">修改</Button>
       <Button type="error" :disabled="cando" @click="remove()" v-if="accessBtn('cancel')">作废</Button>
+      <Button type="info" :disabled="cando" @click="edit()" v-if="accessBtn('edit')">修改</Button>
     </div>
     <Modal
       v-model="showModal"
@@ -96,11 +96,15 @@
           NAME: [{required: true, message: '名称必填'}]
         },
         columns: [
+          {
+            title: '序号', width: 70,align:'center',
+            render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
+          },
           {title: '仓库编号', key: 'STORE_NO', sortable: true, minWidth: 140},
           {title: '仓库名称', key: 'NAME', sortable: true, minWidth: 140},
           {title: '所在地', key: 'ADDRESS', sortable: true, minWidth: 140},
           {
-            title: '是否默认仓库', key: 'IS_DEFAULT', sortable: true, minWidth: 140,align:'center',
+            title: '是否默认仓库', key: 'IS_DEFAULT', sortable: true, minWidth: 140,
             render: (h, params) => h('span', getName(this.defaultList, params.row.IS_DEFAULT))
           },
         ],

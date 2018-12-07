@@ -50,7 +50,7 @@
         list: '',
         columns: [
           {
-            title: '序号', minWidth: 80,align:'center',
+            title: '序号', width: 70,align:'center',
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
           {title: '供应商名称', key: 'NAME', sortable: true, minWidth: 140,align:'left'},

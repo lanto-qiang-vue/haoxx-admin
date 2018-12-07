@@ -11,7 +11,7 @@
                     @changePage="changePage" @changePageSize="changePageSize" @onRowClick="onRowClick">
         <div slot="operate">
           <Input v-model="KEYWORD" placeholder="车型名称..." style="width: 300px"></Input>
-          <Button type="primary" size="small" style="margin-left:10px;margin-top:2px;" @click="page=1;getList()"><Icon type="ios-search" size="24"/></Button>
+          <Button type="primary"  style="margin-left:10px;margin-top:2px;" @click="page=1;getList()">搜索</Button>
         </div>
       </common-table>
     </div>
@@ -29,14 +29,17 @@
         split: 0.2,
         tableData:[],
         columns:[
-          {title: '序号',  minWidth: 70, type: 'index'},
+          {
+            title: '序号', width: 70,align:'center',
+            render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
+          },
           {title: '车型', key: 'MODEL_NAME', minWidth: 300},
           {title: '品牌', key: 'PP_NAME', minWidth: 120},
           {title: '国产/进口', key: 'JK_NAME', minWidth: 100},
           {title: '厂商', key: 'CS_NAME', minWidth: 150},
           {title: '车系名称', key: 'CX_NAME', minWidth: 150},
-          {title: '市场指导价', key: 'SCZDJ', minWidth: 130,
-            render: (h, params) => h('span', params.row.SCZDJ+'.00')
+          {title: '市场指导价', key: 'SCZDJ', minWidth: 130,align:'right',
+            render: (h, params) => h('span', this.formatMoney(params.row.SCZDJ))
           },
           {title: '发动机', key: 'FDJ', minWidth: 100},
           {title: '变速器', key: 'BSQ', minWidth: 160},
