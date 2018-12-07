@@ -2,9 +2,9 @@
 <div>
 	   <div>
           <Input  placeholder="参数名称..." v-model="keyword" style="width: 300px"></Input>
-      <ButtonGroup size="small" style="padding-left:10px;">
-        <Button type="primary" @click="getList()"><Icon type="ios-search" size="24"/></Button>
-        <Button type="primary" @click="clear()"><Icon type="ios-undo" size="24"/></Button>
+      <ButtonGroup style="padding-left:10px;">
+        <Button type="primary" @click="getList()">搜索</Button>
+        <!--<Button type="primary" @click="clear()"><Icon type="ios-undo" size="24"/></Button>-->
       </ButtonGroup>
           </div>
 	 <Collapse v-if="item.data.length > 0" v-model="collapse" v-for="(item, key, index) in handle" style="margin-top:5px;" :key="key">
