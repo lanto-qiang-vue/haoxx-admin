@@ -187,6 +187,7 @@
 		  let self= this
       // self.resize(1000)
       window.onresize = function(){
+		    console.log('window.onresize')
 		    if(window.innerHeight!= self.windowInnerHeight)
           self.resize(200)
       }
@@ -209,13 +210,12 @@
         if(commonTable.offsetHeight) {
           clearTimeout(this.timer);
           this.timer = setTimeout(function () {
-            self.windowInnerHeight= window.innerHeight
             self.tableHeight = commonTable.offsetHeight -
               commonTable.querySelector(".table-search").offsetHeight -
               commonTable.querySelector(".operate").offsetHeight - 10 -
               commonTable.querySelector(".table-bottom").offsetHeight;
             commonTable.style.opacity = 1
-
+            self.windowInnerHeight= window.innerHeight
             console.log(".common-table", commonTable.offsetHeight)
             console.log(".table-search", commonTable.querySelector(".table-search").offsetHeight)
             console.log(".operate", commonTable.querySelector(".operate").offsetHeight)
@@ -323,6 +323,7 @@
         vertical-align: top;
       }
     }
+
   }
   .table-bottom{
     .ivu-page{

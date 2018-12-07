@@ -10,7 +10,8 @@ export default {
     dict: getDict() || '',
     tenant: getTenant() || '',
     outStatus: getOutStatus() || 0,
-    pickingNumber: 0
+    pickingNumber: 0,
+    // windowInnerHeight:
   },
   getters: {
     // menuList: (state, getters, rootState) => getMenuByRouter(routers, rootState.user.access)
