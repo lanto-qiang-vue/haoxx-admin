@@ -196,6 +196,7 @@
 .split{
   border: 1px solid #dcdee2;
   background-color: white;
+  
   .split-pane{
     padding: 10px;
     height: 100%;
