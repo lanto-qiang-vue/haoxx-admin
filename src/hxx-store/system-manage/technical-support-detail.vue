@@ -15,14 +15,15 @@
     <modal-title slot="header" title="技术支持基本信息"  @clickBack="showModal=false"></modal-title>
     <!--<Collapse v-model="collapse">
       <Panel name="1">技术支持基本信息-->
-          <div style="padding: 30px;">
+
+          <div>
               <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch"  :label-width="85" inline class="detail-form">
-                <FormItem label="车辆型号:" prop="MODEL_NAME" style="width:45%;">
+                <FormItem label="车辆型号:" prop="MODEL_NAME">
                     <Input type="text" :disabled='saveFlag' v-model="listSearch.MODEL_NAME" placeholder="" @on-focus="showVehicleModel=true;">
                         <Icon type="ios-search" slot="suffix" @click="showVehicleModel=true;" style="cursor:pointer;"/>
                     </Input>
                 </FormItem>
-                <FormItem label="故障类型:" style="width:45%;">
+                <FormItem label="故障类型:" >
                     <Input type="text" :disabled='saveFlag' v-model="listSearch.FAULT_TYPE" placeholder=""> </Input>
                 </FormItem>
                 <FormItem label="故障呈现:" prop="FAULT_INFO" style="width:100%;">
@@ -31,13 +32,13 @@
                 <FormItem label="备注:" style="width:100%;">
                     <Input type="textarea" :disabled='saveFlag' v-model="listSearch.REMARK" placeholder="" style="min-width: 100%;"> </Input>
                 </FormItem>
-                
+
                 <FormItem label="技术答复:" style="width:100%;" v-show="noSaveFlag">
                     <Input type="textarea" :disabled='saveFlag' v-model="listSearch.FAULT_ANSWER" placeholder="" style="min-width: 100%;"> </Input>
                 </FormItem>
             </Form>
           </div>
-       
+
       <!--</Panel>
     </Collapse>-->
     <div slot="footer">
@@ -55,7 +56,7 @@
     >
         <vehicle-model @onRowClick="onRowClick" :show="showVehicleModel"></vehicle-model>
     </Modal>
-    
+
   </Modal>
 
 </template>
@@ -85,7 +86,7 @@ export default {
             ruleValidate: {
                 MODEL_NAME:[{required: true, message: '请选择车型'}],
                 FAULT_INFO:[{required: true, message: '请描述故障呈现'}],
-                
+
             },
             page: 1,
             limit: 25,
@@ -93,7 +94,7 @@ export default {
             saveFlag:false,
             noSaveFlag:false,
             buttonFlag:true,
-            
+
       }
     },
     props:['showDetail', 'detailData'],
@@ -119,7 +120,7 @@ export default {
 
           }
 
-          
+
       }
     },
     mounted () {
@@ -182,7 +183,7 @@ export default {
             this.listSearch['MODEL_NAME']=val.MODEL_NAME;
             this.listSearch['TID']=val.TID;
             this.listSearch['MODEL_ID']=val.MODEL_ID;
-            
+
         }
     }
 }

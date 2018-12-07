@@ -20,6 +20,7 @@
   margin: 0 15px;
   height: 44px;
   padding-top: 14px;
+  border-bottom: 1px solid #E9E9E9;
   *{
     vertical-align: baseline;
     line-height: 20px;

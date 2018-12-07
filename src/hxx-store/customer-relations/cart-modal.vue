@@ -13,61 +13,61 @@
   >
     <modal-title slot="header" title="车辆档案详情" :state="''" @clickBack="showModal=false"></modal-title>
     <!-- @on-click="qh" v-model="indexName" -->
-    <Tabs @on-click="qh" v-model="indexName" class="modal-tabs">
+    <Tabs @on-click="qh" v-model="indexName" class="modal-tabs" style="overflow: hidden">
       <!-- 基本信息 -->
       <TabPane label="基本信息" name="m1" icon="logo-apple">
-        <Form :label-width="120" :model="formData" ref="formData" :rules="ruleValidate" inline>
+        <Form :label-width="120" :model="formData" ref="formData" :rules="ruleValidate" class="common-form">
           <!-- 调整字段个数和位置 -->
           <div style="height:10px;"></div>
-          <FormItem label="车牌号:" style="width:30%;" prop="PLATE_NUM">
+          <FormItem label="车牌号:"  prop="PLATE_NUM">
             <Input type="text" v-model="formData.PLATE_NUM" style="min-width: 100%;"> </Input>
           </FormItem>
-          <FormItem label="客户编号:" style="width:30%;" prop="CUSTOMER_CODE">
+          <FormItem label="客户编号:"  prop="CUSTOMER_CODE">
             <Input type="text" v-model="formData.CUSTOMER_CODE" :readonly="true" icon="ios-search"
                    @on-click="customerChange" style="min-width: 100%;"> </Input>
           </FormItem>
-          <FormItem label="客户名称:" style="width:30%;" prop="CUSTOMER_NAME">
+          <FormItem label="客户名称:"  prop="CUSTOMER_NAME">
             <Input type="text" v-model="formData.CUSTOMER_NAME" :disabled="true" style="min-width: 100%;"> </Input>
           </FormItem>
-          <FormItem label="车架号:" style="width:30%;" prop="VIN_NO">
+          <FormItem label="车架号:"  prop="VIN_NO">
             <Input type="text" v-model="formData.VIN_NO" style="min-width: 100%;"> </Input>
           </FormItem>
-          <FormItem label="车型:" style="width:60%;" prop="VEHICLE_MODEL">
+          <FormItem label="车型:" prop="VEHICLE_MODEL" style="width: 570px">
             <Input type="text" style="min-width: 100%;" v-model="formData.VEHICLE_MODEL" @on-focus="selectVehicle"
                    :readonly="true" @on-click="selectVehicle" icon="ios-search"> </Input>
           </FormItem>
           <!-- 调整字段个数和位置 -->
           <!-- 1 -->
-          <FormItem label="车辆颜色:" style="width:30%;">
+          <FormItem label="车辆颜色:" >
             <Select placeholder="" v-model="formData.VEHICLE_COLOR" style="min-width: 100%;">
               <Option v-for="(item, index) in color"
                       :key="index" :value="item.code">{{item.name}}
               </Option>
             </Select>
           </FormItem>
-          <FormItem label="发动机号:" style="width:30%;">
+          <FormItem label="发动机号:" >
             <Input type="text" v-model="formData.ENGINE_NO" style="min-width: 100%;"> </Input>
           </FormItem>
-          <FormItem label="出厂日期:" style="width:30%;">
+          <FormItem label="出厂日期:" >
             <Col span="11" style="width:100%;">
               <DatePicker type="date" v-model="formData.LEAVE_FACTORY_DATE" placeholder="" format="yyyy-MM-dd"
                           style="min-width: 100%;"></DatePicker>
             </Col>
           </FormItem>
           <!-- 2 -->
-          <FormItem label="购买日期" style="width:30%;">
+          <FormItem label="购买日期" >
             <Col span="11" style="width:100%;">
               <DatePicker type="date" v-model="formData.BUY_DATE" placeholder="" format="yyyy-MM-dd"
                           style="min-width: 100%;"></DatePicker>
             </Col>
           </FormItem>
-          <FormItem label="最近来厂日期:" style="width:30%;" prop="phone">
+          <FormItem label="最近来厂日期:"  prop="phone">
             <Col span="11" style="width:100%;">
               <DatePicker type="date" v-model="formData.COME_DATE" placeholder="" format="yyyy-MM-dd"
                           style="min-width: 100%;"></DatePicker>
             </Col>
           </FormItem>
-          <FormItem label="最近来厂里程:" style="width:30%;">
+          <FormItem label="最近来厂里程:" >
             <InputNumber
               style="width:100%;"
               :min="0"
@@ -75,9 +75,9 @@
               :formatter="value => `${value}公里`"
               :parser="value => value.replace('公里', '')"></InputNumber>
           </FormItem>
-          <div style="clear:both;"></div>
+          <!--<div style="clear:both;"></div>-->
           <!-- 3 -->
-          <FormItem label="定保里程:" style="width:30%;">
+          <FormItem label="定保里程:" >
             <InputNumber
               style="width:100%;line-height:34px;"
               :min="0"
@@ -85,7 +85,7 @@
               :formatter="value => `${value}公里`"
               :parser="value => value.replace('公里', '')"></InputNumber>
           </FormItem>
-          <FormItem label="定保周期:" style="width:30%;" prop="phone">
+          <FormItem label="定保周期:"  prop="phone">
             <InputNumber
               style="width:100%;line-height:34px;"
               :min="0"
@@ -93,14 +93,14 @@
               :formatter="value => `${value}月`"
               :parser="value => value.replace('月', '')"></InputNumber>
           </FormItem>
-          <FormItem label="最近保养日期:" style="width:30%;">
+          <FormItem label="最近保养日期:" >
             <Col span="11" style="width:100%;">
               <DatePicker type="date" v-model="formData.LAST_REPAIR_DATE" placeholder="" format="yyyy-MM-dd"
                           style="min-width: 100%;"></DatePicker>
             </Col>
           </FormItem>
           <!-- 4 -->
-          <FormItem label="最近保养里程:" style="width:30%;">
+          <FormItem label="最近保养里程:" >
             <InputNumber
               style="width:100%;"
               :min="0"
@@ -108,13 +108,13 @@
               :formatter="value => `${value}公里`"
               :parser="value => value.replace('公里', '')"></InputNumber>
           </FormItem>
-          <FormItem label="下次保养日期:" style="width:30%;" prop="phone">
+          <FormItem label="下次保养日期:"  prop="phone">
             <Col span="11" style="width:100%;">
               <DatePicker type="date" v-model="formData.NEXT_REPAIR_DATE" placeholder="" format="yyyy-MM-dd"
                           style="min-width: 100%;"></DatePicker>
             </Col>
           </FormItem>
-          <FormItem label="下次保养里程:" style="width:30%;">
+          <FormItem label="下次保养里程:" >
             <InputNumber
               style="width:100%;"
               :min="0"
@@ -123,33 +123,33 @@
               :parser="value => value.replace('公里', '')"></InputNumber>
           </FormItem>
           <!-- 5 -->
-          <FormItem label="年检日期:" style="width:30%;">
+          <FormItem label="年检日期:" >
             <Col span="11" style="width:100%;">
               <DatePicker type="date" v-model="formData.YEAR_CHECK_DATE" placeholder="" format="yyyy-MM-dd"
                           style="min-width: 100%;"></DatePicker>
             </Col>
           </FormItem>
-          <FormItem label="交强险到期日:" v-show="xhide" style="width:30%;" prop="phone">
+          <FormItem label="交强险到期日:" v-show="xhide"  prop="phone">
             <Col span="11" style="width:100%;">
               <DatePicker type="date" placeholder="" v-model="formData.MUST_SAFE_VALIDITY" format="yyyy-MM-dd"
                           style="min-width: 100%;"></DatePicker>
             </Col>
           </FormItem>
-          <FormItem label="商业险到期日:" v-show="xhide"  style="width:30%;">
+          <FormItem label="商业险到期日:" v-show="xhide"  >
             <Col span="11" style="width:100%;">
               <DatePicker type="date" v-model="formData.BUSINESS_SAFE_VALIDITY" placeholder="" format="yyyy-MM-dd"
                           style="min-width: 100%;"></DatePicker>
             </Col>
           </FormItem>
           <!-- 6 -->
-          <FormItem label="交强险保险公司:" v-show="xhide"  style="width:30%;">
+          <FormItem label="交强险保险公司:" v-show="xhide"  >
             <Select placeholder="" v-model="formData.MUST_SAFE_CORP" style="min-width: 100%;">
               <Option v-for="(item, index) in must"
                       :key="index" :value="item.INSURER_ID">{{item.CORP_NAME}}
               </Option>
             </Select>
           </FormItem>
-          <FormItem label="商业险保险公司:" v-show="xhide"  style="width:30%;">
+          <FormItem label="商业险保险公司:" v-show="xhide"  >
             <Select placeholder="" v-model="formData.BUSINESS_SAFE_CORP" style="min-width: 100%;">
               <Option v-for="(item, index) in business"
                       :key="index" :value="item.INSURER_ID">{{item.CORP_NAME}}

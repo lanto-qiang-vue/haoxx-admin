@@ -47,8 +47,11 @@
   }
   .left-sider{
     .ivu-layout-sider-children{
-      overflow-y: scroll;
-      margin-right: -15px;
+      overflow: auto;
+    }
+    .ivu-layout-sider-children::-webkit-scrollbar{
+      height: 0;
+      width: 0;
     }
   }
 }

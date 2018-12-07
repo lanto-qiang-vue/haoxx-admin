@@ -14,7 +14,7 @@
     :closable="false"
   >
     <modal-title slot="header" title="保单管理"  @clickBack="showModal=false"></modal-title>
-    <div style="height: 100%;overflow: auto;padding-bottom: 30px;">
+    <div >
       
       <Collapse v-model="collapse">
         <Panel name="1">保单基本信息
