@@ -14,13 +14,15 @@
         </Select>
       </div>
       <div class="search-block"style="width:250px;">
-        <DatePicker v-model="search.orderDateGte" format="yyyy-MM-dd" type="date" placeholder="开始时间" style="width: 120px;"></DatePicker>
-        <DatePicker v-model="search.orderDateIte" format="yyyy-MM-dd" type="date" placeholder="结束时间" style="width: 120px;margin-left: 5px;"></DatePicker>
+        <DatePicker v-model="search.orderDateGte" format="yyyy-MM-dd" type="date" placeholder="开始时间" style="width: 115px;"></DatePicker> -
+        <DatePicker v-model="search.orderDateIte" format="yyyy-MM-dd" type="date" placeholder="结束时间" style="width: 115px;"></DatePicker>
       </div>
 
-      
+      <div class="search-block"style="width:auto">
         <Button type="primary" @click="page=1;getList()">搜索</Button>
-      
+      </div>
+
+
     </div>
     <div slot="operate">
       <Button type="primary" v-if="accessBtn('add')" @click="detailData=null,showDetail=Math.random()">新增</Button>
@@ -49,7 +51,7 @@
 		  return{
         loading:false,
         columns: [
-          {title: '序号',  minWidth: 90,align:'center', sortable: true,type:'index'
+          {title: '序号',  width: 70,align:'center', sortable: true,type:'index'
             // render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
           },
           {title: '预约类别', key: 'ORDER_TYPE', sortable: true, minWidth: 120,
