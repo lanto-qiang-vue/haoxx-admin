@@ -562,7 +562,7 @@
         // alert(2);
         this.memberData = deepClone(this.startData);
         this.memberData.CUSTOMER_ID = this.tabshow;
-        this.memberData.MEMBER_CARD_NO = this.formData2.MEMBER_CARD_NO;
+        this.memberData.MEMBER_CARD_NO = this.formData2.MEMBER_CARD_NO == '未发卡' ? '' : this.formData2.MEMBER_CARD_NO;
         this.cardModal = true;
         // this.$emit('transmit');
       },
