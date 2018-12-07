@@ -10,12 +10,12 @@
               <DatePicker v-model="search.ACCOUNT_TIME_lte" format="yyyy-MM-dd" type="date" placeholder="结束日期" style="width: 120px;margin-left: 5px;"></DatePicker>
               <Button style="margin-left: 5px;" type="primary" @click="page=1;getList()">搜索</Button>
           </FormItem>
-          
+
        </Form>
-      
+
     </div>
     <div slot="operate">
-      <Button type="primary" v-if="" @click="selectPick">新增</Button>
+      <Button type="success" v-if="" @click="selectPick">新增</Button>
       <Button type="primary" v-if="" @click="editButton" :disabled='!detailData'>查看详情</Button>
     </div>
     <!--详情-->
@@ -42,13 +42,13 @@ export default {
                 {title: '岗位名称', key: 'name', sortable: true, minWidth: 150,
                 },
                 {title: '岗位职责', key: 'postName', sortable: true, minWidth: 150,
-                    
+
                 },
                 {title: '申请时间', key: 'cREATE_TIME', sortable: true, minWidth: 150,
                     render: (h, params) => h('span', params.row.cREATE_TIME.substr(0, 16))
                 },
                 {title: '人数', key: 'num', sortable: true, minWidth: 120,align:'right'
-                    
+
                 },
                 {title: '状态', key: 'state', sortable: true, minWidth: 100,
                     render: (h, params) => {
@@ -79,16 +79,16 @@ export default {
             showDetail: false,
             detailData: null,
             clearTableSelect: null,
-            
+
       }
     },
     computed:{
-        
+
     },
     mounted () {
       this.getList();
       this.showTable= Math.random();
-      
+
     },
     methods:{
         //获取列表值-----
@@ -117,7 +117,7 @@ export default {
             for(var i in this.search){
                 this.search[i]= ''
             }
-            
+
             this.page=1;
             this.getList();
         },

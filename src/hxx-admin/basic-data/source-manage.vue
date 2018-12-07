@@ -16,7 +16,7 @@
       </div>
       <div slot="right" class="split-pane">
         <div class="operate">
-          <Button type="primary" :disabled="canAdd" @click="addCode">新增</Button>
+          <Button type="success" :disabled="canAdd" @click="addCode">新增</Button>
           <Button type="error" :disabled="canDelete" @click="deleteConfirm">删除</Button>
           <Button type="info" :disabled="canAdd" @click="refresh">刷新</Button>
         </div>

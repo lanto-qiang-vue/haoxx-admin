@@ -26,7 +26,7 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="primary" @click="add()">新增</Button>
+      <Button type="success" @click="add()">新增</Button>
       <Button type="info" :disabled="cando" @click="edit()">修改</Button>
     </div>
     <Modal

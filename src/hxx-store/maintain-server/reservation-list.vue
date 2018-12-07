@@ -25,8 +25,8 @@
 
     </div>
     <div slot="operate">
-      <Button type="primary" v-if="accessBtn('add')" @click="detailData=null,showDetail=Math.random()">新增</Button>
-      
+      <Button type="success" v-if="accessBtn('add')" @click="detailData=null,showDetail=Math.random()">新增</Button>
+
       <Button type="error" v-if="accessBtn('ban')"  @click="deleteDetailData" :disabled="isOrderSuccess">作废</Button>
       <Button type="info" v-if="accessBtn('edit')" @click="showDetail=Math.random()" :disabled="!detailData">编辑/查看</Button>
     </div>

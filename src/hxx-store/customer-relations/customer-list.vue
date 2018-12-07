@@ -14,7 +14,7 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="primary" @click="add()" v-if="accessBtn('add')">新增</Button>
+      <Button type="success" @click="add()" v-if="accessBtn('add')">新增</Button>
       <Button type="error" :disabled="cando" @click="remove()" v-if="accessBtn('del')">作废</Button>
       <Button type="success" @click="lead()" v-if="accessBtn('import')">导入</Button>
       <Button type="primary" @click="expor()" v-if="accessBtn('export')">导出</Button>

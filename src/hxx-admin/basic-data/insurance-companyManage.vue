@@ -23,7 +23,7 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="primary" @click="add()">新增</Button>
+      <Button type="success" @click="add()">新增</Button>
       <Button type="info" :disabled="cando" @click="edit()">修改</Button>
       <Button type="error" :disabled="cando" @click="remove()">作废</Button>
     </div>

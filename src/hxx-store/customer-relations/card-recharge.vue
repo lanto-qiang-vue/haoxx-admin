@@ -26,7 +26,7 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="primary" v-if="accessBtn('add')" @click="add()">新增</Button>
+      <Button type="success" v-if="accessBtn('add')" @click="add()">新增</Button>
       <Button type="info" v-if="accessBtn('edit')" :disabled="canDo" @click="edit()">编辑/查看</Button>
       <Button type="success" v-if="accessBtn('check')" :disabled="canDo  || list.STATUS != '10471001'" @click="check()">审核</Button>
       <Button type="warning" v-if="accessBtn('recheck')" :disabled="canDo  || list.STATUS != '10471002'" @click="rcheck()">反审核审核</Button>

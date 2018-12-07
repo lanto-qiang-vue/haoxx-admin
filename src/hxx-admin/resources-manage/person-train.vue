@@ -16,7 +16,7 @@
        </Form>
     </div>
     <div slot="operate">
-      <Button type="primary" v-if="" @click="addPerson">新增</Button>
+      <Button type="success" v-if="" @click="addPerson">新增</Button>
       <Button type="primary" v-if="" :disabled='endButton' @click="endButtonFun">结束培训</Button>
       <Button type="primary" v-if="" :disabled='!detailData' @click="detailButton">查看明细</Button>
       <Button type="primary" v-if="" :disabled='!detailData' @click="editButton">详细</Button>
@@ -48,18 +48,18 @@
                         </Input>
                     </FormItem>
                     <FormItem label="培训费用:" style="width:45%;" prop="Cost">
-                        
+
                         <!--<Input type="text"  v-model="newAddData.Cost" placeholder="">
                         </Input>-->
                         <InputNumber :min="0" v-model="newAddData.Cost"></InputNumber>
                     </FormItem>
-                    
+
                 </Form>
             </div>
             <div slot="footer">
                 <Button type="primary" @click="saveAddData('newAddData')" style="margin-right: 10px;">保存</Button>
             </div>
-            
+
         </Modal>
 
         <!--查看明细-->
@@ -85,7 +85,7 @@
             <div slot="footer">
                 <Button type="primary" @click="checkOutFun" style="margin-right: 10px;">返回</Button>
             </div>
-            
+
         </Modal>
 
     <!--  详细 页面数据  -->
@@ -108,49 +108,49 @@
                     <FormItem label="培训地点:"  style="width:45%;" >
                         <Input type="textarea" :rows="4"  v-model="showDetailData.place" disabled placeholder="">
                         </Input>
-                    
+
                     </FormItem>
                     <FormItem label="培训时间:"  style="width:45%;" >
                         <Input type="text"  v-model="showDetailData.time"  placeholder="" disabled>
                         </Input>
                     </FormItem>
                     <FormItem label="培训费用:" style="width:45%;" >
-                        
+
                         <Input type="text"  v-model="showDetailData.cost" disabled placeholder="">
                         </Input>
-                  
+
                     </FormItem>
                     <FormItem label="发布人:" style="width:45%;" >
-                        
+
                         <Input type="text"  v-model="showDetailData.cREATER" disabled placeholder="">
                         </Input>
-                        
+
                     </FormItem>
                     <FormItem label="审核人:" style="width:45%;" >
-                        
+
                         <Input type="text"  v-model="showDetailData.userStatusModification" disabled placeholder="">
                         </Input>
-                      
+
                     </FormItem>
                     <FormItem label="更改时间:" style="width:45%;" >
-                        
+
                         <Input type="text"  v-model="showDetailData.uPDATE_TIME" disabled placeholder="">
                         </Input>
-                        
+
                     </FormItem>
                     <FormItem label="申请人数:" style="width:45%;" >
-                        
+
                         <Input type="text"  v-model="showDetailData.num" disabled placeholder="">
                         </Input>
-                        
+
                     </FormItem>
-                    
+
                 </Form>
             </div>
             <div slot="footer">
                 <Button type="primary" @click="outDetail" style="margin-right: 10px;">返回</Button>
             </div>
-            
+
         </Modal>
   </common-table>
 
@@ -181,16 +181,16 @@ export default {
                 {title: '培训费用', key: 'cost', sortable: true, minWidth: 120,
                 },
                 {title: '发布人', key: 'cREATER', sortable: true, minWidth: 120,
-                    
+
                 },
                 {title: '审核人', key: 'userStatusModification', sortable: true, minWidth: 120,
-                    
+
                 },
                 {title: '更改时间', key: 'uPDATE_TIME', sortable: true, minWidth: 150,
                     render: (h, params) => h('span', params.row.uPDATE_TIME.substr(0, 19))
                 },
                 {title: '申请人数', key: 'num', sortable: true, minWidth: 120,
-                    
+
                 },
                 {title: '状态', key: 'state', sortable: true, minWidth: 100,
                     render: (h, params) => {
@@ -264,12 +264,12 @@ export default {
       }
     },
     computed:{
-        
+
     },
     mounted () {
       this.getList();
       this.showTable= Math.random();
-      
+
     },
     methods:{
         //获取列表值-----
@@ -300,10 +300,10 @@ export default {
             for(var i in this.search){
                 this.search[i]= ''
             }
-            
+
             this.page=1;
             this.getList();
-            
+
         },
         changePage(page){
             this.page= page
@@ -322,8 +322,8 @@ export default {
             }else{
                 this.endButton=false;
             }
-            
-            
+
+
         },
 
         closeDetail(){
@@ -356,12 +356,12 @@ export default {
                         title:"系统提示!",
                         content:"确定要保存吗？",
                         onOk:this.saveAddFun,
-                        
+
                     })
                 }
             })
-            
-            
+
+
         },
         saveAddFun(){
             this.newAddData.Time=formatDate(this.newAddData.Time)+ ' '+ formatDate(this.newAddData.Time, 'hh:mm:ss');
@@ -392,7 +392,7 @@ export default {
                 title:"系统提示!",
                 content:"确定要结束吗？",
                 onOk:this.endFun,
-                
+
             })
         },
         endFun(){
@@ -400,14 +400,14 @@ export default {
                 url: '/manage/support/tech_train/update_pass',
                 method: 'post',
                 data: {
-                
+
                     ids: this.detailData.id,
                     access_token: this.$store.state.user.token
                 }
             }).then(res => {
                 if (res.success === true) {
                     this.getList();
-                    
+
                 }
             })
         },
@@ -445,7 +445,7 @@ export default {
             }
             this.showDetailData['time']=this.detailData['time'].substr(0, 16);
             this.showDetail=true;
-            
+
         },
         outDetail(){
             this.showDetail=false;

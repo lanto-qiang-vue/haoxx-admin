@@ -26,8 +26,8 @@
             </Button>
             <Button style="float:right;" type="info" @click="importBrand">导出</Button>
             <Button style="float:right;" type="success" @click="uploadBrand">导入</Button>
-            <Button style="float:right;" :disabled="cando" type="primary" @click="add">新增</Button>
-            <Button style="float:right;" type="primary" @click="addBrand">新增品牌车系</Button>
+            <Button style="float:right;" :disabled="cando" type="success" @click="add">新增</Button>
+            <Button style="float:right;" type="success" @click="addBrand">新增品牌车系</Button>
           </div>
         </common-table>
       </div>

@@ -23,7 +23,7 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="primary" v-if="accessBtn('add')" @click="add">新增</Button>
+      <Button type="success" v-if="accessBtn('add')" @click="add">新增</Button>
       <Button type="success" v-if="accessBtn('check')" :disabled="canDo || list.STATUS != '10471001'" @click="check">
         审核
       </Button>

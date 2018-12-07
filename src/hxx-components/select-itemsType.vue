@@ -44,7 +44,7 @@
                     <ButtonGroup size="small">
                         <Button type="primary" @click="searchVehicle">搜索</Button>
                     </ButtonGroup>
-                    <Button style="margin-left: 5px;" type="primary" @click="addItemFun">新增</Button>
+                    <Button style="margin-left: 5px;" type="success" @click="addItemFun">新增</Button>
                 </FormItem>
            </Form>
 
