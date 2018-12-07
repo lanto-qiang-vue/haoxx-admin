@@ -61,16 +61,54 @@
             key: 'TYPE',
             sortable: true,
             minWidth: 100,
-            render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.TYPE))
+            // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.TYPE))
+            render: (h, params) => {
+              var bgColor='#00bcd4';
+              if(params.row.TYPE==10381001){
+                bgColor='green';
+              }else{
+                bgColor='red';
+              }
+              return h('div', {
+                style: {
+                  width:'100%',
+                  height:'100%',
+                  textAlign: "center",
+                  background: bgColor,
+                  color:'#fff',
+                  fontSize:'16px',
+                },
+              },getName(this.$store.state.app.dict, params.row.TYPE))
+            }
           },
           {
-            title: '业务类别', key: 'RECORD_TYPE', sortable: true, minWidth: 120,align:'center',
+            title: '业务类别', key: 'RECORD_TYPE', sortable: true, minWidth: 120,
             render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.RECORD_TYPE))
           },
           {title: '业务单号', key: 'RECORD_NO', sortable: true, minWidth: 120},
           {
             title: '金额', key: 'MONEY', sortable: true, minWidth: 100,align:'right',
-            render: (h, params) => h('span', this.formatMoney(params.row.MONEY))
+            // render: (h, params) => h('span', this.formatMoney(params.row.MONEY))
+            render: (h, params) => {
+              var bgColor='#00bcd4';
+              let arrows;
+              if(params.row.TYPE==10381001){
+                bgColor='green';
+                arrows = "+";
+              }else{
+                bgColor='red';
+                arrows = "-";
+              }
+              return h('div', {
+                style: {
+                  width:'100%',
+                  height:'100%',
+                  textAlign: "right",
+                  color:bgColor,
+                  fontSize:'18px',
+                },
+              },arrows+this.formatMoney(params.row.MONEY))
+            }
           },
           {
             title: '结算方式', key: 'PAYMENT', sortable: true, minWidth: 120,align:'center',
