@@ -14,7 +14,7 @@
     :closable="false"
   >
     <modal-title slot="header" title="仓库盘点单" :state="titleMsg" @clickBack="showModal=false"></modal-title>
-    <div style="height: 100%;overflow: auto; padding-bottom: 30px;">
+    <div>
         <!--<div class="status">&nbsp;&nbsp;&nbsp;&nbsp;({{this.titleMsg}})</div>-->
     <Collapse v-model="collapse">
       <Panel name="1">查询

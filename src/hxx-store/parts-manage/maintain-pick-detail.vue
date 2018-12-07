@@ -13,7 +13,7 @@
     :transition-names="['', '']"
   > 
   <modal-title slot="header" title="维修领料" :state="titleMsg" @clickBack="showModal=false"></modal-title>
-  <div style="overflow: auto;height: 100%;padding-bottom: 30px;">
+  <div>
       <!--<div style="font-size: 18px;text-align: right;color: red;padding-right: 30px;">工单号:{{listSearch.REPAIR_NO}}</div>-->
     <Collapse v-model="collapse">
       <Panel name="1">查询

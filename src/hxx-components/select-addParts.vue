@@ -8,7 +8,7 @@
         width="90"
         :scrollable="true"
         @on-visible-change="visibleChange"
-        :transfer= "false"
+        :transfer= "true"
         :footer-hide="false"
         :transition-names="['', '']"
     >
