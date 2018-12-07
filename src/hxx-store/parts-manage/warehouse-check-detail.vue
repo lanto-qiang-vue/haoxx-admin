@@ -105,7 +105,7 @@ export default {
             transferFlag:true,//判断界面是否出现在body
             //维修配件
             columns: [
-                {title: '序号',  minWidth: 80,type:'index',align:'center'},
+                {title: '序号',  width: 70,type:'index',align:'center'},
                 {title: '配件名称', key: 'NAME', sortable: true, minWidth: 120},
                 {title: '原厂编号', key: 'FACTORY_NO', sortable: true, minWidth: 120,
                 },
@@ -115,7 +115,7 @@ export default {
                 {title: '品牌', key: 'BRAND', sortable: true, minWidth: 100,
                     render: (h, params) => h('span', getName(this.getBrand, params.row.UNIT))
                 },
-                {title: '实盘数量', key: 'CHECK_NUM', sortable: true, minWidth: 120,
+                {title: '实盘数量', key: 'CHECK_NUM', sortable: true, minWidth: 120,align:'right',
                     render: (h, params) => {
                         return h('div', [
                             h('InputNumber', {
@@ -140,9 +140,9 @@ export default {
                         ]);
                     }
                 },
-                {title: '现库数量', key: 'STOCK_NUM', sortable: true, minWidth: 120,
+                {title: '现库数量', key: 'STOCK_NUM', sortable: true, minWidth: 120,align:'right',
                 },
-                {title: '差异数量', key: 'DIFFERENCE_NUM', sortable: true, minWidth: 120,
+                {title: '差异数量', key: 'DIFFERENCE_NUM', sortable: true, minWidth: 120,align:'right',
                     render: (h, params) => h('span', (params.row.CHECK_NUM-params.row.STOCK_NUM))
                 },
                 {title: '备注', key: 'REMARK', sortable: true, minWidth: 120,

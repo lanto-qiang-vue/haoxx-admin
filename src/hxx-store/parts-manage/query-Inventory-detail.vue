@@ -61,7 +61,7 @@ export default {
       return{
             showModal:false,
             columns: [
-                {title: '序号',  minWidth: 80,align:'center',type:'index'
+                {title: '序号',  width: 70,align:'center',type:'index'
                     // render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
                 },
                 {title: '类型', key: 'TYPE', sortable: true, minWidth: 100,
@@ -104,7 +104,7 @@ export default {
                         }
                         return h('div', {
                                 style: {
-                                    textAlign: "center",
+                                    textAlign: "right",
                                     color:bgColor,
                                 },
                             },bgNum)
@@ -127,7 +127,7 @@ export default {
                         }
                         return h('div', {
                                 style: {
-                                    textAlign: "center",
+                                    textAlign: "right",
                                     color:bgColor,
                                 },
                             },bgNum)

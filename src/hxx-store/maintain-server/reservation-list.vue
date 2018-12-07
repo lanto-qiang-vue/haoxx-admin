@@ -24,9 +24,9 @@
     </div>
     <div slot="operate">
       <Button type="primary" v-if="accessBtn('add')" @click="detailData=null,showDetail=Math.random()">新增</Button>
-      <Button type="info" v-if="accessBtn('edit')" @click="showDetail=Math.random()" :disabled="!detailData">编辑/查看</Button>
+      
       <Button type="error" v-if="accessBtn('ban')"  @click="deleteDetailData" :disabled="isOrderSuccess">作废</Button>
-
+      <Button type="info" v-if="accessBtn('edit')" @click="showDetail=Math.random()" :disabled="!detailData">编辑/查看</Button>
     </div>
     <!--预约详情单-->
     <reservation-list-detail class="table-modal-detail" :showDetail="showDetail"
@@ -49,7 +49,7 @@
 		  return{
         loading:false,
         columns: [
-          {title: '序号',  minWidth: 90,align:'center', sortable: true,type:'index'
+          {title: '序号',  width: 70,align:'center', sortable: true,type:'index'
             // render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
           },
           {title: '预约类别', key: 'ORDER_TYPE', sortable: true, minWidth: 120,

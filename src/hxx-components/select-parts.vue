@@ -114,7 +114,7 @@ import commonTable from '@/hxx-components/common-table.vue'
                 //表格内容数据----
                 columns: [
                     // {type: 'selection', width: 50, fixed: 'left'},
-                    {title: '序号',  minWidth: 80,align:'center',
+                    {title: '序号',  width: 70,align:'center',
                         render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
                     },
                     {title: '仓库', key: 'STORE_NAME', sortable: true, minWidth: 180,
@@ -133,14 +133,14 @@ import commonTable from '@/hxx-components/common-table.vue'
                     {title: '销售建议价', key: 'SALES_PRICE', sortable: true, minWidth: 150,align:'right',
                         render: (h, params) => h('span', this.formatMoney(params.row.SALES_PRICE))
                     },
-                    {title: '库存量', key: 'STOCK_NUM', sortable: true, minWidth: 120},
+                    {title: '库存量', key: 'STOCK_NUM', sortable: true, minWidth: 120,align:'right',},
                     {title: '单位', key: 'UNIT', sortable: true, minWidth: 100,
                         render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.UNIT))
                     },
                     {title: '操作', key: 'operation', sortable: true, minWidth: 100,fixed: 'right',align:'center',
                         render: (h, params) => {
                             let buttonContent= this.state(params.row)? '取消选择':'选择';
-                            let buttonStatus= this.state(params.row)? 'warning':'primary';
+                            let buttonStatus= this.state(params.row)? 'default':'warning';
                             return h('div', [
                                 h('Button', {
                                     props: {

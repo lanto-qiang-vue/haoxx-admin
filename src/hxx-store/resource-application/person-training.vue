@@ -36,7 +36,7 @@ export default {
     data(){
 		return{
             columns: [
-                {title: '序号',  minWidth: 90,align:'center', sortable: true,type:'index'
+                {title: '序号',  width: 70,align:'center', sortable: true,type:'index'
                     // render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
                 },
                 {title: '培训内容', key: 'trainingContent', sortable: true, minWidth: 150,
@@ -135,15 +135,12 @@ export default {
         onRowClick(row, index){
             console.log(row);
             this.detailData=row
-            if(this.detailData.isjoin=="0"){
-                this.buttonFlag=true;
+            if(this.detailData.isjoin=="0"&&this.detailData.state=='1'){
+                this.buttonFlag=false;
             }else{
-                if(this.detailData.state=='2'){
-                    this.buttonFlag=true;
-                    
-                }else{
-                    this.buttonFlag=false;
-                }
+
+                this.buttonFlag=true;
+                
             }
             
         },

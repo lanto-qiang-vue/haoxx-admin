@@ -131,7 +131,7 @@ import selectAddParts from '@/hxx-components/select-addParts.vue'
 
                 columns: [
                     // {type: 'selection', width: 50, fixed: 'left'},
-                    {title: '序号',  minWidth: 80,align:'center',
+                    {title: '序号',  width: 70,align:'center',
                         render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
                     },
                     {title: '配件名称', key: 'NAME', sortable: true, minWidth: 170,
@@ -160,7 +160,7 @@ import selectAddParts from '@/hxx-components/select-addParts.vue'
                         // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.UNIT))
                         render: (h, params) => h('span', this.formatMoney(params.row.SALES_PRICE))
                     },
-                    {title: '销售税率', key: 'RATE', sortable: true, minWidth: 120,
+                    {title: '销售税率', key: 'RATE', sortable: true, minWidth: 120,align:'right',
                         // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.UNIT))
                     },
                     {title: '来源', key: 'PART_SOURCE', sortable: true, minWidth: 120,
@@ -172,7 +172,7 @@ import selectAddParts from '@/hxx-components/select-addParts.vue'
                     {title: '操作', key: 'operation', sortable: true, minWidth: 100,fixed: 'right',align:'center',
                         render: (h, params) => {
                             let buttonContent= this.state(params.row)? '取消选择':'选择';
-                            let buttonStatus= this.state(params.row)? 'warning':'primary';
+                            let buttonStatus= this.state(params.row)? 'default':'warning';
                             return h('div', [
                                 h('Button', {
                                     props: {

@@ -17,10 +17,11 @@
     </div>
     <div slot="operate">
       <Button type="primary" v-if="accessBtn('add')" @click="detailData=null,showDetail=Math.random()">新增</Button>
-      <Button type="info" v-if="accessBtn('edit')" @click="showDetail=Math.random()" :disabled="buttonStateArr.edit">修改/查看</Button>
+      
       <Button type="info" v-if="" @click="auditButton" :disabled="buttonStateArr.audit">审核</Button>
       <Button type="info" v-if="" @click="reAuditButton" :disabled="buttonStateArr.reAudit">反审核</Button>
       <Button type="error" v-if="accessBtn('del')"  @click="deleteDetailData" :disabled="buttonStateArr.ban">作废</Button>
+      <Button type="info" v-if="accessBtn('edit')" @click="showDetail=Math.random()" :disabled="buttonStateArr.edit">修改/查看</Button>
     </div>
     <!--预约详情单-->
     <policy-manage-detail class="table-modal-detail" :showDetail="showDetail"
@@ -47,7 +48,9 @@
                 {title: '客户', key: 'CUSTOMER_NAME', sortable: true, minWidth: 130},
                 {title: '联系电话', key: 'MOBILE_PHONE', sortable: true, minWidth: 140},
                 {title: '车船税', key: 'VEHICLE_TAX', sortable: true, minWidth: 120,align:'right',},
-                {title: '总金额', key: 'SUM_MONEY', sortable: true, minWidth: 130,align:'right',},
+                {title: '总金额', key: 'SUM_MONEY', sortable: true, minWidth: 130,align:'right',
+                    render: (h, params) => h('span', this.formatMoney(params.row.SUM_MONEY))
+                },
                 {title: '提成', key: 'DEDUCT_MONEY', sortable: true, minWidth: 130,align:'right',
                     // render: (h, params) => h('span', params.row.ORDER_DATE.substr(0, 10))
                 },

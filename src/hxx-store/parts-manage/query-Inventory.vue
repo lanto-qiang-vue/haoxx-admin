@@ -37,7 +37,7 @@ export default {
     data(){
 		return{
             columns: [
-                {title: '序号',  minWidth: 90,align:'center', sortable: true,type:'index'
+                {title: '序号',  width: 70,align:'center', sortable: true,type:'index'
                     // render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
                 },
                 {title: '仓库', key: 'STORE_NAME', sortable: true, minWidth: 150,
@@ -48,7 +48,7 @@ export default {
                 {title: '品牌', key: 'BRAND', sortable: true, minWidth: 100,
                     render: (h, params) => h('span', getName(this.getBrand, params.row.BRAND))
                 },
-                {title: '库存量', key: 'STOCK_NUM', sortable: true, minWidth: 200},
+                {title: '库存量', key: 'STOCK_NUM', sortable: true, minWidth: 200,align:'right',},
                 {title: '单位成本', key: 'UNIT_COST', sortable: true, minWidth: 150,align:'right',
                     render: (h, params) => h('span', this.formatMoney(params.row.UNIT_COST))
                 },

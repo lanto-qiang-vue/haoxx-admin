@@ -36,7 +36,7 @@ export default {
     data(){
 		return{
             columns: [
-                {title: '序号',  minWidth: 90,align:'center', sortable: true,type:'index'
+                {title: '序号',  width: 70,align:'center', sortable: true,type:'index'
                     // render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
                 },
                 {title: '车型信息', key: 'mODEL_NAME', sortable: true, minWidth: 150,
