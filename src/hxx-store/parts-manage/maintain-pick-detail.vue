@@ -41,12 +41,6 @@
           
        <!--</Form>
        <Form ref="formInline"  slot="content" :label-width="80">-->
-          <FormItem label="客诉内容:" style="width: 100%">
-              <Input type="textarea" disabled v-model="listSearch.CUSTOMER_INFO" placeholder="请输入客诉内容"> </Input>
-          </FormItem>
-          <FormItem label="维修建议:" style="width: 100%">
-              <Input type="textarea" disabled v-model="listSearch.REPAIR_INFO" placeholder="请输入建议内容"> </Input>
-          </FormItem>
        </Form>
       </Panel>
       <Panel name="2">维修项目/套餐信息
@@ -87,7 +81,7 @@
     </Collapse>
     
     <div class="r-list-header" style="margin: 5px 0;">
-      <h1>维修配件</h1>
+      <h2>维修配件</h2>
     </div>
     <Table
       class="main-table"
@@ -95,7 +89,10 @@
       :columns="columns1"
       :data="commitParts"
       :highlight-row="true"
-      @on-row-click="onRowClick"
+
+
+      @on-select-all="onSelectAll"
+      @on-selection-change="onSelectionChange"
       stripe
       border
     ></Table>
@@ -209,7 +206,31 @@
         ],
         //维修配件
         columns1: [
+            {
+                type: 'selection',
+                width: 60,
+                align: 'center'
+            },
           {title: '序号',  width: 70,align:'center', sortable: true,type:'index'},
+          {title: '领料状态', key: 'STATUS', sortable: true, minWidth: 150,
+            render: (h, params) => {
+                        var bgColor='#00bcd4';
+                        if(params.row.STATUS==10221002){
+                            bgColor='#FF9800';
+                        }else{
+                            bgColor='#00bcd4';
+                        }
+                        return h('div', {
+                                style: {
+                                    width:'100%',
+                                    height:'100%',
+                                    textAlign: "center",
+                                    background: bgColor,
+                                    color:'#fff',
+                                },
+                            },getName(this.getStatus, params.row.STATUS))
+                        }
+          },
           {title: '配件编号', key: 'PART_NO', sortable: true, minWidth: 120,},
           {title: '配件名称', key: 'NAME', sortable: true, minWidth: 120},
           {title: '数量', key: 'PART_NUM', sortable: true, minWidth: 100,align:'right',
@@ -239,25 +260,7 @@
           {title: '领/退料人', key: 'GET_PART_PERSON', sortable: true, minWidth: 150,},
           {title: '领/退料时间', key: 'GET_PART_TIME', sortable: true, minWidth: 150,},
           {title: '领料仓库', key: 'STORE_NAME', sortable: true, minWidth: 150,},
-          {title: '领料状态', key: 'STATUS', sortable: true, minWidth: 150,
-            render: (h, params) => {
-                        var bgColor='#00bcd4';
-                        if(params.row.STATUS==10221002){
-                            bgColor='#FF9800';
-                        }else{
-                            bgColor='#00bcd4';
-                        }
-                        return h('div', {
-                                style: {
-                                    width:'100%',
-                                    height:'100%',
-                                    textAlign: "center",
-                                    background: bgColor,
-                                    color:'#fff',
-                                },
-                            },getName(this.getStatus, params.row.STATUS))
-                        }
-          },
+
           {title: '备注', key: 'REMARK', sortable: true, minWidth: 150,
           },
         ],
@@ -283,7 +286,7 @@
           {title: '操作', key: '', sortable: true, minWidth: 150,
           },
         ],
-        collapse: ["1","2"],
+        collapse: ["1"],
         collapse1:'',
         listSearch:{
            "TENANT_ID":"",
@@ -400,6 +403,7 @@
         if(this.detailData){
             this.showModal=true
             this.listSearch=this.detailData;
+            
             this.listSearch.REPAIR_TYPE=getName(this.getType,this.listSearch.REPAIR_TYPE);
             
             this.titleMsg="工单号:"+this.listSearch.REPAIR_NO;
@@ -546,9 +550,20 @@
             })
         },
         //选择领退料数据--------
-        onRowClick( row, index){
-            console.log(row);
-            this.commitOneParts=row;
+        // onRowClick( row, index){
+        //     console.log(row);
+        //     this.commitOneParts=row;
+        // },
+        // onSelect(selection,row){
+        //     console.log('on-select',selection,row);
+        // },
+        onSelectAll(selection){
+            this.commitOneParts=selection;
+            console.log('onSelectAll',selection);
+        },
+        onSelectionChange(selection){
+            this.commitOneParts=selection;
+            console.log('onSelectionChange',selection);
         },
         //退料入库按钮------------
         rejectedFun(){
@@ -568,7 +583,7 @@
                         data: {
                         REPAIR_ID: this.listSearch.REPAIR_ID,
                         PERSON: this.personObj.selectPerson,
-                        parts: JSON.stringify([this.commitOneParts]),
+                        parts: JSON.stringify(this.commitOneParts),
                         access_token: this.$store.state.user.token
                         }
                     }).then(res => {
@@ -606,7 +621,7 @@
                         REPAIR_ID: this.listSearch.REPAIR_ID,
                         STORE_ID:this.storeObj.selectStore,
                         PERSON: this.storeObj.selectPerson,
-                        parts: JSON.stringify([this.commitOneParts]),
+                        parts: JSON.stringify(this.commitOneParts),
                         access_token: this.$store.state.user.token
                         }
                     }).then(res => {
@@ -647,7 +662,7 @@
                         REPAIR_ID: this.listSearch.REPAIR_ID,
                         STORE_ID:this.storeObj.selectStore,
                         PERSON: this.storeObj.selectPerson,
-                        parts: JSON.stringify([this.commitOneParts]),
+                        parts: JSON.stringify(this.commitOneParts),
                         IS_CONF_OUT:'10041001',
                         access_token: this.$store.state.user.token
                         }
@@ -666,6 +681,7 @@
         visibleChange(status){
             if(status === false){
                 this.$emit('closeDetail');
+                this.collapse=["1"];
                 // this.handleReset("listSearch");
             }
         },
