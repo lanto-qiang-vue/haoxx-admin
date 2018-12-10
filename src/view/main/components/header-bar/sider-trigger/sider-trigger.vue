@@ -1,6 +1,6 @@
 <template>
 <a @click="handleChange" type="text" :class="['sider-trigger-a', collapsed ? 'collapsed' : '']">
-  <Tooltip  :content="collapsed?'展开菜单':'收起菜单'" style="line-height: normal;vertical-align: middle;">
+  <Tooltip  :content="collapsed?'展开菜单':'收起菜单'" style="line-height: normal;vertical-align: middle;color:#515B6D;">
     <Icon :type="icon" :size="size" />
   </Tooltip>
 </a>

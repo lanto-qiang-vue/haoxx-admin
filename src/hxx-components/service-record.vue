@@ -3,7 +3,6 @@
   <Modal
     v-model="showModal"
     @on-visible-change="visibleChange"
-    title="维修记录"
     width="80"
     class="table-modal-detail"
     :mask-closable="false"
@@ -14,7 +13,10 @@
   >
     <!--<div style="font-size: 18px;text-align: right;color: red;padding-right: 30px;">{{titleMsg}}</div>-->
       <!--<div style="height: 100%;overflow: auto; padding-bottom: 30px;padding-top:10px;">-->
-        <div class="status">({{titleMsg}})</div>
+        <!--<div class="status">({{titleMsg}})</div>-->
+    <div slot="header" style="line-height:42px;">
+      <span style="color:white;">维修记录</span><span style="color:red;">({{titleMsg}})</span>
+    </div>
     <Collapse v-model="collapse">
       <Panel name="1">详情
        <Form ref="listSearch"   slot="content" :label-width="120" inline class="detail-form">
@@ -115,7 +117,8 @@
     ></Table>
    </div>
     <div class="r-list-money">
-      <p>
+      <p style="float:left;">
+        <span class="bold">合计应收金额：<span>{{base.SUM_MONEY}}元</span></span>=
         维修项目费用：
         <span>{{base.REPAIR_ITEM_MONEY}}元</span>
          + 维修配件费用：
@@ -124,8 +127,6 @@
           <span>{{base.REPAIR_ITEM_DERATE_MONEY}}</span>
            - 配件优惠金额：
           <span>{{base.REPAIR_PART_DERATE_MONEY}}</span>
-          = 合计应收金额：
-          <span class="r-list-money-reset">{{base.SUM_MONEY}}元</span>
       </p>
     </div>
     <!--</div>-->
@@ -315,16 +316,22 @@
     padding: 20px 0;
     text-align: center;
   }
-  .r-list-money{
+  .r-list-money {
+    padding-top: 20px;
+    margin-bottom: 20px;
+    height: 30px;
     width: 100%;
-    font-size: 18px;
+    font-size: 12px;
     text-align: center;
-
-    span{
-      color:red;
-
+    span {
+      color: red;
     }
-    .r-list-money-reset{
+    .bold{
+      font-size: 14px;
+      font-weight: 600;
+      color: black;
+    }
+    .r-list-money-reset {
       font-size: 22px;
     }
   }

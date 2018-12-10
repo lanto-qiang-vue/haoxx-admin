@@ -33,10 +33,12 @@
 		components:{commonTable,cartModal},
     mixins: [mixin],
     activated(){
-      let obj = this.$route.query.data;
-      this.info = obj;
-      this.hidetype = this.$route.query.hidetype;
-      this.show = Math.random();
+      // let obj = this.$route.query.data;
+      if(this.$route.query.data) {
+        this.info = this.$route.query.data;
+        this.hidetype = this.$route.query.hidetype;
+        this.show = Math.random();
+      }
     },
 		data(){
 			return {
@@ -52,7 +54,7 @@
 				tableData:[],
         obj:'',//存储完整对象
 				showTable:false,
-        info:[],
+        info:{},
 				search:{
           color:'',
           keyword:'',

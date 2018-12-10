@@ -14,10 +14,10 @@
     :closable="false"
   >
     <modal-title slot="header" title="仓库盘点单" :state="titleMsg" @clickBack="showModal=false"></modal-title>
-    <div>
+    <div style="height:100%;padding-top:10px;padding-bottom:30px;">
         <!--<div class="status">&nbsp;&nbsp;&nbsp;&nbsp;({{this.titleMsg}})</div>-->
-    <Collapse v-model="collapse">
-      <Panel name="1">查询
+    <!--<Collapse v-model="collapse">-->
+      <!--<Panel name="1">查询-->
        <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="85" inline class="detail-form">
           <FormItem label="盘点仓库:" prop="STORE_ID" style="width:23%;">
               <Select v-model="listSearch.STORE_ID" placeholder="请选择..." style="min-width: 100%;" @on-change="selectStoreFun">
@@ -46,8 +46,8 @@
           </FormItem>
           
        </Form>
-      </Panel>
-    </Collapse>
+      <!--</Panel>-->
+    <!--</Collapse>-->
 
     <div class="r-list-header" style="margin: 5px 0;">
       <h1>配件明细</h1>

@@ -13,8 +13,8 @@
         :transition-names="['', '']"
     >
     <div style="height: 100%;overflow: auto;">
-        <Collapse v-model="collapse">
-      <Panel name="1">配件基本信息
+        <!--<Collapse v-model="collapse">-->
+      <!--<Panel name="1">配件基本信息-->
        <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="110" inline class="common-form">
           <FormItem label="配件名称:" style="width:30%;" prop="NAME">
               <Input type="text" v-model="listSearch.NAME" placeholder="">
@@ -69,8 +69,8 @@
               </Input>
           </FormItem>
        </Form>
-      </Panel>
-      <Panel name="2">配件详细信息
+      <!--</Panel>-->
+      <!--<Panel name="2">配件详细信息-->
        <Form  slot="content" :label-width="110" inline class="detail-form">
 
            <FormItem label="品牌:" style="width:30%;" >
@@ -99,8 +99,8 @@
               </Select>
           </FormItem>
        </Form>
-      </Panel>
-      <Panel name="3">配件限价信息
+      <!--</Panel>-->
+      <!--<Panel name="3">配件限价信息-->
        <Form  slot="content" :label-width="110" inline class="common-form">
 
           <FormItem label="采购最低价:" style="width:30%;">
@@ -130,8 +130,8 @@
           </FormItem>
 
        </Form>
-      </Panel>
-    </Collapse>
+      <!--</Panel>-->
+    <!--</Collapse>-->
 <!--         <Modal
         v-model="showType"
         title="配件分类列表"
@@ -311,14 +311,14 @@
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                       var flag = "";
-                      if(this.listSearch.SALES_PRICE > this.listSearch.MAX_SALES_PRICE ){flag = "销售建议价应小于等于销售最高价!"};
-                      if(this.listSearch.SALES_PRICE < this.listSearch.MIN_SALES_PRICE){flag = "销售建议价应大于等于销售最低价!"};
-                      if(this.listSearch.MIN_SALES_PRICE < this.listSearch.MAX_SHOP_PRICE){flag = "销售最低价应大于等于采购最高价!"};
-                      if(this.listSearch.MAX_SHOP_PRICE < this.listSearch.MIN_SHOP_PRICE){flag = "采购最高价应大于等于采购最低价!"};
-                      if(this.listSearch.MAX_SALES_PRICE < this.listSearch.MIN_SALES_PRICE){flag = "销售最高价应大于等于销售最低价!"};
+                      if(this.listSearch.SALES_PRICE > this.listSearch.MAX_SALES_PRICE && this.listSearch.MAX_SALES_PRICE >= 0){flag = "销售建议价应小于等于销售最高价!"};
+                      if(this.listSearch.SALES_PRICE < this.listSearch.MIN_SALES_PRICE && this.listSearch.MIN_SALES_PRICE >= 0){flag = "销售建议价应大于等于销售最低价!"};
+                      if(this.listSearch.MIN_SALES_PRICE < this.listSearch.MAX_SHOP_PRICE && this.listSearch.MAX_SHOP_PRICE >= 0){flag = "销售最低价应大于等于采购最高价!"};
+                      if(this.listSearch.MAX_SHOP_PRICE < this.listSearch.MIN_SHOP_PRICE && this.listSearch.MIN_SHOP_PRICE >= 0){flag = "采购最高价应大于等于采购最低价!"};
+                      if(this.listSearch.MAX_SALES_PRICE < this.listSearch.MIN_SALES_PRICE && this.listSearch.MIN_SALES_PRICE >=0){flag = "销售最高价应大于等于销售最低价!"};
                       //采购指导价PURCHASE_PRICE
-                      if(this.listSearch.PURCHASE_PRICE < this.listSearch.MIN_SHOP_PRICE){flag = "采购最低价应小于等于采购指导价!"};
-                      if(this.listSearch.PURCHASE_PRICE > this.listSearch.MAX_SHOP_PRICE){flag = "采购最高价应大于等于采购指导价!";
+                      if(this.listSearch.PURCHASE_PRICE < this.listSearch.MIN_SHOP_PRICE && this.listSearch.MIN_SHOP_PRICE >= 0){flag = "采购最低价应小于等于采购指导价!"};
+                      if(this.listSearch.PURCHASE_PRICE > this.listSearch.MAX_SHOP_PRICE && this.listSearch.MAX_SHOP_PRICE >= 0){flag = "采购最高价应大于等于采购指导价!";
                       }
                       if(flag != ""){
                       this.$Modal.error({title:'系统提示',content:flag});

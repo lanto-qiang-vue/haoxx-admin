@@ -209,6 +209,7 @@
   import vehicleModel from '@/hxx-components/vehicle-model.vue'
   import serviceRecord from '@/hxx-components/service-record.vue'
   import ModalTitle from '@/hxx-components/modal-title.vue'
+  import {deepClone} from "../../libs/util";
   export default {
     name: 'cart-modal',
     components: {selectCustomer, commonTable, vehicleModel, serviceRecord,ModalTitle},
@@ -353,7 +354,7 @@
       },
       info() {
         //修改初始赋值
-        var obj = this.info;
+        let obj = deepClone(this.info);
         this.formData = obj;
         let params = getUserInfo(this.$store.state.user.userInfo.params,"P1003");
         this.formData.PLATE_NUM = this.formData.PLATE_NUM || params;

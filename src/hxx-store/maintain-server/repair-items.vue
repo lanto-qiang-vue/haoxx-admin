@@ -6,7 +6,7 @@
     <div slot="right" class="split-pane">
       <common-table :columns="columns" :total="total" :page="page" v-model="tableData" :show="show"
                     @changePageSize="changePageSize" @changePage="changePage" :clearSelect="clearType"
-                    @onRowClick="onRowClick">
+                    @onRowClick="onRowClick" style="margin-top:-10px;">
         <div slot="search">
           <Form class="common-form">
             <FormItem>
@@ -37,7 +37,7 @@
             <!--</Form>-->
           <!--</div>-->
         </div>
-        <div slot="operate">
+        <div slot="operate" style="margin-top:-10px;">
           <Button type="primary" @click="impor()" v-if="accessBtn('export')">导入标准库</Button>
           <Button type="success" :disabled="isdisabled" @click="add()">新增</Button>
           <Button type="error" :disabled="cando" @click="del()">删除</Button>

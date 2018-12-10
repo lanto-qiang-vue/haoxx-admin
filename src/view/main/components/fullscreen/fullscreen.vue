@@ -1,7 +1,7 @@
 <template>
   <div v-if="showFullScreenBtn" class="full-screen-btn-con">
     <Tooltip :content="value ? '退出全屏' : '全屏'" placement="bottom" style="line-height: normal">
-      <Icon @click.native="handleChange" :type="value ? 'md-contract' : 'md-expand'" :size="24"></Icon>
+      <Icon @click.native="handleChange" :type="value ? 'md-contract' : 'md-expand'" :size="24" style="color:#515B6D;"></Icon>
     </Tooltip>
   </div>
 </template>
