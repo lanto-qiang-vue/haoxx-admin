@@ -328,7 +328,7 @@
                                 this.$Modal.confirm({
                                     title:"系统提示!",
                                     content:"确定要保存吗？",
-                                    onOk:this.del,
+                                    onOk:this.addSaveData,
 
                                 })
                     } else {
@@ -347,7 +347,7 @@
                 this.listSearch.NOT_CONTAINS_TAX_SALE_PRICE=(this.listSearch.SALES_PRICE/(this.listSearch.RATE+1)).toFixed(2);
                 this.listSearch.TAX=(this.listSearch.NOT_CONTAINS_TAX_SALE_PRICE*this.listSearch.RATE).toFixed(2);
             },
-            del(){
+            addSaveData(){
               //这里是新增操作 就服你名字都不换....社会我鑫哥....人狠话不多....
               var listSearch={};
               for(let i in this.listSearch){
