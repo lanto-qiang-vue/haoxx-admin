@@ -1585,6 +1585,10 @@
         this.getEmployeeList(this.detailData);
       }
     },
+    activated(){
+      console.log(document.documentElement);
+      document.documentElement=0;
+    },
     mounted() {
       this.wtdData = this.$store.state.user.userInfo.tenant;
       //获取单价------

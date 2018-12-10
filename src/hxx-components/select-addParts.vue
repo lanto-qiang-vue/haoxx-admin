@@ -74,7 +74,7 @@
        <Form  slot="content" :label-width="110" inline class="detail-form">
 
            <FormItem label="品牌:" style="width:30%;" >
-              <Select v-model="listSearch.BRAND" placeholder="" style="width:100%;" placeholder="选择品牌...">
+              <Select v-model="listSearch.BRAND" filterable style="width:100%;" placeholder="选择品牌..." clearable>
                 <Option v-for="(item, index) in initBrandArr"
                   :key="index" :value="item.code">{{item.name}}</Option>
               </Select>
@@ -85,7 +85,7 @@
           </FormItem>
 
           <FormItem label="三包期:" style="width:30%;">
-              <InputNumber :min="0" v-model="listSearch.THREE_EXPIRATION_DATE" style="width:100%;" placeholder=""             :formatter="value => `${value}月`"
+              <InputNumber :min="0"  v-model="listSearch.THREE_EXPIRATION_DATE" style="width:100%;" placeholder=""             :formatter="value => `${value}月`"
             :parser="value => value.replace('月', '')"></InputNumber>
           </FormItem>
           <FormItem label="保质期:" style="width:30%;">
@@ -189,7 +189,7 @@
                     "NAME":"",
                     "FACTORY_NO":"",
                     "TYPE_NAME":"",
-                    "PURCHASE_PRICE":0,
+                    "PURCHASE_PRICE":null,
                     "SALES_PRICE":0,
                     "UNIT":"",
                     "RATE":0,
@@ -197,15 +197,15 @@
                     "NOT_CONTAINS_TAX_SALE_PRICE":"",
                     "BRAND":"",
                     "FORMAT":"",
-                    "THREE_EXPIRATION_DATE":0,
-                    "EXPIRATION_DATE":0,
+                    "THREE_EXPIRATION_DATE":null,
+                    "EXPIRATION_DATE":null,
                     "PART_SOURCE":"",
-                    "MIN_SHOP_PRICE":0,
-                    "MIN_SALES_PRICE":0,
-                    "SAFE_STOCK_NUM":0,
-                    "MAX_SHOP_PRICE":0,
-                    "MAX_SALES_PRICE":0,
-                    "MAX_STOCK_NUM":0,
+                    "MIN_SHOP_PRICE":null,
+                    "MIN_SALES_PRICE":null,
+                    "SAFE_STOCK_NUM":null,
+                    "MAX_SHOP_PRICE":null,
+                    "MAX_SALES_PRICE":null,
+                    "MAX_STOCK_NUM":null,
                     "TYPE_ID":'',
                 },
                 initList:{
@@ -214,7 +214,7 @@
                     "NAME":"",
                     "FACTORY_NO":"",
                     "TYPE_NAME":"",
-                    "PURCHASE_PRICE":0,
+                    "PURCHASE_PRICE":null,
                     "SALES_PRICE":0,
                     "UNIT":"",
                     "RATE":0,
@@ -222,15 +222,15 @@
                     "NOT_CONTAINS_TAX_SALE_PRICE":"",
                     "BRAND":"",
                     "FORMAT":"",
-                    "THREE_EXPIRATION_DATE":0,
-                    "EXPIRATION_DATE":0,
+                    "THREE_EXPIRATION_DATE":null,
+                    "EXPIRATION_DATE":null,
                     "PART_SOURCE":"",
-                    "MIN_SHOP_PRICE":0,
-                    "MIN_SALES_PRICE":0,
-                    "SAFE_STOCK_NUM":0,
-                    "MAX_SHOP_PRICE":0,
-                    "MAX_SALES_PRICE":0,
-                    "MAX_STOCK_NUM":0,
+                    "MIN_SHOP_PRICE":null,
+                    "MIN_SALES_PRICE":null,
+                    "SAFE_STOCK_NUM":null,
+                    "MAX_SHOP_PRICE":null,
+                    "MAX_SALES_PRICE":null,
+                    "MAX_STOCK_NUM":null,
                     "TYPE_ID":'',
                 },
                 ruleValidate: {
@@ -258,7 +258,7 @@
                         "NAME":"",
                         "FACTORY_NO":"",
                         "TYPE_NAME":"",
-                        "PURCHASE_PRICE":0,
+                        "PURCHASE_PRICE":null,
                         "SALES_PRICE":0,
                         "UNIT":"",
                         "RATE":0,
@@ -266,15 +266,15 @@
                         "NOT_CONTAINS_TAX_SALE_PRICE":"",
                         "BRAND":"",
                         "FORMAT":"",
-                        "THREE_EXPIRATION_DATE":0,
-                        "EXPIRATION_DATE":0,
+                        "THREE_EXPIRATION_DATE":null,
+                        "EXPIRATION_DATE":null,
                         "PART_SOURCE":"",
-                        "MIN_SHOP_PRICE":0,
-                        "MIN_SALES_PRICE":0,
-                        "SAFE_STOCK_NUM":0,
-                        "MAX_SHOP_PRICE":0,
-                        "MAX_SALES_PRICE":0,
-                        "MAX_STOCK_NUM":0,
+                        "MIN_SHOP_PRICE":null,
+                        "MIN_SALES_PRICE":null,
+                        "SAFE_STOCK_NUM":null,
+                        "MAX_SHOP_PRICE":null,
+                        "MAX_SALES_PRICE":null,
+                        "MAX_STOCK_NUM":null,
                         "TYPE_ID":'',
                     };
 
@@ -296,7 +296,7 @@
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                       var flag = "";
-                      if(this.listSearch.SALES_PRICE > this.listSearch.MAX_SALES_PRICE){flag = "销售建议价应小于等于销售最高价!"};
+                      if(this.listSearch.SALES_PRICE > this.listSearch.MAX_SALES_PRICE ){flag = "销售建议价应小于等于销售最高价!"};
                       if(this.listSearch.SALES_PRICE < this.listSearch.MIN_SALES_PRICE){flag = "销售建议价应大于等于销售最低价!"};
                       if(this.listSearch.MIN_SALES_PRICE < this.listSearch.MAX_SHOP_PRICE){flag = "销售最低价应大于等于采购最高价!"};
                       if(this.listSearch.MAX_SHOP_PRICE < this.listSearch.MIN_SHOP_PRICE){flag = "采购最高价应大于等于采购最低价!"};
