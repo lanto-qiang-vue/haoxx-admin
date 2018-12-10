@@ -41,10 +41,12 @@
         console.log('进行改变中',val);
         if(this.allType){
             this.newVal=val;
+            console.log('dddddddd222',self.contentData,self.contentData1);
             if(this.flags){
                 let self= this
                 clearTimeout(this.timer);
                 this.timer = setTimeout(function(){
+                    console.log('dddddddd',self.contentData,self.contentData1);
                   if(self.newVal>self.contentData){
                           self.$Modal.confirm({
                               title:"系统提示!",

@@ -82,13 +82,15 @@
 
         <Modal
             v-model="showVehicleModel"
-            title="选择车型"
-            width="90"
-            :scrollable="false"
-            :transfer= "false"
-            :footer-hide="false"
-            :mask-closable="false"
+
             :transition-names="['', '']"
+            :mask-closable="false"
+            title="选择车型"
+            width="80"
+            :scrollable="true"
+            class="table-modal-detail"
+            :transfer="true"
+            :footer-hide="true"
 
         >
             <vehicle-model @onRowClick="onRowClick" :show="showVehicleModel"></vehicle-model>
