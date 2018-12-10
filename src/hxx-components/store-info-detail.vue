@@ -217,6 +217,7 @@
     watch:{
 		  data(datas){
        this.cancelEdit()
+       this.getImage(this.data.TENANT_ID);
       },
       show(val){
         val? document.querySelector("#store-info-detail .info").scrollTop= 0: ''
@@ -302,12 +303,16 @@
         })
       },
       showImg(img){
-        this.$Modal.info({
-          width: 90,
-          title: '查看',
-          closable: true,
-          content: '<img src="'+img+'" style="width: 100%"/>'
-        })
+        // this.$Modal.info({
+        //   width: 90,
+        //   title: '查看',
+        //   closable: true,
+        //   content: '<img src="'+img+'" style="width: 100%"/>'
+        // })
+
+
+        var query={img:img};
+        this.$router.push({path:'/store-img',query:query});
       },
       removeImg(name){
         this.info[name]= ''
@@ -374,7 +379,26 @@
             this.$Message.error('请输入必填项!');
           }
         })
-      }
+      },
+      getImage(id){
+        //通过门店id获取对应上传图片 /manage/info/tenantinfo/getTenantPic
+        this.axios.request({
+          url: '/manage/info/tenantinfo/getTenantPic',
+          method: 'post',
+          data: {
+            access_token: this.$store.state.user.token,
+            TENANT_ID:id,
+          }
+        }).then(res => {
+          if (res.success === true) {
+            this.info["ROAD_FILE_PATH"] = res.data[0].ROAD_FILE_PATH;
+            this.info["BUS_FILE_PATH"] = res.data[0].BUS_FILE_PATH;
+            this.info["TENANT_FILE_PATH"] = res.data[0].TENANT_FILE_PATH;
+            
+            
+          }
+        })
+      },
     }
 	}
 </script>

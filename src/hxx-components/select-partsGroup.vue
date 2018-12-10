@@ -33,7 +33,7 @@
 
         </div>
     </common-table>
-    <select-addParts :showSelectAddParts="showSelectAddParts">
+    <select-addParts :showSelectAddParts="showSelectAddParts" @closeDetail="closeDetail">
 
     </select-addParts>
     <div slot="footer">
@@ -142,7 +142,7 @@ import selectAddParts from '@/hxx-components/select-addParts.vue'
                     },
                     {title: '配件分类', key: 'TYPE_NAME', sortable: true, minWidth: 150},
                     {title: '品牌', key: 'BRAND', sortable: true, minWidth: 150,
-                        render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.BRAND))
+                        render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.BRAND)||params.row.BRAND)
                     },
                     {title: '规格', key: 'FORMAT', sortable: true, minWidth: 140},
                     {title: '包装单位', key: 'UNIT', sortable: true, minWidth: 120,
@@ -302,7 +302,10 @@ import selectAddParts from '@/hxx-components/select-addParts.vue'
                 this.page=1;
                 this.getList();
             },
-
+            closeDetail(){
+                this.page=1;
+                this.getList();
+            }
 
         }
 	}
