@@ -37,10 +37,10 @@
         <Panel name="1">
           仓库基本信息
           <Form slot="content" :model="formData" ref="list" :rules="rules" :label-width="120" class="common-form">
-            <FormItem label="仓库名称:" style="width:30%;" prop="NAME">
+            <FormItem label="仓库名称:" prop="NAME">
               <Input v-model="formData.NAME" type="text"> </Input>
             </FormItem>
-            <FormItem label="仓库地址:" style="width:30%;">
+            <FormItem label="仓库地址:" >
               <Input v-model="formData.ADDRESS" type="text"> </Input>
             </FormItem>
             <FormItem label="默认仓库:">

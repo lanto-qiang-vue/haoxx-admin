@@ -15,7 +15,6 @@
   >
     <modal-title slot="header" title="保单管理"  @clickBack="showModal=false"></modal-title>
     <div >
-
       <Collapse v-model="collapse">
         <Panel name="1">保单基本信息
             <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="120" class="common-form">

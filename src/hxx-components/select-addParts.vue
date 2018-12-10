@@ -68,68 +68,72 @@
               <Input type="text" v-model="listSearch.NOT_CONTAINS_TAX_SALE_PRICE"  placeholder="" style="width:100%;" disabled>
               </Input>
           </FormItem>
+         <div style="clear:both;"></div>
+         <FormItem label="品牌:" style="width:30%;" >
+           <Select v-model="listSearch.BRAND" filterable style="width:100%;" placeholder="选择品牌..." clearable>
+             <Option v-for="(item, index) in initBrandArr"
+                     :key="index" :value="item.code">{{item.name}}</Option>
+           </Select>
+         </FormItem>
+         <FormItem label="规格:" style="width:30%;">
+           <Input type="text" v-model="listSearch.FORMAT" placeholder="" style="width:100%;" >
+           </Input>
+         </FormItem>
+
+         <FormItem label="三包期:" style="width:30%;">
+           <InputNumber :min="0"  v-model="listSearch.THREE_EXPIRATION_DATE" style="width:100%;" placeholder=""             :formatter="value => `${value}月`"
+                        :parser="value => value.replace('月', '')"></InputNumber>
+         </FormItem>
+         <FormItem label="保质期:" style="width:30%;">
+           <InputNumber :min="0" v-model="listSearch.EXPIRATION_DATE" style="width:100%;" placeholder=""             :formatter="value => `${value}月`"
+                        :parser="value => value.replace('月', '')"></InputNumber>
+         </FormItem>
+         <FormItem label="配件来源:" style="width:30%;">
+           <Select v-model="listSearch.PART_SOURCE" placeholder="" style="width:100%;" placeholder="选择来源...">
+             <Option v-for="(item, index) in initPartSource"
+                     :key="index" :value="item.code">{{item.name}}</Option>
+           </Select>
+         </FormItem>
+         <div style="clear:both;"></div>
+         <FormItem label="采购最低价:" style="width:30%;">
+           <InputNumber :min="0" v-model="listSearch.MIN_SHOP_PRICE" style="width:100%;" placeholder=""             :formatter="value => `${value}元`"
+                        :parser="value => value.replace('元', '')"></InputNumber>
+         </FormItem>
+         <FormItem label="销售最低价:" style="width:30%;">
+           <InputNumber :min="0" v-model="listSearch.MIN_SALES_PRICE" style="width:100%;" placeholder=""
+                        :formatter="value => `${value}元`"
+                        :parser="value => value.replace('元', '')"></InputNumber>
+         </FormItem>
+         <FormItem label="安全库存:" style="width:30%;">
+           <InputNumber :min="0" v-model="listSearch.SAFE_STOCK_NUM" style="width:100%;" placeholder=""></InputNumber>
+         </FormItem>
+         <FormItem label="采购最高价:" style="width:30%;">
+           <InputNumber :min="0" v-model="listSearch.MAX_SHOP_PRICE" style="width:100%;" placeholder=""
+                        :formatter="value => `${value}元`"
+                        :parser="value => value.replace('元', '')"></InputNumber>
+         </FormItem>
+         <FormItem label="销售最高价:" style="width:30%;">
+           <InputNumber :min="0" v-model="listSearch.MAX_SALES_PRICE" style="width:100%;" placeholder=""
+                        :formatter="value => `${value}元`"
+                        :parser="value => value.replace('元', '')"></InputNumber>
+         </FormItem>
+         <FormItem label="最高库存:" style="width:30%;">
+           <InputNumber  :min="0" v-model="listSearch.MAX_STOCK_NUM" style="width:100%;" placeholder=""></InputNumber>
+         </FormItem>
+
        </Form>
       <!--</Panel>-->
       <!--<Panel name="2">配件详细信息-->
-       <Form  slot="content" :label-width="110" inline class="detail-form">
+       <!--<Form  slot="content" :label-width="110" inline class="detail-form">-->
 
-           <FormItem label="品牌:" style="width:30%;" >
-              <Select v-model="listSearch.BRAND" filterable style="width:100%;" placeholder="选择品牌..." clearable>
-                <Option v-for="(item, index) in initBrandArr"
-                  :key="index" :value="item.code">{{item.name}}</Option>
-              </Select>
-          </FormItem>
-          <FormItem label="规格:" style="width:30%;">
-              <Input type="text" v-model="listSearch.FORMAT" placeholder="" style="width:100%;" >
-              </Input>
-          </FormItem>
 
-          <FormItem label="三包期:" style="width:30%;">
-              <InputNumber :min="0"  v-model="listSearch.THREE_EXPIRATION_DATE" style="width:100%;" placeholder=""             :formatter="value => `${value}月`"
-            :parser="value => value.replace('月', '')"></InputNumber>
-          </FormItem>
-          <FormItem label="保质期:" style="width:30%;">
-              <InputNumber :min="0" v-model="listSearch.EXPIRATION_DATE" style="width:100%;" placeholder=""             :formatter="value => `${value}月`"
-            :parser="value => value.replace('月', '')"></InputNumber>
-          </FormItem>
-          <FormItem label="配件来源:" style="width:30%;">
-              <Select v-model="listSearch.PART_SOURCE" placeholder="" style="width:100%;" placeholder="选择来源...">
-                <Option v-for="(item, index) in initPartSource"
-                  :key="index" :value="item.code">{{item.name}}</Option>
-              </Select>
-          </FormItem>
-       </Form>
+       <!--</Form>-->
       <!--</Panel>-->
       <!--<Panel name="3">配件限价信息-->
-       <Form  slot="content" :label-width="110" inline class="common-form">
+       <!--<Form  slot="content" :label-width="110" inline class="common-form">-->
 
-          <FormItem label="采购最低价:" style="width:30%;">
-              <InputNumber :min="0" v-model="listSearch.MIN_SHOP_PRICE" style="width:100%;" placeholder=""             :formatter="value => `${value}元`"
-            :parser="value => value.replace('元', '')"></InputNumber>
-          </FormItem>
-          <FormItem label="销售最低价:" style="width:30%;">
-              <InputNumber :min="0" v-model="listSearch.MIN_SALES_PRICE" style="width:100%;" placeholder=""
-            :formatter="value => `${value}元`"
-            :parser="value => value.replace('元', '')"></InputNumber>
-          </FormItem>
-          <FormItem label="安全库存:" style="width:30%;">
-              <InputNumber :min="0" v-model="listSearch.SAFE_STOCK_NUM" style="width:100%;" placeholder=""></InputNumber>
-          </FormItem>
-          <FormItem label="采购最高价:" style="width:30%;">
-              <InputNumber :min="0" v-model="listSearch.MAX_SHOP_PRICE" style="width:100%;" placeholder=""
-            :formatter="value => `${value}元`"
-            :parser="value => value.replace('元', '')"></InputNumber>
-          </FormItem>
-          <FormItem label="销售最高价:" style="width:30%;">
-              <InputNumber :min="0" v-model="listSearch.MAX_SALES_PRICE" style="width:100%;" placeholder=""
-            :formatter="value => `${value}元`"
-            :parser="value => value.replace('元', '')"></InputNumber>
-          </FormItem>
-          <FormItem label="最高库存:" style="width:30%;">
-              <InputNumber  :min="0" v-model="listSearch.MAX_STOCK_NUM" style="width:100%;" placeholder=""></InputNumber>
-          </FormItem>
-
-       </Form>
+   <!---->
+       <!--</Form>-->
       <!--</Panel>-->
     <!--</Collapse>-->
 <!--         <Modal

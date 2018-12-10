@@ -1,11 +1,12 @@
 <template>
-  <Dropdown @on-click="handleClick" transfer :placement="placement">
-    <a class="drop-menu-a" type="text" @mouseover="handleMousemove($event, children)" :style="{textAlign: !hideTitle ? 'left' : ''}"><common-icon :size="rootIconSize" :color="textColor" :type="parentItem.icon"/><span class="menu-title" v-if="!hideTitle">{{ showTitle(parentItem) }}</span><Icon style="float: right;" v-if="!hideTitle" type="ios-arrow-forward" :size="16"/></a>
-    <DropdownMenu slot="list">
-      <template v-for="child in children">
+  <Dropdown @on-click="handleClick" transfer :placement="placement" >
+    <a class="drop-menu-a" type="text" @mouseover="handleMousemove($event, children)" :style="{textAlign: !hideTitle ? 'left' : ''}"><common-icon :size="rootIconSize" :color="textColor" :type="'logo-android'" :custom="parentItem.custom"/><span class="menu-title" v-if="!hideTitle"></span></a>
+    <DropdownMenu slot="list" style="background:#001529;" class="drop-menu">
+      <template v-for="child in children" >
         <collapsed-menu v-if="showChildren(child)" :icon-size="iconSize" :parent-item="child" :key="`drop-${child.name}`"></collapsed-menu>
-        <DropdownItem v-else :key="`drop-${child.name}`" :name="child.name"><common-icon :size="iconSize" :type="child.icon"/><span class="menu-title">{{ showTitle(child) }}</span></DropdownItem>
+        <DropdownItem v-else :key="`drop-${child.name}`" :name="child.name" style="color:white;"><span class="menu-title">{{ showTitle(child) }}</span></DropdownItem>
       </template>
+      <!--<common-icon :size="iconSize" :type="child.icon"/>-->
     </DropdownMenu>
   </Dropdown>
 </template>
@@ -24,7 +25,10 @@ export default {
     rootIconSize: {
       type: Number,
       default: 16
-    }
+    },
+    Icon:{
+
+    },
   },
   data () {
     return {
@@ -41,6 +45,13 @@ export default {
       const isOverflow = pageY + height < window.innerHeight
       this.placement = isOverflow ? 'right-start' : 'right-end'
     }
+  },mounted(){
+    // console.log(JSON.stringify(this.Icon));
   }
 }
 </script>
+<style lang="less">
+.drop-menu .ivu-dropdown-item:hover{
+  background: #1890FF;
+}
+  </style>
