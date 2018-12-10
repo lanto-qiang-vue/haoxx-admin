@@ -74,7 +74,7 @@
        <Form  slot="content" :label-width="110" inline class="detail-form">
 
            <FormItem label="品牌:" style="width:30%;" >
-              <Select v-model="listSearch.BRAND" filterable style="width:100%;" placeholder="选择品牌..." clearable>
+              <Select v-model="listSearch.BRAND" filterable @on-query-change="remoteMethod1" style="width:100%;" placeholder="选择品牌..." clearable ref="brandId">
                 <Option v-for="(item, index) in initBrandArr"
                   :key="index" :value="item.code">{{item.name}}</Option>
               </Select>
@@ -164,7 +164,7 @@
 </template>
 
 <script>
-  import { getName, getDictGroup } from '@/libs/util.js'
+  import { getName,getCode, getDictGroup } from '@/libs/util.js'
 	export default {
 		    name: "select-addParts",
         props:['showSelectAddParts','initPartsGroup','editdata'],
@@ -181,7 +181,7 @@
                     {code:0.06,name:"6%"},
                     {code:0.13,name:"13%"},
                 ],
-                initBrandArr:[],
+                
                 initPartSource:[],
                 listSearch:{
                     "PART_ID":"",
@@ -241,6 +241,7 @@
                 },
                 treeData:[],
                 data1:[],
+                newBrand:null,
             }
         },
         watch:{
@@ -287,10 +288,24 @@
         },
         mounted() {
             this.initUnitArr=getDictGroup(this.$store.state.app.dict, '1015');
-            this.initBrandArr=getDictGroup(this.$store.state.app.dict, '1016');
+            
             this.initPartSource=getDictGroup(this.$store.state.app.dict, '1017');
         },
+        computed:{
+            initBrandArr(){
+                return getDictGroup(this.$store.state.app.dict, '1016');
+            }
+        },
         methods:{
+            remoteMethod1(query){
+
+                this.newBrand=query;
+
+                if(!query||!getCode(this.initBrandArr,query)){
+                    this.listSearch.BRAND="";
+                }
+                
+            },
             saveData(name){
 
                 this.$refs[name].validate((valid) => {
@@ -334,11 +349,17 @@
             },
             del(){
               //这里是新增操作 就服你名字都不换....社会我鑫哥....人狠话不多....
+              var listSearch={};
+              for(let i in this.listSearch){
+                  listSearch[i]=this.listSearch[i];
+              }
+              listSearch['BRAND']=this.newBrand;
+
                 this.axios.request({
                     url: '/tenant/basedata/partinfo/save',
                     method: 'post',
                     data: {
-                    data: JSON.stringify(this.listSearch),
+                    data: JSON.stringify(listSearch),
                     access_token: this.$store.state.user.token
                     }
                 }).then(res => {
@@ -388,6 +409,7 @@
                 this.$emit('closeDetail');
                 this.handleReset("listSearch");
                 this.$emit('clearsection');
+                this.$refs.brandId.clearSingleSelect();
             }
         },
         //校验重置

@@ -924,6 +924,18 @@ export default [
           access: '100105',
         },
         component: () => import('@/hxx-admin/store-manager/upload-error.vue')
+      },
+      {
+        path: '/store-img',
+        name: 'store-img',
+        meta: {
+          hideInMenu: true,
+          icon: 'md-funnel',
+          title: '查看详情',
+          lgType: "",
+          access: '',
+        },
+        component: () => import('@/hxx-admin/store-manager/store-img.vue')
       }
     ]
   },
