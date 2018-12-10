@@ -56,11 +56,12 @@
            {title: '状态', key: 'STATUS', sortable: true, minWidth: 80,
            	render: (h,params) => h('span',getName(this.statuslist,params.row.STATUS))
            },
-           {title: '操作', key: 'operation', sortable: true, minWidth: 80,fixed: 'right',align:'center',
+           {title: '操作', key: 'operation', sortable: true, width: 100,fixed: 'right',align:'center',
                         render: (h, params) => {
                             let buttonContent= '请选择';
                             let buttonStatus= 'warning';
                             let dtype = this.check(params.row.ITEM_ID);
+                            if(dtype) buttonStatus = "";
                             return h('div', [
                                 h('Button', {
                                     props: {
@@ -69,9 +70,8 @@
                                         disabled:dtype
                                     },
                                     style: {
-                                        width:"60px",
+                                        width:"80px",
                                         textAlign: "center",
-                                        marginRight: '10px',
                                     },
                                     on: {
                                         click: (index) => {

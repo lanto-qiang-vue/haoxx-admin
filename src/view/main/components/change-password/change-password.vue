@@ -1,6 +1,6 @@
 <template>
 <Tooltip class="change-password" content="修改当前账号密码" @click.native='click'>
-  <Icon type="md-create" :size="24"></Icon>
+  <Icon type="md-create" :size="24" style="color:#515B6D;"></Icon>
   <Modal v-model="showModal" title="修改密码" :width="400">
     <Form ref="form" :model="form" :rules="rule" :label-width="80" class="change-password-form">
       <FormItem prop="oldPassword" label="旧密码">
