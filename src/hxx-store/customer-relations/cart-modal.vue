@@ -13,9 +13,9 @@
   >
     <modal-title slot="header" title="车辆档案详情" :state="''" @clickBack="showModal=false"></modal-title>
     <!-- @on-click="qh" v-model="indexName" -->
-    <Tabs @on-click="qh" v-model="indexName" class="modal-tabs" style="overflow: hidden">
+    <Tabs @on-click="qh" v-model="indexName" class="modal-tabs" style="overflow: hidden;">
       <!-- 基本信息 -->
-      <TabPane label="基本信息" name="m1" icon="logo-apple">
+      <TabPane label="基本信息" name="m1" icon="logo-apple" style="margin-top:-10px;">
         <Form :label-width="120" :model="formData" ref="formData" :rules="ruleValidate" class="common-form">
           <!-- 调整字段个数和位置 -->
           <div style="height:10px;"></div>

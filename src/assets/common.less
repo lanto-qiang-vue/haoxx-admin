@@ -7,13 +7,14 @@
 //@btn-font-size: 14px;
 //@tag-font-size: 14px;
 @table-td-hover-bg: #e6f7ff;
-@table-td-highlight-bg: #e6f7ff;
+@table-td-highlight-bg:#FEE593;
 .ivu-table-small{
   font-size: 12px;
 }
 .ivu-collapse-header .ivu-icon{
   float:right;
   line-height:3;
+  height:30px;
 }
 .ivu-collapse{
   border:none;
@@ -98,12 +99,16 @@
           width: 100%;
           background-color: white;
           z-index: 5;
+          box-shadow: 1px 3px 10px #909090;
         }
       }
     }
   }
 }
-
+//top10像素
+.ivu-modal-body .ivu-collapse{
+  margin-top:10px;
+}
 .full-height{
   >.ivu-modal-mask{
     background-color: white;
@@ -241,6 +246,10 @@
     }
   }
 }
+.ivu-btn-blue{
+  background-color:#9BB0C3FF;
+  color:#FFFFFFFF;
+}
 .button-variant(@color; @background; @border) {
   &.disabled,
   &[disabled],
@@ -273,7 +282,11 @@
 .ivu-input-number:hover input{
   padding-right: 25px;
 }
-
+.Hclass .ivu-modal .ivu-modal-content .ivu-modal-header{
+  background-color:white;
+  box-shadow: 1px 3px 10px #909090;
+  //border-bottom: 1px solid black;
+ }
 #print_style table{border:2px #000 solid;border-collapse: collapse; display: block;}
 #print_style th,#print_style td{border: 1px solid #000;}
 #print_style .noBorder th,#print_style .noBorder td{border:none;}

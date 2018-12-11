@@ -49,7 +49,7 @@
         v-model="showModal"
         class="table-modal-detail"
         title="未导入的维修项目"
-        width="90"
+        width="80"
         :mask-closable="false"
         :scrollable="true"
         :transfer="true"
@@ -86,6 +86,7 @@
         :footer-hide="false"
         :transition-names="['', '']">
         <!--<div style="width: 100%;height:100%;padding-bottom:30px;padding-top:10px;">-->
+        <div>
         <Collapse v-model="value1">
           <Panel name="1">
             项目基本信息
@@ -154,6 +155,7 @@
             </Form>
           </Panel>
         </Collapse>
+        </div>
         <!--<Collapse v-model="value2">-->
           <!--<Panel name="2">-->
             <!--备注描述-->
@@ -639,7 +641,8 @@
         }).then(res => {
           this.changeTree = [];
           if (res.success === true) {
-            var data = this.machine2(res.data, {});
+            let data = this.machine2(res.data, {});
+            data['expand'] = true;
             this.changeTree.push(data);
             this.spinShow = false;
           }

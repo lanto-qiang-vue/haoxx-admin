@@ -61,7 +61,7 @@
                             let buttonContent= '请选择';
                             let buttonStatus= 'warning';
                             let dtype = this.check(params.row.ITEM_ID);
-                            if(dtype) buttonStatus = "";
+                            if(dtype) buttonStatus = "blue";
                             return h('div', [
                                 h('Button', {
                                     props: {

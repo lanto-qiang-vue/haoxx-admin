@@ -34,6 +34,7 @@
     :transition-names="['', '']">
               <modal-title slot="header" title="配件套餐" :state="''" @clickBack="showModal=false"></modal-title>
               <!--<div style="height:100%;padding-top:10px;padding-bottom:30px;">-->
+              <div>
         <Collapse v-model="value1">
         <Panel name="1">
                 配件套餐基本信息
@@ -55,6 +56,9 @@
                 :key="index" :value="item.code">{{item.name}}</Option>
                 </Select>
                 </FormItem>
+                  <FormItem label="备注描述:" style="width:100%;">
+                    <Input type="textarea" v-model="formData.GROUP_INFO" rows="1" placeholder="请输入备注信息..."> </Input>
+                  </FormItem>
                 </Form>
               </Panel>
               <Panel name="2">
@@ -72,16 +76,16 @@
                     border></Table>
                 </div>
               </Panel>
-              <Panel name="3">
-                备注描述:
-                <div slot="content">
-                <Form slot="content"  ref="lists" class="common-form">
-                <Input type="textarea" v-model="formData.GROUP_INFO" placeholder="请输入备注信息..."> </Input>
-                </Form>
-                </div>
-              </Panel>
+              <!--<Panel name="3">-->
+                <!--备注描述:-->
+                <!--<div slot="content">-->
+                <!--<Form slot="content"  ref="lists" class="common-form">-->
+                <!--<Input type="textarea" v-model="formData.GROUP_INFO" placeholder="请输入备注信息..."> </Input>-->
+                <!--</Form>-->
+                <!--</div>-->
+              <!--</Panel>-->
               </Collapse>
-              <!--</div>-->
+              </div>
       <div slot="footer">
       <Button @click="addcancle()">取消</Button>
       <Button type="primary" @click="addpost('list')">保存</Button>

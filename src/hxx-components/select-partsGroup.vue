@@ -4,7 +4,7 @@
     <Modal
         v-model="showOnoff"
         title="选择配件档案"
-        width="90"
+        width="80"
         :scrollable="true"
         :transfer= "transferFlag"
         :footer-hide="false"
@@ -172,7 +172,7 @@ import selectAddParts from '@/hxx-components/select-addParts.vue'
                     {title: '操作', key: 'operation', sortable: true, minWidth: 100,fixed: 'right',align:'center',
                         render: (h, params) => {
                             let buttonContent= this.state(params.row)? '取消选择':'选择';
-                            let buttonStatus= this.state(params.row)? 'default':'warning';
+                            let buttonStatus= this.state(params.row)? 'blue':'warning';
                             return h('div', [
                                 h('Button', {
                                     props: {

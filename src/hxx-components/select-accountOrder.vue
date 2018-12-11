@@ -3,7 +3,7 @@
     <Modal
         v-model="showOnoff"
         title="维修工单结算"
-        width="90"
+        width="80"
         @on-visible-change="visibleChange"
         :scrollable="true"
         :transfer= "true"

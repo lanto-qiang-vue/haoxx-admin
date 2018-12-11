@@ -53,6 +53,7 @@
       :transition-names="['', '']">
       <modal-title slot="header" title="采购退货" :state="''" @clickBack="showModal=false"></modal-title>
       <!--<div style="height: 100%;overflow: auto; padding-bottom: 30px;padding-top:10px;">-->
+      <div>
       <Collapse v-model="value">
         <Panel name="1">
           基本信息
@@ -101,6 +102,7 @@
           </div>
         </Panel>
       </Collapse>
+      </div>
       <div style="width:100%;text-align:center;padding-top:20px;">
         <Button @click="showSelectParts=Math.random()" type="primary" shape="circle" style="margin-right: 10px;">
           <Icon type="md-checkmark" size="24"/>

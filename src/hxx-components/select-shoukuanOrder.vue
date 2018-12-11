@@ -3,7 +3,7 @@
     <!--收款框弹出-->
         <Modal v-model="showShouKuan"
             title="维修工单结算收款"
-            width="90"
+            width="80"
             @on-visible-change="visibleChange"
             :scrollable="true"
             :transfer= "true"

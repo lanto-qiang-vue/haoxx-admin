@@ -1,5 +1,6 @@
 <template>			
-<div>
+<div style="width:100%;height:100%;background-color:white;">
+  <div style="height:10px;"></div>
 	   <div>
           <Input  placeholder="参数名称..." v-model="keyword" style="width: 300px"></Input>
       <ButtonGroup style="padding-left:10px;">
@@ -34,7 +35,12 @@
 		     {title: '参数值',key:'PARAM_VALUE',minWidth: 200,align: 'center',
 		     render: (h, params) => {
 		     	        let store = params.row.PARAM_VALUE;
-		     	        let stype = params.row.INPUT_TYPE
+		     	        let stype = params.row.INPUT_TYPE;
+		     	        if(params.row.TYPE == 10291003){
+                    return h('div', [
+                      h('span',params.row.PARAM_VALUE)
+                    ]);
+                  }
 		     	        if(stype != 3){
 		     	        	return h('div', [
                             h('Input', {

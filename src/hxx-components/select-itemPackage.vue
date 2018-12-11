@@ -4,7 +4,7 @@
     <Modal
         v-model="showOnoff"
         title="选择维修项目套餐"
-        width="90"
+        width="80"
         :scrollable="true"
         :transfer= "showTransfer"
         :mask-closable="false"

@@ -5,7 +5,7 @@
     @on-visible-change="visibleChange"
     :mask-closable="false"
     class="table-modal-detail full-height"
-    width="100%"
+    width="100"
     :scrollable="true"
     :transfer= "false"
     :footer-hide="false"
@@ -17,6 +17,7 @@
       <!--<div class="status" v-show="title.length == 6">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;({{titleMsg}})</div>-->
       <!--<div class="status" v-show="title.length == 8">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;({{titleMsg}})</div>-->
       <!--<div class="status">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;({{titleMsg}})</div>-->
+    <div>
     <Collapse v-model="collapse">
       <Panel name="1">详情
        <Form ref="listSearch" v-if="tem == 1"   slot="content" :label-width="120" inline class="detail-form">
@@ -159,6 +160,7 @@
               <!-- 配件销售退货结束 -->
       </Panel>
     </Collapse>
+    </div>
     <div v-if="combo.length > 0 && tem == 1">
     <div class="r-list-header">
       <h1>维修项目</h1>
@@ -406,134 +408,197 @@
           {title: '维修项目名称', key: 'NAME', sortable: true, minWidth: 140,
             // render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.ORDER_TYPE))
           },
-          {title: '标准工时', key: 'REPAIR_TIME', sortable: true, minWidth: 120},
-          {title: '标准金额', key: 'REPAIR_MONEY', sortable: true, minWidth: 120},
-          {title: '油漆面数', key: 'PAINT_NUM', sortable: true, minWidth: 120},
-          {title: '小计金额', key: 'ITEM_MONEY', sortable: true, minWidth: 120},
-          {title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 120},
-          {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 130},
+          {title: '标准工时', key: 'REPAIR_TIME', sortable: true, minWidth: 120,align:'right'},
+          {title: '标准金额', key: 'REPAIR_MONEY', sortable: true, minWidth: 120,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.REPAIR_MONEY))
+          },
+          {title: '油漆面数', key: 'PAINT_NUM', sortable: true, minWidth: 120,align:'right'},
+          {title: '小计金额', key: 'ITEM_MONEY', sortable: true, minWidth: 120,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.ITEM_MONEY))
+          },
+          {title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 120,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.ITEM_DERATE_MONEY))
+          },
+          {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 130,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.ITEM_LAST_MONEY))
+          },
           {title: '车间班组', key: 'WORK_CLASS_NAME', sortable: true, minWidth: 120},
           {title: '备注', key: 'REMARK', sortable: true, minWidth:120}
         ],
         columns1: [
-          {title: '序号',  width: 100,type:'index',},
+          {title: '序号',  width: 70,type:'index',align:'center'},
           {title: '配件编号', key: 'PART_NO', sortable: true, minWidth: 200,},
           {title: '配件名称', key: 'NAME', sortable: true, minWidth: 150},
-          {title: '数量', key: 'PART_NUM', sortable: true, minWidth: 150},
-          {title: '单位', key: 'UNIT', sortable: true, minWidth: 150,
+          {title: '数量', key: 'PART_NUM', sortable: true, minWidth: 150,align:'right'},
+          {title: '单位', key: 'UNIT', sortable: true, minWidth: 150,align:'center',
             render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.UNIT))
           },
-          {title: '单价', key: 'SALES_PRICE', sortable: true, minWidth: 150},
-          {title: '小计金额', key: 'PART_MONEY', sortable: true, minWidth: 150,},
-          {title: '优惠金额', key: 'PART_DERATE_MONEY', sortable: true, minWidth: 150},
-          {title: '优惠后金额', key: 'PART_LAST_MONEY', sortable: true, minWidth: 150,},
-                    {title: '是否为托修方自配部件', key: 'IS_SELF', sortable: true, minWidth: 200,
+          {title: '单价', key: 'SALES_PRICE', sortable: true, minWidth: 150,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.SALES_PRICE))
+          },
+          {title: '小计金额', key: 'PART_MONEY', sortable: true, minWidth: 150,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.PART_MONEY))
+          },
+          {title: '优惠金额', key: 'PART_DERATE_MONEY', sortable: true, minWidth: 150,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.PART_DERATE_MONEY))
+          },
+          {title: '优惠后金额', key: 'PART_LAST_MONEY', sortable: true, minWidth: 150,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.PART_LAST_MONEY))
+          },
+                    {title: '是否为托修方自配部件', key: 'IS_SELF', sortable: true, minWidth: 200,align:'center',
              render: (h, params) => h('span', this.isSelf(params.row.IS_SELF))
           },
           {title: '备注', key: 'REMARK', sortable: true, minWidth: 150},
         ],
         //维修项目套餐
         columns2: [
-          {title: '序号',  width: 70,type:'index',},
+          {title: '序号',  width: 70,type:'index',align:'center'},
           {title: '项目套餐名称', key: 'GROUP_NAME', sortable: true, minWidth: 200,},
-          {title: '套餐价格', key: 'SALES_PRICE', sortable: true, minWidth: 150},
-          {title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 150},
-          {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 150},
+          {title: '套餐价格', key: 'SALES_PRICE', sortable: true, minWidth: 150,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.SALES_PRICE))
+          },
+          {title: '优惠金额', key: 'ITEM_DERATE_MONEY', sortable: true, minWidth: 150,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.ITEM_DERATE_MONEY))
+          },
+          {title: '优惠后金额', key: 'ITEM_LAST_MONEY', sortable: true, minWidth: 150,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.ITEM_LAST_MONEY))
+          },
           {title: '车间班组', key: 'WORK_CLASS_NAME', sortable: true, minWidth: 150},
           {title: '备注', key: 'REMARK', sortable: true, minWidth: 150},
         ],
           columns3: [
           {title: '项目1', key: 'REPAIR_ITEM1', sortable: true, minWidth: 200,},
-          {title: '金额', key: 'REPAIR_MONEY1', sortable: true, minWidth: 150},
+          {title: '金额', key: 'REPAIR_MONEY1', sortable: true, minWidth: 150,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.REPAIR_MONEY1))
+          },
           {title: '项目2', key: 'REPAIR_ITEM2', sortable: true, minWidth: 150},
-          {title: '金额', key: 'REPAIR_MONEY2', sortable: true, minWidth: 150},
+          {title: '金额', key: 'REPAIR_MONEY2', sortable: true, minWidth: 150,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.REPAIR_MONEY2))
+          },
           {title: '项目3', key: 'REPAIR_ITEM3', sortable: true, minWidth: 150},
-          {title: '金额', key: 'REPAIR_MONEY3', sortable: true, minWidth: 150},
+          {title: '金额', key: 'REPAIR_MONEY3', sortable: true, minWidth: 150,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.REPAIR_MONEY3))
+          },
           {title: '项目4', key: 'REPAIR_ITEM4', sortable: true, minWidth: 150},
-          {title: '金额', key: 'REPAIR_MONEY4', sortable: true, minWidth: 150},
+          {title: '金额', key: 'REPAIR_MONEY4', sortable: true, minWidth: 150,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.REPAIR_MONEY4))
+          },
         ],
           columns4: [
-          {title: '序号',  minWidth: 80,type:'index'},
+          {title: '序号',  width: 70,type:'index',align:'center'},
           {title: '仓库', key: 'STORE_NAME', sortable: true, minWidth: 100},
           {title: '配件名称', key: 'NAME', sortable: true, minWidth: 120},
           {title: '原厂编号', key: 'FACTORY_NO', sortable: true, minWidth: 120},
-          {title: '数量', key: 'PART_NUM', sortable: true, minWidth: 80},
-          {title: '单位', key: 'UNIT', sortable: true, minWidth: 80,
+          {title: '数量', key: 'PART_NUM', sortable: true, minWidth: 80,align:'right'},
+          {title: '单位', key: 'UNIT', sortable: true, minWidth: 80,align:'center',
           render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.UNIT))},
           {title: '品牌', key: 'BRAND', sortable: true, minWidth: 120,
           render: (h, params) => h('span', getName(this.$store.state.app.dict, params.row.BRAND))
           },
-          {title: '退货单价', key: 'PURCHASE_PRICE', sortable: true, minWidth: 120,},
-          {title: '退款金额', key: 'SUM_MONEY', sortable: true, minWidth: 120},
+          {title: '退货单价', key: 'PURCHASE_PRICE', sortable: true, minWidth: 120,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.PURCHASE_PRICE))
+          },
+          {title: '退款金额', key: 'SUM_MONEY', sortable: true, minWidth: 120,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.SUM_MONEY))
+          },
         ],
           columns5: [
-          {title: '应付金额', key: 'REAL_MONEY', sortable: true, minWidth: 150},
-          {title: '优惠金额', key: 'LESS_MONEY', sortable: true, minWidth: 150},
-          {title: '结算方式一', key: 'PAYMENT1', sortable: true, minWidth: 150,
+          {title: '应付金额', key: 'REAL_MONEY', sortable: true, minWidth: 150,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.REAL_MONEY))
+          },
+          {title: '优惠金额', key: 'LESS_MONEY', sortable: true, minWidth: 150,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.LESS_MONEY))
+          },
+          {title: '结算方式一', key: 'PAYMENT1', sortable: true, minWidth: 150,align:'center',
           render: (h, params) => h('span', getName(this.paytype, params.row.PAYMENT1))
           },
-          {title: '计算方式一金额', key: 'MONEY1', sortable: true, minWidth: 150},
-          {title: '结算方式二', key: 'PAYMENT2', sortable: true, minWidth: 150,
+          {title: '计算方式一金额', key: 'MONEY1', sortable: true, minWidth: 150,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.MONEY1))
+          },
+          {title: '结算方式二', key: 'PAYMENT2', sortable: true, minWidth: 150,align:'center',
           render: (h, params) => h('span', getName(this.paytype, params.row.PAYMENT2))
           },
-          {title: '结算方式二金额', key: 'MONEY2', sortable: true, minWidth: 150},
+          {title: '结算方式二金额', key: 'MONEY2', sortable: true, minWidth: 150,align:'center'},
           {title: '收款时间', key: 'CREATE_TIME', sortable: true, minWidth: 150,},
           {title: '收款人', key: 'FOLLOW_PERSON', sortable: true, minWidth: 150},
         ],
          columns6: [
-          {title: '序号',  width: 70,type:'index'},
+          {title: '序号',  width: 70,type:'index',align:'center'},
           {title: '仓库', key: 'STORE_NAME', sortable: true, minWidth: 150},
           {title: '配件名称', key: 'NAME', sortable: true, minWidth: 150},
           {title: '原厂编号', key: 'FACTORY_NO', sortable: true, minWidth: 150},
-          {title: '数量', key: 'PART_NUM', sortable: true, minWidth: 150},
-          {title: '单位', key: 'UNIT', sortable: true, minWidth: 150,
+          {title: '数量', key: 'PART_NUM', sortable: true, minWidth: 150,align:'right'},
+          {title: '单位', key: 'UNIT', sortable: true, minWidth: 150,align:'center',
           render: (h, params) => h('span', getName(this.unittype, params.row.UNIT))
           },
-          {title: '单位成本', key: 'PART_COST', sortable: true, minWidth: 150},
-          {title: '单价', key: 'SALES_PRICE', sortable: true, minWidth: 150},
-          {title: '小计金额', key: 'SUM_MONEY', sortable: true, minWidth: 150},
-          {title: '优惠金额', key: 'LESS_MONEY', sortable: true, minWidth: 150},
-          {title: '应收金额', key: 'REAL_MONEY', sortable: true, minWidth: 150},
+          {title: '单位成本', key: 'PART_COST', sortable: true, minWidth: 150,align:'right'},
+          {title: '单价', key: 'SALES_PRICE', sortable: true, minWidth: 150,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.SALES_PRICE))
+          },
+          {title: '小计金额', key: 'SUM_MONEY', sortable: true, minWidth: 150,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.SUM_MONEY))
+          },
+          {title: '优惠金额', key: 'LESS_MONEY', sortable: true, minWidth: 150,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.LESS_MONEY))
+          },
+          {title: '应收金额', key: 'REAL_MONEY', sortable: true, minWidth: 150,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.REAL_MONEY))
+          },
          ],
           columns7: [
-          {title: '序号',  width: 70,type:'index'},
+          {title: '序号',  width: 70,type:'index',align:'center'},
           {title: '配件名称', key: 'NAME', sortable: true, minWidth: 150},
           {title: '原厂编号', key: 'FACTORY_NO', sortable: true, minWidth: 150},
-          {title: '数量', key: 'PART_NUM', sortable: true, minWidth: 150},
-          {title: '单位', key: 'UNIT', sortable: true, minWidth: 150,
+          {title: '数量', key: 'PART_NUM', sortable: true, minWidth: 150,align:'right'},
+          {title: '单位', key: 'UNIT', sortable: true, minWidth: 150,align:'center',
           render: (h, params) => h('span', getName(this.unittype, params.row.UNIT))
           },
           {title: '品牌', key: 'BRAND', sortable: true, minWidth: 150},
-          {title: '采购单价', key: 'PURCHASE_PRICE', sortable: true, minWidth: 150},
-          {title: '采购金额', key: 'SUM_MONEY', sortable: true, minWidth: 150},
-          {title: '含税销售价', key: 'SALES_PRICE', sortable: true, minWidth: 150},
-          {title: '销售税率', key: 'TAX', sortable: true, minWidth: 150},
-          {title: '销售税额', key: 'RATE', sortable: true, minWidth: 150},
-          {title: '未含税销售价', key: 'NOT_CONTAINS_TAX_SALE_PRICE', sortable: true, minWidth: 150},
+          {title: '采购单价', key: 'PURCHASE_PRICE', sortable: true, minWidth: 150,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.PURCHASE_PRICE))
+          },
+          {title: '采购金额', key: 'SUM_MONEY', sortable: true, minWidth: 150,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.SUM_MONEY))
+          },
+          {title: '含税销售价', key: 'SALES_PRICE', sortable: true, minWidth: 150,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.SALES_PRICE))
+    },
+          {title: '销售税率', key: 'TAX', sortable: true, minWidth: 150,align:'right'},
+          {title: '销售税额', key: 'RATE', sortable: true, minWidth: 150,align:'right',
+          },
+          {title: '未含税销售价', key: 'NOT_CONTAINS_TAX_SALE_PRICE', sortable: true, minWidth: 150,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.NOT_CONTAINS_TAX_SALE_PRICE))
+          },
          ],
           columns8: [
           {title: '付款单号', key: 'PAY_NO', sortable: true, minWidth: 150},
-          {title: '付款方式', key: 'PAYMENT', sortable: true, minWidth: 150,
+          {title: '付款方式', key: 'PAYMENT', sortable: true, minWidth: 150,align:'center',
            render: (h, params) => h('span', getName(this.paytype, params.row.PAYMENT))
           },
-          {title: '付款金额', key: 'MONEY', sortable: true, minWidth: 150},
+          {title: '付款金额', key: 'MONEY', sortable: true, minWidth: 150,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.MONEY))
+          },
           {title: '付款时间', key: 'CREATE_TIME', sortable: true, minWidth: 150},
           {title: '付款人', key: 'FOLLOW_PERSON', sortable: true, minWidth: 150}
          ],
           columns9: [
-          {title: '序号',  width: 70,type:'index'},
+          {title: '序号',  width: 70,type:'index',align:'center'},
           {title: '配件名称', key: 'NAME', sortable: true, minWidth: 150},
           {title: '原厂编号', key: 'FACTORY_NO', sortable: true, minWidth: 150},
-          {title: '数量', key: 'PART_NUM', sortable: true, minWidth: 150},
-          {title: '单位', key: 'UNIT', sortable: true, minWidth: 150,
+          {title: '数量', key: 'PART_NUM', sortable: true, minWidth: 150,align:'right'},
+          {title: '单位', key: 'UNIT', sortable: true, minWidth: 150,align:'center',
           render: (h, params) => h('span', getName(this.unittype, params.row.UNIT))
           },
           {title: '品牌', key: 'BRAND', sortable: true, minWidth: 150,
           render: (h, params) => h('span', getName(this.brandtype, params.row.BRAND))
           },
-          {title: '退货单价', key: 'SALES_PRICE', sortable: true, minWidth: 150},
-          {title: '小计金额', key: 'SUM_MONEY', sortable: true, minWidth: 150},
-          {title: '单位成本', key: 'PART_COST', sortable: true, minWidth: 150},
+          {title: '退货单价', key: 'SALES_PRICE', sortable: true, minWidth: 150,align:'right',
+            render: (h, params) => h('span',this.formatMoney(params.row.SALES_PRICE))
+          },
+          {title: '小计金额', key: 'SUM_MONEY', sortable: true, minWidth: 150,
+            render: (h, params) => h('span',this.formatMoney(params.row.SUM_MONEY))
+          },
+          {title: '单位成本', key: 'PART_COST', sortable: true, minWidth: 150,align:'right'},
          ],
         collapse: '1',
         titleMsg:'',

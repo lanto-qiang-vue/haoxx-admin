@@ -2,8 +2,8 @@
   <div class="tags-nav">
     <div class="close-con">
       <Dropdown transfer @on-click="handleTagsOption">
-        <Button size="small" type="text">
-          <Icon :size="18" type="ios-close-circle-outline" />
+        <Button size="small" type="text" class="wqndy">
+          <Icon :size="18" type="ios-close-circle-outline" style="margin-left:-10px;margin-top:7px;" />
         </Button>
         <DropdownMenu slot="list">
           <DropdownItem name="close-all">关闭所有</DropdownItem>

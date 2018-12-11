@@ -397,7 +397,7 @@
   .login {
     width: 100%;
     height: 82vh;
-    min-height: 600px;
+    min-height: 700px;
     /*background-size: 100% 100%;*/
     background: url('../assets/images/banner-loginbg.png') 30%  no-repeat;
     background-size: auto 100%;

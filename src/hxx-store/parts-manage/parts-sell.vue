@@ -53,6 +53,7 @@
       :transition-names="['', '']">
       <modal-title slot="header" title="配件销售" :state="''" @clickBack="showModal=false"></modal-title>
       <!--<div style="height: 100%;overflow: auto; padding-bottom: 30px;padding-top:10px;">-->
+      <div>
       <Collapse v-model="value">
         <Panel name="1">
           基本信息
@@ -123,7 +124,7 @@
       <div style="float:left;font-size:18px;">合计金额:&nbsp;<span style="color:red;">{{formData.SUM_MONEY}}</span>&nbsp;&nbsp;-&nbsp;&nbsp;优惠金额:<span
         style="color:red;">{{formData.LESS_MONEY}}</span>&nbsp;&nbsp;=&nbsp;&nbsp;应收金额:<span style="color:red">{{formData.REAL_MONEY}}</span>
       </div>
-      <!--</div>-->
+      </div>
       <div slot="footer">
         <Button type="primary" @click="addPost('formData')" v-show="canShow">保存</Button>
         <Button @click="showModal=false">取消</Button>

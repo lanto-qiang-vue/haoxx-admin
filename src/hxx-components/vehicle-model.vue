@@ -100,7 +100,7 @@
             this.treeData=[{
               title: '所有厂家/品牌/车系',
               id: 0,
-              expand: false,
+              expand: true,
               // render:this.renderTree,
               children: this.sortTree(res.data, 10, 0)
             }]
