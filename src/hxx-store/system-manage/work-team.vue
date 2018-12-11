@@ -95,7 +95,7 @@
         titles: ['未选维修工', '当前已选维修工'],
         data1: [],
         targetKeys: ["1"],
-        split: 0.2,
+        split: 0.3,
         value1: '1',
         value3: '3',
         addType:0,
