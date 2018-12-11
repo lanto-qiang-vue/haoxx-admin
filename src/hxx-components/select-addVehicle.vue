@@ -4,7 +4,7 @@
     <Modal
         v-model="showOnoff"
         title="新增客户及车辆"
-        width="90"
+        width="80"
         @on-visible-change="visibleChange"
         :scrollable="true"
         :transfer= "true"

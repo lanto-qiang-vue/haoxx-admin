@@ -3,7 +3,7 @@
   <Modal
     v-model="showModal"
     title="招聘信息"
-    width="90"
+    width="80"
     @on-visible-change="visibleChange"
     :scrollable="true"
     :transfer= "false"

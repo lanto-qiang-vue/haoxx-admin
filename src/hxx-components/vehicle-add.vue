@@ -3,7 +3,7 @@
   :transition-names="['', '']"
 	v-model="showModal"
   @on-visible-change="visibleChange"
-    width="90"
+    width="80"
     title="车辆新增"
     :mask-closable="false"
     class="table-modal-detail"
@@ -144,7 +144,7 @@
         <Modal
     :transition-names="['', '']"
     v-model="vehicleShow"
-    width="90"
+    width="80"
     :scrollable="true"
     :transfer= "false"
     :footer-hide="true"
@@ -181,6 +181,7 @@
         hidetype:1,
         vehicleShow:false,
         showModal:false,
+        CID:'',
         xhide:false,
 				formData:{
 				MUST_SAFE_CORP:0,
@@ -243,7 +244,8 @@
            	 this.business = this.must;
            },
            CUSTOMER_ID(name){
-           	this.formData.CUSTOMER_ID = name;
+           	// this.formData.CUSTOMER_ID = name;
+             this.CID = name;
            },
            row(obj){
              let params = getUserInfo(this.$store.state.user.userInfo.params,"P1003");
@@ -337,6 +339,7 @@
                 })
 			},
 			vehicleAdd(){
+        this.formData.CUSTOMER_ID = this.CID;
 		  this.axios.request({
           url: 'tenant/basedata/ttvehiclefile/save',
           method: 'post',

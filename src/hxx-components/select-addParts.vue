@@ -5,7 +5,7 @@
         v-model="showOnoff"
         title="新增配件档案"
         class="table-modal-detail"
-        width="90"
+        width="80"
         :scrollable="true"
         @on-visible-change="visibleChange"
         :transfer= "true"

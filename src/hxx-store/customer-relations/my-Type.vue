@@ -1,22 +1,6 @@
 <template>
   <div style="width:250px;position:relative;">
-  <Input type="text" icon="ios-search" @on-keyup="goToSelect" :readonly="disType" @on-click="selectVehicle"> </Input>
-    <span style="position:absolute;right:0px;top:4px;cursor: pointer;" v-show="selectType">X</span>
-    <div style="" v-show="inputShow" v-clickoutside="handleClose" style="position:absolute;top:31px;z-index:99;">
-      <Table
-        :data="data"
-        :columns="tableColumns"
-        stripe
-        border
-        height="500"
-        width="500"
-        :highlight-row="true"
-        :loading="loading"
-        :row-class-name="rowClassName"
-        @on-row-click="onRowClick"
-      >
-      </Table>
-    </div>
+  <Button type="blue">蓝白色</Button>
   </div>
 </template>
 <script>

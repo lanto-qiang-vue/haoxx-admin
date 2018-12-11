@@ -5,16 +5,14 @@
                 @onRowDblclick="onRowDblclick" :show="showTable" :page="page" :loading="loading">
     <div slot="search">
       <Form ref="search" :rules="ruleValidate"  :model="search" :label-width="85" inline>
-          <FormItem label="创建时间:" style="width: 100%; margin-right: 10px;">
+          <FormItem label="创建时间:">
               <DatePicker v-model="search.ACCOUNT_TIME_gte" format="yyyy-MM-dd" type="date" placeholder="开始日期" style="width: 120px;"></DatePicker>
               <DatePicker v-model="search.ACCOUNT_TIME_lte" format="yyyy-MM-dd" type="date" placeholder="结束日期" style="width: 120px;margin-left: 5px;"></DatePicker>
               <Button type="primary" @click="page=1;getList()" style="margin-left: 5px;">搜索</Button>
           </FormItem>
-
        </Form>
-
     </div>
-    <div slot="operate">
+    <div slot="operate" style="margin-top:-10px;">
       <Button type="success" v-if="" @click="selectPick">新增</Button>
       <Button type="info" v-if="" @click="editButton">查看详情</Button>
     </div>

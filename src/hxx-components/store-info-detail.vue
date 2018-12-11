@@ -1,6 +1,7 @@
 <template>
 <div id="store-info-detail">
   <div class="info">
+    <div style="height:10px;"></div>
     <Collapse v-model="collapse">
       <Panel name="1">门店基本信息
         <Form class="common-form" ref="form" :rules="ruleValidate" :model="info" :label-width="120" slot="content">
@@ -130,7 +131,6 @@
         </div>
       </Panel>
     </Collapse>
-    <div style="height:60px;"></div>
   </div>
   <div class="footer" v-show="!isRegister&&!isCheck">
     <Button v-show="!editAble" type="info" :disabled="false" @click="editAble= true"
@@ -217,7 +217,9 @@
     watch:{
 		  data(datas){
        this.cancelEdit()
-       this.getImage(this.data.TENANT_ID);
+        if(this.type == 2){
+          this.getImage(this.data.TENANT_ID);
+        }
       },
       show(val){
         val? document.querySelector("#store-info-detail .info").scrollTop= 0: ''
@@ -256,6 +258,7 @@
           TENANT_NAME: rule,
           TENANT_AREA_DISPLAY:rule,
           TENANT_ADD: rule,
+          ROAD_LICENSE: rule,
           EMAIL:[
             { validator: validateEMAIL, trigger: 'change,blur' },
           ],

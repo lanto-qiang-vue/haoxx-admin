@@ -98,7 +98,7 @@
       :closable="false"
       @on-visible-change="visibleChange"
       title="收款"
-      width="90"
+      width="80"
       :scrollable="true"
       on-visible-change
       :transfer="false"

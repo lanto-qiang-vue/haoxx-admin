@@ -155,7 +155,7 @@
     <Modal
         v-model="showAccount"
         title="维修工单结算"
-        width="50"
+        width="80"
         @on-visible-change=""
         :scrollable="true"
         :transfer= "false"

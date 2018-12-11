@@ -25,7 +25,7 @@
         <Modal
             v-model="showAdd"
             title="人员培训基本信息"
-            width="90"
+            width="80"
             @on-visible-change="addVisibleChange"
             :scrollable="true"
             :transfer= "false"
@@ -67,7 +67,7 @@
             v-model="showNewDetail"
             title="申请明细"
             @on-visible-change="detailVisibleChange"
-            width="90"
+            width="80"
             :scrollable="true"
             :transfer= "false"
             :footer-hide="false"

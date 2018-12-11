@@ -44,6 +44,7 @@
       :transition-names="['', '']">
       <modal-title slot="header" title="销售退货" :state="''" @clickBack="showModal=false"></modal-title>
       <!--<div style="height:100%;padding-top:10px;padding-bottom:30px;">-->
+      <div>
       <Collapse v-model="value">
         <Panel name="1">
           基本信息
@@ -105,7 +106,7 @@
         </Button>
       </div>
       <div style="float:left;font-size:18px;">合计金额:&nbsp;<span style="color:red;">{{formData.RETURN_MONEY}}</span></div>
-      <!--</div>-->
+      </div>
       <div slot="footer">
         <Button type="primary" @click="addPost('formData')" v-show="canShow">保存</Button>
         <Button @click="showModal=false">取消</Button>

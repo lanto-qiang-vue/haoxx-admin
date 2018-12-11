@@ -39,6 +39,7 @@
       :transition-names="['', '']">
       <modal-title slot="header" title="供应商管理" :state="''" @clickBack="showModal=false"></modal-title>
       <!--<div style="height: 100%;overflow-x:hidden; padding-bottom: 30px;padding-top:10px;">-->
+      <div>
       <Collapse value="1">
         <Panel name="1">
           供应商基本信息
@@ -106,7 +107,7 @@
           </Form>
         </Panel>
       </Collapse>
-      <!--</div>-->
+      </div>
       <div slot="footer">
         <Button type="primary" @click="addPost('formData')">保存</Button>
         <Button @click="showModal=false">取消</Button>

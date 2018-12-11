@@ -4,12 +4,13 @@
       v-model="showModal1"
       :fullscreen="true"
       :mask-closable="false"
+      class="Hclass"
       :scrollable="true"
       :closable="false"
       :transfer= "false"
       :footer-hide="true"
       :transition-names="['', '']">
-      <div slot="header" style="height:40px;">
+      <div slot="header" style="height:52px;">
         <div class="user-avator-dropdown" style="float:right;margin-top:-10px;">
           <Dropdown trigger="click" @on-click="handle">
             <div class="login-user">
@@ -32,6 +33,7 @@
     <Modal
       v-model="showModal2"
       :fullscreen="true"
+      class="Hclass"
       style="min-width:600px;"
       :mask-closable="false"
       :scrollable="true"
@@ -40,7 +42,7 @@
       :footer-hide="false"
       :transition-names="['', '']"
     >
-      <div slot="header" style="height:40px;border:none;">
+      <div slot="header" style="height:52px;border:none;">
         <div class="user-avator-dropdown" style="float:right;margin-top:-10px;">
           <Dropdown trigger="click" @on-click="handle">
             <div class="login-user">
@@ -244,6 +246,14 @@ handle(){
           if (res.success === true) {
             this.showModal = false;
             setTimeout(this.hint,1000);
+          }else{
+            setTimeout(()=>{
+              this.$Modal.error({
+                title:'系统提示',
+                content:res.Exception.message,
+              });
+            },300);
+            this.$Spin.hide();
           }
         })
       },

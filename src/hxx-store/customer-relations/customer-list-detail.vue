@@ -17,13 +17,6 @@
       <!-- 基本信息 -->
       <TabPane label="基本信息" name="m1" icon="logo-apple">
         <Form ref="formData" :model="formData" :label-width="120" class="common-form" :rules="ruleValidate" inline>
-          <FormItem style="margin-left:-80px;width:100%;">
-            <!--<div class="operate">-->
-            <!--<Button @click="showModal = false">返回</Button>-->
-            <!--<Button type="primary" style="margin-left: 8px" @click="hsubmit('formData')">保存</Button>-->
-            <!--</div>-->
-          </FormItem>
-          <div></div>
           <FormItem label="客户名称" style="width:30%;" prop="name">
             <Input type="text" v-model="formData.name" style="min-width: 100%;"> </Input>
           </FormItem>
