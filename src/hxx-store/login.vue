@@ -1,7 +1,7 @@
 <template>
   <div style="width:100%;height:100%;overflow:auto;">
-    <div style="height:70px;width:1200px;margin:0 auto;">
-      <div style="width:960px;height:100%;margin:0 auto;">
+    <div style="height:70px;width:80%;margin:0 auto;">
+      <div style="">
         <div style="height:100%;float:left;padding-top:20px;">
           <img src="../assets/images/haoxiuxiu-logo.png"
                style="width:120px;height:50px;position:absolute;top:10px;"/>
@@ -397,18 +397,16 @@
   .login {
     width: 100%;
     height: 82vh;
-    min-height: 600px;
-    background-size: 100% 100%;
-    background-image: url('../assets/images/banner-loginbg.png');
-    background-size: cover;
+    min-height: 700px;
+    /*background-size: 100% 100%;*/
+    background: url('../assets/images/banner-loginbg.png') 30%  no-repeat;
+    background-size: auto 100%;
     margin:0 auto;
-    background-position: center;
     position: relative;
     &-con {
       position: absolute;
-      right: 250px;
-      top: 68%;
-      transform: translateY(-60%);
+      right: 15%;
+      bottom: 10%;
       width: 300px;
       &-header {
         font-size: 16px;
@@ -445,6 +443,6 @@
       float: none;
       display: inline-block;
     }
-    
+
   }
 </style>

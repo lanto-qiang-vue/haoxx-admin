@@ -347,7 +347,7 @@
                     }
                 }).then(res => {
                     if (res.success === true) {
-                        this.$Message.info('successful')
+                        this.$Message.info('保存成功')
                         this.$emit('refresh');
                         this.showOnoff=false;
                     }

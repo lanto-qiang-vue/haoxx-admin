@@ -101,6 +101,7 @@
     mounted () {
       this.searchSelectOption= getDictGroup(this.$store.state.app.dict, '1042');
       for(let i=0;i<this.searchSelectOption.length;i++){
+        
         if(this.searchSelectOption[i].code==="10421004"){
 
         }else{

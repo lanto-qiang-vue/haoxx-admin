@@ -30,11 +30,12 @@
             <Input type="text" v-model="formData.CUSTOMER_NAME" :disabled="true" style="min-width: 100%;"> </Input>
           </FormItem>
           <FormItem label="车架号:"  prop="VIN_NO">
-            <Input type="text" v-model="formData.VIN_NO" style="min-width: 100%;"> </Input>
+            <Input type="text" v-model="formData.VIN_NO" style="min-width: 100%;" @on-keyup="changeVinFun"> </Input>
           </FormItem>
           <FormItem label="车型:" prop="VEHICLE_MODEL" style="width: 570px">
-            <Input type="text" style="min-width: 100%;" v-model="formData.VEHICLE_MODEL" @on-focus="selectVehicle"
-                   :readonly="true" @on-click="selectVehicle" icon="ios-search"> </Input>
+            <!--<Input type="text" style="min-width: 100%;" v-model="formData.VEHICLE_MODEL" @on-focus="selectVehicle"
+                   :readonly="true" @on-click="selectVehicle" icon="ios-search"> </Input>-->
+            <unit-search-input @showTableFun="showTableFun" :searchTableData="searchTableData" :showChange="showChange" @closeSelect="closeSelect" @onRowSelect="onRowSelect"></unit-search-input>
           </FormItem>
           <!-- 调整字段个数和位置 -->
           <!-- 1 -->
@@ -210,9 +211,10 @@
   import serviceRecord from '@/hxx-components/service-record.vue'
   import ModalTitle from '@/hxx-components/modal-title.vue'
   import {deepClone} from "../../libs/util";
+  import unitSearchInput from '@/hxx-components/unit-search-input.vue'
   export default {
     name: 'cart-modal',
-    components: {selectCustomer, commonTable, vehicleModel, serviceRecord,ModalTitle},
+    components: {selectCustomer, commonTable, vehicleModel, serviceRecord,ModalTitle,unitSearchInput},
     computed: {
       cando() {
         var flag = this.obj == '' ? true : false;
@@ -231,7 +233,7 @@
       const servicePass = (rule, value, callback) => {
         var p1 = /\d?[A-Z]+\d?/
         if (p1.test(value) && value.length == 17) {
-          this.checkCart(value);
+          
           callback();
         } else {
           callback(new Error('请输入正确的车架号'));
@@ -295,7 +297,7 @@
             {validator: validatePass, trigger: 'change'},
             {validator: servicePass, trigger: 'blur'}
           ],
-          VEHICLE_MODEL: [{required: true, message: '请点击选取车型', trigger: 'blur'}],
+          VEHICLE_MODEL: [{required: true, message: '请输入车型', trigger: 'change'}],
           CUSTOMER_CODE: [{required: true, message: '请点击搜索图标选取客户', trigger: 'blur'}],
           CUSTOMER_NAME: [{required: true, message: '客户名称必选', trigger: 'blur'}],
         },
@@ -330,6 +332,8 @@
             title: '服务顾问', key: 'FOLLOW_PERSON', sortable: true, minWidth: 120
           },
         ],
+        searchTableData:'',
+        showChange:null,
       }
     },
     props: ['show', 'row', 'info', 'hidetype'],
@@ -364,6 +368,9 @@
         this.formData.LAST_REPAIR_MILEAGE = obj.LAST_REPAIR_MILEAGE ? parseFloat(obj.LAST_REPAIR_MILEAGE) : 0;
         this.formData.NEXT_REPAIR_MILEAGE = obj.NEXT_REPAIR_MILEAGE ? parseFloat(obj.NEXT_REPAIR_MILEAGE) : 0;
         this.formData.REGULAR_REPAIR = obj.REGULAR_REPAIR ? parseFloat(obj.REGULAR_REPAIR) : 0;
+
+        this.searchTableData=this.formData.VEHICLE_MODEL;
+        this.showChange=Math.random();
       },
     },
     methods: {
@@ -389,8 +396,12 @@
           }
         })
       },
-      visibleChange() {
+      visibleChange(status) {
         this.$emit('clearsection');
+        if(status === false){
+          this.searchTableData=null;
+                    this.showChange=Math.random();
+        }
       },
       clearsection() {
         this.obj = '';
@@ -464,7 +475,11 @@
         this.formData.VEHICLE_MODEL = row.MODEL_NAME;
         //车型id...
         this.formData.TID = row.TID;
+
         this.vehicleShow = false;
+
+        this.searchTableData=row.MODEL_NAME;
+        this.showChange=Math.random();
       },
       vehicleLook() {
         //查看数据使用
@@ -553,6 +568,30 @@
         };
         this.formData = data;
       },
+
+      showTableFun(){
+          this.vehicleShow=true;
+      },
+      closeSelect(){
+          this.formData.VEHICLE_MODEL= ""
+          this.formData.TID= ""
+          this.searchTableData="";
+      },
+      onRowSelect(val){ 
+          console.log('sfsdfsdfdsfsd',val);
+          this.formData.VEHICLE_MODEL= val.MODEL_NAME
+          this.formData.TID= val.TID
+          
+      },
+      changeVinFun(event){
+          var p1 = /\d?[A-Z]+\d?/
+          if (!p1.test(event.target.value) || event.target.value.length !== 17) {
+          }else{
+                this.checkCart(event.target.value);
+          }
+      }
+
+
     },
     mounted() {
       //颜色下拉处理
