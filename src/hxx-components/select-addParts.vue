@@ -13,8 +13,8 @@
         :transition-names="['', '']"
     >
     <div style="height: 100%;overflow: auto;">
-        <Collapse v-model="collapse">
-      <Panel name="1">配件基本信息
+        <!--<Collapse v-model="collapse">-->
+      <!--<Panel name="1">配件基本信息-->
        <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="110" inline class="common-form">
           <FormItem label="配件名称:" style="width:30%;" prop="NAME">
               <Input type="text" v-model="listSearch.NAME" placeholder="">
@@ -68,70 +68,74 @@
               <Input type="text" v-model="listSearch.NOT_CONTAINS_TAX_SALE_PRICE"  placeholder="" style="width:100%;" disabled>
               </Input>
           </FormItem>
-       </Form>
-      </Panel>
-      <Panel name="2">配件详细信息
-       <Form  slot="content" :label-width="110" inline class="detail-form">
+         <div style="clear:both;"></div>
+         <FormItem label="品牌:" style="width:30%;" >
+           <Select v-model="listSearch.BRAND" filterable style="width:100%;" placeholder="选择品牌..." clearable>
+             <Option v-for="(item, index) in initBrandArr"
+                     :key="index" :value="item.code">{{item.name}}</Option>
+           </Select>
+         </FormItem>
+         <FormItem label="规格:" style="width:30%;">
+           <Input type="text" v-model="listSearch.FORMAT" placeholder="" style="width:100%;" >
+           </Input>
+         </FormItem>
 
-           <FormItem label="品牌:" style="width:30%;" >
-              <Select v-model="listSearch.BRAND" placeholder="" style="width:100%;" placeholder="选择品牌...">
-                <Option v-for="(item, index) in initBrandArr"
-                  :key="index" :value="item.code">{{item.name}}</Option>
-              </Select>
-          </FormItem>
-          <FormItem label="规格:" style="width:30%;">
-              <Input type="text" v-model="listSearch.FORMAT" placeholder="" style="width:100%;" >
-              </Input>
-          </FormItem>
-
-          <FormItem label="三包期:" style="width:30%;">
-              <InputNumber :min="0" v-model="listSearch.THREE_EXPIRATION_DATE" style="width:100%;" placeholder=""             :formatter="value => `${value}月`"
-            :parser="value => value.replace('月', '')"></InputNumber>
-          </FormItem>
-          <FormItem label="保质期:" style="width:30%;">
-              <InputNumber :min="0" v-model="listSearch.EXPIRATION_DATE" style="width:100%;" placeholder=""             :formatter="value => `${value}月`"
-            :parser="value => value.replace('月', '')"></InputNumber>
-          </FormItem>
-          <FormItem label="配件来源:" style="width:30%;">
-              <Select v-model="listSearch.PART_SOURCE" placeholder="" style="width:100%;" placeholder="选择来源...">
-                <Option v-for="(item, index) in initPartSource"
-                  :key="index" :value="item.code">{{item.name}}</Option>
-              </Select>
-          </FormItem>
-       </Form>
-      </Panel>
-      <Panel name="3">配件限价信息
-       <Form  slot="content" :label-width="110" inline class="common-form">
-
-          <FormItem label="采购最低价:" style="width:30%;">
-              <InputNumber :min="0" v-model="listSearch.MIN_SHOP_PRICE" style="width:100%;" placeholder=""             :formatter="value => `${value}元`"
-            :parser="value => value.replace('元', '')"></InputNumber>
-          </FormItem>
-          <FormItem label="销售最低价:" style="width:30%;">
-              <InputNumber :min="0" v-model="listSearch.MIN_SALES_PRICE" style="width:100%;" placeholder=""
-            :formatter="value => `${value}元`"
-            :parser="value => value.replace('元', '')"></InputNumber>
-          </FormItem>
-          <FormItem label="安全库存:" style="width:30%;">
-              <InputNumber :min="0" v-model="listSearch.SAFE_STOCK_NUM" style="width:100%;" placeholder=""></InputNumber>
-          </FormItem>
-          <FormItem label="采购最高价:" style="width:30%;">
-              <InputNumber :min="0" v-model="listSearch.MAX_SHOP_PRICE" style="width:100%;" placeholder=""
-            :formatter="value => `${value}元`"
-            :parser="value => value.replace('元', '')"></InputNumber>
-          </FormItem>
-          <FormItem label="销售最高价:" style="width:30%;">
-              <InputNumber :min="0" v-model="listSearch.MAX_SALES_PRICE" style="width:100%;" placeholder=""
-            :formatter="value => `${value}元`"
-            :parser="value => value.replace('元', '')"></InputNumber>
-          </FormItem>
-          <FormItem label="最高库存:" style="width:30%;">
-              <InputNumber  :min="0" v-model="listSearch.MAX_STOCK_NUM" style="width:100%;" placeholder=""></InputNumber>
-          </FormItem>
+         <FormItem label="三包期:" style="width:30%;">
+           <InputNumber :min="0"  v-model="listSearch.THREE_EXPIRATION_DATE" style="width:100%;" placeholder=""             :formatter="value => `${value}月`"
+                        :parser="value => value.replace('月', '')"></InputNumber>
+         </FormItem>
+         <FormItem label="保质期:" style="width:30%;">
+           <InputNumber :min="0" v-model="listSearch.EXPIRATION_DATE" style="width:100%;" placeholder=""             :formatter="value => `${value}月`"
+                        :parser="value => value.replace('月', '')"></InputNumber>
+         </FormItem>
+         <FormItem label="配件来源:" style="width:30%;">
+           <Select v-model="listSearch.PART_SOURCE" placeholder="" style="width:100%;" placeholder="选择来源...">
+             <Option v-for="(item, index) in initPartSource"
+                     :key="index" :value="item.code">{{item.name}}</Option>
+           </Select>
+         </FormItem>
+         <div style="clear:both;"></div>
+         <FormItem label="采购最低价:" style="width:30%;">
+           <InputNumber :min="0" v-model="listSearch.MIN_SHOP_PRICE" style="width:100%;" placeholder=""             :formatter="value => `${value}元`"
+                        :parser="value => value.replace('元', '')"></InputNumber>
+         </FormItem>
+         <FormItem label="销售最低价:" style="width:30%;">
+           <InputNumber :min="0" v-model="listSearch.MIN_SALES_PRICE" style="width:100%;" placeholder=""
+                        :formatter="value => `${value}元`"
+                        :parser="value => value.replace('元', '')"></InputNumber>
+         </FormItem>
+         <FormItem label="安全库存:" style="width:30%;">
+           <InputNumber :min="0" v-model="listSearch.SAFE_STOCK_NUM" style="width:100%;" placeholder=""></InputNumber>
+         </FormItem>
+         <FormItem label="采购最高价:" style="width:30%;">
+           <InputNumber :min="0" v-model="listSearch.MAX_SHOP_PRICE" style="width:100%;" placeholder=""
+                        :formatter="value => `${value}元`"
+                        :parser="value => value.replace('元', '')"></InputNumber>
+         </FormItem>
+         <FormItem label="销售最高价:" style="width:30%;">
+           <InputNumber :min="0" v-model="listSearch.MAX_SALES_PRICE" style="width:100%;" placeholder=""
+                        :formatter="value => `${value}元`"
+                        :parser="value => value.replace('元', '')"></InputNumber>
+         </FormItem>
+         <FormItem label="最高库存:" style="width:30%;">
+           <InputNumber  :min="0" v-model="listSearch.MAX_STOCK_NUM" style="width:100%;" placeholder=""></InputNumber>
+         </FormItem>
 
        </Form>
-      </Panel>
-    </Collapse>
+      <!--</Panel>-->
+      <!--<Panel name="2">配件详细信息-->
+       <!--<Form  slot="content" :label-width="110" inline class="detail-form">-->
+
+
+       <!--</Form>-->
+      <!--</Panel>-->
+      <!--<Panel name="3">配件限价信息-->
+       <!--<Form  slot="content" :label-width="110" inline class="common-form">-->
+
+   <!---->
+       <!--</Form>-->
+      <!--</Panel>-->
+    <!--</Collapse>-->
 <!--         <Modal
         v-model="showType"
         title="配件分类列表"
@@ -189,7 +193,7 @@
                     "NAME":"",
                     "FACTORY_NO":"",
                     "TYPE_NAME":"",
-                    "PURCHASE_PRICE":0,
+                    "PURCHASE_PRICE":null,
                     "SALES_PRICE":0,
                     "UNIT":"",
                     "RATE":0,
@@ -197,15 +201,15 @@
                     "NOT_CONTAINS_TAX_SALE_PRICE":"",
                     "BRAND":"",
                     "FORMAT":"",
-                    "THREE_EXPIRATION_DATE":0,
-                    "EXPIRATION_DATE":0,
+                    "THREE_EXPIRATION_DATE":null,
+                    "EXPIRATION_DATE":null,
                     "PART_SOURCE":"",
-                    "MIN_SHOP_PRICE":0,
-                    "MIN_SALES_PRICE":0,
-                    "SAFE_STOCK_NUM":0,
-                    "MAX_SHOP_PRICE":0,
-                    "MAX_SALES_PRICE":0,
-                    "MAX_STOCK_NUM":0,
+                    "MIN_SHOP_PRICE":null,
+                    "MIN_SALES_PRICE":null,
+                    "SAFE_STOCK_NUM":null,
+                    "MAX_SHOP_PRICE":null,
+                    "MAX_SALES_PRICE":null,
+                    "MAX_STOCK_NUM":null,
                     "TYPE_ID":'',
                 },
                 initList:{
@@ -214,7 +218,7 @@
                     "NAME":"",
                     "FACTORY_NO":"",
                     "TYPE_NAME":"",
-                    "PURCHASE_PRICE":0,
+                    "PURCHASE_PRICE":null,
                     "SALES_PRICE":0,
                     "UNIT":"",
                     "RATE":0,
@@ -222,15 +226,15 @@
                     "NOT_CONTAINS_TAX_SALE_PRICE":"",
                     "BRAND":"",
                     "FORMAT":"",
-                    "THREE_EXPIRATION_DATE":0,
-                    "EXPIRATION_DATE":0,
+                    "THREE_EXPIRATION_DATE":null,
+                    "EXPIRATION_DATE":null,
                     "PART_SOURCE":"",
-                    "MIN_SHOP_PRICE":0,
-                    "MIN_SALES_PRICE":0,
-                    "SAFE_STOCK_NUM":0,
-                    "MAX_SHOP_PRICE":0,
-                    "MAX_SALES_PRICE":0,
-                    "MAX_STOCK_NUM":0,
+                    "MIN_SHOP_PRICE":null,
+                    "MIN_SALES_PRICE":null,
+                    "SAFE_STOCK_NUM":null,
+                    "MAX_SHOP_PRICE":null,
+                    "MAX_SALES_PRICE":null,
+                    "MAX_STOCK_NUM":null,
                     "TYPE_ID":'',
                 },
                 ruleValidate: {
@@ -258,7 +262,7 @@
                         "NAME":"",
                         "FACTORY_NO":"",
                         "TYPE_NAME":"",
-                        "PURCHASE_PRICE":0,
+                        "PURCHASE_PRICE":null,
                         "SALES_PRICE":0,
                         "UNIT":"",
                         "RATE":0,
@@ -266,15 +270,15 @@
                         "NOT_CONTAINS_TAX_SALE_PRICE":"",
                         "BRAND":"",
                         "FORMAT":"",
-                        "THREE_EXPIRATION_DATE":0,
-                        "EXPIRATION_DATE":0,
+                        "THREE_EXPIRATION_DATE":null,
+                        "EXPIRATION_DATE":null,
                         "PART_SOURCE":"",
-                        "MIN_SHOP_PRICE":0,
-                        "MIN_SALES_PRICE":0,
-                        "SAFE_STOCK_NUM":0,
-                        "MAX_SHOP_PRICE":0,
-                        "MAX_SALES_PRICE":0,
-                        "MAX_STOCK_NUM":0,
+                        "MIN_SHOP_PRICE":null,
+                        "MIN_SALES_PRICE":null,
+                        "SAFE_STOCK_NUM":null,
+                        "MAX_SHOP_PRICE":null,
+                        "MAX_SALES_PRICE":null,
+                        "MAX_STOCK_NUM":null,
                         "TYPE_ID":'',
                     };
 
@@ -296,14 +300,14 @@
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                       var flag = "";
-                      if(this.listSearch.SALES_PRICE > this.listSearch.MAX_SALES_PRICE){flag = "销售建议价应小于等于销售最高价!"};
-                      if(this.listSearch.SALES_PRICE < this.listSearch.MIN_SALES_PRICE){flag = "销售建议价应大于等于销售最低价!"};
-                      if(this.listSearch.MIN_SALES_PRICE < this.listSearch.MAX_SHOP_PRICE){flag = "销售最低价应大于等于采购最高价!"};
-                      if(this.listSearch.MAX_SHOP_PRICE < this.listSearch.MIN_SHOP_PRICE){flag = "采购最高价应大于等于采购最低价!"};
-                      if(this.listSearch.MAX_SALES_PRICE < this.listSearch.MIN_SALES_PRICE){flag = "销售最高价应大于等于销售最低价!"};
+                      if(this.listSearch.SALES_PRICE > this.listSearch.MAX_SALES_PRICE && this.listSearch.MAX_SALES_PRICE >= 0){flag = "销售建议价应小于等于销售最高价!"};
+                      if(this.listSearch.SALES_PRICE < this.listSearch.MIN_SALES_PRICE && this.listSearch.MIN_SALES_PRICE >= 0){flag = "销售建议价应大于等于销售最低价!"};
+                      if(this.listSearch.MIN_SALES_PRICE < this.listSearch.MAX_SHOP_PRICE && this.listSearch.MAX_SHOP_PRICE >= 0){flag = "销售最低价应大于等于采购最高价!"};
+                      if(this.listSearch.MAX_SHOP_PRICE < this.listSearch.MIN_SHOP_PRICE && this.listSearch.MIN_SHOP_PRICE >= 0){flag = "采购最高价应大于等于采购最低价!"};
+                      if(this.listSearch.MAX_SALES_PRICE < this.listSearch.MIN_SALES_PRICE && this.listSearch.MIN_SALES_PRICE >=0){flag = "销售最高价应大于等于销售最低价!"};
                       //采购指导价PURCHASE_PRICE
-                      if(this.listSearch.PURCHASE_PRICE < this.listSearch.MIN_SHOP_PRICE){flag = "采购最低价应小于等于采购指导价!"};
-                      if(this.listSearch.PURCHASE_PRICE > this.listSearch.MAX_SHOP_PRICE){flag = "采购最高价应大于等于采购指导价!";
+                      if(this.listSearch.PURCHASE_PRICE < this.listSearch.MIN_SHOP_PRICE && this.listSearch.MIN_SHOP_PRICE >= 0){flag = "采购最低价应小于等于采购指导价!"};
+                      if(this.listSearch.PURCHASE_PRICE > this.listSearch.MAX_SHOP_PRICE && this.listSearch.MAX_SHOP_PRICE >= 0){flag = "采购最高价应大于等于采购指导价!";
                       }
                       if(flag != ""){
                       this.$Modal.error({title:'系统提示',content:flag});
@@ -343,7 +347,7 @@
                     }
                 }).then(res => {
                     if (res.success === true) {
-                        this.$Message.info('successful')
+                        this.$Message.info('保存成功')
                         this.$emit('refresh');
                         this.showOnoff=false;
                     }

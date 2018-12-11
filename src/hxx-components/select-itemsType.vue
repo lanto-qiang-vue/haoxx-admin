@@ -93,7 +93,7 @@ import commonTable from '@/hxx-components/common-table.vue'
 
                 columns: [
                     // {type: 'selection', width: 50, fixed: 'left'},
-                    {title: '序号',  width: 70,
+                    {title: '序号',  width: 70,align:'center',
                         render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
                     },
                     {title: '项目编号', key: 'ITEM_NO', sortable: true, minWidth: 150,

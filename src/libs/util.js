@@ -377,6 +377,12 @@ export const getName = (arr, code) => {
       return arr[i].name
   }
 }
+export const getCode = (arr, name) => {
+  for (let i in arr){
+    if(arr[i].name==name)
+      return arr[i].code
+  }
+}
 export const getCreate = (arr,code) =>{
 for(let i in arr){
 if(arr[i].USER_ID ==code){

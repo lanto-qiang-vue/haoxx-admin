@@ -38,9 +38,8 @@
             <FormItem label="出入库日期:" style="width: 450px">
                     <DatePicker v-model="search.orderDateGte" format="yyyy-MM-dd" type="date" placeholder="开始时间" style="width: 120px;"></DatePicker>
                     <DatePicker v-model="search.orderDateIte" format="yyyy-MM-dd" type="date" placeholder="结束时间" style="width: 120px;margin-left: 5px;"></DatePicker>
-                    <Button type="primary" @click="page=1;getList()">搜索</Button>
+              <Button type="primary" @click="page=1;getList()" style="margin-left:10px;">搜索</Button>
             </FormItem>
-
         </Form>
     </div>
   </common-table>

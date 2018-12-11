@@ -38,6 +38,7 @@
       :transition-names="['', '']">
       <modal-title slot="header" title="维修项目套餐" :state="''" @clickBack="showModal=false"></modal-title>
       <!--<div style="height: 100%;overflow-x:hidden; padding-bottom: 30px;padding-top:10px;">-->
+      <div>
         <Collapse v-model="value1">
           <Panel name="1">
             项目基本信息
@@ -97,6 +98,7 @@
         </Collapse>
       <!--</div>-->
      <!--</div>-->
+      </div>
       <div slot="footer">
         <Button @click="addcancle()">取消</Button>
         <Button type="primary" @click="addpost('list')">保存</Button>

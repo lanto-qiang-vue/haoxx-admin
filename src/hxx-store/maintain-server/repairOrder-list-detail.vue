@@ -1346,6 +1346,8 @@
       showDetail() {
         this.showFlag=true;
         this.showModal = true
+        
+
         //--------------------
         //清空公共数据值------
         this.getItem = [];
@@ -1585,6 +1587,14 @@
         this.getEmployeeList(this.detailData);
       }
     },
+  //  activated(){
+  //     console.log("获取到的对象值：",document.querySelector(".ivu-modal-body"));
+
+  //         console.log("底部高度"+document.querySelector(".ivu-modal-body").scrollTop);
+
+        
+  //       document.querySelector(".ivu-modal-body").scrollTop=0;
+  //   },
     mounted() {
       this.wtdData = this.$store.state.user.userInfo.tenant;
       //获取单价------
@@ -1693,6 +1703,7 @@
 
       visibleChange(status) {
         if (status === false) {
+          document.querySelector(".ivu-modal-body").scrollTop=0;
           this.$emit('closeDetail');
           this.handleReset("listSearch");
         }
