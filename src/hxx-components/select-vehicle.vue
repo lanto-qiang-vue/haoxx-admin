@@ -58,7 +58,7 @@ import { getName, getDictGroup } from '@/libs/util.js'
                     {title: '客户名称', key: 'CUSTOMER_NAME', sortable: true, minWidth: 120},
                     {title: '联系电话', key: 'MOBILE_PHONE', sortable: true, minWidth: 135},
                     {title: '车架号', key: 'VIN_NO', sortable: true, minWidth: 200},
-                    {title: '发动机号', key: 'ENGINE_NO', sortable: true, minWidth: 200,
+                    {title: '车型', key: 'VEHICLE_MODEL', sortable: true, minWidth: 200,
                         // render: (h, params) => h('span', params.row.ORDER_DATE.substr(0, 10))
                     },
                     {title: '最近来厂日期', key: 'COME_DATE', sortable: true, minWidth: 200},

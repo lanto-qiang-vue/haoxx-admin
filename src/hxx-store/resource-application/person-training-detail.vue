@@ -27,10 +27,10 @@
               </Input>
           </FormItem>
           
-          <FormItem label="培训地点:" style="width:100%;">
+          <FormItem label="培训地点:" style="width:95%;">
               <Input type="textarea" :disabled='saveFlag' v-model="listSearch.place" placeholder="" style="min-width: 100%;"> </Input>
           </FormItem>
-          <FormItem label="培训内容:" style="width:100%;">
+          <FormItem label="培训内容:" style="width:95%;">
               <Input type="textarea" :disabled='saveFlag' v-model="listSearch.trainingContent" placeholder="" style="min-width: 100%;"> </Input>
           </FormItem>
        </Form>
