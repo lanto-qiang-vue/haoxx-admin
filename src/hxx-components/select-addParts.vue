@@ -68,68 +68,72 @@
               <Input type="text" v-model="listSearch.NOT_CONTAINS_TAX_SALE_PRICE"  placeholder="" style="width:100%;" disabled>
               </Input>
           </FormItem>
+         <div style="clear:both;"></div>
+         <FormItem label="品牌:" style="width:30%;" >
+           <Select v-model="listSearch.BRAND" filterable style="width:100%;" placeholder="选择品牌..." clearable>
+             <Option v-for="(item, index) in initBrandArr"
+                     :key="index" :value="item.code">{{item.name}}</Option>
+           </Select>
+         </FormItem>
+         <FormItem label="规格:" style="width:30%;">
+           <Input type="text" v-model="listSearch.FORMAT" placeholder="" style="width:100%;" >
+           </Input>
+         </FormItem>
+
+         <FormItem label="三包期:" style="width:30%;">
+           <InputNumber :min="0"  v-model="listSearch.THREE_EXPIRATION_DATE" style="width:100%;" placeholder=""             :formatter="value => `${value}月`"
+                        :parser="value => value.replace('月', '')"></InputNumber>
+         </FormItem>
+         <FormItem label="保质期:" style="width:30%;">
+           <InputNumber :min="0" v-model="listSearch.EXPIRATION_DATE" style="width:100%;" placeholder=""             :formatter="value => `${value}月`"
+                        :parser="value => value.replace('月', '')"></InputNumber>
+         </FormItem>
+         <FormItem label="配件来源:" style="width:30%;">
+           <Select v-model="listSearch.PART_SOURCE" placeholder="" style="width:100%;" placeholder="选择来源...">
+             <Option v-for="(item, index) in initPartSource"
+                     :key="index" :value="item.code">{{item.name}}</Option>
+           </Select>
+         </FormItem>
+         <div style="clear:both;"></div>
+         <FormItem label="采购最低价:" style="width:30%;">
+           <InputNumber :min="0" v-model="listSearch.MIN_SHOP_PRICE" style="width:100%;" placeholder=""             :formatter="value => `${value}元`"
+                        :parser="value => value.replace('元', '')"></InputNumber>
+         </FormItem>
+         <FormItem label="销售最低价:" style="width:30%;">
+           <InputNumber :min="0" v-model="listSearch.MIN_SALES_PRICE" style="width:100%;" placeholder=""
+                        :formatter="value => `${value}元`"
+                        :parser="value => value.replace('元', '')"></InputNumber>
+         </FormItem>
+         <FormItem label="安全库存:" style="width:30%;">
+           <InputNumber :min="0" v-model="listSearch.SAFE_STOCK_NUM" style="width:100%;" placeholder=""></InputNumber>
+         </FormItem>
+         <FormItem label="采购最高价:" style="width:30%;">
+           <InputNumber :min="0" v-model="listSearch.MAX_SHOP_PRICE" style="width:100%;" placeholder=""
+                        :formatter="value => `${value}元`"
+                        :parser="value => value.replace('元', '')"></InputNumber>
+         </FormItem>
+         <FormItem label="销售最高价:" style="width:30%;">
+           <InputNumber :min="0" v-model="listSearch.MAX_SALES_PRICE" style="width:100%;" placeholder=""
+                        :formatter="value => `${value}元`"
+                        :parser="value => value.replace('元', '')"></InputNumber>
+         </FormItem>
+         <FormItem label="最高库存:" style="width:30%;">
+           <InputNumber  :min="0" v-model="listSearch.MAX_STOCK_NUM" style="width:100%;" placeholder=""></InputNumber>
+         </FormItem>
+
        </Form>
       <!--</Panel>-->
       <!--<Panel name="2">配件详细信息-->
-       <Form  slot="content" :label-width="110" inline class="detail-form">
+       <!--<Form  slot="content" :label-width="110" inline class="detail-form">-->
 
-           <FormItem label="品牌:" style="width:30%;" >
-              <Select v-model="listSearch.BRAND" filterable @on-query-change="remoteMethod1" style="width:100%;" placeholder="选择品牌..." clearable ref="brandId">
-                <Option v-for="(item, index) in initBrandArr"
-                  :key="index" :value="item.code">{{item.name}}</Option>
-              </Select>
-          </FormItem>
-          <FormItem label="规格:" style="width:30%;">
-              <Input type="text" v-model="listSearch.FORMAT" placeholder="" style="width:100%;" >
-              </Input>
-          </FormItem>
 
-          <FormItem label="三包期:" style="width:30%;">
-              <InputNumber :min="0"  v-model="listSearch.THREE_EXPIRATION_DATE" style="width:100%;" placeholder=""             :formatter="value => `${value}月`"
-            :parser="value => value.replace('月', '')"></InputNumber>
-          </FormItem>
-          <FormItem label="保质期:" style="width:30%;">
-              <InputNumber :min="0" v-model="listSearch.EXPIRATION_DATE" style="width:100%;" placeholder=""             :formatter="value => `${value}月`"
-            :parser="value => value.replace('月', '')"></InputNumber>
-          </FormItem>
-          <FormItem label="配件来源:" style="width:30%;">
-              <Select v-model="listSearch.PART_SOURCE" placeholder="" style="width:100%;" placeholder="选择来源...">
-                <Option v-for="(item, index) in initPartSource"
-                  :key="index" :value="item.code">{{item.name}}</Option>
-              </Select>
-          </FormItem>
-       </Form>
+       <!--</Form>-->
       <!--</Panel>-->
       <!--<Panel name="3">配件限价信息-->
-       <Form  slot="content" :label-width="110" inline class="common-form">
+       <!--<Form  slot="content" :label-width="110" inline class="common-form">-->
 
-          <FormItem label="采购最低价:" style="width:30%;">
-              <InputNumber :min="0" v-model="listSearch.MIN_SHOP_PRICE" style="width:100%;" placeholder=""             :formatter="value => `${value}元`"
-            :parser="value => value.replace('元', '')"></InputNumber>
-          </FormItem>
-          <FormItem label="销售最低价:" style="width:30%;">
-              <InputNumber :min="0" v-model="listSearch.MIN_SALES_PRICE" style="width:100%;" placeholder=""
-            :formatter="value => `${value}元`"
-            :parser="value => value.replace('元', '')"></InputNumber>
-          </FormItem>
-          <FormItem label="安全库存:" style="width:30%;">
-              <InputNumber :min="0" v-model="listSearch.SAFE_STOCK_NUM" style="width:100%;" placeholder=""></InputNumber>
-          </FormItem>
-          <FormItem label="采购最高价:" style="width:30%;">
-              <InputNumber :min="0" v-model="listSearch.MAX_SHOP_PRICE" style="width:100%;" placeholder=""
-            :formatter="value => `${value}元`"
-            :parser="value => value.replace('元', '')"></InputNumber>
-          </FormItem>
-          <FormItem label="销售最高价:" style="width:30%;">
-              <InputNumber :min="0" v-model="listSearch.MAX_SALES_PRICE" style="width:100%;" placeholder=""
-            :formatter="value => `${value}元`"
-            :parser="value => value.replace('元', '')"></InputNumber>
-          </FormItem>
-          <FormItem label="最高库存:" style="width:30%;">
-              <InputNumber  :min="0" v-model="listSearch.MAX_STOCK_NUM" style="width:100%;" placeholder=""></InputNumber>
-          </FormItem>
-
-       </Form>
+   <!---->
+       <!--</Form>-->
       <!--</Panel>-->
     <!--</Collapse>-->
 <!--         <Modal
@@ -164,7 +168,7 @@
 </template>
 
 <script>
-  import { getName,getCode, getDictGroup } from '@/libs/util.js'
+  import { getName, getDictGroup } from '@/libs/util.js'
 	export default {
 		    name: "select-addParts",
         props:['showSelectAddParts','initPartsGroup','editdata'],
@@ -181,7 +185,7 @@
                     {code:0.06,name:"6%"},
                     {code:0.13,name:"13%"},
                 ],
-                
+                initBrandArr:[],
                 initPartSource:[],
                 listSearch:{
                     "PART_ID":"",
@@ -241,7 +245,6 @@
                 },
                 treeData:[],
                 data1:[],
-                newBrand:null,
             }
         },
         watch:{
@@ -288,24 +291,10 @@
         },
         mounted() {
             this.initUnitArr=getDictGroup(this.$store.state.app.dict, '1015');
-            
+            this.initBrandArr=getDictGroup(this.$store.state.app.dict, '1016');
             this.initPartSource=getDictGroup(this.$store.state.app.dict, '1017');
         },
-        computed:{
-            initBrandArr(){
-                return getDictGroup(this.$store.state.app.dict, '1016');
-            }
-        },
         methods:{
-            remoteMethod1(query){
-
-                this.newBrand=query;
-
-                if(!query||!getCode(this.initBrandArr,query)){
-                    this.listSearch.BRAND="";
-                }
-                
-            },
             saveData(name){
 
                 this.$refs[name].validate((valid) => {
@@ -328,7 +317,7 @@
                                 this.$Modal.confirm({
                                     title:"系统提示!",
                                     content:"确定要保存吗？",
-                                    onOk:this.addSaveData,
+                                    onOk:this.del,
 
                                 })
                     } else {
@@ -347,19 +336,13 @@
                 this.listSearch.NOT_CONTAINS_TAX_SALE_PRICE=(this.listSearch.SALES_PRICE/(this.listSearch.RATE+1)).toFixed(2);
                 this.listSearch.TAX=(this.listSearch.NOT_CONTAINS_TAX_SALE_PRICE*this.listSearch.RATE).toFixed(2);
             },
-            addSaveData(){
+            del(){
               //这里是新增操作 就服你名字都不换....社会我鑫哥....人狠话不多....
-              var listSearch={};
-              for(let i in this.listSearch){
-                  listSearch[i]=this.listSearch[i];
-              }
-              listSearch['BRAND']=this.newBrand;
-
                 this.axios.request({
                     url: '/tenant/basedata/partinfo/save',
                     method: 'post',
                     data: {
-                    data: JSON.stringify(listSearch),
+                    data: JSON.stringify(this.listSearch),
                     access_token: this.$store.state.user.token
                     }
                 }).then(res => {
@@ -409,7 +392,6 @@
                 this.$emit('closeDetail');
                 this.handleReset("listSearch");
                 this.$emit('clearsection');
-                this.$refs.brandId.clearSingleSelect();
             }
         },
         //校验重置

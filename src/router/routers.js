@@ -494,6 +494,16 @@ export default [
         },
         component: () => import('@/hxx-store/customer-relations/customer-list.vue')
       },
+      {
+        path: '/my-Type',
+        name: 'my-Type',
+        meta: {
+          icon: 'md-funnel',
+          title: '我的车型组件',
+          lgType: "1002",
+        },
+        component: () => import('@/hxx-store/customer-relations/my-Type.vue')
+      },
        {path: '/cart-list',
         name: 'cart-list',
         meta: {
