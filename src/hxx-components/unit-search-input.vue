@@ -1,15 +1,17 @@
 <template>
-  <div style="width:250px;position:relative;">
-    <Input type="text" icon="ios-search" @on-keyup="goToSelect" :readonly="disType" @on-click="selectVehicle"> </Input>
-    <span style="position:absolute;right:0px;top:4px;cursor: pointer;" v-show="selectType">X</span>
-    <div style="" v-show="inputShow" v-clickoutside="handleClose" style="position:absolute;top:31px;z-index:99;">
+  <div style="width:450px;position:relative;">
+    <Input v-model="inputData" type="text" @on-keyup="goToSelect" :readonly="disType">
+      <Icon type="ios-search" slot="suffix" @click="selectVehicle" style="cursor:pointer;"/>
+    </Input>
+    <span style="position:absolute;right:32px;top:2px;cursor: pointer;z-index: 100;font-size: 16px;" v-show="selectType" @click="closeSelect"><Icon type="ios-close-circle" /></span>
+    <div v-show="inputShow" v-clickoutside="handleClose" style="position:absolute;top:31px;z-index:99;">
       <Table
         :data="data"
         :columns="tableColumns"
         stripe
         border
-        height="500"
-        width="500"
+        height="400"
+        width="450"
         :highlight-row="true"
         :loading="loading"
         :row-class-name="rowClassName"
@@ -40,9 +42,11 @@
     },
   };
   export default {
-    name: "gyd-qndy",
+    name: "unit-search-input",
+    props:['searchTableData',"showChange"],
     data(){
       return {
+        inputData:'',
         inputShow:false,
         disType:false,
         selectType:false,
@@ -64,22 +68,69 @@
         ],
       }
     },
+    watch:{
+      showChange(){
+        // alert('进来了');
+        if(this.searchTableData){
+          this.inputData=this.searchTableData;
+          this.selectType=true;
+          this.disType=true;
+        }else{
+          this.inputData='';
+          this.selectType=false;
+          this.disType=false;
+        }
+        
+      }
+    },
     directives: {clickoutside},
     methods: {
       handleClose(e) {
+        
+        
+        if(this.inputShow){
+          
+          //  let row={};
+          //   row['MODEL_NAME']=this.inputData;
+          //   row['TID']='';
+          //   this.$emit('onRowSelect',row);
+        }
         this.inputShow = false;
+       
       },
+      //给父级弹出车型框--------
       selectVehicle(){
-        alert("可以");
+        this.$emit('showTableFun');
       },
-      onRowClick(row){
-
+      //清空搜索数据
+      closeSelect(){
+        // alert('不可以');
+        this.inputData="";
+        this.selectType=false;
+        this.disType=false;
+        this.$emit('closeSelect');
+      },
+      onRowClick( row, index){
+          console.log('row：',row);
+          this.inputShow = false;
+          this.selectType=true;
+          this.disType=true;
+          this.inputData=row.MODEL_NAME;
+          this.$emit('onRowSelect',row);
+      },
+      rowClassName(row, index){
+        // console.log('row：',row);
       },
       goToSelect(e){
         clearTimeout(this.timer);
         this.timer = setTimeout(()=>{
           this.getList(e.target.value);
           this.inputShow = true;
+
+          let row={};
+            row['MODEL_NAME']=this.inputData;
+            row['TID']='';
+            this.$emit('onRowSelect',row);
         },500);
       },
       getList(value){

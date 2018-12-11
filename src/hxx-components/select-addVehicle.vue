@@ -4,7 +4,7 @@
     <Modal
         v-model="showOnoff"
         title="新增客户及车辆"
-        width="90"
+        width="80"
         @on-visible-change="visibleChange"
         :scrollable="true"
         :transfer= "true"
@@ -15,32 +15,34 @@
     >
     <Collapse v-model="collapse">
       <Panel name="1">车辆基本信息
-       <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="100" inline class="detail-form">
+       <Form ref="listSearch" :rules="ruleValidate"  :model="listSearch" slot="content" :label-width="120" inline class="common-form">
           <FormItem label="车牌号:" prop="PLATE_NUM">
-              <Input type="text" v-model="listSearch.PLATE_NUM" placeholder="" style="min-width: 250px;" >
+              <Input type="text" v-model="listSearch.PLATE_NUM" placeholder=""  >
               </Input>
           </FormItem>
           <FormItem label="车辆颜色:">
-              <Select v-model="listSearch.VEHICLE_COLOR" placeholder="" style="min-width: 250px;" placeholder="请选择">
+              <Select v-model="listSearch.VEHICLE_COLOR" placeholder=""  placeholder="请选择">
                 <Option v-for="(item, index) in initColorArr"
                   :key="index" :value="item.code">{{item.name}}</Option>
               </Select>
           </FormItem>
           <FormItem label="发动机号:">
-              <Input type="text" v-model="listSearch.ENGINE_NO" placeholder="" style="min-width: 250px;" >
+              <Input type="text" v-model="listSearch.ENGINE_NO" placeholder=""  >
               </Input>
           </FormItem>
           <FormItem label="车架号:" prop="VIN_NO">
-               <Input type="text" v-model="listSearch.VIN_NO" placeholder="" style="min-width: 250px;">
-              </Input>
-          </FormItem>
-          <FormItem label="车型:">
-              <Input @on-focus="showVehicleModel=true;" type="text" v-model="listSearch.VEHICLE_MODEL" placeholder="" style="min-width: 250px;" search >
+               <Input type="text" v-model="listSearch.VIN_NO" placeholder=""  @on-keyup="changeVinFun">
               </Input>
           </FormItem>
           <FormItem label="出厂日期:" >
               <DatePicker v-model="listSearch.LEAVE_FACTORY_DATE" type="date" placeholder=""></DatePicker>
           </FormItem>
+          <FormItem label="车型:" style="width: 560px;">
+              <!--<Input @on-focus="showVehicleModel=true;" type="text" v-model="listSearch.VEHICLE_MODEL" placeholder=""  search >
+              </Input>-->
+              <unit-search-input @showTableFun="showTableFun" :searchTableData="searchTableData" :showChange="showChange" @closeSelect="closeSelect" @onRowSelect="onRowSelect"></unit-search-input>
+          </FormItem>
+          
 
        </Form>
       </Panel>
@@ -48,24 +50,24 @@
        <Form slot="content" :label-width="80" inline class="detail-form">
 
            <FormItem label="客户名称:" >
-               <Input type="text" v-model="listSearch.NAME" placeholder="" style="min-width: 250px;" >
+               <Input type="text" v-model="listSearch.NAME" placeholder=""  >
               </Input>
           </FormItem>
           <FormItem label="移动电话:">
-               <Input type="text" v-model="listSearch.MOBILE_PHONE" placeholder="" style="min-width: 250px;" >
+               <Input type="text" v-model="listSearch.MOBILE_PHONE" placeholder=""  >
               </Input>
           </FormItem>
 
           <FormItem label="联系地址:">
-               <Input type="text" v-model="listSearch.ADDRESS" placeholder="" style="min-width: 250px;" >
+               <Input type="text" v-model="listSearch.ADDRESS" placeholder=""  >
               </Input>
           </FormItem>
           <FormItem label="QQ:">
-               <Input type="text" v-model="listSearch.QQ_NO" placeholder="" style="min-width: 250px;" >
+               <Input type="text" v-model="listSearch.QQ_NO" placeholder=""  >
               </Input>
           </FormItem>
           <FormItem label="微信:" >
-               <Input type="text" v-model="listSearch.WEIXIN_NO" placeholder="" style="min-width: 250px;" >
+               <Input type="text" v-model="listSearch.WEIXIN_NO" placeholder=""  >
               </Input>
           </FormItem>
           <FormItem label="生日:" >
@@ -93,7 +95,7 @@
             :footer-hide="true"
 
         >
-            <vehicle-model @onRowClick="onRowClick" :show="showVehicleModel"></vehicle-model>
+            <vehicle-model @onRowClick="onRowClick" :show="showVehicleModel" ></vehicle-model>
         </Modal>
   </Modal>
 </template>
@@ -103,10 +105,11 @@
   import { getName, getDictGroup ,getUserInfo} from '@/libs/util.js'
   import { formatDate } from '@/libs/tools.js'
   import vehicleModel from '@/hxx-components/vehicle-model.vue'
+  import unitSearchInput from '@/hxx-components/unit-search-input.vue'
 	export default {
 		name: "select-addVehicle",
         props:['showAddVehicle'],
-        components: {vehicleModel},
+        components: {vehicleModel,unitSearchInput},
         data(){
             const validatePass = (rule, value, callback) => {
 			     	var p1 = /\d?[A-Z]+\d?/
@@ -122,7 +125,7 @@
                 if (!p1.test(value) || value.length !== 17) {
                     callback(new Error('大写字母和数字组成,长度不超过17位1'));
                 }else{
-                      this.getVehicleModel();
+                      
                 	  callback();
                 }
             };
@@ -176,6 +179,8 @@
 					 ],
 
 				},
+                searchTableData:'',
+                showChange:null,
             }
         },
         watch:{
@@ -251,6 +256,8 @@
                     if (res.success === true) {
                         this.listSearch.VEHICLE_MODEL= res.data.MODEL_NAME;
                         this.listSearch.TID= res.data.TID;
+                        this.searchTableData=res.data.MODEL_NAME;
+                        this.showChange=Math.random();
                     }
                 })
             },
@@ -258,18 +265,43 @@
                 this.showVehicleModel=false
                 this.listSearch.VEHICLE_MODEL= val.MODEL_NAME
                 this.listSearch.TID= val.TID
+                this.searchTableData=val.MODEL_NAME;
+                this.showChange=Math.random();
             },
             //弹出层状态变化--------
             visibleChange(status){
                 if(status === false){
                     this.$emit('closeDetail');
                     this.handleReset("listSearch");
+                    this.searchTableData=null;
+                    this.showChange=Math.random();
                 }
             },
             //校验重置
             handleReset (name) {
                 this.$refs[name].resetFields();
             },
+            showTableFun(){
+                this.showVehicleModel=true;
+            },
+            closeSelect(){
+                this.listSearch.VEHICLE_MODEL= ""
+                this.listSearch.TID= ""
+                this.searchTableData="";
+            },
+            onRowSelect(val){
+                
+                this.listSearch.VEHICLE_MODEL= val.MODEL_NAME
+                this.listSearch.TID= val.TID
+                
+            },
+            changeVinFun(event){
+                var p1 = /\d?[A-Z]+\d?/
+                if (!p1.test(event.target.value) || event.target.value.length !== 17) {
+                }else{
+                      this.getVehicleModel();
+                }
+            }
         }
 	}
 </script>
