@@ -776,8 +776,10 @@
       //监听界面变化--------
       visibleChange(status){
         if(status === false){
+          document.querySelector(".ivu-modal-body").scrollTop=0;
           this.$emit('closeDetail');
           this.handleReset("listSearch");
+
         }
       },
       //保存按钮校验------------

@@ -242,8 +242,12 @@
       }
     },
     methods: {
-      visibleChange() {
+      visibleChange(status) {
         this.clearsection();
+        if(status === false){
+                document.querySelector(".ivu-modal-body").scrollTop=0;
+                
+            }
       },
       clearsection() {
         this.list = '';

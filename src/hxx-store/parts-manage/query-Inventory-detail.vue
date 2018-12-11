@@ -226,6 +226,7 @@ export default {
 
         visibleChange(status){
             if(status === false){
+                document.querySelector(".ivu-modal-body").scrollTop=0;
                 this.$emit('closeDetail');
                 // this.handleReset("listSearch");
             }

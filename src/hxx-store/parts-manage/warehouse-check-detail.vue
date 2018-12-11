@@ -690,6 +690,7 @@ export default {
         //弹出层状态变化--------
         visibleChange(status){
             if(status === false){
+                document.querySelector(".ivu-modal-body").scrollTop=0;
                 this.$emit('closeDetail');
                 this.handleReset("listSearch");
             }

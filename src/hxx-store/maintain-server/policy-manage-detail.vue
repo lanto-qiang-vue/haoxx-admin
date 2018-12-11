@@ -330,6 +330,7 @@
         //监听窗口状态------
         visibleChange(status){
             if(status === false){
+                document.querySelector(".ivu-modal-body").scrollTop=0;
                 this.$emit('closeDetail');
                 this.handleReset("listSearch");
             }
