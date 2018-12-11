@@ -1,7 +1,7 @@
 <template>
   <div class="user-avator-dropdown">
     <div class="switch-store" v-if="this.$store.state.user.userInfo.isManage">
-      <Dropdown trigger="custom" :visible="visible" @on-clickoutside="mdshow" placement="bottom-end"
+      <Dropdown trigger="custom" :visible="visible" @on-clickoutside="mdshow" placement="bottom-end" transfer
                 @on-click="openSwitchStore" @on-visible-change="dropdownVisible">
         <Tooltip content="点击切换门店" placement="bottom" :disabled="disabledDropdown" style="width: 60px">
           <Icon custom="fa fa-exchange" @click="mdshow" :size="24"></Icon>
@@ -227,22 +227,7 @@ export default {
     text-align: center;
     border-left: 1px solid #F0F0F0;
     border-right: 1px solid #F0F0F0;
-    .store-block{
-      height:500px;
-      overflow-y: scroll;
-      width: 420px;
-      text-align: left;
-      .title{
-        padding: 0 10px;
-        overflow: hidden;
-        margin-bottom: 5px;
-        .ivu-btn{
-          /*vertical-align: top;*/
-          float: left;
-        }
-      }
 
-    }
   }
   .login-user{
     display: inline-block;
@@ -284,6 +269,22 @@ export default {
 }
 </style>
 <style lang="less">
+  .store-block{
+    height:500px;
+    overflow-y: scroll;
+    width: 450px;
+    text-align: left;
+    padding: 10px 2px;
+    .title{
+      padding: 0 10px;
+      overflow: hidden;
+      margin-bottom: 5px;
+      .ivu-btn{
+        /*vertical-align: top;*/
+        float: left;
+      }
+    }
+  }
   .store-block{
     .ivu-table{
       line-height: 40px;
