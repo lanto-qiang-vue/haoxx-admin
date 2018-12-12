@@ -10,7 +10,7 @@
     :scrollable="true"
     :transfer= "true"
     :footer-hide="false">	
-    <!-- 车辆车辆档案新增调用 -->
+    <!-- 车辆车辆档案新增调用 大祥,我是你大爷-->
     <div style="height:20px;"></div>
     <Form :label-width="120" :model="formData" ref="formData" class="common-form" :rules="ruleValidate">
           <FormItem label="车牌号:"   prop="PLATE_NUM">
@@ -284,6 +284,8 @@
 			this.formData.TID = obj.TID;
 			this.formData.CUSTOMER_ID = obj.CUSTOMER_ID;
 			this.formData.BUSINESS_SAFE_VALIDITY = obj.BUSINESS_SAFE_VALIDITY;
+      this.searchTableData=this.formData.VEHICLE_MODEL;
+this.showChange=Math.random();
            }
 		},
 		methods:{
