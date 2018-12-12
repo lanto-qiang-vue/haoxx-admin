@@ -616,6 +616,8 @@ export default {
                         this.repairPersonArr.push(obj);
                         this.serverPersonArr.push(obj);
                     }
+                    this.listSearch.FOLLOW_PERSON = this.$store.state.user.userInfo.user.userName;
+                    this.listSearch.REPAIR_PERSON = this.$store.state.user.userInfo.user.userName;
                 }
             })
         },
