@@ -28,7 +28,7 @@
               <!-- 特殊下拉 -->
     <Dropdown trigger="click" style="width: 100%" id="select-type" placement="bottom-start">
         <!-- <a href="javascript:void(0)"> -->
-          <Input type="text" v-model="listSearch.TYPE_NAME" placeholder="选择分类"  search >
+          <Input type="text" v-model="listSearch.TYPE_NAME" :readonly="true" placeholder="选择分类"  search >
           </Input>
         <!-- </a> -->
         <DropdownMenu slot="list">
