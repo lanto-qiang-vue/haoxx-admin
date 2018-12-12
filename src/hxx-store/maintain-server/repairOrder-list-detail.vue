@@ -1681,8 +1681,8 @@
             }
             //初始化主修人数据
             if (!val) {
-              this.listSearch.FOLLOW_PERSON = this.repairPersonArr[0].code;
-              this.listSearch.REPAIR_PERSON = this.serverPersonArr[0].code;
+              this.listSearch.FOLLOW_PERSON = this.$store.state.user.userInfo.user.userName;
+              this.listSearch.REPAIR_PERSON = this.$store.state.user.userInfo.user.userName;
             }
             
           }

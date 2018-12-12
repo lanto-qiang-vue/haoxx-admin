@@ -275,6 +275,9 @@ export default {
               for(let i in this.listSearch){
                   this.listSearch[i]='';
               }
+              this.listSearch['CHECK_DATE']=new Date();
+              this.listSearch['CHECK_PERSON']=this.$store.state.user.userInfo.user.userName;
+
               this.saveFlag=true;
               this.noSaveFlag=false;
               this.printFlag=false;

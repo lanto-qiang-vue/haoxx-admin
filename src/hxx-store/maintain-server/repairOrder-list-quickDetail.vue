@@ -616,6 +616,8 @@ export default {
                         this.repairPersonArr.push(obj);
                         this.serverPersonArr.push(obj);
                     }
+                    this.listSearch.FOLLOW_PERSON = this.$store.state.user.userInfo.user.userName;
+                    this.listSearch.REPAIR_PERSON = this.$store.state.user.userInfo.user.userName;
                 }
             })
         },
@@ -657,19 +659,11 @@ export default {
             this.$refs[name].validate((valid) => {
                 if (valid) {
                     if(this.selectData.length>0){
-                        
-
-                                    
-              
                   this.$Modal.confirm({
                             title:"系统提示!",
                             content:"确定要保存吗？",
                             onOk:this.saveData,
-                            
                         })
-
-              
-
                     }else{
                         this.$Message.info('至少选择一个服务项目')
                     }

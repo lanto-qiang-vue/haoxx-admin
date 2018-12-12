@@ -6,7 +6,7 @@
     width="450"
     @on-visible-change="visibleChange"
     :scrollable="true"
-    :transfer= "false"
+    :transfer= "true"
     :footer-hide="false"
     :mask-closable="false"
     :transition-names="['', '']"
