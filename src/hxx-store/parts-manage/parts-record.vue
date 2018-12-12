@@ -16,13 +16,13 @@
             <FormItem label="配件类别" :label-width="80">
               <Input :disabled="true" v-model="TYPE"></Input>
             </FormItem>
-            <ButtonGroup size="small">
+            <ButtonGroup>
               <Button type="primary" @click="page=1;getList()">
-                <Icon type="ios-search" size="24"/>
+                搜索
               </Button>
-              <Button type="primary" @click="clear()">
-                <Icon type="ios-undo" size="24"/>
-              </Button>
+              <!--<Button type="primary" @click="clear()">-->
+                <!--<Icon type="ios-undo" size="24"/>-->
+              <!--</Button>-->
             </ButtonGroup>
           </Form>
         </div>
@@ -32,7 +32,7 @@
           <Button type="info" :disabled="cando" @click="edit()" v-if="accessBtn('edit')">修改</Button>
         </div>
         <select-add-parts @refresh="refresh" @clearsection="clearsection" :editdata="list"
-                          :showSelectAddParts="addshow"></select-add-parts>
+                          :showSelectAddParts="addshow" :defalutData="defaultData"></select-add-parts>
       </common-table>
     </div>
   </Split>
@@ -53,6 +53,7 @@
         list: '',
         data2: [],
         cleartype: false,
+        defaultData:{},
         columns: [
           {title: '配件编号', key: 'PART_NO', sortable: true, minWidth: 120},
           {title: '配件名称', key: 'NAME', sortable: true, minWidth: 140},
@@ -127,6 +128,7 @@
         console.log(row);
         if (row.length > 0) {
           var title = row[0].nodeName == '配件分类' ? '请选择...' : row[0].nodeName;
+          this.defaultData = row[0];
           var type = title == '请选择...' ? '' : row[0].nodeId;
           this.TYPE = title;
           this.TYPE_ID = type;

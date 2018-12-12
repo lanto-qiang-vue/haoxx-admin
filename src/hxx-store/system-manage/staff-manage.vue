@@ -512,9 +512,22 @@
 
   }
 </script>
-<style lang="less">
-  .ivu-transfer-list {
-    width: 45%;
-    height: 400px;
+  <style lang="less">
+                    .vehicle-tree{
+                      >.ivu-tree-children{
+                        height: 100%;
+                        overflow: auto;
+                      }
+                      .highlight{
+                        color: red;
+                      }
+                    }
+  .ivu-transfer{
+    min-width:800px;
+  }
+  .ivu-transfer-list{
+    width:35%;
+    min-width:300px;
+    height:400px;
   }
 </style>

@@ -171,7 +171,24 @@
   import { getName, getDictGroup } from '@/libs/util.js'
 	export default {
 		    name: "select-addParts",
-        props:['showSelectAddParts','initPartsGroup','editdata'],
+        // props:['showSelectAddParts','initPartsGroup','editdata'],
+        props: {
+          showSelectAddParts: {
+            default(){
+              return false;
+            }
+          },
+          editdata:{
+            default(){
+              return {};
+            }
+          },
+          defalutData:{
+            default(){
+              return {}
+            }
+          }
+        },
         components: {},
         data(){
             return{
@@ -281,7 +298,10 @@
                         "MAX_STOCK_NUM":null,
                         "TYPE_ID":'',
                     };
-
+                  if(this.defalutData.level > 0){
+                  this.listSearch.TYPE_ID = this.defalutData.nodeId;
+                  this.listSearch.TYPE_NAME = this.defalutData.nodeName;
+                  }
                 }
                 this.selectPartsType();
             },

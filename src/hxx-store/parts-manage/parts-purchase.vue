@@ -63,7 +63,7 @@
             <FormItem label="采购日期:" style="width:30%;" prop="PURCHASE_DATE">
               <Row>
                 <Col span="11" style="width:100%;">
-                  <DatePicker type="date" v-model="formData.PURCHASE_DATE" style="min-width: 100%;"></DatePicker>
+                  <DatePicker type="date" v-model="formData.PURCHASE_DATE"  style="min-width: 100%;"></DatePicker>
                 </Col>
               </Row>
             </FormItem>
@@ -368,7 +368,7 @@
           SUPPLIER_ID: "",
           SUPPLIER_NAME: "",
           STORE_ID: "0",
-          PURCHASE_DATE: "",
+          PURCHASE_DATE: new Date(),
           PURCHASE_PERSON: "",
           PURCHASE_TYPE: "10241001",
           REMARK: "",

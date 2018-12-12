@@ -356,10 +356,6 @@
             render: (h, params) => h('span',this.formatMoney(params.row.SUM_MONEY))
           },
           {
-            title: '单位成本', key: 'PART_COST', minWidth: 120,align:'right',
-            render: (h, params) => h('span',this.formatMoney(params.row.SUM_MONEY))
-          },
-          {
             title: '操作', key: 'FACTORY_NO', minWidth: 120,align:'center',
             render: (h, params) => {
               let buttonContent = "删除";
@@ -897,6 +893,7 @@
         this.getWareHouse();
         this.formData = deepClone(this.storeData);
         this.$refs.formData.resetFields();
+        this.formData.RETURN_DATE = new Date();
         this.formData.RETURN_PERSON = this.$store.state.user.userInfo.user.userName;
         this.formData.SUM_MONEY = 0;
         this.showModal = true;
