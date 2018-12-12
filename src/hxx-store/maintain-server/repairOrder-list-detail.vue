@@ -92,13 +92,13 @@
                            @on-open-change="openEndTime"></DatePicker>
             </FormItem>
             <FormItem label="故障描述:" style="width: 100%">
-              <Input type="textarea" v-model="listSearch.FAULT_DESC" rows="1" placeholder="请输入故障描述"> </Input>
+              <Input type="textarea" v-model="listSearch.FAULT_DESC" :rows="1" placeholder="请输入故障描述"> </Input>
             </FormItem>
             <FormItem label="客诉内容:" style="width: 100%">
-              <Input type="textarea" v-model="listSearch.CUSTOMER_INFO" rows="1" placeholder="请输入客诉内容"> </Input>
+              <Input type="textarea" v-model="listSearch.CUSTOMER_INFO" :rows="1" placeholder="请输入客诉内容"> </Input>
             </FormItem>
             <FormItem label="维修建议:" style="width: 100%">
-              <Input type="textarea" v-model="listSearch.REPAIR_INFO" rows="1" placeholder="请输入建议内容"> </Input>
+              <Input type="textarea" v-model="listSearch.REPAIR_INFO" :rows="1" placeholder="请输入建议内容"> </Input>
             </FormItem>
           </Form>
           <!--<Form ref="formInline" slot="content" :label-width="110">

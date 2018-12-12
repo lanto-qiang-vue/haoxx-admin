@@ -1,6 +1,6 @@
 <template>
   <Dropdown @on-click="handleClick" transfer :placement="placement" >
-    <a class="drop-menu-a" type="text" @mouseover="handleMousemove($event, children)" :style="{textAlign: !hideTitle ? 'left' : ''}"><common-icon size="20" :color="textColor" :type="'logo-android'" :custom="parentItem.custom"/><span class="menu-title" v-if="!hideTitle"></span></a>
+    <a class="drop-menu-a" type="text" @mouseover="handleMousemove($event, children)" :style="{textAlign: !hideTitle ? 'left' : ''}"><common-icon :size="20" :color="textColor" :type="'logo-android'" :custom="parentItem.custom"/><span class="menu-title" v-if="!hideTitle"></span></a>
     <DropdownMenu slot="list" style="background:#001529;" class="drop-menu">
       <template v-for="child in children" >
         <collapsed-menu v-if="showChildren(child)" :icon-size="iconSize" :parent-item="child" :key="`drop-${child.name}`"></collapsed-menu>
