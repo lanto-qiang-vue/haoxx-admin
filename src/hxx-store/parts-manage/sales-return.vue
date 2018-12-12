@@ -73,7 +73,7 @@
               </Select>
             </FormItem>
             <FormItem label="原始销售单:" style="width:30%;">
-              <Input type="text" @on-click="selectType=Math.random()" v-model="formData.SALES_NO" icon="ios-search">
+              <Input type="text" @on-click="selectType=Math.random()" :readonly="true" v-model="formData.SALES_NO" icon="ios-search">
               </Input>
             </FormItem>
             <FormItem label="退货仓库:" style="width:30%;" prop="STORE_ID">

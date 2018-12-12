@@ -84,7 +84,7 @@
               </Select>
             </FormItem>
             <FormItem label="原始采购单号:" style="width:30%;">
-              <Input type="text" @on-click="selectPurchaseNo" v-model="formData.PURCHASE_NO" icon="ios-search">
+              <Input type="text" @on-click="selectPurchaseNo" :readonly="true" v-model="formData.PURCHASE_NO" icon="ios-search">
               </Input>
             </FormItem>
           </Form>

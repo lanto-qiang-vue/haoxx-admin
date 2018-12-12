@@ -1011,7 +1011,6 @@
         this.commitItem.splice(index,1);
         this.computItemMoney();
       },
-
       //获取选择配件数据
       selectPartsItem(val){
         console.log("选择配件数据",val);
