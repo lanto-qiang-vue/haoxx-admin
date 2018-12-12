@@ -187,6 +187,7 @@
 			return{
         hidetype:1,
         vehicleShow:false,
+        CID:'',
         showModal:false,
         xhide:false,
 				formData:{
@@ -254,8 +255,10 @@
            	 this.business = this.must;
            },
            CUSTOMER_ID(name){
-             alert(name);
-           	this.formData.CUSTOMER_ID = name;
+             this.CID = name;
+             // alert(name);
+           	// this.formData.CUSTOMER_ID = name;
+
            },
            row(obj){
              let params = getUserInfo(this.$store.state.user.userInfo.params,"P1003");
@@ -357,6 +360,7 @@
                 })
 			},
 			vehicleAdd(){
+        this.formData.CUSTOMER_ID = this.CID;
 		  this.axios.request({
           url: 'tenant/basedata/ttvehiclefile/save',
           method: 'post',
