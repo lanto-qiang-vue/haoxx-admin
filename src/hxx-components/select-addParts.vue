@@ -318,14 +318,14 @@
                 this.$refs[name].validate((valid) => {
                     if (valid) {
                       var flag = "";
-                      if(this.listSearch.SALES_PRICE > this.listSearch.MAX_SALES_PRICE && this.listSearch.MAX_SALES_PRICE >= 0){flag = "销售建议价应小于等于销售最高价!"};
-                      if(this.listSearch.SALES_PRICE < this.listSearch.MIN_SALES_PRICE && this.listSearch.MIN_SALES_PRICE >= 0){flag = "销售建议价应大于等于销售最低价!"};
-                      if(this.listSearch.MIN_SALES_PRICE < this.listSearch.MAX_SHOP_PRICE && this.listSearch.MAX_SHOP_PRICE >= 0){flag = "销售最低价应大于等于采购最高价!"};
-                      if(this.listSearch.MAX_SHOP_PRICE < this.listSearch.MIN_SHOP_PRICE && this.listSearch.MIN_SHOP_PRICE >= 0){flag = "采购最高价应大于等于采购最低价!"};
-                      if(this.listSearch.MAX_SALES_PRICE < this.listSearch.MIN_SALES_PRICE && this.listSearch.MIN_SALES_PRICE >=0){flag = "销售最高价应大于等于销售最低价!"};
+                      if(this.listSearch.SALES_PRICE > this.listSearch.MAX_SALES_PRICE && this.listSearch.MAX_SALES_PRICE != null){flag = "销售建议价应小于等于销售最高价!"};
+                      if(this.listSearch.SALES_PRICE < this.listSearch.MIN_SALES_PRICE && this.listSearch.MIN_SALES_PRICE != null){flag = "销售建议价应大于等于销售最低价!"};
+                      if(this.listSearch.MIN_SALES_PRICE < this.listSearch.MAX_SHOP_PRICE && this.listSearch.MAX_SHOP_PRICE != null){flag = "销售最低价应大于等于采购最高价!"};
+                      if(this.listSearch.MAX_SHOP_PRICE < this.listSearch.MIN_SHOP_PRICE && this.listSearch.MIN_SHOP_PRICE != null){flag = "采购最高价应大于等于采购最低价!"};
+                      if(this.listSearch.MAX_SALES_PRICE < this.listSearch.MIN_SALES_PRICE && this.listSearch.MIN_SALES_PRICE != null){flag = "销售最高价应大于等于销售最低价!"};
                       //采购指导价PURCHASE_PRICE
-                      if(this.listSearch.PURCHASE_PRICE < this.listSearch.MIN_SHOP_PRICE && this.listSearch.MIN_SHOP_PRICE >= 0){flag = "采购最低价应小于等于采购指导价!"};
-                      if(this.listSearch.PURCHASE_PRICE > this.listSearch.MAX_SHOP_PRICE && this.listSearch.MAX_SHOP_PRICE >= 0){flag = "采购最高价应大于等于采购指导价!";
+                      if(this.listSearch.PURCHASE_PRICE < this.listSearch.MIN_SHOP_PRICE && this.listSearch.MIN_SHOP_PRICE != null){flag = "采购最低价应小于等于采购指导价!"};
+                      if(this.listSearch.PURCHASE_PRICE > this.listSearch.MAX_SHOP_PRICE && this.listSearch.MAX_SHOP_PRICE != null){flag = "采购最高价应大于等于采购指导价!";
                       }
                       if(flag != ""){
                       this.$Modal.error({title:'系统提示',content:flag});
