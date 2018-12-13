@@ -11,7 +11,7 @@
       <div style="clear:both;"></div>
     </div>
     <unit-tree v-if="indexId < 0" :indexId="indexId + 1"></unit-tree>
-    <!--声明类型type控制selectAll-->
+    <!--声明类型type控制大祥你大爷的selectAll-->
     <unit-tree  @cancelColor="cancelColor" v-for="item in data" :remark="item.remark" :fatherId="item.fatherId" :clearType="clearType" :changeAll="changeAll" v-show="myshow" :id="id" :data="item.children" :nodeId="item.nodeId" :level="level+1"
                :name="item.nodeName"
                :indexId="0"></unit-tree>
