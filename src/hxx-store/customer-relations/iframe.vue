@@ -9,7 +9,7 @@
         name: "iframe",
         data(){
           return {
-            myurl:'http://localhost:4040/dq/login/hxx_login?token='+ this.$store.state.user.token + "&mobile=17321492645",
+            myurl:'http://localhost:4040/dq/login/hxx_login?token='+ this.$store.state.user.token + "&mobile=17321492645陈鑫智障",
           }
         }
     }
