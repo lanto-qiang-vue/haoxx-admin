@@ -1153,6 +1153,7 @@
         this.formData = deepClone(this.storeData);
         this.$refs.formData.resetFields();
         this.formData.SEND_TYPE = this.list1036[0].code;
+        this.formData.SALES_DATE = new Date();
         this.formData.FOLLOW_PERSON = this.$store.state.user.userInfo.user.userName;
         this.formData.SUM_MONEY = 0;
         this.formData.LESS_MONEY = 0;

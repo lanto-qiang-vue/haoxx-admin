@@ -1,6 +1,7 @@
 import Axios from 'axios'
 import baseURL from '_conf/url'
 import { Message } from 'iview'
+import store from '@/store'
 // import Cookies from 'js-cookie'
 // import { TOKEN_KEY } from '@/libs/util'
 class httpRequest {
@@ -52,6 +53,12 @@ class httpRequest {
         //   if (data.msg) Message.error(data.msg)
         // }
         // return false
+        if(data.data.code == 808){
+          Message.destroy();
+          Message.error("登陆失效,请重新登陆");
+          store.dispatch('handleLogOut')
+          return false;
+        }
         if(data.hasOwnProperty("Exception")){
           if(data["Exception"].hasOwnProperty("message")){
             Message.error(data.Exception.message || '服务内部错误3')
@@ -66,7 +73,8 @@ class httpRequest {
       }
       return data
     }, (error) => {
-      Message.error('服务内部错误')
+      alert(error);
+      // Message.error('服务内部错误')
       // 对响应错误做点什么
       return Promise.reject(error)
     })

@@ -11,8 +11,8 @@
               </Select>
      </div>
       <ButtonGroup size="small">
-        <Button type="primary" @click="page=1;getList()"><Icon type="ios-search" size="24"/></Button>
-        <Button type="primary" @click="clear()"><Icon type="ios-undo" size="24"/></Button>
+        <Button type="primary" @click="page=1;getList()">操作</Button>
+        <!--<Button type="primary" @click="clear()"><Icon type="ios-undo" size="24"/></Button>-->
       </ButtonGroup>
     </div>
     <div slot="operate">
@@ -57,7 +57,7 @@
                 </Select>
                 </FormItem>
                   <FormItem label="备注描述:" style="width:100%;">
-                    <Input type="textarea" v-model="formData.GROUP_INFO" rows="1" placeholder="请输入备注信息..."> </Input>
+                    <Input type="textarea" v-model="formData.GROUP_INFO" :rows="1" placeholder="请输入备注信息..."> </Input>
                   </FormItem>
                 </Form>
               </Panel>

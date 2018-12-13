@@ -63,13 +63,13 @@
         <div slot="left" class="split-pane" style="overflow: auto;height:100%;">
           <Form slot="content" :model="formData" ref="list" :rules="rules" :label-width="100" class="common-form">
             <FormItem label="员工账号:" style="width:90%;" prop="USER_CODE">
-              <Input v-model="formData.USER_CODE" :disabled="isdisabled" type="text"> </Input>
+              <Input v-model="formData.USER_CODE" :disabled="isdisabled" type="text" placeholder="请输入员工账号，如手机号或姓名全拼"> </Input>
             </FormItem>
             <FormItem label="员工姓名:" style="width:90%;" prop="USER_NAME">
-              <Input v-model="formData.USER_NAME" type="text"> </Input>
+              <Input v-model="formData.USER_NAME" type="text" placeholder="员工姓名(请避免重名),列如:张三"> </Input>
             </FormItem>
             <FormItem label="登录密码:" v-if="!isdisabled" style="width:90%;" prop="PWD">
-              <Input v-model="formData.PWD" @on-keyup="kg" type="text"> </Input>
+              <Input v-model="formData.PWD" @on-keyup="kg" type="text" placeholder="密码应为6-18位字母数字及下划线"> </Input>
             </FormItem>
             <FormItem label="职务:" style="width:90%;" prop="PROFESSION">
               <Select v-model="formData.PROFESSION">
@@ -86,31 +86,31 @@
               </Select>
             </FormItem>
             <FormItem label="电子邮箱:" style="width:90%;" prop="EMAIL">
-              <Input v-model="formData.EMAIL" type="text"> </Input>
+              <Input v-model="formData.EMAIL" type="text" placeholder="电子邮箱"> </Input>
             </FormItem>
             <FormItem label="手机号码:" style="width:90%;" prop="TEL_PHONE">
-              <Input v-model="formData.TEL_PHONE" type="text"> </Input>
+              <Input placeholder="手机号码" v-model="formData.TEL_PHONE" type="text"> </Input>
             </FormItem>
             <FormItem label="QQ号码:" style="width:90%;" prop="QQ_NUM">
-              <Input v-model="formData.QQ_NUM" type="text"> </Input>
+              <Input v-model="formData.QQ_NUM" placeholder="QQ号码" type="text"> </Input>
             </FormItem>
             <FormItem label="微信号码:" style="width:90%;" prop="WEIXIN_NUM">
-              <Input v-model="formData.WEIXIN_NUM" type="text"> </Input>
+              <Input v-model="formData.WEIXIN_NUM" placeholder="微信号码" type="text"> </Input>
             </FormItem>
             <FormItem label="身份证号:" style="width:90%;" prop="CERT_NO">
-              <Input v-model="formData.CERT_NO" type="text"> </Input>
+              <Input v-model="formData.CERT_NO" type="text" placeholder="身份证号"> </Input>
             </FormItem>
             <FormItem label="入职日期:" style="width:90%;" prop="JOIN_DATE">
               <Col span="11" style="width:100%;">
-                <DatePicker type="date" v-model="formData.JOIN_DATE" format="yyyy-MM-dd"
+                <DatePicker type="date" v-model="formData.JOIN_DATE" placeholder="入职日期" format="yyyy-MM-dd"
                             style="min-width: 100%;"></DatePicker>
               </Col>
             </FormItem>
             <FormItem label="家庭地址:" style="width:90%;" prop="HOME_ADDRESS">
-              <Input v-model="formData.HOME_ADDRESS" type="text"> </Input>
+              <Input v-model="formData.HOME_ADDRESS" placeholder="家庭地址" type="text"> </Input>
             </FormItem>
             <FormItem label="所属部门:" style="width:90%;" prop="DEPT">
-              <Input v-model="formData.DEPT" type="text"> </Input>
+              <Input v-model="formData.DEPT" type="text" placeholder="所属部门"> </Input>
             </FormItem>
             <FormItem label="账号状态:" style="width:90%;" prop="STATUS">
               <Select v-model="formData.STATUS">
@@ -152,10 +152,11 @@
     mixins: [mixin],
     data() {
       const validatePWD = (rule, value, callback) => {
-        if (value != '' && value.length >= 6 && value.length <= 18) {
+        let reg  = /^[a-zA-Z0-9_]{6,18}$/;
+        if(value != '' && reg.test(value)){
           callback();
-        } else {
-          callback(new Error('密码长度应在6-18位之间'));
+        }else{
+          callback(new Error('密码应为6-18位字母数字及下滑线'));
         }
       };
       const validateEMAIL = (rule, value, callback) => {
@@ -512,9 +513,22 @@
 
   }
 </script>
-<style lang="less">
-  .ivu-transfer-list {
-    width: 45%;
-    height: 400px;
+  <style lang="less">
+                    .vehicle-tree{
+                      >.ivu-tree-children{
+                        height: 100%;
+                        overflow: auto;
+                      }
+                      .highlight{
+                        color: red;
+                      }
+                    }
+  .ivu-transfer{
+    min-width:800px;
+  }
+  .ivu-transfer-list{
+    width:35%;
+    min-width:300px;
+    height:400px;
   }
 </style>

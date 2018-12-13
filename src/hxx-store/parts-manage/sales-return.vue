@@ -73,7 +73,7 @@
               </Select>
             </FormItem>
             <FormItem label="原始销售单:" style="width:30%;">
-              <Input type="text" @on-click="selectType=Math.random()" v-model="formData.SALES_NO" icon="ios-search">
+              <Input type="text" @on-click="selectType=Math.random()" :readonly="true" v-model="formData.SALES_NO" icon="ios-search">
               </Input>
             </FormItem>
             <FormItem label="退货仓库:" style="width:30%;" prop="STORE_ID">
@@ -353,10 +353,6 @@
             }
           },
           {title: '小计金额', key: 'SUM_MONEY', minWidth: 120,align:'right',
-            render: (h, params) => h('span',this.formatMoney(params.row.SUM_MONEY))
-          },
-          {
-            title: '单位成本', key: 'PART_COST', minWidth: 120,align:'right',
             render: (h, params) => h('span',this.formatMoney(params.row.SUM_MONEY))
           },
           {
@@ -897,6 +893,7 @@
         this.getWareHouse();
         this.formData = deepClone(this.storeData);
         this.$refs.formData.resetFields();
+        this.formData.RETURN_DATE = new Date();
         this.formData.RETURN_PERSON = this.$store.state.user.userInfo.user.userName;
         this.formData.SUM_MONEY = 0;
         this.showModal = true;

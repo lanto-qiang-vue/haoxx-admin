@@ -69,7 +69,7 @@
                      style="min-width: 100%;">
               </Input>
             </FormItem>
-            <FormItem label="退货日期:" style="width:30%;" prop="RETURN_DATE">
+            <FormItem label="退货日期" style="width:30%;" prop="RETURN_DATE">
               <Row>
                 <Col span="11" style="width:100%;">
                   <DatePicker type="date" v-model="formData.RETURN_DATE" style="min-width: 100%;"></DatePicker>
@@ -84,7 +84,7 @@
               </Select>
             </FormItem>
             <FormItem label="原始采购单号:" style="width:30%;">
-              <Input type="text" @on-click="selectPurchaseNo" v-model="formData.PURCHASE_NO" icon="ios-search">
+              <Input type="text" @on-click="selectPurchaseNo" :readonly="true" v-model="formData.PURCHASE_NO" icon="ios-search">
               </Input>
             </FormItem>
           </Form>
@@ -261,15 +261,15 @@
         limit: 25,
         formData: {},
         storeData: {
-          "RETURN_ID": "",
-          "SUPPLIER_ID": "",
-          "PURCHASE_ID": "",
-          "SUPPLIER_NAME": "",
-          "RETURN_DATE": "",
-          "RETURN_REASON": "",
-          "RETURN_PERSON": "",
-          "PURCHASE_NO": "",
-          "RETURN_MONEY": 0
+          RETURN_ID: "",
+          SUPPLIER_ID: "",
+          PURCHASE_ID: "",
+          SUPPLIER_NAME: "",
+          RETURN_DATE:"",
+          RETURN_REASON: "",
+          RETURN_PERSON: "",
+          PURCHASE_NO: "",
+          RETURN_MONEY: 0
         },
         showTable: false,
         tableData: [],
@@ -925,6 +925,7 @@
         }
         this.$refs.formData.resetFields();
         this.formData.RETURN_MONEY = 0;
+        this.formData.RETURN_DATE = new Date();
         this.formData.RETURN_PERSON = this.$store.state.user.userInfo.user.userName;
         this.showModal = true;
       },
