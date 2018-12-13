@@ -504,16 +504,6 @@ export default [
         },
         component: () => import('@/hxx-store/customer-relations/cart-list.vue')
       },
-      {path: '/iframe',
-        name: 'iframe',
-        meta: {
-          icon: 'md-funnel',
-          title: '商城嵌套',
-          lgType: "1002",
-          // access: '100506',
-        },
-        component: () => import('@/hxx-store/customer-relations/iframe.vue')
-      },
        {path: '/card-product',
         name: 'card-product',
         meta: {
