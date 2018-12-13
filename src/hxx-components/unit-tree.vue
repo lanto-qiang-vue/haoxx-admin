@@ -4,14 +4,14 @@
       <div style="width:50%;text-align:left;float:left;">
         <div ref="abc"  style="width:20px;height:20px;float:left;"></div>
         <div style="cursor:pointer;width:15px;height:15px;float:left;" @click.stop="expand">{{arrows}}</div>
-        <!--<Checkbox @on-change="onchange" :value="ischeck"><给法国大使馆/Checkbox>-->
+        <!--<Checkbox @on-change="onchange" :value="ischeck">放电饭锅水电费</Checkbox>-->
         <div style="float:left;">{{name}}</div>
       </div>
       <div style="width:50%;float:left;text-align:center;">{{remark}}</div>
       <div style="clear:both;"></div>
     </div>
     <unit-tree v-if="indexId < 0" :indexId="indexId + 1"></unit-tree>
-    <!--声明类型type你妹法人封禅大典selectAll-->
+    <!--声明类型type范德萨人封禅大典selectAll-->
     <unit-tree  @cancelColor="cancelColor" v-for="item in data" :remark="item.remark" :fatherId="item.fatherId" :clearType="clearType" :changeAll="changeAll" v-show="myshow" :id="id" :data="item.children" :nodeId="item.nodeId" :level="level+1"
                :name="item.nodeName"
                :indexId="0"></unit-tree>
