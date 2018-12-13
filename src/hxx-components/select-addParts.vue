@@ -252,9 +252,19 @@
                 this.showOnoff=true;
                 if(this.editdata){
                     // console.log('大猩猩陈一。。。。。')
-                    this.listSearch = this.editdata;
+                    for(let i in this.initList){
+                        this.listSearch[i]=this.initList[i];
+                    }
+
+                    for(let i in this.editdata){
+                        this.listSearch[i]=this.editdata[i];
+                    }
+
+                    // this.listSearch = this.editdata;
                     this.listSearch.RATE = this.listSearch.RATE == '' ? 0 : this.listSearch.RATE;
                     this.listSearch.NOT_CONTAINS_TAX_SALE_PRICE = this.listSearch.NOT_CONTAINS_TAX_SALE_PRICE  ? this.listSearch.NOT_CONTAINS_TAX_SALE_PRICE : 0;
+
+                    console.log("this.listSearch",this.listSearch);
                 }else{
                     this.listSearch={
                         "PART_ID":"",
