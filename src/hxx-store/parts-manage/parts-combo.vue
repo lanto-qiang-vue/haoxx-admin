@@ -10,8 +10,8 @@
                   :key="index" :value="item.code">{{item.name}}</Option>
               </Select>
      </div>
-      <ButtonGroup size="small">
-        <Button type="primary" @click="page=1;getList()">操作</Button>
+      <ButtonGroup>
+        <Button type="primary" @click="page=1;getList()">搜索</Button>
         <!--<Button type="primary" @click="clear()"><Icon type="ios-undo" size="24"/></Button>-->
       </ButtonGroup>
     </div>
