@@ -117,7 +117,7 @@
                         :formatter="value => `${value}元`"
                         :parser="value => value.replace('元', '')"></InputNumber>
          </FormItem>
-         <FormItem label="最高库存:" style="width:30%;">
+         <FormItem label="最高库存:" style="width:30%;"> 
            <InputNumber  :min="0" v-model="listSearch.MAX_STOCK_NUM" style="width:100%;" placeholder=""></InputNumber>
          </FormItem>
 
