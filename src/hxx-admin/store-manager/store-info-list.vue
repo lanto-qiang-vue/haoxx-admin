@@ -115,7 +115,7 @@
         versionList:[
           {code:0,name:'基础版本'},
           {code:1,name:'专业版本'},
-          {code:2,name:'公共版本'},
+          {code:2,name:'上传电子健康档案'},
         ],
         storeName:'',
         setModal: false,//控制设置门店版本
