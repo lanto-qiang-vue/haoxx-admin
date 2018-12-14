@@ -162,7 +162,7 @@
           {title: '门店商户号', key: 'TENANT_NUM', sortable: true, minWidth: 130},
           {title: '门店名称', key: 'TENANT_NAME', sortable: true, minWidth: 200},
           {title: '门店版本', key: 'ROLE_TYPE', sortable: true, minWidth: 150,
-            render: (h, params) => h('span', getName(this.versionList, params.row.ROLE_TYPE))
+            // render: (h, params) => h('span', getName(this.versionList, params.row.ROLE_TYPE))
           },
           {title: '门店地址', key: 'TENANT_ADD', sortable: true, minWidth: 150},
           {title: '联系人姓名', key: 'LINK_MAN', sortable: true, minWidth: 130},
