@@ -53,7 +53,8 @@ class httpRequest {
         //   if (data.msg) Message.error(data.msg)
         // }
         // return false
-        if(data.data.code == 808){
+        let flag = data.data ? true : false;
+        if(flag && data.data.code == 808){
           Message.destroy();
           Message.error("登陆失效,请重新登陆");
           store.dispatch('handleLogOut')

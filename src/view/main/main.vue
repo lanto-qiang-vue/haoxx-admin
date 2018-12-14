@@ -39,6 +39,7 @@
 </template>
 <script>
 import SideMenu from './components/side-menu'
+import Shop from './components/shop/shop.vue';
 import HeaderBar from './components/header-bar'
 import TagsNav from './components/tags-nav'
 import User from './components/user'
@@ -61,7 +62,8 @@ export default {
     Fullscreen,
     User,
     PickingNumber,
-    ChangePassword
+    ChangePassword,
+    Shop,
   },
   data () {
     return {
