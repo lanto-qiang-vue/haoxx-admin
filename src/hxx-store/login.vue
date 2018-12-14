@@ -399,7 +399,7 @@
     height: 82vh;
     min-height: 700px;
     /*background-size: 100% 100%;*/
-    background: url('../assets/images/banner-loginbg.png') 30%  no-repeat;
+    background: #010124 url('../assets/images/banner-loginbg.png') 30%  no-repeat;
     background-size: auto 100%;
     margin:0 auto;
     position: relative;

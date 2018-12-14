@@ -7,13 +7,28 @@
     <meta data-n-head="true" name="viewport" content="user-scalable=no">
     <link rel="icon" href="<%= BASE_URL %>favicon.ico">
     <title>好修修门店管理系统</title>
-
   </head>
+  <style>
+    .nodisplay #app{
+      display: none;
+    }
+  </style>
   <body>
     <noscript>
       <strong>We're sorry but iview-admin doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
     </noscript>
+    <h1 id="nonsupport" style="display:none;">本系统不支持IE浏览器，请使用其它浏览器，推荐使用google浏览器最佳。
+      <a href="http://download.hoxiuxiu.com/app/setup.exe">点击下载谷歌浏览器</a>
+    </h1>
     <div id="app"></div>
     <!-- built files will be auto injected -->
+
+  <script>
+    var ua = navigator.userAgent.toLocaleLowerCase();
+    if(ua.match(/msie/) != null || ua.match(/trident/) != null) {
+      document.getElementById("nonsupport").style.display = "block";
+      document.body.classList.add("nodisplay");
+    }
+  </script>
   </body>
 </html>

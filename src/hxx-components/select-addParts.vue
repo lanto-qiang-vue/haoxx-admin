@@ -73,9 +73,9 @@
        <Form  slot="content" :label-width="110" inline class="detail-form">
 
            <FormItem label="品牌:" style="width:30%;" >
-              <Select v-model="listSearch.BRAND" filterable @on-query-change="remoteMethod1" style="width:100%;" placeholder="选择品牌..." clearable ref="brandId">
-                <Option v-for="(item, index) in initBrandArr"
-                  :key="index" :value="item.code">{{item.name}}</Option>
+              <Select v-model="listSearch.BRAND" filterable @on-query-change="remoteMethod1" style="width:100%;" placeholder="选择品牌..." clearable ref="brandId" label>
+                <Option v-for="(item, index) in initBrandArr" :key="index" :value="item.code">{{item.name}}</Option>
+               
               </Select>
           </FormItem>
           <FormItem label="规格:" style="width:30%;">
@@ -263,6 +263,11 @@
         watch:{
             showSelectAddParts(){
                 this.showOnoff=true;
+                for(let i in this.initBrandArr){
+                    if(this.initBrandArr[i]['code']==this.initBrandArr[i]['name']){
+                        this.initBrandArr.splice(i,1);
+                    }
+                }
                 if(this.editdata){
                     // console.log('大猩猩陈一。。。。。')
 
@@ -273,7 +278,16 @@
                     for(let i in this.editdata){
                         this.listSearch[i]=this.editdata[i];
                     }
+
+                    if(this.listSearch["BRAND"]){
+                        let obj={code:'',name:""};
+                        obj['code']=this.listSearch["BRAND"];
+                        obj['name']=this.listSearch["BRAND"];
+                        this.initBrandArr.push(obj);
+                    }
+
                     
+                    // this.listSearch=this.editdata;
                     this.listSearch.RATE = this.listSearch.RATE == '' ? 0 : this.listSearch.RATE;
                     this.listSearch.NOT_CONTAINS_TAX_SALE_PRICE = this.listSearch.NOT_CONTAINS_TAX_SALE_PRICE  ? this.listSearch.NOT_CONTAINS_TAX_SALE_PRICE : 0;
                 }else{
