@@ -18,7 +18,7 @@
           <fullscreen v-model="isFullscreen"/>
           <change-password></change-password>
           <picking-number ></picking-number>
-          <shop></shop>
+          <!--<shop></shop>-->
           <user slot="right" :user-avator="userAvator"/>
           <!--<language @on-lang-change="setLocal" style="margin-right: 10px;" :lang="local"/>-->
         </header-bar>
