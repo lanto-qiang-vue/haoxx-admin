@@ -61,7 +61,7 @@
           {title: '配件分类', key: 'TYPE_NAME', sortable: true, minWidth: 140},
           {
             title: '品牌', key: 'BRAND', sortable: true, minWidth: 140,
-            render: (h, params) => h('span', getName(this.brandtype, params.row.BRAND) || params.row.BRAND)
+            // render: (h, params) => h('span', getName(this.brandtype, params.row.BRAND) || params.row.BRAND)
           },
           {title: '规格', key: 'FORMAT', sortable: true, minWidth: 150},
           {
