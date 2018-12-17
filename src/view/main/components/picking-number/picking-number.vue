@@ -21,6 +21,14 @@
       },
       showThis(){
         return this.$store.getters.loginType=='1002'
+      },
+      mathRand:function(){
+		    return this.$store.state.app.mathRand;
+      }
+    },
+    watch:{
+      mathRand(){
+        this.getPickingNumber();
       }
     },
     mounted(){
