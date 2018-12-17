@@ -19,7 +19,7 @@
     @on-selection-change="changeSelect"
     class="main-table"
     ref="tablesMain"
-    :data="data"
+    :data="value"
     :columns="tableColumns"
     stripe
     border
@@ -160,32 +160,30 @@
     },
     data(){
 		  return{
-        // current: 1,
-        tableColumns:[],
-		    data:[],
         collapse: ['1','2'],
         tableHeight: 500,
         timer: null,
-        // windowInnerHeight: window.innerHeight
       }
     },
     computed:{
       windowInnerHeight: function(){
         return this.$store.state.app.windowInnerHeight
+      },
+      tableColumns(){
+        let arr= deepClone(this.columns)
+        for (let i in arr){
+          arr[i].ellipsis= true
+          arr[i].tooltip= true
+        }
+        return arr
       }
     },
     watch:{
-      columns(thisColumns){
-        this.calcColumns(thisColumns)
-      },
       clearSelect(val){
         this.$refs.tablesMain.clearCurrentRow()
       },
       show(){
         this.resize(500)
-      },
-      value(data){
-        this.data= data
       },
       windowInnerHeight(){
         this.resize(200)
@@ -200,18 +198,9 @@
           // self.resize(200)
           self.$store.commit('setWindowInnerHeight', window.innerHeight)
       }
-      this.calcColumns(this.columns)
+
     },
     methods:{
-		  calcColumns(thisColumns){
-        console.log(thisColumns)
-        let arr= deepClone(thisColumns)
-        for (let i in arr){
-          arr[i].ellipsis= true
-          arr[i].tooltip= true
-        }
-        this.tableColumns= arr
-      },
       resize(time){
         let self= this
         let commonTable=this.$refs.commonTable
