@@ -685,7 +685,8 @@ export default {
             }).then(res => {
                 if (res.success === true) {
                     this.$Message.info('保存成功')
-                    for(let i in this.buttonStateArr){
+                  this.$store.commit('setMathRand',Math.random());
+                  for(let i in this.buttonStateArr){
                         switch(i){
                         case 'save':
                         case 'doaccount': this.buttonStateArr[i]= false; break
