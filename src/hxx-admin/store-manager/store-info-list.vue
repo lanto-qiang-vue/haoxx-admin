@@ -112,6 +112,11 @@
         }
       }
       return {
+        versionList:[
+          {code:0,name:'基础版本'},
+          {code:1,name:'专业版本'},
+          {code:2,name:'上传电子健康档案'},
+        ],
         storeName:'',
         setModal: false,//控制设置门店版本
         resetModal: false,//重置健康档案
@@ -134,7 +139,6 @@
             {validator: versionRule, trigger: 'change,blur'}
           ],
         },
-        versionList: [],//版本list
         query: {
           KEYWORD: '',
           CHECK_STATUS_eq: '',
@@ -158,7 +162,7 @@
           {title: '门店商户号', key: 'TENANT_NUM', sortable: true, minWidth: 130},
           {title: '门店名称', key: 'TENANT_NAME', sortable: true, minWidth: 200},
           {title: '门店版本', key: 'ROLE_TYPE', sortable: true, minWidth: 150,
-            render: (h, params) => h('span', getName(this.STATUS_group, params.row.ROLE_TYPE))
+            // render: (h, params) => h('span', getName(this.versionList, params.row.ROLE_TYPE))
           },
           {title: '门店地址', key: 'TENANT_ADD', sortable: true, minWidth: 150},
           {title: '联系人姓名', key: 'LINK_MAN', sortable: true, minWidth: 130},
