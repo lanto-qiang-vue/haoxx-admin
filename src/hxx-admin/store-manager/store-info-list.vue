@@ -58,6 +58,10 @@
           <Input v-model="recordInfo.COMPANYPASSWORD"></Input>
         </FormItem>
       </Form>
+      <div slot="footer">
+        <Button @click="showAddModal=false">取消</Button>
+        <Button type="primary" @click="saveRecord">保存</Button>
+      </div>
     </Modal>
     <Modal v-model="setModal" @on-visible-change="visibleChange" title="选择门店版本" :width="400">
       <Form ref="setData" :rules="setRule" :model="setData" :label-width="120">
@@ -113,9 +117,9 @@
       }
       return {
         versionList:[
-          {code:0,name:'基础版本'},
-          {code:1,name:'专业版本'},
-          {code:2,name:'上传电子健康档案'},
+          // {code:0,name:'基础版本'},
+          // {code:1,name:'专业版本'},
+          // {code:2,name:'上传电子健康档案'},
         ],
         storeName:'',
         setModal: false,//控制设置门店版本
@@ -326,7 +330,7 @@
         }).then(res => {
           if (res.success == true) {
             this.versionList = res.data;
-            this.versionList.unshift({ROLE_ID: 0, ROLE_NAME: '请选择'});
+            this.versionList.unshift({ROLE_ID:'0', ROLE_NAME: '请选择'});
           }
         })
       },
