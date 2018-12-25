@@ -8,8 +8,8 @@
           <Icon custom="fa fa-exchange"  :size="24"></Icon>
         </Tooltip>
         </div>
-        <DropdownMenu slot="list">
-          <div class="store-block">
+        <DropdownMenu slot="list" >
+          <div class="store-block" @click="mclick">
             <div class="title">
               <Button type="primary" custom-icon="fa fa-plus" @click="linkTo"  style="margin-right: 10px">注册新门店</Button>
               <Button  custom-icon="fa fa-refresh" @click="getStoreList">刷新</Button>
@@ -113,6 +113,9 @@ export default {
           break
         }
       }
+    },
+    mclick(){
+      this.visible = !this.visible;
     },
     mdshow(){
       this.visible = !this.visible;
