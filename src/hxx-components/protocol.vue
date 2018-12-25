@@ -5,6 +5,7 @@
     class="protocol"
     :mask-closable="false"
     :closable="false"
+    :transfer="true"
     width="800"
   >
     <div slot="header" style="line-height:54px;text-align:center;font-size:16px;"><strong>用户协议</strong></div>
