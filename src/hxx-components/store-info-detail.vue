@@ -1,7 +1,6 @@
 <template>
 <div id="store-info-detail">
   <div class="info">
-    <div style="height:10px;"></div>
     <Collapse v-model="collapse">
       <Panel name="1">门店基本信息
         <Form class="common-form" ref="form" :rules="ruleValidate" :model="info" :label-width="120" slot="content">
@@ -128,6 +127,7 @@
               </div>
             </div>
           </Card>
+          <div style="height:60px;"></div>
         </div>
       </Panel>
     </Collapse>

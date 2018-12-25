@@ -25,6 +25,7 @@
       </Header>
       <Content class="main-content-con">
         <Layout class="main-layout-con">
+          <protocol :protocolShow="protocolShow" :type="2"></protocol>
           <div class="tag-nav-wrapper">
             <tags-nav :value="$route" @input="handleClick" :list="tagNavList" @on-close="handleCloseTag"/>
           </div>
@@ -39,6 +40,7 @@
   </Layout>
 </template>
 <script>
+  import protocol from '@/hxx-components/protocol.vue';
 import SideMenu from './components/side-menu'
 import Shop from './components/shop/shop.vue';
 import HeaderBar from './components/header-bar'
@@ -65,10 +67,12 @@ export default {
     PickingNumber,
     ChangePassword,
     Shop,
+    protocol
   },
   data () {
     return {
       collapsed: false,
+      protocolShow:false,
       minLogo,
       maxLogo,
       isFullscreen: false,
@@ -164,6 +168,16 @@ export default {
     this.setBreadCrumb(this.$route.matched)
     // 设置初始语言
     this.setLocal(this.$i18n.locale)
+    //检查协议字段
+    // this.$store.state.user.userInfo.user.isAgreement = 3;
+    // let data = this.$store.state.user.userInfo;
+    // data.user.isAgreement = 1;
+    // this.$store.commit('setUser',data)
+    // console.log(JSON.stringify(data.user));
+    // console.log(this.$store.state.user.userInfo.user.isAgreement);
+    if(this.$store.state.user.userInfo.user.isAgreement == 0){
+       this.protocolShow = true;
+    }
     // 文档提示
     // this.$Notice.info({
     //   title: '想快速上手，去看文档吧',

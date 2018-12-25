@@ -16,7 +16,9 @@ const LOGIN_PAGE_NAME2 = 'admin-login'
 router.beforeEach((to, from, next) => {
   iView.LoadingBar.start()
   let isLogin = (getToken() && getUser() && getMenu())
-  if (!isLogin && (to.name !== LOGIN_PAGE_NAME && to.name !== LOGIN_PAGE_NAME2)) {
+  if (to.meta && to.meta.noLogin){
+    next()
+  } else if (!isLogin && (to.name !== LOGIN_PAGE_NAME && to.name !== LOGIN_PAGE_NAME2)) {
     // 未登录且要跳转的页面不是登录页
     console.log('1未登录且要跳转的页面不是登录页')
     next({
@@ -35,7 +37,7 @@ router.beforeEach((to, from, next) => {
     next({
       name: loginType == '1002' ? 'home' : 'admin-home' // 跳转到home页
     })
-  } else {
+  }else {
     console.log('4已登录，判断权限')
     // store.dispatch('getUserInfo').then(user => {
     // 拉取用户信息，通过用户权限和跳转的页面的name来判断是否有权限访问;access必须是一个数组，如：['super_admin'] ['super_admin', 'admin']

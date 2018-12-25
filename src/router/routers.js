@@ -26,7 +26,8 @@ export default [
     name: 'protocol',
     meta: {
       title: '用户协议',
-      hideInMenu: true
+      hideInMenu: true,
+      noLogin: true
     },
     component: () => import('@/hxx-store/protocol.vue')
   },
