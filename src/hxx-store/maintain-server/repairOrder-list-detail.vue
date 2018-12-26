@@ -1536,7 +1536,7 @@
             } else if (this.detailData['STATUS'] == '10201004') {
               this.titleMsg = "已结算待收款";
               this.isOrderSuccess = false;
-
+              this.accountInfoFun(this.listSearch);
               for (let i in this.buttonStateArr) {
                 switch (i) {
                   case 'shoukuan':
@@ -1552,7 +1552,7 @@
             } else if (this.detailData['STATUS'] == '10201005') {
               this.titleMsg = "已结清";
               this.isOrderSuccess = false;
-              this.isAccountFlag = false;
+              this.accountInfoFun(this.listSearch);
               for (let i in this.buttonStateArr) {
                 switch (i) {
                   case 'printAccount':
@@ -1985,6 +1985,51 @@
 
       },
 
+      //结算信息数据显示-----
+      accountInfoFun(val){
+        this.accountInfo = [];
+          var newJson = {
+            itemMoney: 0,
+            partMoney: 0,
+            itemDerateMoney: 0,
+            partDerateMoney: 0,
+            otherItemMoney: 0,
+            sumMoney: 0,
+          }
+
+          for (let i in val) {
+            switch (i) {
+              case 'REPAIR_ITEM_MONEY':
+                newJson['itemMoney'] = val[i];
+     
+                break;
+              case 'REPAIR_ITEM_DERATE_MONEY':
+                newJson['itemDerateMoney'] = val[i];
+
+                break;
+              case 'REPAIR_PART_DERATE_MONEY':
+                newJson['partDerateMoney'] = val[i];
+
+                break;
+              case 'REPAIR_PART_MONEY':
+                newJson['partMoney'] = val[i];
+
+                break;
+              case 'OTHER_MONEY':
+                newJson['otherItemMoney'] = val[i];
+
+                break;
+              case 'SUM_MONEY':
+                newJson['sumMoney'] = val[i];
+
+                break;
+
+            }
+          }
+
+          this.accountInfo.push(newJson);
+          this.isAccountFlag = false;
+      },
 
       handleReset(name) {
         this.$refs[name].resetFields();
@@ -2175,7 +2220,7 @@
             "ORDER_DATE": null,
             "IS_SEL": true,
             "REMARK": "",
-            "WORK_CLASS_ID": '',
+            "WORK_CLASS_ID": this.vehicleTeamArr[0]['itemId']||1,
             "WORK_CLASS_NAME": "",
           }
           for (let i in this.getItem[j]) {
@@ -2570,7 +2615,7 @@
             "STATUS": "",
             "IS_PREINSTALL": "",
             "IS_SEL": true,
-            "WORK_CLASS_ID": '',
+            "WORK_CLASS_ID": this.vehicleTeamArr[0]['itemId']||1,
             "WORK_CLASS_NAME": "",
 
           }

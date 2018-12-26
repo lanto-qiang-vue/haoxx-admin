@@ -170,6 +170,7 @@
         return this.$store.state.app.windowInnerHeight
       },
       tableColumns(){
+        
         let arr= deepClone(this.columns)
         for (let i in arr){
           arr[i].ellipsis= true
@@ -227,6 +228,8 @@
         let tablesMain = this.$refs.tablesMain;
         // alert(commonTable.querySelector(".table-bottom").offsetTop);
         console.log("底部高度"+commonTable.querySelector(".table-bottom").offsetTop);
+
+        console.log("table高度"+commonTable.querySelector(".table-bottom").offsetTop);
         console.log("table高度"+(tablesMain.$el.offsetTop+this.tableHeight));
         // alert(tablesMain.$el.offsetTop+this.tableHeight);
         if(commonTable.querySelector(".table-bottom").offsetTop < (tablesMain.$el.offsetTop+this.tableHeight)){
