@@ -113,7 +113,7 @@
         </span>
                   </Input>
                 </FormItem>
-                <div> <div style="float:left;"><Checkbox @on-change="changeType" :value="singleProtocol">已阅读并同意</Checkbox></div><div style="float:left;margin-left:-10px;"><span style="color:blue;cursor:default;" @click="protocolShow=Math.random()">《用户协议》</span></div></div>
+                <div> <div style="float:left;"><Checkbox @on-change="changeType" :value="singleProtocol">已阅读并同意</Checkbox></div><div style="float:left;margin-left:-10px;"><span style="color:blue;cursor:pointer;" @click="protocolShow=Math.random()">《用户协议》</span></div></div>
                 <div style="clear:both;"></div>
                 <div style="height:10px;"></div>
                 <FormItem>
