@@ -88,7 +88,7 @@
               </div>
       <div slot="footer">
       <Button @click="addcancle()">取消</Button>
-      <Button type="primary" @click="addpost('list')">保存</Button>
+      <Button type="primary" @click="addpost('list')" v-if="accessBtn('edit')">保存</Button>
       </div>
     </Modal>
     <select-parts-group @selectPartsGroup="getParts" :initPartsGroup="initParts" :showSelectPartsGroup="selectShow"></select-parts-group>
