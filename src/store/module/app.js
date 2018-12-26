@@ -11,7 +11,8 @@ export default {
     tenant: getTenant() || '',
     outStatus: getOutStatus() || 0,
     pickingNumber: 0,
-    windowInnerHeight: window.innerHeight
+    windowInnerHeight: window.innerHeight,
+    mathRand:0,
   },
   getters: {
     // menuList: (state, getters, rootState) => getMenuByRouter(routers, rootState.user.access)
@@ -71,6 +72,9 @@ export default {
     },
     setWindowInnerHeight(state,num){
       state.windowInnerHeight = num
+    },
+    setMathRand(state,num){
+      state.mathRand = num;
     }
   },
   actions: {

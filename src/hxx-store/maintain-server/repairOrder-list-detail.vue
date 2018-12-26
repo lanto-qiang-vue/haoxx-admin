@@ -1763,6 +1763,7 @@
         }).then(res => {
           if (res.success === true) {
             this.$Message.info('保存成功');
+            this.$store.commit('setMathRand',Math.random());
             for (let key in res.data) {
               this.listSearch[key] = res.data[key];
 
@@ -1827,6 +1828,7 @@
         }).then(res => {
           if (res.success === true) {
             this.$Message.info('派工成功');
+            this.$store.commit('setMathRand',Math.random());
             this.titleMsg = "已派工维修中";
             this.isOrderSuccess = false;
             for (let key in res.data) {

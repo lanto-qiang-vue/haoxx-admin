@@ -27,7 +27,7 @@
           </Dropdown>
         </div>
       </div>
-      <div style="height:10px;"></div>
+      <!--<div style="height:10px;"></div>-->
   <store-info-detail :data="datas" @save="saveStoreInfo" @register="saveRegister" :type="1" @goback="goback"></store-info-detail>
     </Modal>
     <Modal
@@ -58,7 +58,7 @@
           </Dropdown>
         </div>
       </div>
-    <div style="height:10px;"></div>
+    <!--<div style="height:10px;"></div>-->
     <common-table :showPage="false" :loading="tableType" v-model="tableData" :columns="columns"  @onRowDblclick="dbclick" :showSearch="false" :showOperate="false"  :show="showTable">
     </common-table>
       <div slot="footer" style="text-align:center;">

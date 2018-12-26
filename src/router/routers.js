@@ -22,6 +22,16 @@ export default [
     component: () => import('@/hxx-store/login.vue')
   },
   {
+    path: '/protocol',
+    name: 'protocol',
+    meta: {
+      title: '用户协议',
+      hideInMenu: true,
+      noLogin: true
+    },
+    component: () => import('@/hxx-store/protocol.vue')
+  },
+  {
     path: '/admin-login',
     name: 'admin-login',
     meta: {

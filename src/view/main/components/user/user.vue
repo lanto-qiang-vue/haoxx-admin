@@ -3,11 +3,13 @@
     <div class="switch-store" v-if="this.$store.state.user.userInfo.isManage">
       <Dropdown trigger="custom" :visible="visible" @on-clickoutside="mdshow" placement="bottom-end" transfer
                 @on-click="openSwitchStore" @on-visible-change="dropdownVisible">
-        <Tooltip content="点击切换门店" placement="bottom" :disabled="disabledDropdown" style="width: 60px">
-          <Icon custom="fa fa-exchange" @click="mdshow" :size="24"></Icon>
+        <div @click="Tmdshow">
+        <Tooltip content="点击切换门店" placement="bottom" :disabled="disabledDropdown"  style="width: 60px">
+          <Icon custom="fa fa-exchange"  :size="24"></Icon>
         </Tooltip>
-        <DropdownMenu slot="list">
-          <div class="store-block">
+        </div>
+        <DropdownMenu slot="list" >
+          <div class="store-block" @click="mclick">
             <div class="title">
               <Button type="primary" custom-icon="fa fa-plus" @click="linkTo"  style="margin-right: 10px">注册新门店</Button>
               <Button  custom-icon="fa fa-refresh" @click="getStoreList">刷新</Button>
@@ -112,7 +114,13 @@ export default {
         }
       }
     },
+    mclick(){
+      this.visible = !this.visible;
+    },
     mdshow(){
+      this.visible = !this.visible;
+    },
+    Tmdshow(){
       this.visible = !this.visible;
     },
     linkTo(){
@@ -132,6 +140,7 @@ export default {
       }).then(res => {
         if (res.success === true) {
           this.data= res.data
+          this.visible = true;
           this.loading= false
         }
       })

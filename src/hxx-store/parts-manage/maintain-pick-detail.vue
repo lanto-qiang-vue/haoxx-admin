@@ -594,6 +594,7 @@
                             this.getPartsFun(this.listSearch.REPAIR_ID);
                             this.commitOneParts=null;
                             this.$Message.info('退料成功');
+                          this.$store.commit('setMathRand',Math.random());
                             this.handleReset('personObj');
                         }
                     })
@@ -635,6 +636,7 @@
                                 this.getPartsFun(this.listSearch.REPAIR_ID);
                                 this.commitOneParts=null;
                                 this.$Message.info('领料成功');
+                                this.$store.commit('setMathRand',Math.random());
                                 this.handleReset('storeObj');
                             }
                             
@@ -674,6 +676,7 @@
                                 this.getPartsFun(this.listSearch.REPAIR_ID);
                                 this.commitOneParts=null;
                                 this.$Message.info('领料成功');
+                                this.$store.commit('setMathRand',Math.random());
                                 this.handleReset('storeObj');
                         }
                     })

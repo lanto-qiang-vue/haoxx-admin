@@ -81,7 +81,7 @@
           </Tabs>
           <!-- 企业商户结尾 注册启始 2-->
           <div v-if="isShow == 2">
-            <div><h1 style="font-size:18px;">用户注册</h1></div>
+            <div><span style="font-size:18px;"><b>用户注册</b></span><span style="float:right;padding-top:3px;"><a @click="login">登录</a></span></div>
             <div class="form-con">
               <Form :model="form3" ref="form3" :rules="rules">
                 <FormItem prop="phone">
@@ -113,9 +113,11 @@
         </span>
                   </Input>
                 </FormItem>
-                <div style="float:right;padding:0 20px 10px 0;margin-top:-10px;"><a @click="login">返回登录</a></div>
+                <div> <div style="float:left;"><Checkbox @on-change="changeType" :value="singleProtocol">已阅读并同意</Checkbox></div><div style="float:left;margin-left:-10px;"><span style="color:blue;cursor:default;" @click="protocolShow=Math.random()">《用户协议》</span></div></div>
+                <div style="clear:both;"></div>
+                <div style="height:10px;"></div>
                 <FormItem>
-                  <Button @click="doregister()" type="primary" long>注册</Button>
+                  <Button @click="doregister()" :disabled="canRegister" type="primary" long>注册</Button>
                 </FormItem>
               </Form>
             </div>
@@ -130,19 +132,24 @@
         </div>
       </div>
     </div>
+    <protocol :protocolShow="protocolShow" @argee="argee"></protocol>
     <div class="footer-right"> © 2018 Copyright 上海衡益网络技术有限公司 沪ICP备18016827号-1</div>
   </div>
 </template>
 
 <script>
   // import LoginForm from '_c/login-form'
+  import protocol from '@/hxx-components/protocol.vue';
   import {mapActions} from 'vuex'
   import { getAccount} from '@/libs/util.js'
   export default {
+    components:{protocol},
     data() {
       return {
+        protocolShow:false,
         description: '获取',
         indexName:'name1',
+        singleProtocol:false,//同意协议
         form: {
           userName: '',
           password: ''
@@ -156,7 +163,8 @@
           phone: '',
           phoneCode: '',
           password: '',
-          repeatPassword: ''
+          repeatPassword: '',
+          IsAgreement:0,
         },
         single: false,
         isShow: 1,
@@ -177,8 +185,16 @@
         },
       }
     },
-    mounted() {
-
+    mounted(){
+    },
+    computed:{
+      canRegister(){
+        if(!this.form3.phone || !this.form3.phoneCode || !this.form3.password || !this.form3.repeatPassword || !this.singleProtocol){
+          return true;
+        }else{
+          return false;
+        }
+      }
     },
     created(){
       let account = JSON.parse(getAccount());
@@ -201,6 +217,12 @@
         'handleLogin',
         'getUserInfo'
       ]),
+      argee(flag){
+        this.singleProtocol = flag;
+      },
+      changeType(e){
+        this.singleProtocol = e;
+      },
       doregister() {
         this.$refs['form3'].validate((valid) => {
           if (valid) {
@@ -215,7 +237,8 @@
                   password:this.form3.password,
                   confpassword:this.form3.repeatPassword,
                   telcode:this.form3.phoneCode,
-                  telphone:this.form3.phone
+                  telphone:this.form3.phone,
+                  IsAgreement:this.singleProtocol ? 1 : 0,
                 }
               }).then(res => {
                 if (res.success === true) {
@@ -299,7 +322,7 @@
             }
           }).then(res => {
             if (res.success === true) {
-              console.log("登录时请求的数据",res.data);
+              // console.log("登录时请求的数据",JSON.stringify(res.data));
               this.$store.commit('setUser', res.data)
               resolve()
             } else reject()

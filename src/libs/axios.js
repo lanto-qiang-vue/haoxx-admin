@@ -43,6 +43,10 @@ class httpRequest {
           // Spin.hide()
         }, 500)
       }
+      //登录服务接口...
+      if(data[0]&&data[0].error == 0){
+         return data;
+      }
       if (!data.success || data.success !== true) {
         // 后端服务在个别情况下回报201，待确认
         // if (data.code === 401) {

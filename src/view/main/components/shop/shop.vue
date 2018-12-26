@@ -11,7 +11,7 @@
     name: "shop",
     methods:{
       goTo(){
-        window.open("http://localhost:4040/dq/login/login.html?token="+this.$store.state.user.token);
+        window.open("http://mall.hoxiuxiu.com/dq/login/login.html?token="+this.$store.state.user.token);
       }
     },
   }
