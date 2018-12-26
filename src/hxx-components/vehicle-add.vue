@@ -337,7 +337,9 @@ this.showChange=Math.random();
       onRowClick(row){
       this.formData.VEHICLE_MODEL = row.MODEL_NAME;
       this.formData.TID = row.TID;
+      this.searchTableData=row.MODEL_NAME;
       this.vehicleShow = false;
+      this.showChange=Math.random();
       },
       visibleChange(status){
         this.$emit('clearsection');
