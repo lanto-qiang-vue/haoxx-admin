@@ -32,18 +32,19 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="primary" :disabled="!detailData" @click="edit">查看/编辑</Button>
-      <Button type="success" :disabled="!detailData || detailData.CHECK_STATUS != '10351002'" @click="showRecordInfo">
+      <Button type="primary" :disabled="!detailData" @click="edit" v-if="accessBtn('lookEdit')">查看/编辑</Button>
+      <Button type="success" :disabled="!detailData || detailData.CHECK_STATUS != '10351002'" v-if="accessBtn('addDzjk')" @click="showRecordInfo">
         新增电子健康档案账号
       </Button>
       <Button type="error" v-show="!detailData || detailData.CHECK_STATUS!='10351004'"
-              :disabled="!detailData || detailData.CHECK_STATUS != '10351002'" @click="updateCheckStatus">门店停用
+              :disabled="!detailData || detailData.CHECK_STATUS != '10351002'" @click="updateCheckStatus" v-if="accessBtn('tenantstop')">门店停用
       </Button>
       <Button type="success" v-show="detailData && detailData.CHECK_STATUS=='10351004'" :disabled="!detailData"
-              @click="updateCheckStatus">门店恢复
+              @click="updateCheckStatus" v-if="accessBtn('tenantstop')">门店恢复
       </Button>
-      <Button type="primary" :disabled="!detailData" @click="setStore">设置门店版本</Button>
-      <Button type="primary" :disabled="canReset" @click="resetStore">重置健康档案账号</Button>
+      <Button type="primary" :disabled="!detailData" @click="setStore" v-if="accessBtn('setversion')">设置门店版本</Button>
+      <Button type="primary" :disabled="canReset" @click="resetStore" v-if="accessBtn('resetzh')">重置健康档案账号</Button>
+      <Button type="error" :disabled="!detailData" @click="storeDelete" v-if="accessBtn('deltenant')">门店删除</Button>
     </div>
 
     <Modal v-model="showAddModal" @on-visible-change="visibleChange" title="新增电子健康档案账号" :width="400">
@@ -100,6 +101,7 @@
 </template>
 
 <script>
+  import mixin from '@/hxx-components/mixin'
   import CommonTable from '@/hxx-components/common-table.vue'
   import StoreInfoDetail from '@/hxx-components/store-info-detail.vue'
   import {getName, getDictGroup} from '@/libs/util.js'
@@ -107,6 +109,7 @@
   export default {
     components: {CommonTable, StoreInfoDetail},
     name: "store-info-list",
+    mixins: [mixin],
     data() {
       const versionRule = (rule, value, callback) => {
         if (value == '0') {
@@ -225,6 +228,27 @@
       this.getList()
     },
     methods: {
+      storeDelete(){
+        this.$Modal.confirm({
+          title:'系统提示',
+          content:'确认删除门店吗?',
+          onOk:()=>{
+            this.axios.request({
+              url: '/manage/info/tenantinfo/deleteTenant',
+              method: 'post',
+              data: {
+                access_token: this.$store.state.user.token,
+                tenantId:this.detailData.TENANT_ID
+              }
+            }).then(res => {
+              if (res.success === true) {
+                this.$Message.success(res.data.msg);
+                this.getList();
+              }
+            })
+          }
+        });
+      },
       edit(){
         this.getImg(this.detailData.TENANT_ID);
       },
