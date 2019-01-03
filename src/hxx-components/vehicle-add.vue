@@ -9,15 +9,14 @@
     class="table-modal-detail"
     :scrollable="true"
     :transfer= "true"
-    :footer-hide="false">	
-    <!-- 车辆车辆档案新增调用 大祥,我是你大爷-->
+    :footer-hide="false">
     <div style="height:20px;"></div>
     <Form :label-width="120" :model="formData" ref="formData" class="common-form" :rules="ruleValidate">
           <FormItem label="车牌号:"   prop="PLATE_NUM">
               <Input type="text" v-model="formData.PLATE_NUM"  > </Input>
           </FormItem>
           <FormItem label="车架号:"  prop="VIN_NO" >
-              <Input type="text" v-model="formData.VIN_NO" @on-keyup="changeVinFun"> </Input>
+              <Input type="text" v-model="formData.VIN_NO" @on-blur="changeVinFun"> </Input>
           </FormItem>
                     <FormItem label="车型:"  prop="VEHICLE_MODEL" style="width: 570px; padding-right: 10px;">
               <!--<Input type="text"   v-model="formData.VEHICLE_MODEL" :readonly="true" @on-focus="vehicleChange" @on-click="vehicleChange" icon="ios-search"> </Input>-->

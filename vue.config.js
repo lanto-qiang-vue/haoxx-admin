@@ -41,7 +41,7 @@ module.exports = {
   devServer: {
     proxy: {
       '/proxy': {
-        target: 'http://192.168.169.116:8080/LtRepair/',
+        target: 'http://192.168.169.113:8080/LtRepair/',
         // target: 'http://developer.hxx.hoxiuxiu.com/',
         // target:'http://api.hoxiuxiu.com/',
         // target:'http://api.hxx.hoxiuxiu.com/',
