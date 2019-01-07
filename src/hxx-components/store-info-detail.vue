@@ -69,7 +69,7 @@
             <Input v-model="info.LINK_ZIP" :readonly="!editAble"></Input>
           </FormItem>
           <FormItem prop="TENANT_NUM" label="门店商户号">
-            <Input v-model="info.TENANT_NUM" :readonly="!editAble" :disabled="!isAdmin"></Input>
+            <Input v-model="info.TENANT_NUM" :readonly="!editAble" :disabled="true"></Input>
           </FormItem>
           <div></div>
           <FormItem prop="TENANT_NUM" label="其它说明" v-if="isCheck || type == 1">
