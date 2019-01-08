@@ -61,7 +61,7 @@
               </Select>
             </FormItem>
             <FormItem label="车辆类型:">
-              <Select v-model="listSearch.VEHICLE_TYPE" placeholder="" @on-change="selectCarInitFun">
+              <Select v-model="listSearch.VEHICLE_TYPE" placeholder="" @on-change="selectCarInitFun" :disabled='quickTypeCar'>
                 <Option v-for="(item, index) in vehicleTypeArr"
                         :key="index" :value="item.code">{{item.name}}
                 </Option>
@@ -329,6 +329,7 @@
       };
 
       return {
+        quickTypeCar:false,
         showItemFlag: null,//项目套餐组详情
         itemDetailId: '',//项目套餐组id
 
@@ -1346,7 +1347,11 @@
       showDetail() {
         this.showFlag=true;
         this.showModal = true
-        
+        if(this.$store.state.user.userInfo.tenant.businessType=="10331004"||this.$store.state.user.userInfo.tenant.businessType=="10331005"){
+               this.quickTypeCar=true;
+        }else{
+          this.quickTypeCar=false;
+        }
 
         //--------------------
         //清空公共数据值------
