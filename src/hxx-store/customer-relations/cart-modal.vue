@@ -30,7 +30,7 @@
             <Input type="text" v-model="formData.CUSTOMER_NAME" :disabled="true" style="min-width: 100%;"> </Input>
           </FormItem>
           <FormItem label="车架号:"  prop="VIN_NO">
-            <Input type="text" v-model="formData.VIN_NO" style="min-width: 100%;" @on-keyup="changeVinFun"> </Input>
+            <Input type="text" v-model="formData.VIN_NO" style="min-width: 100%;" @on-blur="changeVinFun"> </Input>
           </FormItem>
           <FormItem label="车型:" prop="VEHICLE_MODEL" style="width: 570px">
             <!--<Input type="text" style="min-width: 100%;" v-model="formData.VEHICLE_MODEL" @on-focus="selectVehicle"
@@ -233,7 +233,7 @@
       const servicePass = (rule, value, callback) => {
         var p1 = /\d?[A-Z]+\d?/
         if (p1.test(value) && value.length == 17) {
-          
+
           callback();
         } else {
           callback(new Error('请输入正确的车架号'));
@@ -374,8 +374,8 @@
       },
     },
     methods: {
-      checkCart(val) {
-        //能否根据车架号获取到车型...
+      checkCart(val,token) {
+        // 能否根据车架号获取到车型...
         if(this.formData.VEHICLE_MODEL != ""){
           return false;
         }
@@ -383,13 +383,15 @@
           url: '/tenant/basedata/ttvehiclefile/get_vehicle_model',
           method: 'post',
           data: {
-            access_token: this.$store.state.user.token,
+            access_token: token,
             vin: val,
           }
         }).then(res => {
           if (res.success === true) {
           this.formData.VEHICLE_MODEL = res.data.MODEL_NAME;
-          this.formData.TID = res.data.TID;
+           this.formData.TID = res.data.TID;
+            this.searchTableData=res.data.MODEL_NAME;
+            this.showChange=Math.random();
           // console.log("车型:"+this.formData.VEHICLE_MODEL + "车型ID:" + this.formData.TID);
           } else {
             this.$Modal.info({title: '系统提示', content: res.title + "<span style='color:red;'>请手动选取车型</span>"});
@@ -583,11 +585,13 @@
           this.formData.TID= val.TID
           
       },
-      changeVinFun(event){
-          var p1 = /\d?[A-Z]+\d?/
-          if (!p1.test(event.target.value) || event.target.value.length !== 17) {
+      changeVinFun(){
+        let val = this.formData.VIN_NO;
+          let p1 = /\d?[A-Z]+\d?/
+          if (!p1.test(val) || val.length !== 17) {
           }else{
-                this.checkCart(event.target.value);
+                // this.checkCart('LSGGF53W8CH066445','f7ff5ee7985d31ebde226c66ca4f17af5908f43cdba7997e46dfe202b48c8e810605f19147d09ea713638ced39f39649d07561542460a8bcaf6cdd752b29928fc5d2d5f77d2426c3b278c11d0d175aaf133547a4f4e88d8b15c6157ea292d4dbe5e1cfbb35694bb719bc83c3cdf2e232eeeb6d17514fbb02fba66cb8dbb7dcdca0aba1725a9202591b54a651422f9bffeb24332b265ddff8');
+                this.checkCart(val,this.$store.state.user.token);
           }
       }
 

@@ -31,7 +31,7 @@
               </Input>
           </FormItem>
           <FormItem label="车架号:" prop="VIN_NO">
-               <Input type="text" v-model="listSearch.VIN_NO" placeholder=""  @on-keyup="changeVinFun">
+               <Input type="text" v-model="listSearch.VIN_NO" placeholder=""  @on-blur="changeVinFun">
               </Input>
           </FormItem>
           <FormItem label="出厂日期:" >
