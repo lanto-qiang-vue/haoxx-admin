@@ -33,8 +33,6 @@
               }else{
                 this.$Message.success('批量导入成功');
                 this.uploadShow = false;
-                this.getTree();
-                this.getList();
               }
             }else{
               this.$Modal.error({title:'系统提示',content:res.Exception.message});
