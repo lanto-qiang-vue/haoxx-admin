@@ -184,6 +184,7 @@ import commonTable from '@/hxx-components/common-table.vue'
 
 
                 if(this.initSearch){
+                    console.log('xxx',this.initSearch);
                     let getCarName=getName(this.vehicleTypeArr,this.initSearch.VEHICLE_TYPE);
                     this.test1=getName(this.carNameArr,getCarName);
 
@@ -462,8 +463,17 @@ import commonTable from '@/hxx-components/common-table.vue'
                             }
                         }).then(res => {
                             if (res.success === true) {
+                                if(res.data.length>0){
+                                    this.addFun();
+                                }else{
+                                    // this.$Modal.confirm({
+                                    //     title:"系统提示!",
+                                    //     content:"当前门店未导入自定义类型，请联系客服！",
 
-                                this.addFun();
+                                    // })
+                                    this.$Message.info('当前门店未导入自定义类型，请联系客服！')
+                                }
+                                
 
 
 

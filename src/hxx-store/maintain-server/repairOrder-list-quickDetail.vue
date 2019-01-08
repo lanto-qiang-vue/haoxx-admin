@@ -57,7 +57,7 @@
               </Select>
           </FormItem>
           <FormItem label="车辆类型:" >
-              <Select v-model="listSearch.VEHICLE_TYPE" placeholder=""  @on-change="selectCarInitFun">
+              <Select v-model="listSearch.VEHICLE_TYPE" placeholder=""  @on-change="selectCarInitFun" :disabled='quickTypeCar'>
                 <Option v-for="(item, index) in vehicleTypeArr"
                   :key="index" :value="item.code">{{item.name}}</Option>
               </Select>
@@ -235,6 +235,7 @@ export default {
         }
       };
       return{
+          quickTypeCar:false,
           showFlag:false,
         showoff:null,//选择车辆
         showModal: false,//本界面是否显示判断
@@ -448,6 +449,12 @@ export default {
         console.log('进来的参数：',this.detailData);
         this.showFlag=true;
         this.showModal=true
+
+        if(this.$store.state.user.userInfo.tenant.businessType=="10331004"||this.$store.state.user.userInfo.tenant.businessType=="10331005"){
+               this.quickTypeCar=true;
+        }else{
+          this.quickTypeCar=false;
+        }
         //获取项目组数据---------------
         
         //清空公共数据值------
