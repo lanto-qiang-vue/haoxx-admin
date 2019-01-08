@@ -184,6 +184,7 @@ import commonTable from '@/hxx-components/common-table.vue'
 
 
                 if(this.initSearch){
+                    console.log('xxx',this.initSearch);
                     let getCarName=getName(this.vehicleTypeArr,this.initSearch.VEHICLE_TYPE);
                     this.test1=getName(this.carNameArr,getCarName);
 
