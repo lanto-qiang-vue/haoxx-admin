@@ -445,7 +445,7 @@ export const printAccountFun=function(wtdData,listSearch,commitItem,commitItemGr
             '<td colspan="10" class="text-left" style="padding:0px 10px">6. 请扫描二维码或登录上海汽修平台，对本次维修服务进行评价。</td>'+
             '</tr>'+
             '<tr class="noBorder">'+
-            '<td colspan="5" style="text-align:right;"><img src="/static/img/pj_qrcode.png" style="width:152px;height:152px;"/></td>'+
+            '<td colspan="5" style="text-align:right;"><img src="/static/img/pj_qrcode.png" style="width:82px;height:82px;"/></td>'+
             '<td colspan="5" style="padding:30px 0px;vertical-align: top;text-align:left;">上海市机动车维修公共服务平台</td>'+
             '</tr>';
   }else{
@@ -524,15 +524,15 @@ export const printAccountFun=function(wtdData,listSearch,commitItem,commitItemGr
   var style3='';
   if(styleFlag){
       style3='<meta http-equiv="X-UA-Compatible" content="IE=Edge"><style>table{border:2px #000 solid;border-collapse: collapse;} th,td{border: 1px solid #000;} .noBorder th,.noBorder td{border:none;} .noRTLBorder th,.noRTLBorder td{border-right:none;border-top:none;border-left:none;} .noRLBorder th,.noRLBorder td{border-right:none;border-left:none;}' +
-     "th,td {padding: 2px; line-height: 16px; text-align: center; vertical-align: middle;font-size:13px; } td{text-align: left;} .text-center,.text-center th,.text-center td{text-align:center;} .text-right,.text-right th,.text-right td{text-align:right;}" +
+     "th,td {padding: 2px; line-height: 12px; text-align: center; vertical-align: middle;font-size:12px; } td{text-align: left;} .text-center,.text-center th,.text-center td{text-align:center;} .text-right,.text-right th,.text-right td{text-align:right;}" +
      ".w100{width:100px;} .w110{width:110px;} .w130{width:130px;} .w200{ width:200px;} .h30{ height:30px;line-height:25px;} .w30{width:30px;} .w70{width:70px;} .w80{width:80px;}  .w400{width:700px;} " +
      ".text-left{text-align:left;} </style>";
   }
 
   
 
-  var temp='<div style="padding:0 20px;" id="print_style">'+style3+
-            '<table border=0 width="100%" cellspacing="0" cellpadding="0" bordercolor="#000000">'+
+  var temp='<div style="padding:0 20px;font-size:12px;" id="print_style">'+style3+
+            '<table  border=0 width="100%" cellspacing="0" cellpadding="0" bordercolor="#000000">'+
             '<tdead>'+
             '<tr class="noBorder">'+
             '<td colspan="10" style="text-align:center;"><b style="line-height:30px;font-size:16px;">机动车维修费用结算清单</b></td>'+
@@ -695,10 +695,10 @@ export const printAccountFun=function(wtdData,listSearch,commitItem,commitItemGr
             '<td colspan="10" class="text-left" style="padding:0px 10px">3. 承修方不承担托修方自备配件质量保证责任。</td>'+
             '</tr>'+
             '<tr class="noBorder">'+
-            '<td colspan="10" class="text-left" style="padding:0px 10px">4. 企业承诺本次维修质量保证期为车辆行驶<span style="border-bottom:#000 1px solid;display:inline-block;padding:0 10px;">'+store.state.user.userInfo.params[4].PARAM_VALUE+'</span>公里或者<span style="border-bottom:#000 1px solid;display:inline-block;padding:0 10px;">'+store.state.user.userInfo.params[5].PARAM_VALUE+'</span>日，里程和时间以先到者为准。</td>'+
+            '<td colspan="10" class="text-left" style="padding:0px 10px">4. 企业承诺本次维修质量保证期为车辆行驶<span style="border-bottom:#000 1px solid;height:12px;display:inline-block;padding:0 10px;min-width:30px;">'+store.state.user.userInfo.params[4].PARAM_VALUE+'</span>公里或者<span style="height:12px;border-bottom:#000 1px solid;display:inline-block;padding:0 10px;min-width:30px;">'+store.state.user.userInfo.params[5].PARAM_VALUE+'</span>日，里程和时间以先到者为准。</td>'+
             '</tr>'+
             '<tr class="noBorder">'+
-            '<td colspan="10" class="text-left" style="padding:0px 10px">5. 企业承诺本次维修的新能源汽车专用部件<span style="border-bottom:#000 1px solid;display:inline-block;padding:0 10px;min-width:30px;">'+listSearch.ZY_PART+'</span>维修质量保证期为<span style="border-bottom:#000 1px solid;display:inline-block;padding:0 10px;min-width:30px;">'+listSearch.ZY_PART_BZQ+'</span></td>'+
+            '<td colspan="10" class="text-left" style="padding:0px 10px">5. 企业承诺本次维修的新能源汽车专用部件<span style="border-bottom:#000 1px solid;display:inline-block;height:12px;padding:0 10px;min-width:30px;">'+listSearch.ZY_PART+'</span>维修质量保证期为<span style="height:12px;border-bottom:#000 1px solid;display:inline-block;padding:0 10px;min-width:30px;">'+listSearch.ZY_PART_BZQ+'</span></td>'+
             '</tr>'+
               localhostString
             +

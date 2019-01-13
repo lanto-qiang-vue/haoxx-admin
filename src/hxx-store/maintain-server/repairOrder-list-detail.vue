@@ -2917,6 +2917,7 @@
             temp = printAccountFun(this.wtdData, listSearch, this.commitItem, this.commitItemGroup, commitParts, this.commitOtherItem, store, 'styleFlag');
           }
           var LODOP = getLodop();
+          LODOP.SET_PRINT_STYLEA(0, "FontSize", 12);
           LODOP.SET_PRINT_STYLEA(0, "Alignment", 2);
           LODOP.ADD_PRINT_TABLE(50, 0, "100%", 1000, temp);
           //LODOP.SET_PRINT_STYLEA(0,"Offset2Top",-60); //设置次页偏移把区域向上扩
