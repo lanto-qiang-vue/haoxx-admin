@@ -50,7 +50,7 @@ module.exports = {
       },
       '/other': {
         // target: 'http://api.hoxiuxiu.com/',
-        target:'http://api.test.hoxiuxiu.com',
+        target:'http://api.hoxiuxiu.com',
         pathRewrite: {'^/other': ''},
         secure: false
       }

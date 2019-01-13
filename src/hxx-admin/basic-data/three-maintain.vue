@@ -251,6 +251,7 @@
             access_token: this.$store.state.user.token,
             limit: this.limit,
             page: this.page,
+            KEYWORD:this.search.keyword,
             STATUS_eq:this.search.status == 0 ? '' : this.search.status,
             CHECK_STATUS_eq:this.search.check_status == 0 ? '' : this.search.check_status,
           }
