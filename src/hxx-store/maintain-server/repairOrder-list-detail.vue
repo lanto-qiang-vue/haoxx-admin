@@ -91,7 +91,7 @@
                           :time-picker-options="{steps: [1, 30, 30]}" placeholder="" :options="endTimeOptions"
                            @on-open-change="openEndTime"></DatePicker>
             </FormItem>
-            <FormItem label="故障描述:" style="width: 100%">
+            <FormItem label="故障描述:" style="width: 100%" prop="FAULT_DESC">
               <Input type="textarea" v-model="listSearch.FAULT_DESC" :rows="1" placeholder="请输入故障描述"> </Input>
             </FormItem>
             <FormItem label="客诉内容:" style="width: 100%">
@@ -1252,6 +1252,9 @@
           ],
           TELPHONE: [
             {validator: validatePass, trigger: 'change'},
+          ],
+           FAULT_DESC: [
+            {required: true,  message: '请填写数据', }
           ],
 
         },
