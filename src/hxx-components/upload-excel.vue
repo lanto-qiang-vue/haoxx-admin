@@ -120,7 +120,11 @@
         this.$emit(this.success, res);
       },
       down() {
+        if(this.downUrl == '/resources/excel/customer.xls'){
+          window.location.href = "/customer.xls";
+        }else{
         window.location.href = this.baseUrl + this.downUrl;
+        }
       },
     }
   }
