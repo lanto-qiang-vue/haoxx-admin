@@ -234,7 +234,7 @@
                     }
                 }).then(res => {
                     if (res.success === true) {
-                        this.$Message.info('successful')
+                        // this.$Message.info('successful')
                         this.showOnoff=false;
                         this.$emit('selectAddVehicleFun');
 
