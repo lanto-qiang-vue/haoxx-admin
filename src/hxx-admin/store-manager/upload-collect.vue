@@ -1,6 +1,19 @@
 <template>
   <common-table v-model="tableData" :columns="columns" @changePageSize="changePageSize" @changePage="changePage"
                 :total="total" :show="showTable" :clearSelect="clearType" @onRowClick="onRowClick" :page="page">
+    <div slot="search">
+      <div class="search-block">
+        <Input v-model="search.keyword" placeholder="关键字搜索"></Input>
+      </div>
+      <ButtonGroup size="small">
+        <Button type="primary" @click="page=1;getList()">
+          <Icon type="ios-search" size="24"/>
+        </Button>
+        <Button type="primary" @click="clear()">
+          <Icon type="ios-undo" size="24"/>
+        </Button>
+      </ButtonGroup>
+    </div>
   </common-table>
 </template>
 <script>
@@ -57,7 +70,7 @@
             access_token: this.$store.state.user.token,
             limit: this.limit,
             page: this.page,
-            // KEYWORD: this.search.keyword,
+            KEYWORD: this.search.keyword,
           }
         }).then(res => {
           if (res.success === true) {

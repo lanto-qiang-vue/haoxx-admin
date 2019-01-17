@@ -33,9 +33,9 @@
     </div>
     <div slot="operate">
       <Button type="primary" :disabled="!detailData" @click="edit" v-if="accessBtn('lookEdit')">查看/编辑</Button>
-      <Button type="success" :disabled="!detailData || detailData.CHECK_STATUS != '10351002'" v-if="accessBtn('addDzjk')" @click="showRecordInfo">
-        新增电子健康档案账号
-      </Button>
+      <!--<Button type="success" :disabled="!detailData || detailData.CHECK_STATUS != '10351002'" v-if="accessBtn('addDzjk')" @click="showRecordInfo">-->
+        <!--新增电子健康档案账号-->
+      <!--</Button>-->
       <Button type="error" v-show="!detailData || detailData.CHECK_STATUS!='10351004'"
               :disabled="!detailData || detailData.CHECK_STATUS != '10351002'" @click="updateCheckStatus" v-if="accessBtn('tenantstop')">门店停用
       </Button>
