@@ -84,7 +84,7 @@
                            placeholder="" :options="endTimeOptions"
                            @on-open-change="openEndTime"></DatePicker>
           </FormItem>
-          <FormItem label="故障描述:" style="width: 100%">
+          <FormItem label="故障描述:" style="width: 100%" prop="FAULT_DESC">
               <Input type="textarea" v-model="listSearch.FAULT_DESC" placeholder="请输入故障描述"> </Input>
           </FormItem>
           <FormItem label="客诉内容:" style="width: 100%">
@@ -374,6 +374,9 @@ export default {
             PLATE_NUM: [
                 { required: true, type: 'string', message: '请选择车型', trigger: 'change' }
             ],
+          FAULT_DESC:[
+            {required:true,message:'请输入数据'}
+          ],
             MILEAGE: [
                 { required: true, type: 'number', message: '请选择里程', trigger: 'change'},
                 {validator: validatePass1, trigger: 'change'},
