@@ -3,7 +3,7 @@
                 :total="total" :show="showTable" :clearSelect="clearType" :loading="loading" @onRowClick="onRowClick" :page="page">
     <div slot="search">
       <div class="search-block">
-        <Input v-model="search.keyword" placeholder="关键字搜索..."></Input>
+        <Input v-model="search.keyword" placeholder="门店名称/门店商户号/门店地址"></Input>
       </div>
       <div class="search-block">
         <Select v-model="search.check_status" placeholder="请选择状态...">
@@ -251,6 +251,7 @@
             access_token: this.$store.state.user.token,
             limit: this.limit,
             page: this.page,
+            KEYWORD:this.search.keyword,
             STATUS_eq:this.search.status == 0 ? '' : this.search.status,
             CHECK_STATUS_eq:this.search.check_status == 0 ? '' : this.search.check_status,
           }

@@ -53,8 +53,6 @@
                 userid:this.$store.state.user.userInfo.user.userId
               }
             }).then(res => {
-              console.log(res);
-               // if(res)
               if(res[0].error == 0){
                 let data = this.$store.state.user.userInfo;
                 data.user.isAgreement = 1;

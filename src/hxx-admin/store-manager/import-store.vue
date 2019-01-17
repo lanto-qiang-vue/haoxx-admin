@@ -1,8 +1,9 @@
 <template>
-    <div>
+    <div style="padding-top:20px;">
       <Button type="primary" style="margin-left:20px;" @click="infoUpload">批量上传门店信息</Button>
       <Button type="primary" style="margin-left:20px;" @click="errorImport">错误门店导出</Button>
       <Button type="primary" style="margin-left:20px;" @click="infoImport">门店信息导出</Button>
+      <Button type="primary" style="margin-left:20px;" @click="fileUpload">批量导入子门店</Button>
       <Modal :transition-names="['', '']" v-model="show" :mask-closable="false" width="400">
         <p slot="header" style="color:white;text-align:left;height:30px;line-height:30px;">
           <span>{{title}}</span>
@@ -43,11 +44,12 @@
           <Button type="error" @click="uploadClose">关闭</Button>
         </div>
       </Modal>
+      <upload-excel :type="fileShow" :title="'批量导入子门店'" :downUrl="'common/dowmloadChilrenTenantTemple'" :actionUrl="'manage/info/tenantimport/importChilrenTenant'" :success="'success'" :uploadName="'file'" @success="uploadSuccess"></upload-excel>
     </div>
 </template>
 <script>
   import env from '_conf/url'
-  // import uploadExcel from '@/hxx-components/upload-excel.vue';
+  import uploadExcel from '@/hxx-components/upload-excel.vue';
     export default {
         name: "import-store",
         data(){
@@ -65,18 +67,22 @@
             baseUrl:'',
             description:[{des:'1、点击当前区域，找到您所要导入的Excel文件,请确保文件按照模板中导入说明的要求填写。'},{des:'2、选择好文件后, 点“确定”按钮完成导入'}],
             show:false,
+            fileShow:false,
             title:'门店信息批量导入',
             downUrl:'common/basedata/tenantImport/downloadTemple',
             actionUrl:'manage/info/tenantimport/doImport',
           }
         },
-      // components:{uploadExcel},
+      components:{uploadExcel},
       watch:{
         'formData.AREA_ID'(val){
           this.token.AREA_ID = val;
         }
       },
       methods:{
+          fileUpload(){
+this.fileShow = Math.random();
+          },
           getArea(){
             this.axios.request({
               url: '/manage/info/tenantimport/getArea',
@@ -143,6 +149,7 @@
               }else{
                   this.$Message.success('批量导入成功');
                   this.show = false;
+                  this.fileShow = false;
               }
             }else{
               this.$Modal.error({title:'系统提示',content:res.Exception.message});

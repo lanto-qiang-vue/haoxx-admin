@@ -903,6 +903,17 @@ export default [
         component: () => import('@/hxx-admin/store-manager/store-check.vue')
       },
       {
+        path: '/upload-collect',
+        name: 'upload-collect',
+        meta: {
+          icon: 'md-funnel',
+          title: '门店上传汇总',
+          lgType: "1001",
+          access: '100107',
+        },
+        component: () => import('@/hxx-admin/store-manager/upload-collect.vue')
+      },
+      {
         path: '/import-store',
         name: 'import-store',
         meta: {
