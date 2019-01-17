@@ -43,7 +43,7 @@
               @click="updateCheckStatus" v-if="accessBtn('tenantstop')">门店恢复
       </Button>
       <Button type="primary" :disabled="!detailData" @click="setStore" v-if="accessBtn('setversion')">设置门店版本</Button>
-      <Button type="primary" :disabled="canReset" @click="resetStore" v-if="accessBtn('resetzh')">重置健康档案账号</Button>
+      <!--<Button type="primary" :disabled="canReset" @click="resetStore" v-if="accessBtn('resetzh')">重置健康档案账号</Button>-->
       <Button type="error" :disabled="!detailData" @click="storeDelete" v-if="accessBtn('deltenant')">门店删除</Button>
     </div>
 
