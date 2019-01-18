@@ -180,8 +180,8 @@
             message: '输入有效手机号'
           }],
           phoneCode: [{required: true, trigger: 'blur', message: '验证码必填'}],
-          password: [{required: true, trigger: 'blur', message: '密码必填'}],
-          repeatPassword: [{required: true, trigger: 'blur', message: '重复密码必填'}],
+          password: [{required: true, trigger: 'blur,change',pattern:/^[a-zA-Z0-9_]{6,18}$/, message: '密码应为6-18位字母数字及下滑线'}],
+          repeatPassword: [{required: true, trigger: 'blur,change', message: '重复密码必填'}],
         },
       }
     },
