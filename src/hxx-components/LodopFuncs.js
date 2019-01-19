@@ -63,7 +63,7 @@ export const getLodop=function(oOBJECT,oEMBED){
     var strHtmFireFox="<br><br><font color='#0277bd'>（注意：如曾安装过Lodop旧版附件npActiveXPLugin,请在【工具】->【附加组件】->【扩展】中先卸它）</font>";
     var strHtmChrome="<br><br><font color='#0277bd'>(如果此前正常，仅因浏览器升级或重安装而出问题，需重新执行以上安装）</font>";
     var strCLodopInstall="<p color='#0277bd'>CLodop云打印服务(localhost本地)未安装启动!</p><p>请<a href='http://www.lodop.net/download.html' style='text-decoration:underline;text-decoration-color:black;' target='_blank'><b style='color:blue;'>点击这里</b></a>下载"+"\"<b style='color:red;'>云打印C-Lodop扩展版</b>\""+",执行安装</p><p>后请刷新页面。</p><p style='color:red;'><b style='color:red;'>*&nbsp;&nbsp;\n" +
-      "火狐浏览器。</b>需要在安装后再拷贝https://localhost</p><p style='color:red;'>:8443/到浏览器链接栏，添加安全例外&nbsp;&nbsp;(<a style='color:blue;' href='/fox' target='_blank'>查看图示</a>)</p><br/><p>如有疑问请联系客服</p>";
+      "火狐浏览器。</b>需要在安装后再拷贝https://localhost</p><p style='color:red;'>:8443/到浏览器链接栏，添加安全例外&nbsp;&nbsp;(<a style='color:blue;text-decoration:underline;' href='/fox' target='_blank'>查看图示</a>)</p><br/><p>如有疑问请联系客服</p>";
     var strCLodopUpdate="<br><font color='#0277bd'>CLodop云打印服务需升级!点击这里<a href='resources/lodop/CLodop_Setup_for_Win32NT.exe'  style='color:#FF00FF;' target='_self'>执行升级</a>,升级后请刷新页面。</font>";
     var LODOP;
     var obj
