@@ -43,7 +43,7 @@ if (needCLodop()) {
   head.insertBefore( oscript,head.firstChild );
 
   oscript = document.createElement("script");
-	oscript.src ="https://localhost:8000/CLodopfuncs.js?priority=1";
+	oscript.src ="http://localhost:8000/CLodopfuncs.js?priority=1";
 	head.insertBefore( oscript,head.firstChild );
 
 	//引用双端口(8000和18000）避免其中某个被占用：
