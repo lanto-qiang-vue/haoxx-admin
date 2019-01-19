@@ -22,6 +22,15 @@ export default [
     component: () => import('@/hxx-store/login.vue')
   },
   {
+    path: '/fox',
+    name: 'fox',
+    meta: {
+      title: '火狐打印控件例外',
+      hideInMenu: true
+    },
+    component: () => import('@/hxx-store/fox.vue')
+  },
+  {
     path: '/protocol',
     name: 'protocol',
     meta: {
