@@ -259,6 +259,7 @@
           TENANT_AREA_DISPLAY:rule,
           TENANT_ADD: rule,
           ROAD_LICENSE: rule,
+          BUSINESS_TYPE: [{ required: true, message:'必填项不能为空'}],
           EMAIL:[
             { validator: validateEMAIL, trigger: 'change,blur' },
           ],
