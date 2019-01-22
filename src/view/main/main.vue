@@ -16,7 +16,7 @@
       <Header class="header-con">
         <header-bar :collapsed="collapsed" @on-coll-change="handleCollapsedChange">
           <fullscreen v-model="isFullscreen"/>
-          <change-password></change-password>
+          <!--<change-password></change-password>-->
           <picking-number ></picking-number>
           <!--<shop></shop>-->
           <user slot="right" :user-avator="userAvator"/>

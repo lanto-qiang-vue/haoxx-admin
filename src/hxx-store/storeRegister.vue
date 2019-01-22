@@ -180,6 +180,20 @@ handle(){
       },
       dbclick(row){
         this.detail = row;
+        // this.axios.request({
+        //   url: '/manage/info/tenantinfo/getTenantPic',
+        //   method: 'post',
+        //   data: {
+        //     access_token: this.$store.state.user.token,
+        //     TENANT_ID:row.TENANT_ID,
+        //     page:1,
+        //     limit:25
+        //   }
+        // }).then(res => {
+        //   if (res.success === true) {
+        //
+        //   }
+        // })
         this.showModal = true;
       },
       getList(){

@@ -787,6 +787,17 @@ export default [
     component: Main,
     children:[
       {
+      path: '/account-manage.vue',
+      name: 'account-manage',
+      meta: {
+        icon: 'md-funnel',
+        title: '账号管理',
+        lgType: "1002",
+        access: '100707',
+      },
+      component: () => import('@/hxx-store/system-manage/account-manage.vue')
+    },
+      {
         path: '/health-record.vue',
         name: 'health-record',
         meta: {

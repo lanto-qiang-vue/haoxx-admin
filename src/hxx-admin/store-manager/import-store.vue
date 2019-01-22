@@ -2,8 +2,23 @@
     <div style="padding-top:20px;">
       <Button type="primary" style="margin-left:20px;" @click="infoUpload">批量上传门店信息</Button>
       <Button type="primary" style="margin-left:20px;" @click="errorImport">错误门店导出</Button>
-      <Button type="primary" style="margin-left:20px;" @click="infoImport">门店信息导出</Button>
+      <Button type="primary" style="margin-left:20px;" @click="infoImportBefore">门店信息导出</Button>
       <Button type="primary" style="margin-left:20px;" @click="fileUpload">批量导入子门店</Button>
+      <Modal :transition-names="['', '']" v-model="importShow" :mask-closable="false" width="400" title="门店信息导出">
+        <Form :label-width="100" :model="form" ref="form" :rules="rule1" style="width:350px;">
+            <FormItem  label="选择区域:" prop="AREA_ID">
+              <Select v-model="form.AREA_ID" >
+                <Option v-for="(item, index) in areaList"
+                        :key="index" :value="item.AREA_ID">{{item.AREA_NAME}}
+                </Option>
+              </Select>
+            </FormItem>
+        </Form>
+        <div slot="footer">
+          <Button @click="importShow=false">取消</Button>
+          <Button type="primary" @click="infoImport">导出</Button>
+        </div>
+      </Modal>
       <Modal :transition-names="['', '']" v-model="show" :mask-closable="false" width="400">
         <p slot="header" style="color:white;text-align:left;height:30px;line-height:30px;">
           <span>{{title}}</span>
@@ -55,12 +70,19 @@
         data(){
           return{
             areaList:[],
+            importShow:false,
             token: {access_token: '',AREA_ID:''},
             formData:{
               AREA_ID:'',
             },
+            form:{
+              AREA_ID:'',
+            },
             token: {access_token: ''},
             rules:{
+              AREA_ID:[{required:true,message:'请选择区域'}],
+            },
+            rule1:{
               AREA_ID:[{required:true,message:'请选择区域'}],
             },
             filename:'请选择文件',
@@ -80,6 +102,10 @@
         }
       },
       methods:{
+        infoImportBefore(){
+          this.getArea();
+        this.importShow = true;
+        },
           fileUpload(){
 this.fileShow = Math.random();
           },
@@ -133,7 +159,13 @@ this.fileShow = Math.random();
           window.location.href = this.baseUrl+"/manage/info/tenantimport/doExport?access_token="+this.$store.state.user.token;
         },
         infoImport(){
-          window.location.href = this.baseUrl+"/manage/info/tenantimport/doExportTenant?access_token="+this.$store.state.user.token;
+          this.$refs.form.validate((valid) => {
+            if(valid){
+              window.location.href = this.baseUrl+"/manage/info/tenantimport/doExportTenant?access_token="+this.$store.state.user.token + "&AREA_ID="+this.form.AREA_ID;
+            }else{
+              this.$Message.error('请选择区域导出');
+            }
+          });
         },
         uploadSuccess(res){
           this.$Spin.hide();

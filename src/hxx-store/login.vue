@@ -15,7 +15,7 @@
       <div class="login-con">
         <Card icon="log-in">
           <!-- 企业商户登录 1 -->
-          <Tabs v-if="isShow == 1"   v-model="indexName">
+          <Tabs v-show="isShow == 1"   v-model="indexName">
             <TabPane label="企业登录" name="name1">
               <div class="form-con">
                 <Form :model="form" @keydown.enter.native="handleSubmit('tel')">
@@ -26,21 +26,21 @@
         </span>
                     </Input>
                   </FormItem>
-                  <FormItem prop="password">
+                  <FormItem prop="password" style="margin-bottom:5px;">
                     <Input type="password" v-model="form.password" placeholder="请输入密码">
                                         <span slot="prepend">
           <Icon :size="14" type="md-lock"></Icon>
         </span>
                     </Input>
+                    <div style="float:left;padding-top:30px;margin-left:-30px;"><Checkbox v-model="single" style="padding-left:35px;" v-if="jzzz">记住账号</Checkbox></div>
+                    <div style="float:right;color:#AAAAAA;cursor:pointer;" @click="isShow = 4">忘记密码?</div>
                   </FormItem>
                   <FormItem>
-                    <Checkbox v-model="single" style="padding-left:35px;" v-if="jzzz">记住账号</Checkbox>
-                    <div style="float:right;padding-right:20px;"><a href="javascript:void(0);"
-                                                                    @click="register">新用户注册</a></div>
+                    <Button @click="handleSubmit('tel')" style="" type="primary" long>登录</Button>
                   </FormItem>
-                  <FormItem>
-                    <Button @click="handleSubmit('tel')" type="primary" long>登录</Button>
-                  </FormItem>
+                  <div style="float:left;padding-right:20px;"><a href="javascript:void(0);" @click="isShow = 3">门店许可证登录</a></div>
+                  <div style="float:right;padding-right:20px;"><a href="javascript:void(0);"
+                                                                  @click="register">新用户注册</a></div>
                 </Form>
               </div>
             </TabPane>
@@ -80,7 +80,7 @@
             </TabPane>
           </Tabs>
           <!-- 企业商户结尾 注册启始 2-->
-          <div v-if="isShow == 2">
+          <div v-show="isShow == 2">
             <div><span style="font-size:18px;"><b>用户注册</b></span><span style="float:right;padding-top:3px;"><a @click="login">登录</a></span></div>
             <div class="form-con">
               <Form :model="form3" ref="form3" :rules="rules">
@@ -123,6 +123,104 @@
             </div>
           </div>
           <!-- 注册结束 -->
+          <!--门店许可证登录-->
+          <div v-show="isShow == 3">
+            <div style="color:#1690FF;text-align:center;padding-bottom:10px;border-bottom:1px solid #E8E8E8;">门店许可证登录</div>
+            <div class="form-con">
+              <Form :model="form4" ref="form4" :rules="rule4">
+                <FormItem prop="license">
+                  <Input v-model="form4.license" placeholder="请输入许可证号">
+                                        <span slot="prepend">
+          <Icon :size="16" type="ios-paper"></Icon>
+        </span>
+                  </Input>
+                </FormItem>
+                <FormItem prop="licensepwd">
+                  <Input v-model="form4.licensepwd" placeholder="请输入密码">
+                                        <span slot="prepend">
+          <Icon :size="16" type="md-lock"></Icon>
+        </span>
+                  </Input>
+                </FormItem>
+                <FormItem prop="telphone">
+                  <Input v-model="form4.telphone" placeholder="请输入手机号码">
+                                        <span slot="prepend">
+          <Icon :size="16" type="ios-call"></Icon>
+        </span>
+                  </Input>
+                </FormItem>
+                <FormItem prop="telcode">
+                  <Input v-model="form4.telcode" placeholder="请输入短信验证码">
+                                        <span slot="prepend">
+          <Icon type="md-chatboxes" :size="16"/>
+        </span>
+                    <span slot="append"><a href="javascript:void(0)" @click="getCode4" :disabled="time4 != 60">{{description4}}</a></span>
+                  </Input>
+                </FormItem>
+                <FormItem prop="password">
+                  <Input type="password" v-model="form4.password" placeholder="请设置登录密码">
+                                        <span slot="prepend">
+          <Icon :size="14" type="md-lock"></Icon>
+        </span>
+                  </Input>
+                </FormItem>
+                <FormItem prop="password_cp">
+                  <Input type="password" v-model="form4.password_cp" placeholder="请确认登录密码">
+                                        <span slot="prepend">
+          <Icon :size="14" type="md-lock"></Icon>
+        </span>
+                  </Input>
+                </FormItem>
+                <FormItem style="margin-bottom:0px;">
+                  <div style="line-heght:10px;"><span style="color:orange;">确定后手机号即用作登录用户名</span></div>
+                  <Button @click="licenceToPhone" type="primary" long>确认并重新登录</Button>
+                </FormItem>
+              </Form>
+            </div>
+          </div>
+          <!--许可证登录结束-->
+          <!--忘记密码-->
+          <div v-show="isShow == 4">
+            <div style="color:#1690FF;text-align:center;padding-bottom:10px;border-bottom:1px solid #E8E8E8;">重置密码</div>
+            <div style="height:10px;"></div>
+            <div class="form-con">
+                    <Form :model="form5" ref="form5" :rules="rule5">
+                <FormItem prop="telphone">
+                  <Input v-model="form5.telphone" placeholder="请输入手机号码">
+                                        <span slot="prepend">
+          <Icon :size="16" type="ios-call"></Icon>
+        </span>
+                  </Input>
+                </FormItem>
+                <FormItem prop="telcode">
+                  <Input v-model="form5.telcode" placeholder="请输入短信验证码">
+                                        <span slot="prepend">
+          <Icon type="md-chatboxes" :size="16"/>
+        </span>
+                    <span slot="append"><a href="javascript:void(0)" @click="getCode5" :disabled="time5 != 60">{{description5}}</a></span>
+                  </Input>
+                </FormItem>
+                <FormItem prop="password">
+                  <Input type="password" v-model="form5.password" placeholder="请设置登录密码">
+                                        <span slot="prepend">
+          <Icon :size="14" type="md-lock"></Icon>
+        </span>
+                  </Input>
+                </FormItem>
+                <FormItem prop="password_cp">
+                  <Input type="password" v-model="form5.password_cp" placeholder="请确认登录密码">
+                                        <span slot="prepend">
+          <Icon :size="14" type="md-lock"></Icon>
+        </span>
+                  </Input>
+                </FormItem>
+                <FormItem style="margin-bottom:0px;">
+                  <Button @click="forget" type="primary" long>确认并重新登录</Button>
+                </FormItem>
+              </Form>
+            </div>
+          </div>
+          <!---->
         </Card>
         <div style="position: relative;">
         <img src="../assets/images/hxx-ercode.png" style="width: 140%;position: relative;left: -35px;">
@@ -148,6 +246,8 @@
       return {
         protocolShow:false,
         description: '获取',
+        description4:'获取',
+        description5:'获取',
         indexName:'name1',
         singleProtocol:false,//同意协议
         form: {
@@ -166,11 +266,29 @@
           repeatPassword: '',
           IsAgreement:0,
         },
+        form4:{
+          license:'',
+          licensepwd:'',
+          telcode:'',
+          telphone:'',
+          password:'',
+          password_cp:'',
+        },
+        form5:{
+          telcode:'',
+          telphone:'',
+          password:'',
+          password_cp:'',
+        },
         single: false,
         isShow: 1,
         timing: '',
+        timing4:'',
+        timing5:'',
         jzzz:true,
         time: 60,
+        time4:60,
+        time5:60,
         flag: true,//防止定时器多次触发
         rules: {
           phone: [{
@@ -182,6 +300,38 @@
           phoneCode: [{required: true, trigger: 'blur', message: '验证码必填'}],
           password: [{required: true, trigger: 'blur,change',pattern:/^[a-zA-Z0-9_]{6,18}$/, message: '密码应为6-18位字母数字及下滑线'}],
           repeatPassword: [{required: true, trigger: 'blur,change', message: '重复密码必填'}],
+        },
+        rule4:{
+          license:{required:true,message:'请输入许可证号'},
+          licensepwd:{required:true,message:'请输入许可证对应密码'},
+          telcode:{required:true,message:'请输入手机验证码'},
+          telphone:[{
+            required: true,
+            pattern: /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\d{8}$/,
+            trigger: 'change,blur',
+            message: '输入有效手机号'
+          }],
+          password:[{required: true, trigger: 'blur,change',pattern:/^[a-zA-Z0-9_]{6,18}$/, message: '密码应为6-18位字母数字及下滑线'}],
+          password_cp:[{ validator: (rule, value, callback) => {
+              if(!/^[a-zA-Z0-9_]{6,18}$/.test(value)) callback(new Error('密码应为6-18位字母数字及下滑线'));
+              if(value!= this.form4.password) callback(new Error('两次密码不一致'));
+              callback();
+            }, trigger: 'change,blur', required: true }],
+        },
+        rule5:{
+          telcode:{required:true,message:'请输入手机验证码'},
+          telphone:[{
+            required: true,
+            pattern: /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\d{8}$/,
+            trigger: 'change,blur',
+            message: '输入有效手机号'
+          }],
+          password:[{required: true, trigger: 'blur,change',pattern:/^[a-zA-Z0-9_]{6,18}$/, message: '密码应为6-18位字母数字及下滑线'}],
+          password_cp:[{ validator: (rule, value, callback) => {
+              if(!/^[a-zA-Z0-9_]{6,18}$/.test(value)) callback(new Error('密码应为6-18位字母数字及下滑线'));
+              if(value!= this.form5.password) callback(new Error('两次密码不一致'));
+              callback();
+            }, trigger: 'change,blur', required: true }],
         },
       }
     },
@@ -217,6 +367,40 @@
         'handleLogin',
         'getUserInfo'
       ]),
+      forget(){
+        this.$refs.form5.validate((valid) => {
+          if(valid){
+            this.axios.request({
+              url: '/resetPassword.do',
+              method: 'post',
+              data:this.form5,
+            }).then(res => {
+              if(res.success == true){
+                this.isShow = 1;
+              }
+            })
+          }else{
+            this.$Message.error("请校对红框信息!");
+          }
+        });
+      },
+      licenceToPhone(){
+        this.$refs['form4'].validate((valid) => {
+          if(valid){
+            this.axios.request({
+              url: '/license.do ',
+              method: 'post',
+              data:this.form4,
+            }).then(res => {
+              if(res.success == true){
+                this.isShow = 1;
+              }
+            })
+          }else{
+            this.$Message.error("请校对红框信息");
+          }
+        });
+      },
       argee(flag){
         this.singleProtocol = flag;
       },
@@ -374,6 +558,54 @@
       login: function () {
         this.isShow = 1;
       },
+      getCode4(){
+        this.$refs.form4.validateField('telphone', (error) => {
+          if(!error){
+            //开始调取接口获取验证码
+            this.axios.request({
+              url: '/getTelCode.do',
+              method: 'post',
+              data: {
+                telphone: this.form4.telphone,
+              }
+            }).then(res => {
+              let title;
+              if(res.success == true){
+                title = "短信已发送,请及时查收";
+                this.timing4 = setInterval(this.decrTime4, 1000);
+                this.$Modal.info({title:'系统提示!',content:title});
+              }
+            })
+          } else {
+            this.$Message.error("请输入正确的手机号来获取验证码!");
+            return false;
+          }
+        })
+      },
+      getCode5(){
+        this.$refs.form5.validateField('telphone', (error) => {
+          if(!error){
+            //开始调取接口获取验证码
+            this.axios.request({
+              url: '/getResetCode.do',
+              method: 'post',
+              data: {
+                telphone: this.form5.telphone,
+              }
+            }).then(res => {
+              let title;
+              if(res.success == true){
+                title = "短信已发送,请及时查收";
+                this.timing5 = setInterval(this.decrTime5, 1000);
+                this.$Modal.info({title:'系统提示!',content:title});
+              }
+            })
+          } else {
+            this.$Message.error("请输入正确的手机号来获取验证码!");
+            return false;
+          }
+        })
+      },
       getCode: function () {
         this.$refs['form3'].validateField('phone');
         var pattern = /^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\d{8}$/;
@@ -411,6 +643,35 @@
           this.flag = true;
         }
       },
+      decrTime4() {
+        if (this.time4 > 0) {
+          this.description4 = this.time4 - 1 + "s";
+          this.time4--;
+        } else {
+          clearInterval(this.timing4);
+          this.description4 = "获取";
+          this.time4 = 60;
+        }
+      },
+      decrTime5() {
+        if (this.time5 > 0) {
+          this.description5 = this.time5 - 1 + "s";
+          this.time5--;
+        } else {
+          clearInterval(this.timing5);
+          this.description5 = "获取";
+          this.time5 = 60;
+        }
+      },
+    },    watch:{
+      isShow(val){
+        if(val == 3){
+          this.$refs.form4.resetFields();
+        }
+        if(val == 4){
+          this.$refs.form5.resetFields();
+        }
+      }
     }
   }
 </script>
@@ -420,7 +681,7 @@
   .login {
     width: 100%;
     height: 82vh;
-    min-height: 700px;
+    min-height: 800px;
     /*background-size: 100% 100%;*/
     background: #010124 url('../assets/images/banner-loginbg.png') 30%  no-repeat;
     background-size: auto 100%;
@@ -429,7 +690,7 @@
     &-con {
       position: absolute;
       right: 15%;
-      bottom: 10%;
+      bottom: 5%;
       width: 300px;
       &-header {
         font-size: 16px;
