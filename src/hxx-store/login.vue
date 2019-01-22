@@ -377,6 +377,7 @@
             }).then(res => {
               if(res.success == true){
                 this.isShow = 1;
+                this.$Message.success("密码重置成功");
               }
             })
           }else{
