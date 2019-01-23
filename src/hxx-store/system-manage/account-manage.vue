@@ -226,12 +226,12 @@
           this.title = "修改登录密码";
         },
         submit(){
-          if(this.smsSession == ''){
-            this.$Message.error("请获取手机验证码!");
-            return false;
-          }
           this.$refs.formData2.validate((valid) => {
             if(valid){
+              if(this.smsSession == ''){
+                this.$Message.error("请获取手机验证码!");
+                return false;
+              }
               this.axios.request({
                 url: '/tenant/sys/updatemanager/updateManagerUser',
                 method: 'post',
