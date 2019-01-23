@@ -139,7 +139,7 @@
                   </Input>
                 </FormItem>
                 <FormItem prop="licensepwd">
-                  <Input v-model="form4.licensepwd" placeholder="请输入密码">
+                  <Input type="password" v-model="form4.licensepwd" placeholder="请输入密码">
                                         <span slot="prepend">
           <Icon :size="16" type="md-lock"></Icon>
         </span>

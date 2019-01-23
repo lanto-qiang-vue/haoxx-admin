@@ -79,7 +79,7 @@
             <Input type="password" v-model="formData2.againPwd"></Input>
           </FormItem>
           <FormItem style="width:500px;">
-            <Button  @click="stage = 1">上一步</Button>
+            <Button  @click="stage = 1,reset()">上一步</Button>
             <Button type="primary" style="margin-left:40px;" @click="submit">确认并重新登录</Button>
           </FormItem>
         </Form>
@@ -121,6 +121,7 @@
           }
         };
           return {
+            smsSession:'',
             form:{
               oldPassword:'',
               newPassword:'',
@@ -183,6 +184,9 @@
           }
       },
       methods:{
+          reset(){
+            this.$refs.formData1.resetFields();
+          },
         validateField(arr){
           for(let i in arr){
             this.$refs.form.validateField(arr[i])
@@ -222,6 +226,10 @@
           this.title = "修改登录密码";
         },
         submit(){
+          if(this.smsSession == ''){
+            this.$Message.error("请获取手机验证码!");
+            return false;
+          }
           this.$refs.formData2.validate((valid) => {
             if(valid){
               this.axios.request({
@@ -235,6 +243,7 @@
                   againPwd:this.formData2.againPwd,
                   oldTelphone:this.formData1.oldTelphone,
                   oldPwd:this.formData1.oldPwd,
+                  smsSession:this.smsSession,
                 }
               }).then(res => {
                    if(res.success == true){
@@ -274,6 +283,7 @@
                 if(res.success == true){
                   title = "短信已发送,请及时查收";
                   this.timing = setInterval(this.decrTime, 1000);
+                  this.smsSession = res.data.smsSession;
                   this.$Modal.info({title:'系统提示!',content:title});
                 }
               })
@@ -291,6 +301,7 @@
           this.title = "修改手机号";
         },
         checkNext(){
+          this.$refs.formData2.resetFields();
           this.$refs.formData1.validate((valid) => {
            if(valid){
              this.axios.request({
