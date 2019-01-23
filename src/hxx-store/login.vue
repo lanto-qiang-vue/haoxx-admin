@@ -38,7 +38,8 @@
                   <FormItem>
                     <Button @click="handleSubmit('tel')" style="" type="primary" long>登录</Button>
                   </FormItem>
-                  <div style="float:left;padding-right:20px;"><a href="javascript:void(0);" @click="isShow = 3">门店许可证登录</a></div>
+                  <div style="float:left;padding-right:20px;"><a href="javascript:void(0);" @click="isShow = 3">门店许可证登录</a>
+                  </div>
                   <div style="float:right;padding-right:20px;"><a href="javascript:void(0);"
                                                                   @click="register">新用户注册</a></div>
                 </Form>
@@ -125,7 +126,9 @@
           <!-- 注册结束 -->
           <!--门店许可证登录-->
           <div v-show="isShow == 3">
-            <div style="color:#1690FF;text-align:center;padding-bottom:10px;border-bottom:1px solid #E8E8E8;">门店许可证登录</div>
+            <div style="color:#1690FF;text-align:center;padding-bottom:10px;border-bottom:1px solid #E8E8E8;position:relative;">门店许可证登录
+              <div style="position:absolute;top:0px;color:#4A4A4A;left:10px;cursor:pointer;" @click="isShow = 1"><Icon type="md-arrow-back" :size="20"/></div>
+            </div>
             <div class="form-con">
               <Form :model="form4" ref="form4" :rules="rule4">
                 <FormItem prop="license">
@@ -181,7 +184,9 @@
           <!--许可证登录结束-->
           <!--忘记密码-->
           <div v-show="isShow == 4">
-            <div style="color:#1690FF;text-align:center;padding-bottom:10px;border-bottom:1px solid #E8E8E8;">重置密码</div>
+            <div style="color:#1690FF;text-align:center;padding-bottom:10px;border-bottom:1px solid #E8E8E8;position:relative;">重置密码
+              <div style="position:absolute;top:0px;color:#4A4A4A;left:10px;cursor:pointer;" @click="isShow = 1"><Icon type="md-arrow-back" :size="20"/></div>
+            </div>
             <div style="height:10px;"></div>
             <div class="form-con">
                     <Form :model="form5" ref="form5" :rules="rule5">
@@ -377,7 +382,7 @@
             }).then(res => {
               if(res.success == true){
                 this.isShow = 1;
-                this.$Message.success("密码重置成功");
+                this.$Message.success("密码重置成功，请重新登录");
               }
             })
           }else{
@@ -395,6 +400,7 @@
             }).then(res => {
               if(res.success == true){
                 this.isShow = 1;
+                this.$Message.success("已启用手机号登陆，请重新登录");
               }
             })
           }else{
@@ -666,11 +672,22 @@
       },
     },    watch:{
       isShow(val){
-        if(val == 3){
-          this.$refs.form4.resetFields();
-        }
-        if(val == 4){
-          this.$refs.form5.resetFields();
+        switch(val){
+          case 1:
+               for(let i in this.form){
+                 this.form[i] = "";
+               }
+               for(let i in this.form2){
+                 this.form2[i] = "";
+               }
+            this.single = false;
+            break;
+          case 3:
+            this.$refs.form4.resetFields();
+            break;
+          case 4:
+            this.$refs.form5.resetFields();
+            break;
         }
       }
     }

@@ -57,7 +57,7 @@
               <Input v-model="formData1.oldTelphone" :disabled="true"></Input>
             </FormItem>
             <FormItem label="登录密码" style="width:350px;" prop="oldPwd">
-              <Input v-model="formData1.oldPwd"></Input>
+              <Input type="password" v-model="formData1.oldPwd"></Input>
             </FormItem>
             <FormItem>
               <Button type="primary" @click="checkNext">下一步</Button>
@@ -73,10 +73,10 @@
             </Input>
           </FormItem>
           <FormItem label="设置登录密码:" style="width:350px;" prop="newPwd" placeholder="设置登录密码">
-            <Input v-model="formData2.newPwd"></Input>
+            <Input type="password" v-model="formData2.newPwd"></Input>
           </FormItem>
           <FormItem label="确认登录密码:" style="width:350px;" prop="againPwd" placeholder="确认登录密码">
-            <Input v-model="formData2.againPwd"></Input>
+            <Input type="password" v-model="formData2.againPwd"></Input>
           </FormItem>
           <FormItem style="width:500px;">
             <Button  @click="stage = 1">上一步</Button>
@@ -238,7 +238,7 @@
               }).then(res => {
                    if(res.success == true){
                      store.dispatch('handleLogOut');
-                     this.$Message.success("请重新登录");
+                     this.$Message.success("手机号更换成功,请重新登录");
                      return false;
                    }
               })
