@@ -47,7 +47,7 @@
         <div style="margin-left:134px;" v-if="type == 1">
           <div :class="stage == 1 ? 'blue' : 'gray' " style="float:left;width:32px;height:32px;border-radius:50%;font-size:16px;text-align:center;line-height:32px;">1</div><div style="float:left;line-height:32px;font-size:14px;margin-left:10px;">确认身份</div>
           <div style="width:251px;height:1px;background:#E9E9E9;float:left;margin-top:16px;margin-left:5px;"></div>
-          <div :class="stage == 2 ? 'blue' : 'gray'" style="float:left;width:32px;height:32px;border-radius:50%;font-size:16px;text-align:center;line-height:32px;margin-left:10px;">2</div><div style="float:left;line-height:32px;font-size:14px;margin-left:10px;color:rgba(0,0,0,0.45);">填写新手机号并设置登录密码</div>
+          <div :class="stage == 2 ? 'blue' : 'gray'" style="float:left;width:32px;height:32px;border-radius:50%;font-size:16px;text-align:center;line-height:32px;margin-left:10px;">2</div><div style="float:left;line-height:32px;font-size:14px;margin-left:10px;" :class="stage == 2 ? 'black' : 'textGary'">填写新手机号并设置登录密码</div>
           <div style="width:184px;height:1px;background:#E9E9E9;float:left;margin-top:16px;margin-left:5px;"></div>
           <div style="float:left;width:32px;height:32px;border:1px solid rgba(0, 0, 0, 0.25);border-radius:50%;color:rgba(0, 0, 0,0.15);font-size:16px;text-align:center;line-height:32px;margin-left:10px;">3</div><div style="float:left;line-height:32px;font-size:14px;margin-left:10px;color:rgba(0,0,0,0.45);">确定并重新登录</div>
         </div>
@@ -330,6 +330,12 @@
 </script>
 
 <style scoped>
+  .black{
+
+  }
+  .textGary{
+    color:rgba(0,0,0,0.45);
+  }
 .line{
   width:100%;border-bottom:1px solid #E8E8E8;height:50px;line-height:50px;
 }
