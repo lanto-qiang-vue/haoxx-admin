@@ -254,6 +254,8 @@
         description4:'获取',
         description5:'获取',
         indexName:'name1',
+        telSession4:'',
+        telSession5:'',
         singleProtocol:false,//同意协议
         form: {
           userName: '',
@@ -278,12 +280,14 @@
           telphone:'',
           password:'',
           password_cp:'',
+          telSession:'',
         },
         form5:{
           telcode:'',
           telphone:'',
           password:'',
           password_cp:'',
+          telSession:'',
         },
         single: false,
         isShow: 1,
@@ -375,6 +379,11 @@
       forget(){
         this.$refs.form5.validate((valid) => {
           if(valid){
+            if(this.telSession5 == ''){
+              this.$Message.error("请获取短信验证码");
+              return false;
+            }
+            this.form5.telSession = this.telSession5;
             this.axios.request({
               url: '/resetPassword.do',
               method: 'post',
@@ -393,6 +402,11 @@
       licenceToPhone(){
         this.$refs['form4'].validate((valid) => {
           if(valid){
+            if(this.telSession4 == ''){
+              this.$Message.error('请获取手机短信验证码');
+              return false;
+            }
+            this.form4.telSession = this.telSession4;
             this.axios.request({
               url: '/license.do ',
               method: 'post',
@@ -570,7 +584,7 @@
           if(!error){
             //开始调取接口获取验证码
             this.axios.request({
-              url: '/getTelCode.do',
+              url: '/getLicenseCode.do',
               method: 'post',
               data: {
                 telphone: this.form4.telphone,
@@ -580,6 +594,7 @@
               if(res.success == true){
                 title = "短信已发送,请及时查收";
                 this.timing4 = setInterval(this.decrTime4, 1000);
+                this.telSession4 = res.data.telSession;
                 this.$Modal.info({title:'系统提示!',content:title});
               }
             })
@@ -603,6 +618,7 @@
               let title;
               if(res.success == true){
                 title = "短信已发送,请及时查收";
+                this.telSession5 = res.data.telSession;
                 this.timing5 = setInterval(this.decrTime5, 1000);
                 this.$Modal.info({title:'系统提示!',content:title});
               }

@@ -30,15 +30,57 @@
           <Button type="success" @click="add()" v-if="accessBtn('add')">新增</Button>
           <Button type="error" :disabled="cando" @click="remove()" v-if="accessBtn('cancel')">废除</Button>
           <Button type="info" :disabled="cando" @click="edit()" v-if="accessBtn('edit')">修改</Button>
+          <Button type="primary" @click="aImport">配件档案及库存导入</Button>
         </div>
         <select-add-parts @refresh="refresh" @clearsection="clearsection" :editdata="list"
                           :showSelectAddParts="addshow" :defalutData="defaultData"></select-add-parts>
+        <Modal :transition-names="['', '']" v-model="importShow" :mask-closable="false" width="400">
+          <p slot="header" style="color:white;text-align:left;height:30px;line-height:30px;">
+            <span>配件档案及库存导入</span>
+          </p>
+          <div style="text-align:left;">
+            <Upload
+              ref="upload"
+              :before-upload="beforeUpload"
+              name="batchFile"
+              :show-upload-list="false"
+              :on-success="uploadSuccess"
+              :data="token"
+              accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+              type="drag"
+              :action="baseUrl + actionUrl">
+              <div style="padding: 20px 0">
+                <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
+                <div style="clear:both;"></div>
+                <p v-for="item in description">{{item.des}}</p>
+              </div>
+            </Upload>
+            <div>
+              <Form slot="content" :model="formData" ref="formData" :rules="rules" :label-width="120" class="common-form">
+                <FormItem label="选择仓库:" prop="stockId">
+                  <Select v-model="formData.stockId" >
+                    <Option v-for="(item, index) in wareHouseList"
+                            :key="index" :value="item.STORE_ID">{{item.NAME}}
+                    </Option>
+                  </Select>
+                </FormItem>
+              </Form>
+              <div>{{filename}}</div>
+            </div>
+          </div>
+          <div slot="footer">
+            <Button type="success" @click="down" style="float:left;">下载模板</Button>
+            <Button type="primary" @click="upload">确定</Button>
+            <Button type="error" @click="uploadClose">关闭</Button>
+          </div>
+        </Modal>
       </common-table>
     </div>
   </Split>
 </template>
 <script>
   import {getName, getDictGroup, getCreate} from '@/libs/util.js'
+  import env from '_conf/url'
   import commonTable from '@/hxx-components/common-table.vue'
   import selectAddParts from '@/hxx-components/select-addParts.vue'
   import mixin from '@/hxx-components/mixin'
@@ -49,10 +91,23 @@
     mixins: [mixin],
     data() {
       return {
+        importShow:false,
+        token: {access_token: '',stockId:''},
+        filename:'请选择文件',
+        description:[{des:'1、点击当前区域，找到您所要导入的Excel文件,请确保文件按照模板中导入说明的要求填写。'},{des:'2、选择好文件后, 点“确定”按钮完成导入'}],
+        actionUrl:'/tenant/basedata/partinfo/importBatchPart',
+        baseUrl:'',
+        rules:{
+          stockId:{required:true,message:'请选择要导入的仓库'},
+        },
         split: 0.2,
         list: '',
         data2: [],
+        formData:{
+          stockId:'',
+        },
         cleartype: false,
+        wareHouseList:[],
         defaultData:{},
         columns: [
           {title: '配件编号', key: 'PART_NO', sortable: true, minWidth: 120},
@@ -116,6 +171,80 @@
       },
     },
     methods: {
+      getWareHouse(){
+        this.axios.request({
+          url: '/tenant/basedata/partinfo/getStoreSelList',
+          method: 'post',
+          data: {
+            access_token: this.$store.state.user.token,
+            page:1,
+            limit:25,
+          }
+        }).then(res => {
+          if (res.success === true) {
+            if(res.data.length > 0){
+              this.wareHouseList = res.data;
+              this.importShow = true;
+            }else{
+              this.$Modal.info({
+                title:'系统提示',
+                content:'当前账号不存在仓库,请先创建仓库',
+              });
+            }
+          }
+        })
+      },
+      uploadClose(){
+        this.importShow = false;
+      },
+      upload() {
+        if (this.filename == '请选择文件') {
+          this.$Message.error('请选择文件');
+          return;
+        }
+        this.$refs.formData.validate((valid) => {
+          if(valid){
+            this.$Spin.show();
+            this.$refs.upload.post(this.file);
+          }else{
+            this.$Message.error('请选择仓库');
+          }
+        })
+      },
+      down(){
+         window.location.href = "/part.xls";
+      },
+      beforeUpload(files) {
+        this.filename = files.name;
+        this.file = files;
+        return false;
+      },
+      aImport(){
+        this.filename = "请选择文件";
+        this.getWareHouse();
+        this.$refs.formData.resetFields();
+      },
+      uploadSuccess(res){
+        this.$Spin.hide();
+        if(res.success == true){
+          let flag = res.data.errorList ? true : false;
+          if(flag && res.data.errorList.length > 0){
+            let content = "";
+            let data = res.data.errorList;
+            for(let i in data){
+              content += "<div>第"+data[i].rowNum+ "行" + data[i].errorMsg +"</div> ";
+            }
+            this.$Modal.error({title:'导入错误提示',content:content,width:600});
+          }else{
+            this.$Message.success('批量导入成功');
+            this.importShow = false;
+            this.fileShow = false;
+            this.getList();
+          }
+        }else{
+          this.$Modal.error({title:'系统提示',content:res.Exception.message});
+        }
+      },
       refresh() {
         this.getList();
       },
@@ -229,6 +358,13 @@
       this.getTree();
       this.getList();
       this.show = Math.random();
+      this.baseUrl = env;
+      this.token.access_token = this.$store.state.user.token;
+    },
+    watch:{
+      'formData.stockId'(value){
+        this.token.stockId = value;
+      }
     },
   }
 
