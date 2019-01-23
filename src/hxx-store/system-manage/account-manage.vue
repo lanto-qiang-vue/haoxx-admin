@@ -13,15 +13,15 @@
           <div style="float:left;width:200px;">门店商户号:</div>
           <div style="float:left;">{{this.$store.state.user.userInfo.tenant.tenantNum}}</div>
         </div>
+        <!--<div class="line">-->
+          <!--<div style="float:left;width:200px;">登录用户名:</div>-->
+          <!--<div style="float:left;color:#FF8F00;">{{this.$store.state.user.userInfo.user.userName}}</div>-->
+        <!--</div>-->
         <div class="line">
           <div style="float:left;width:200px;">登录用户名:</div>
-          <div style="float:left;color:#FF8F00;">{{this.$store.state.user.userInfo.user.userName}}</div>
-        </div>
-        <div class="line">
-          <div style="float:left;width:200px;">手机号:</div>
           <div style="float:left;color:#FF8F00;width:89px;">{{this.$store.state.user.userInfo.user.userCode}}</div>
           <div style="float:left;color:#9B9B9B;width:182px;">&nbsp;&nbsp;&nbsp;(手机号即用作登录用户名)</div>
-          <div style="float:left;padding-left:100px;"><Button type="primary" @click="changePhone">修改</Button></div>
+          <div style="float:left;padding-left:100px;"><Button type="primary" @click="changePhone" v-if="this.$store.state.user.userInfo.isManage == true">修改</Button></div>
         </div>
         <div class="line">
           <div style="float:left;width:200px;">登录密码:</div>
@@ -234,6 +234,7 @@
                   newPwd:this.formData2.newPwd,
                   againPwd:this.formData2.againPwd,
                   oldTelphone:this.formData1.oldTelphone,
+                  oldPwd:this.formData1.oldPwd,
                 }
               }).then(res => {
                    if(res.success == true){

@@ -88,8 +88,8 @@
             <FormItem label="电子邮箱:" style="width:90%;" prop="EMAIL">
               <Input v-model="formData.EMAIL" type="text" placeholder="电子邮箱"> </Input>
             </FormItem>
-            <FormItem label="手机号码:" style="width:90%;" prop="TEL_PHONE">
-              <Input placeholder="手机号码" v-model="formData.TEL_PHONE" type="text"> </Input>
+            <FormItem label="联系电话:" style="width:90%;" prop="TEL_PHONE">
+              <Input placeholder="联系电话" v-model="formData.TEL_PHONE" type="text"> </Input>
             </FormItem>
             <FormItem label="QQ号码:" style="width:90%;" prop="QQ_NUM">
               <Input v-model="formData.QQ_NUM" placeholder="QQ号码" type="text"> </Input>
@@ -170,7 +170,7 @@
       const validatePHONE = (rule, value, callback) => {
         var reg = /^[1][3,4,5,7,8][0-9]{9}$/;
         if (value != '' && !reg.test(value)) {
-          callback(new Error('手机格式不正确'));
+          callback(new Error('联系电话格式不正确'));
         } else {
           callback();
         }
@@ -253,7 +253,7 @@
             title: '性别', key: 'SEX', sortable: true, minWidth: 90,
             render: (h, params) => h('span', getName(this.sexList, params.row.SEX))
           },
-          {title: '手机号', key: 'TEL_PHONE', sortable: true, minWidth: 140},
+          {title: '联系电话', key: 'TEL_PHONE', sortable: true, minWidth: 140},
           {
             title: '职务', key: 'PROFESSION', sortable: true, minWidth: 90,
             render: (h, params) => h('span', getName(this.classList, params.row.PROFESSION))
