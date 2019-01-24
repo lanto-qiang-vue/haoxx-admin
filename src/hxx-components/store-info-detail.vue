@@ -215,7 +215,7 @@
       }
     },
     watch:{
-		  data(datas){
+		  data(data){
        this.cancelEdit()
         if(this.type == 2){
           this.getImage(this.data.TENANT_ID);

@@ -68,9 +68,10 @@
     </Modal>
     <Modal
       v-model="showModal"
-      class="table-modal-detail"
+      class="table-modal-detail pclass"
       width="90"
       :mask-closable="false"
+      title="详情"
       :scrollable="true"
       :transfer= "false"
       :footer-hide="true"
@@ -179,22 +180,24 @@ handle(){
         this.showModal = false;
       },
       dbclick(row){
-        this.detail = row;
-        // this.axios.request({
-        //   url: '/manage/info/tenantinfo/getTenantPic',
-        //   method: 'post',
-        //   data: {
-        //     access_token: this.$store.state.user.token,
-        //     TENANT_ID:row.TENANT_ID,
-        //     page:1,
-        //     limit:25
-        //   }
-        // }).then(res => {
-        //   if (res.success === true) {
-        //
-        //   }
-        // })
-        this.showModal = true;
+        this.axios.request({
+          url: '/register/tenantregister/getTenantPicture',
+          method: 'post',
+          data: {
+            access_token: this.$store.state.user.token,
+            tenantId:row.TENANT_ID,
+            page:1,
+            limit:25
+          }
+        }).then(res => {
+          if (res.success === true) {
+            this.detail = row;
+              this.detail["ROAD_FILE_PATH"] = res.data[0].ROAD_FILE_PATH;
+              this.detail["BUS_FILE_PATH"] = res.data[0].BUS_FILE_PATH;
+              this.detail["TENANT_FILE_PATH"] = res.data[0].TENANT_FILE_PATH;
+            this.showModal = true;
+          }
+        })
       },
       getList(){
         this.showTable = Math.random();
