@@ -307,16 +307,18 @@
         })
       },
       showImg(img){
-        // this.$Modal.info({
-        //   width: 90,
-        //   title: '查看',
-        //   closable: true,
-        //   content: '<img src="'+img+'" style="width: 100%"/>'
-        // })
 
-
-        var query={img:img};
-        this.$router.push({path:'/store-img',query:query});
+        if(this.type == 1){
+          this.$Modal.info({
+            width: 50,
+            title: '查看',
+            closable: true,
+            content: '<img src="'+img+'" style="width: 100%;"/>'
+          })
+        }else{
+          let query={img:img};
+          this.$router.push({path:'/store-img',query:query});
+        }
       },
       removeImg(name){
         this.info[name]= ''
