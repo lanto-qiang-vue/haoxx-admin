@@ -57,7 +57,7 @@
               <Input v-model="formData1.oldTelphone" :disabled="true"></Input>
             </FormItem>
             <FormItem label="登录密码" style="width:350px;" prop="oldPwd">
-              <Input type="password" v-model="formData1.oldPwd" autocomplete="off"></Input>
+              <Input type="password" v-model="formData1.oldPwd" autocomplete="new-password"></Input>
             </FormItem>
             <FormItem>
               <Button type="primary" @click="checkNext">下一步</Button>
