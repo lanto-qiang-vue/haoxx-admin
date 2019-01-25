@@ -346,6 +346,7 @@
       }
     },
     mounted(){
+      // alert(navigator.userAgent);
     },
     computed:{
       canRegister(){
