@@ -232,7 +232,7 @@
         console.log("table高度"+commonTable.querySelector(".table-bottom").offsetTop);
         console.log("table高度"+(tablesMain.$el.offsetTop+this.tableHeight));
         // alert(tablesMain.$el.offsetTop+this.tableHeight);
-        if(commonTable.querySelector(".table-bottom").offsetTop < (tablesMain.$el.offsetTop+this.tableHeight)){
+        if(commonTable.querySelector(".table-bottom").offsetTop < (tablesMain.$el.offsetTop+this.tableHeight &&commonTable.querySelector(".table-bottom").offsetTop != 0)){
           console.log("重新执行了呢");
            this.resize(1000);
         }

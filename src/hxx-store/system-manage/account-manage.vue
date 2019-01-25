@@ -1,5 +1,5 @@
 <template>
-  <div style="width:100%;height:100%;background:#FFFFFF;position:absolute;">
+  <div style="width:100%;height:100%;background:#FFFFFF;position:absolute;" class="xgsjh">
     <div style="height:20px;"></div>
   <Collapse value="1">
     <Panel name="1">
@@ -51,7 +51,7 @@
           <div style="width:184px;height:1px;background:#E9E9E9;float:left;margin-top:16px;margin-left:5px;"></div>
           <div style="float:left;width:32px;height:32px;border:1px solid rgba(0, 0, 0, 0.25);border-radius:50%;color:rgba(0, 0, 0,0.15);font-size:16px;text-align:center;line-height:32px;margin-left:10px;">3</div><div style="float:left;line-height:32px;font-size:14px;margin-left:10px;color:rgba(0,0,0,0.45);">确定并重新登录</div>
         </div>
-        <div style="height:80px;" v-show="type == 1"></div>
+        <div style="height:70px;" v-show="type == 1"></div>
           <Form :model="formData1" v-show="stage == 1" v-if="type == 1" ref="formData1" :rules="rule1" :label-width="100" class="common-form" style="width:400px;margin-left:134px;" autocomplete="off">
             <FormItem label="原手机号" style="width:350px;">
               <Input v-model="formData1.oldTelphone" :disabled="true"></Input>
@@ -64,42 +64,48 @@
               <Button type="primary" @click="checkNext">下一步</Button>
             </FormItem>
           </Form>
+        <div v-if="stage == 2" style="color:rgba(0,0,0,0.65);width:500px;height:36px;border:1px solid #91D5FF;border-radius:4px;margin-left:134px;background-color: #E6F7FF;line-height:36px;font-size:14px;position:relative;padding-left:33px;margin-bottom:10px;">
+          <div style="width:18px;height:18px;background-color:#1890FF;border-radius:50%;color:white;text-align:center;line-height:18px;position:absolute;top:9px;left:7px;">i</div>新手机号修改成功后即用作登录用户名
+        </div>
         <Form :model="formData2" v-show="stage == 2" v-if="type == 1" ref="formData2" :rules="rule2" :label-width="120" class="common-form" style="width:500px;margin-left:134px;">
           <FormItem label="新手机号:" style="width:350px;" prop="newTelphone">
             <Input v-model="formData2.newTelphone" placeholder="请输入新手机号"></Input>
           </FormItem>
-          <FormItem  label="短信验证码" style="width:350px;" prop="smsCode">
-            <Input v-model="formData2.smsCode" placeholder="短信验证码">
-              <span slot="append"><a href="javascript:void(0)" @click="getCode" :disabled="time != 60">{{description}}</a></span>
+          <FormItem  label="短信验证码" style="width:250px;" prop="smsCode">
+            <Input v-model="formData2.smsCode" placeholder="短信验证码" class="red">
             </Input>
           </FormItem>
-          <FormItem label="设置登录密码:" style="width:350px;" prop="newPwd" placeholder="设置登录密码">
-            <Input type="password" v-model="formData2.newPwd"></Input>
+          <FormItem  :label-width="0" style="width:150px;" prop="smsCode">
+              <a href="javascript:void(0)" :class="time != 60 ? 'hqfalse' : 'hqtrue'" @click="getCode"  :disabled="time != 60">{{description}}</a>
           </FormItem>
-          <FormItem label="确认登录密码:" style="width:350px;" prop="againPwd" placeholder="确认登录密码">
-            <Input type="password" v-model="formData2.againPwd"></Input>
+          <FormItem label="设置登录密码:" style="width:350px;" prop="newPwd" >
+            <Input type="password" v-model="formData2.newPwd" placeholder="请设置登录密码"></Input>
+          </FormItem>
+          <FormItem label="确认登录密码:" style="width:350px;" prop="againPwd" >
+            <Input type="password" v-model="formData2.againPwd" placeholder="请确认登录密码"></Input>
           </FormItem>
           <FormItem style="width:500px;">
             <Button  @click="stage = 1,reset()">上一步</Button>
-            <Button type="primary" style="margin-left:40px;" @click="submit">确认并重新登录</Button>
+            <Button type="primary" style="margin-left:20px;" @click="submit">确认并重新登录</Button>
           </FormItem>
         </Form>
-        <Form ref="form" :model="form" :rules="rule" :label-width="80" style="width:350px;margin-left:134px;" v-show="type == 2">
+        <Form ref="form" :model="form" :rules="rule" :label-width="80" style="width:350px;margin-left:134px;margin-top:20px;" v-show="type == 2">
           <FormItem prop="oldPassword" label="旧密码">
-            <Input type="password" v-model="form.oldPassword" @on-change="validateField(['rePassword','newPassword'])">
+            <Input type="password" v-model="form.oldPassword" @on-change="validateField(['rePassword','newPassword'])" placeholder="请输入旧密码">
             </Input>
           </FormItem>
           <FormItem prop="newPassword" label="新密码">
-            <Input type="password" v-model="form.newPassword" @on-change="validateField(['rePassword'])">
+            <Input type="password" v-model="form.newPassword" @on-change="validateField(['rePassword'])" placeholder="6-18位字母或数字或下划线">
             </Input>
           </FormItem>
           <FormItem prop="rePassword" label="确认密码">
-            <Input type="password" v-model="form.rePassword" @on-change="validateField(['newPassword'])">
+            <Input type="password" v-model="form.rePassword" @on-change="validateField(['newPassword'])" placeholder="请确认新密码">
             </Input>
           </FormItem>
+          <div style="height:20px;"></div>
           <FormItem>
             <Button @click="showModal = false">取消</Button>
-            <Button type="primary" @click="ok()" style="margin-left:40px;">确定</Button>
+            <Button type="primary" @click="ok()" style="margin-left:20px;">确定</Button>
           </FormItem>
         </Form>
       </div>
@@ -122,6 +128,7 @@
           }
         };
           return {
+            hq:'hqfalse',
             smsSession:'',
             form:{
               oldPassword:'',
@@ -142,7 +149,7 @@
             },
             rule1:{oldPwd:{required:true,message:'请填写旧密码'}},
             rule2:{
-              newTelphone:{required:true,pattern:/^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\d{8}$/,message:'请输入正确的手机架'},
+              newTelphone:{required:true,pattern:/^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\d{8}$/,message:'请输入正确的手机号'},
               smsCode:{required:true,message:'请输入短信验证码'},
               newPwd:{required:true,pattern:/^[a-zA-Z0-9_]{6,18}$/,message:'密码应为6-18位字母数字及下滑线'},
               againPwd:[{required:true,message:'请重复确认密码'}, {validator: validatePWD, trigger: 'blur,change'},]
@@ -179,7 +186,7 @@
               ]
             },
             stage:1,
-            description:'获取',
+            description:'获取验证码',
             timing:null,
             time:60,
           }
@@ -249,7 +256,7 @@
               }).then(res => {
                    if(res.success == true){
                      store.dispatch('handleLogOut');
-                     this.$Message.success("手机号更换成功,请重新登录");
+                     this.$Message.success({content:"手机号更换成功,请重新登录",duration: 3});
                      return false;
                    }
               })
@@ -264,7 +271,7 @@
             this.time--;
           } else {
             clearInterval(this.timing);
-            this.description = "获取";
+            this.description = "获取验证码";
             this.time = 60;
           }
         },
@@ -346,5 +353,11 @@
 }
   .gray{
     border:1px solid rgba(0, 0, 0, 0.25);border-radius:50%;color:rgba(0, 0, 0,0.15);
+  }
+  .hqtrue{
+    background:#ECF5FF;color:#1890FF;display:block;font-size:14px;height:32px;width:90px;text-align:center;margin-top:2px;border:1px solid #B3D8FF;border-radius:2px;
+  }
+  .hqfalse{
+    background:#E9E9E9;color:#999999;display:block;font-size:14px;height:32px;width:90px;text-align:center;margin-top:2px;border:1px solid #E9E9E9;border-radius:2px;
   }
 </style>
