@@ -57,7 +57,7 @@
               <Input v-model="formData1.oldTelphone" :disabled="true"></Input>
             </FormItem>
             <FormItem label="登录密码" style="width:350px;" prop="oldPwd">
-              <Input type="password" v-model="formData1.oldPwd"></Input>
+              <Input type="password" v-model="formData1.oldPwd" placeholder="请输入登录密码"></Input>
             </FormItem>
 
             <FormItem>
@@ -79,10 +79,10 @@
               <a href="javascript:void(0)" :class="time != 60 ? 'hqfalse' : 'hqtrue'" @click="getCode"  :disabled="time != 60">{{description}}</a>
           </FormItem>
           <FormItem label="设置登录密码:" style="width:350px;" prop="newPwd" >
-            <Input type="password" v-model="formData2.newPwd" placeholder="请设置登录密码"></Input>
+            <Input type="password" v-model="formData2.newPwd" placeholder="6-18位字母或数字或下划线"></Input>
           </FormItem>
           <FormItem label="确认登录密码:" style="width:350px;" prop="againPwd" >
-            <Input type="password" v-model="formData2.againPwd" placeholder="请确认登录密码"></Input>
+            <Input type="password" v-model="formData2.againPwd" placeholder="请确认密码"></Input>
           </FormItem>
           <FormItem style="width:500px;">
             <Button  @click="stage = 1,reset()">上一步</Button>
@@ -91,15 +91,15 @@
         </Form>
         <Form ref="form" :model="form" :rules="rule" :label-width="80" style="width:350px;margin-left:134px;margin-top:20px;" v-show="type == 2">
           <FormItem prop="oldPassword" label="旧密码">
-            <Input type="password" v-model="form.oldPassword" @on-change="validateField(['rePassword','newPassword'])" placeholder="请输入旧密码">
+            <Input type="password" v-model="form.oldPassword" placeholder="请输入旧密码">
             </Input>
           </FormItem>
           <FormItem prop="newPassword" label="新密码">
-            <Input type="password" v-model="form.newPassword" @on-change="validateField(['rePassword'])" placeholder="6-18位字母或数字或下划线">
+            <Input type="password" v-model="form.newPassword"  placeholder="6-18位字母或数字或下划线">
             </Input>
           </FormItem>
           <FormItem prop="rePassword" label="确认密码">
-            <Input type="password" v-model="form.rePassword" @on-change="validateField(['newPassword'])" placeholder="请确认新密码">
+            <Input type="password" v-model="form.rePassword" placeholder="请确认新密码">
             </Input>
           </FormItem>
           <div style="height:20px;"></div>
@@ -147,7 +147,7 @@
               againPwd:'',
               oldTelphone:'',
             },
-            rule1:{oldPwd:{required:true,message:'请填写旧密码'}},
+            rule1:{oldPwd:{required:true,message:'请填输入登录密码'}},
             rule2:{
               newTelphone:{required:true,pattern:/^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\d{8}$/,message:'请输入正确的手机号'},
               smsCode:{required:true,message:'请输入短信验证码'},
@@ -157,33 +157,18 @@
             rule: {
               oldPassword: [
                 {
-                  validator: (rule, value, callback) => {
-                    // if (!/^[a-zA-Z0-9_]{6,18}$/.test(value)) callback(new Error('密码应为6-18位字母数字及下滑线'));
-                    if (value == this.form.newPassword || value == this.form.rePassword) callback(new Error('新旧密码不能相同'));
-                    callback();
-                  }, trigger: 'change', required: true
-                }
+                  required:true,message:'请输入旧密码',
+                },
               ],
-              newPassword: [
-                {
-                  validator: (rule, value, callback) => {
-                    if (!/^[a-zA-Z0-9_]{6,18}$/.test(value)) callback(new Error('密码应为6-18位字母数字及下滑线'));
-                    if (value == this.form.oldPassword) callback(new Error('新旧密码不能相同'));
-                    if (value != this.form.rePassword) callback(new Error('新密码不一致'));
-                    callback();
-                  }, trigger: 'change', required: true
-                }
-              ],
-              rePassword: [
-                {
-                  validator: (rule, value, callback) => {
-                    if (!/^[a-zA-Z0-9_]{6,18}$/.test(value)) callback(new Error('密码应为6-18位字母数字及下滑线'));
-                    if (value == this.form.oldPassword) callback(new Error('新旧密码不能相同'));
-                    if (value != this.form.newPassword) callback(new Error('新密码不一致'));
-                    callback();
-                  }, trigger: 'change', required: true
-                }
-              ]
+              newPassword:[{ validator: (rule, value, callback) => {
+                  if(!/^[a-zA-Z0-9_]{6,18}$/.test(value)) callback(new Error('密码应为6-18位字母数字及下滑线'));
+                  callback();
+                }, trigger: 'change,blur', required: true }],
+              rePassword: [{ validator: (rule, value, callback) => {
+                  if(!/^[a-zA-Z0-9_]{6,18}$/.test(value)) callback(new Error('密码应为6-18位字母数字及下滑线'));
+                  if(value!= this.form.newPassword) callback(new Error('两次密码不一致'));
+                  callback();
+                }, trigger: 'change,blur', required: true }]
             },
             stage:1,
             description:'获取验证码',
