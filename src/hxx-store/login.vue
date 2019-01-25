@@ -1,6 +1,6 @@
 <template>
   <div style="width:100%;height:100%;overflow:auto;">
-    <div style="height:70px;width:80%;margin:0 auto;">
+    <div style="height:70px;width:80%;margin:0 auto;position:relative;">
       <div style="">
         <div style="height:100%;float:left;padding-top:20px;">
           <img src="../assets/images/haoxiuxiu-logo.png"
@@ -254,6 +254,7 @@
         description4:'获取',
         description5:'获取',
         indexName:'name1',
+        telSession:'',
         telSession4:'',
         telSession5:'',
         singleProtocol:false,//同意协议
@@ -431,6 +432,10 @@
       doregister() {
         this.$refs['form3'].validate((valid) => {
           if (valid) {
+            if(this.telSession == ""){
+              this.$Message.error("请获取验证码");
+              return false;
+            }
             if (this.form3.password !== this.form3.repeatPassword) {
               this.$Message.error("两次密码不一致");
               return false;
@@ -444,6 +449,7 @@
                   telcode:this.form3.phoneCode,
                   telphone:this.form3.phone,
                   IsAgreement:this.singleProtocol ? 1 : 0,
+                  telSession:this.telSession,
                 }
               }).then(res => {
                 if (res.success === true) {
@@ -646,6 +652,7 @@
             var title = '';
             if(res.success == true){
               title = "短信已发送,请及时查收";
+              this.telSession = res.data.telSession;
               this.flag = false;
               this.timing = setInterval(this.decrTime, 1000);
             }else{
@@ -656,6 +663,7 @@
         }
       },
       decrTime() {
+        //注册验证码
         if (this.time > 0) {
           this.description = this.time - 1 + "s";
           this.time--;
@@ -667,6 +675,7 @@
         }
       },
       decrTime4() {
+        //许可证换手机验证码
         if (this.time4 > 0) {
           this.description4 = this.time4 - 1 + "s";
           this.time4--;
@@ -677,6 +686,7 @@
         }
       },
       decrTime5() {
+        //忘记密码验证码
         if (this.time5 > 0) {
           this.description5 = this.time5 - 1 + "s";
           this.time5--;

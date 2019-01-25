@@ -52,13 +52,14 @@
           <div style="float:left;width:32px;height:32px;border:1px solid rgba(0, 0, 0, 0.25);border-radius:50%;color:rgba(0, 0, 0,0.15);font-size:16px;text-align:center;line-height:32px;margin-left:10px;">3</div><div style="float:left;line-height:32px;font-size:14px;margin-left:10px;color:rgba(0,0,0,0.45);">确定并重新登录</div>
         </div>
         <div style="height:80px;" v-show="type == 1"></div>
-          <Form :model="formData1" v-show="stage == 1" v-if="type == 1" ref="formData1" :rules="rule1" :label-width="100" class="common-form" style="width:400px;margin-left:134px;">
+          <Form :model="formData1" v-show="stage == 1" v-if="type == 1" ref="formData1" :rules="rule1" :label-width="100" class="common-form" style="width:400px;margin-left:134px;" autocomplete="off">
             <FormItem label="原手机号" style="width:350px;">
               <Input v-model="formData1.oldTelphone" :disabled="true"></Input>
             </FormItem>
             <FormItem label="登录密码" style="width:350px;" prop="oldPwd">
-              <Input type="password" v-model="formData1.oldPwd" autocomplete="new-password"></Input>
+              <Input type="password" v-model="formData1.oldPwd"></Input>
             </FormItem>
+
             <FormItem>
               <Button type="primary" @click="checkNext">下一步</Button>
             </FormItem>
