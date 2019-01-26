@@ -39,6 +39,9 @@ function needCLodop(){
 if (needCLodop()) {
 	var head = document.head || document.getElementsByTagName("head")[0] || document.documentElement;
 	var  oscript = document.createElement("script");
+	/**
+   * 代码
+   * */
   oscript.src ="https://localhost:8443/CLodopfuncs.js";
   head.insertBefore( oscript,head.firstChild );
 
