@@ -37,13 +37,14 @@
 
 <script>
 import { mapActions } from 'vuex'
-import { getName, getDictGroup } from '@/libs/util.js'
+import { getName, getDictGroup,getTenantId} from '@/libs/util.js'
 export default {
   name: 'User',
   props: {
     userAvator: {
       type: String,
-      default: ''
+      default: '',
+      tenantId:0,
     }
   },
   data(){
@@ -56,12 +57,16 @@ export default {
         {title: '门店名称', key: 'TENANT_NAME', minWidth: 150},
         {title: '操作', key: 'CHECK_STATUS', minWidth: 100,
           render: (h, params) => {
-            // console.log(params)
             let text= '', disabled= true, val= params.row[params.column.key];
             text= getName(this.CHECK_STATUS_group, val)
             if(val== '10351002') {
               disabled= false;
               text='点击切换'
+            }
+            if(params.row.CLIENTAUTHORIZATION == 1 || params.row.TENANT_ID == this.tenantId){
+              disabled = false;
+            }else{
+              disabled = true;
             }
             if(params.row.TENANT_ID== this.$store.state.user.userInfo.tenant.tenantId){
               disabled= true
@@ -85,6 +90,9 @@ export default {
       data: [],
       loading: false
     }
+  },
+  mounted(){
+    this.tenantId = getTenantId();
   },
   computed: {
     loginUserName(){
@@ -161,7 +169,7 @@ export default {
       }).then(res => {
         if (res.success === true) {
           this.$store.commit('setToken', res.data)
-          this.getPickingNumber()
+          this.getPickingNumber();
           let getInfo = Promise.all([ new Promise((resolve, reject) => {
             this.axios.request({
               url: '/tenant/common/getLoginUser',

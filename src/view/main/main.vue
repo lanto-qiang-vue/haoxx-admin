@@ -1,6 +1,6 @@
 <template>
   <Layout style="height: 100%" class="main">
-    <Sider hide-trigger  collapsible :width="200" :collapsed-width="64" v-model="collapsed" @on-collapse="onCollapse" class="left-sider" :style="{overflow: 'hidden'}">
+    <Sider hide-trigger  collapsible :width="width" :collapsed-width="64" v-model="collapsed" @on-collapse="onCollapse" class="left-sider" :style="{overflow: 'hidden'}">
       <side-menu v-show="showMenu" accordion ref="sideMenu" :active-name="$route.name" :collapsed="collapsed" @on-select="turnToPage" :menu-list="menuList">
         <!-- 需要放在菜单上面的内容，如Logo，写在side-menu标签内部，如下 -->
         <div class="logo-con">
@@ -18,8 +18,10 @@
           <fullscreen v-model="isFullscreen"/>
           <!--<change-password></change-password>-->
           <picking-number ></picking-number>
-          <!--<shop></shop>-->
+
           <user slot="right" :user-avator="userAvator"/>
+          <!--<shop slot="right"></shop>-->
+          <authrization slot="right" v-if="!this.$store.state.user.userInfo.isManage"></authrization>
           <!--<language @on-lang-change="setLocal" style="margin-right: 10px;" :lang="local"/>-->
         </header-bar>
       </Header>
@@ -43,6 +45,7 @@
   import protocol from '@/hxx-components/protocol.vue';
 import SideMenu from './components/side-menu'
 import Shop from './components/shop/shop.vue';
+import Authrization from './components/authrization/authrization.vue';
 import HeaderBar from './components/header-bar'
 import TagsNav from './components/tags-nav'
 import User from './components/user'
@@ -67,7 +70,8 @@ export default {
     PickingNumber,
     ChangePassword,
     Shop,
-    protocol
+    protocol,
+    Authrization
   },
   data () {
     return {
@@ -75,6 +79,7 @@ export default {
       protocolShow:false,
       minLogo,
       maxLogo,
+      width:250,
       isFullscreen: false,
       showMenu: true
     }
@@ -175,6 +180,8 @@ export default {
     // this.$store.commit('setUser',data)
     // console.log(JSON.stringify(data.user));
     // console.log(this.$store.state.user.userInfo.user.isAgreement);
+if(this.$store.state.user.userInfo.user.lgType == 1001) this.width = 240;
+else this.width = 200;
     if(this.$store.state.user.userInfo.user.isAgreement == 0){
        this.protocolShow = true;
     }

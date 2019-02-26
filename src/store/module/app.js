@@ -1,4 +1,4 @@
-import { getBreadCrumbList, setTagNavListInLocalstorage, getMenuByRouter, getTagNavListFromLocalstorage, getHomeRoute, setDict, getDict,getTenant,setTenant,setOutStatus,getOutStatus,setAccount,getAccount,setAdmin,getAdmin} from '@/libs/util'
+import { getBreadCrumbList, setTagNavListInLocalstorage, getMenuByRouter, getTagNavListFromLocalstorage, getHomeRoute, setDict, getDict,getTenant,setTenant,setOutStatus,getOutStatus,setAccount,getAccount,setAdmin,getAdmin,setIsAuthorize,getIsAuthorize,setTenantId,getTenantId} from '@/libs/util'
 import routers from '@/router/routers'
 import axios from '@/libs/api.request'
 export default {
@@ -48,6 +48,10 @@ export default {
       state.admin = info;
       setAdmin(info);
     },
+    setTenantId(state,info){
+      state.tenantId = info;
+      setTenantId(info);
+    },
     setAccount(state,info){
       state.account = info;
       setAccount(info)
@@ -66,6 +70,10 @@ export default {
     setOutStatus(state,type){
       state.outStatus = type
       setOutStatus(type)
+    },
+    setIsAuthorize(state,type){
+      state.isAuthorize = type;
+      setIsAuthorize(type);
     },
     setPickingNumber(state,num){
       state.pickingNumber = num

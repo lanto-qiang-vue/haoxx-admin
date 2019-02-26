@@ -84,7 +84,7 @@
   import { mapActions } from 'vuex'
   import StoreInfoDetail from '@/hxx-components/store-info-detail.vue'
   import commonTable from '@/hxx-components/common-table.vue'
-  import { getName, getDictGroup, getCreate } from '@/libs/util.js'
+  import { getName, getDictGroup, getCreate,getTenantId } from '@/libs/util.js'
   export default {
     name: "storeRegister",
     components: {StoreInfoDetail,commonTable},
@@ -98,6 +98,7 @@
         showModal:false,
         detail:{},
         showTable:false,
+        tenantId:0,
         columns:[
           {title: '门店商户号', key: 'TENANT_NUM', sortable: true, minWidth: 140},
           {title: '门店名称', key: 'TENANT_NAME', sortable: true, minWidth: 140},
@@ -111,6 +112,7 @@
             // render: (h,params) =>h('span',getName(this.checkList,params.row.CHECK_STATUS))
             render: (h, params) => {
               var buttonContent= getName(this.checkList,params.row.CHECK_STATUS);
+              let disabled = false;
               switch(params.row.CHECK_STATUS){
                 case "10351001":
                   var buttonStatus = "primary";
@@ -123,11 +125,16 @@
                   var buttonStatus = "error";
                   break;
               }
+              if(buttonStatus == 'success' && params.row.CLIENTAUTHORIZATION != 1) disabled = true;
+              if(params.row.TENANT_ID == this.tenantId){
+
+              }
               return h('div', [
                 h('Button', {
                   props: {
                     type: buttonStatus,
                     size: 'large',
+                    disabled:disabled,
                   },
                   style: {
                     width:"100px",
@@ -149,6 +156,7 @@
       }
     },
     mounted(){
+      this.tenantId = getTenantId();
       if(this.$store.state.app.outStatus == 1){
         this.showModal1 = false;
         this.showModal2 = true;

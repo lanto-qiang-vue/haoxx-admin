@@ -16,7 +16,6 @@
     },
   }
 </script>
-
 <style scoped lang="less">
   .picking-number{
     display: inline-block;

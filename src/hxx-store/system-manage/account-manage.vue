@@ -52,7 +52,8 @@
           <div style="float:left;width:32px;height:32px;border:1px solid rgba(0, 0, 0, 0.25);border-radius:50%;color:rgba(0, 0, 0,0.15);font-size:16px;text-align:center;line-height:32px;margin-left:10px;">3</div><div style="float:left;line-height:32px;font-size:14px;margin-left:10px;color:rgba(0,0,0,0.45);">确定并重新登录</div>
         </div>
         <div style="height:70px;" v-show="type == 1"></div>
-          <Form :model="formData1" v-show="stage == 1" v-if="type == 1" ref="formData1" :rules="rule1" :label-width="100" class="common-form" style="width:400px;margin-left:134px;" autocomplete="off">
+        <div v-show="type == 1">
+          <Form :model="formData1" v-show="stage == 1" ref="formData1" :rules="rule1" :label-width="100" class="common-form" style="width:400px;margin-left:134px;" autocomplete="off">
             <FormItem label="原手机号" style="width:350px;">
               <Input v-model="formData1.oldTelphone" :disabled="true"></Input>
             </FormItem>
@@ -67,7 +68,7 @@
         <div v-if="stage == 2" style="color:rgba(0,0,0,0.65);width:500px;height:36px;border:1px solid #91D5FF;border-radius:4px;margin-left:134px;background-color: #E6F7FF;line-height:36px;font-size:14px;position:relative;padding-left:33px;margin-bottom:10px;">
           <div style="width:18px;height:18px;background-color:#1890FF;border-radius:50%;color:white;text-align:center;line-height:18px;position:absolute;top:9px;left:7px;">i</div>新手机号修改成功后即用作登录用户名
         </div>
-        <Form :model="formData2" v-show="stage == 2" v-if="type == 1" ref="formData2" :rules="rule2" :label-width="120" class="common-form" style="width:500px;margin-left:134px;">
+        <Form :model="formData2" v-show="stage == 2" ref="formData2" :rules="rule2" :label-width="120" class="common-form" style="width:500px;margin-left:134px;">
           <FormItem label="新手机号:" style="width:350px;" prop="newTelphone">
             <Input v-model="formData2.newTelphone" placeholder="请输入新手机号"></Input>
           </FormItem>
@@ -89,6 +90,7 @@
             <Button type="primary" style="margin-left:20px;" @click="submit">确认并重新登录</Button>
           </FormItem>
         </Form>
+        </div>
         <Form ref="form" :model="form" :rules="rule" :label-width="80" style="width:350px;margin-left:134px;margin-top:20px;" v-show="type == 2">
           <FormItem prop="oldPassword" label="旧密码">
             <Input type="password" v-model="form.oldPassword" placeholder="请输入旧密码">
@@ -288,9 +290,10 @@
         },
         changePhone(){
           this.type = 1;
+          this.showModal = true;
+          this.stage = 1;
           this.$refs.formData1.resetFields();
           this.$refs.formData2.resetFields();
-          this.showModal = true;
           this.title = "修改手机号";
         },
         checkNext(){

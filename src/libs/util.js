@@ -8,7 +8,9 @@ export const USERINFO_KEY = 'USERINFO'
 export const ACCESSMENU_KEY = 'ACCESSMENU'
 export const DICT_KEY = 'DICT'
 export const TENANT_KEY = 'Tenant';
-export const OUTSTATUS = 'outStatus'
+export const OUTSTATUS = 'outStatus';
+export const ISAUTHORIZE = 'isAuthorize'
+export const TENANTID = 'tenantId'
 //存储前台账号等信息....
 export const ACCOUNT = 'account';
 //存储后台登陆信息...
@@ -18,7 +20,21 @@ export const setAdmin = (info) =>{
 }
 export const getAdmin = () => {
   const admin = localStorage.getItem(ADMIN)
-  return admin || {}
+  return admin || "{}"
+}
+export const setTenantId = (type) =>{
+  localStorage.setItem(TENANTID,type || 0)
+}
+export const getTenantId = (type) =>{
+  const tenantId = localStorage.getItem(TENANTID)
+  return tenantId || 0;
+}
+export const setIsAuthorize = (type) =>{
+  localStorage.setItem(ISAUTHORIZE,type || 0)
+}
+export const getIsAuthorize = () =>{
+  const isAuthorize = localStorage.getItem(ISAUTHORIZE)
+  return isAuthorize || 0;
 }
 export const setOutStatus = (type) =>{
   localStorage.setItem(OUTSTATUS,type || 0)
@@ -28,7 +44,7 @@ export const setAccount = (info) =>{
 }
 export const getAccount = () =>{
   const account = localStorage.getItem(ACCOUNT)
-  return account || {};
+  return account || "{}";
 }
 export const getOutStatus = () =>{
   const outStatus = localStorage.getItem(OUTSTATUS)

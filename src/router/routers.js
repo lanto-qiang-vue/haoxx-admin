@@ -981,6 +981,85 @@ export default [
     ]
   },
   {
+    path: '/carInsure-marketing',
+    name: 'carInsure-marketing',
+    meta: {
+      icon: 'logo-buffer',
+      title: '车险营销管理',
+      lgType: "1001",
+      access: '1005',
+    },
+    component: Main,
+    children:[
+      {
+        path: '/train-claim',
+        name: 'train-claim',
+        meta: {
+          icon: 'md-funnel',
+          title: '车险培训认领',
+          lgType: "1001",
+          access: '100501',
+        },
+        component: () => import('@/hxx-admin/carInsure-marketing/train-claim.vue')
+      },
+      {
+        path: '/marketing-info',
+        name: 'marketing-info',
+        meta: {
+          icon: 'md-funnel',
+          title: '车险营销情况',
+          lgType: "1001",
+          access: '100502',
+        },
+        component: () => import('@/hxx-admin/carInsure-marketing/marketing-info.vue')
+      },
+      {
+        path: '/insure-count',
+        name: 'insure-count',
+        meta: {
+          icon: 'md-funnel',
+          title: '车险销售总体统计',
+          lgType: "1001",
+          access: '100503',
+        },
+        component: () => import('@/hxx-admin/carInsure-marketing/insure-count.vue')
+      },
+      {
+        path: '/company-reports',
+        name: 'company-reports',
+        meta: {
+          icon: 'md-funnel',
+          title: '车险营销企业列表',
+          lgType: "1001",
+          access: '100504',
+        },
+        component: () => import('@/hxx-admin/carInsure-marketing/company-reports.vue')
+      },
+      {
+        path: '/service-reports',
+        name: 'service-reports',
+        meta: {
+          icon: 'md-funnel',
+          title: '车险营销客服报表',
+          lgType: "1001",
+          access: '100505',
+        },
+        component: () => import('@/hxx-admin/carInsure-marketing/service-reports.vue')
+      },
+      {
+        path: '/service-detail',
+        name: 'service-detail',
+        meta: {
+          icon: 'md-funnel',
+          title: '车险营销客服明细列表',
+          lgType: "1001",
+          access: '100506',
+        },
+        component: () => import('@/hxx-admin/carInsure-marketing/service-detail.vue')
+      }
+    ]
+  },
+  {
     path: '/basic-data',
     name: 'basic-data',
     meta: {

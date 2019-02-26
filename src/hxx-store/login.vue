@@ -358,6 +358,7 @@
       }
     },
     created(){
+      console.log(getAccount());
       let account = JSON.parse(getAccount());
       // console.log(account['telphone']);
       if(account.telphone){
@@ -495,6 +496,7 @@
           data: data
         }).then(res => {
           if (res.success === true) {
+            this.$store.commit('setIsAuthorize',res.data.isAuthorize);
             this.$store.commit('setToken', res.data.tokenStr)
             this.$store.commit('setDict', res.data.dict)
             this.$store.commit('setTenant', res.data.tenantUsers)
@@ -535,7 +537,8 @@
           }).then(res => {
             if (res.success === true) {
               // console.log("登录时请求的数据",JSON.stringify(res.data));
-              this.$store.commit('setUser', res.data)
+              this.$store.commit('setUser', res.data);
+              if(res.data.isManage == true)this.$store.commit('setTenantId',res.data.tenant.tenantId);
               resolve()
             } else reject()
           }).then(err => {
