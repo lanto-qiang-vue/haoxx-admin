@@ -21,7 +21,7 @@
 
           <user slot="right" :user-avator="userAvator"/>
           <!--<shop slot="right"></shop>-->
-          <authrization slot="right" v-if="!this.$store.state.user.userInfo.isManage"></authrization>
+          <authrization slot="right" v-if="!this.$store.state.user.userInfo.isManage && this.$store.state.user.userInfo.user.lgType == 1002"></authrization>
           <!--<language @on-lang-change="setLocal" style="margin-right: 10px;" :lang="local"/>-->
         </header-bar>
       </Header>

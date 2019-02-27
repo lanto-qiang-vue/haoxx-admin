@@ -1,6 +1,6 @@
 <template>
   <common-table v-model="tableData" :columns="columns" @changePageSize="changePageSize" @changePage="changePage"
-                :total="total" :show="showTable" :page="page">
+                :total="total" :show="showTable" :page="page" @onRowClick="rowClick">
     <div slot="search">
       <div class="search-block" style="width:100%;">
         <Form :label-width="60" inline class="common-form">
@@ -46,6 +46,7 @@
         month:'',
         week:'',
         day:'',
+        time:'',
         account:'',
         options: {
           disabledDate(date) {
@@ -95,27 +96,37 @@
       this.getList();
     },
     methods: {
+      rowClick(row){
+        this.$router.push({path:'/service-detail',query:{time:this.time,spacing:this.spacing,userCode:row.userCode}});
+      },
+      fill(val){
+        if(val <10) return "0"+val;
+        else return val;
+      },
       getList() {
         let time = [];
+        let trueTime = '';
         switch(this.spacing){
           case "月":
             let date = new Date(this.month.getFullYear(),this.month.getMonth()+1,0);
-            let day = date.getDate();
-            time.push(this.month.getFullYear()+"-"+(this.month.getMonth()+1)+"-1 00:00:00");
-            time.push(this.month.getFullYear()+"-"+(this.month.getMonth()+1)+ "-" + day + " 23:59:59");
+            let day = this.fill(date.getDate());
+            trueTime = this.toymd(this.month);
+            time.push(this.month.getFullYear()+"-"+this.fill((this.month.getMonth()+1))+"-01 00:00:00");
+            time.push(this.month.getFullYear()+"-"+this.fill((this.month.getMonth()+1))+ "-" + day + " 23:59:59");
             console.log(JSON.stringify(time));
             break;
           case "周":
             time.push(this.start+" 00:00:00");
             time.push(this.end + " 23:59:59");
+            trueTime = this.toymd(this.week);
             console.log(JSON.stringify(time));
             break;
           case "日":
-            time.push(this.day.getFullYear()+"-"+(this.day.getMonth()+1)+"-"+this.day.getDate()+" 00:00:00");
-            time.push(this.day.getFullYear()+"-"+(this.day.getMonth()+1)+"-"+this.day.getDate()+" 23:59:59");
+            time.push(this.day.getFullYear()+"-"+this.fill((this.day.getMonth()+1))+"-"+this.fill(this.day.getDate())+" 00:00:00");
+            time.push(this.day.getFullYear()+"-"+this.fill((this.day.getMonth()+1))+"-"+this.fill(this.day.getDate())+" 23:59:59");
+            trueTime = this.toymd(this.day);
             console.log(JSON.stringify(time));
             break;
-
         }
         this.axios.request({
           baseURL: '/poxy-next',
@@ -126,14 +137,15 @@
             limit:this.size,
             page:this.page,
             KEY_WORD:this.account,
-            START_DATE:'',
-            END_DATE:'',
+            START_DATE:time[0],
+            END_DATE:time[1],
           },
         }).then(res => {
           if (res.success === true) {
             this.showModal = false;
             this.total = res.total;
             this.tableData = res.data;
+            this.time = trueTime;
           }
         })
         // this.tableData = [{A: '13983765456', B: 10, C: 8, D: 9},
@@ -147,6 +159,9 @@
       changePage(page) {
         this.page = page;
         this.getList();
+      },
+      toymd(date){
+        return date.getFullYear() + "-"+ this.fill(date.getMonth()+1) + "-" + this.fill(date.getDate());
       }
     },
     watch:{
@@ -160,8 +175,8 @@
           let endSpacing = 7 - spacing;
           let start = new Date(year, month, day - startSpacing);
           let end = new Date(year, month, endSpacing + day);
-          this.start = start.getFullYear() + "-" + (start.getMonth()+1) + "-" + start.getDate();
-          this.end = end.getFullYear() + "-" + (end.getMonth()+1) + "-" + end.getDate();
+          this.start = start.getFullYear() + "-" + this.fill((start.getMonth()+1)) + "-" + this.fill(start.getDate());
+          this.end = end.getFullYear() + "-" + this.fill((end.getMonth()+1)) + "-" + this.fill(end.getDate());
         }else{
           this.start = this.end = "";
         }

@@ -124,8 +124,7 @@
                 }else{
                   index = params[0].axisValue;
                 }
-                console.log(params);
-                let str = "";
+                let str = index +"<br/>";
                 str += '<div style="background-color:#3C6AC1" class="eclass"></div>扫码牌数:' + data[index].a + '<br/>';
                 str += '<div style="background-color:#FF8137" class="eclass"></div>认领数:' + data[index].b + '<br/>';
                 str += '<div style="background-color:#A5A5A5" class="eclass"></div>精准报价数:' + data[index].c + '<br/>';
@@ -281,7 +280,8 @@
           this.EApp.setOption(option);
           this.showType = true;
           this.EApp.on('click', (params) => {
-            console.log(parseInt(params.name));
+            let name = params.name || '';
+            if(name) this.$router.push({path:'/company-reports',query:{time:name}});
           });
         },
       },
