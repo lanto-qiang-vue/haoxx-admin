@@ -358,7 +358,6 @@
       }
     },
     created(){
-      console.log(getAccount());
       let account = JSON.parse(getAccount());
       // console.log(account['telphone']);
       if(account.telphone){

@@ -3,7 +3,7 @@
                 :total="total" :show="showTable" :page="page" @onRowClick="rowClick">
     <div slot="search">
       <div class="search-block" style="width:100%;">
-        <Form :label-width="60" inline class="common-form">
+        <Form :label-width="60" inline class="common-form" style="margin-bottom:-10px;">
           <FormItem :label-width="0">
             <Input placeholder="客服账号搜索" v-model="account"/>
           </FormItem>

@@ -1056,6 +1056,17 @@ export default [
           access: '100506',
         },
         component: () => import('@/hxx-admin/carInsure-marketing/service-detail.vue')
+      },
+      {
+        path: '/extract-record',
+        name: 'extract-record',
+        meta: {
+          icon: 'md-funnel',
+          title: '提现记录',
+          lgType: "1001",
+          access: '100506',
+        },
+        component: () => import('@/hxx-admin/carInsure-marketing/img64.vue')
       }
     ]
   },

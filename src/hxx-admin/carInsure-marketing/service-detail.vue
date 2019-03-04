@@ -3,7 +3,7 @@
                 :total="total" :show="showTable" :page="page" @onRowClick="rowClick">
     <div slot="search">
       <div class="search-block" style="width:100%;">
-        <Form :label-width="60" inline class="common-form">
+        <Form :label-width="60" inline class="common-form" style="margin-bottom:-10px;">
           <FormItem :label-width="0">
             <Input placeholder="客服账号搜索" v-model="account"/>
           </FormItem>
@@ -98,6 +98,7 @@
         this.spacing = this.$route.query.spacing;
         let arr = this.$route.query.time.split('-');
         this.account = this.$route.query.userCode || '';
+        let date = new Date();
         switch(this.spacing){
           case '月':
             this.month = new Date(arr[0],(parseInt(arr[1])-1));
@@ -128,7 +129,8 @@
       if(this.$route.query.spacing && this.activated) {
         this.spacing = this.$route.query.spacing;
         let arr = this.$route.query.time.split('-');
-        this.account = this.$route.query.userCode || '';
+        this.account = this.$route.query.userCode || ''
+        let date = new Date();
         switch(this.spacing){
           case '月':
             this.month = new Date(arr[0],(parseInt(arr[1])-1));
@@ -146,6 +148,7 @@
             this.week = new Date(date.getFullYear(),date.getMonth(),date.getDate());
             break;
         }
+        this.getList();
       }
       this.activated = true;
     },
@@ -216,9 +219,6 @@
             this.tableData = res.data;
           }
         })
-        // this.tableData = [{A: '13983765456', B: 10, C: 8, D: 9},
-        //   {A: '18678765456', B: 20, C: 15, D: 10}
-        // ];
       },
       changePageSize(size) {
         this.size = size;

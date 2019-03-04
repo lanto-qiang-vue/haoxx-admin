@@ -128,7 +128,7 @@
         })
       },
       NO() {
-        this.$Modal.confirm({title: '系统提示', content: '确认要审核通过吗?', onOk: this.saveNo})
+        this.$Modal.confirm({title: '系统提示', content: '确认要审核通过不通过吗?', onOk: this.saveNo})
       },
       visibleChange() {
         this.clearsection();

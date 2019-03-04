@@ -75,6 +75,9 @@
           <FormItem prop="TENANT_NUM" label="其它说明" v-if="isCheck || type == 1">
             <Input type="textarea" v-model="info.REMARK"></Input>
           </FormItem>
+          <FormItem  label="失败说明" v-if="reason" >
+            <Input type="textarea" value=""></Input>
+          </FormItem>
         </Form>
       </Panel>
       <Panel name="2">证照上传
@@ -166,6 +169,7 @@
         collapse: ['1', '2'],
         interface:'/register/tenantregister/regionList',
         buttonName:'注册门店',
+        reason:false,
         info:{
           "TENANT_ID":"",
           "TENANT_AREA_CODE":"",
@@ -337,11 +341,11 @@
             this.info['CHECK_STATUS'] = this.data['CHECK_STATUS'];
             // console.log(this.info['CHECK_STATUS']);
             if(this.info['CHECK_STATUS'] == '10351003'){
-              this.editAble = true;
+              this.reason = this.editAble = true;
               this.buttonName = "再次提交";
             }else{
               this.buttonName = "注册门店";
-              this.editAble = false;
+             this.reason = this.editAble = false;
             }
           }else{
             this.buttonName = "注册门店";
