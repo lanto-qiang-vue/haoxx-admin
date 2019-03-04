@@ -28,29 +28,46 @@
       <Button type="primary">取消提现失败</Button>
       <Button type="primary">查看打款图</Button>
     </div>
-    <Modal v-model="showModal" title="提现成功" :width="500">
-      <Form ref="formData" :rules="rule" :model="formData" :mask-closable="false" :closable="false" :label-width="100" style="width:350px;">
-        <FormItem label="付款银行">
-          <Input></Input>
+    <Modal v-model="showModal" title="提现成功" :width="450" :mask-closable="false" :closable="false" >
+      <!--stage == 1 成功应该提交的-->
+      <Form ref="formData" :rules="rule" :model="formData" :label-width="120" style="width:370px;" v-show="stage == 1">
+        <FormItem label="付款银行" prop="A">
+          <Input v-model="formData.A"></Input>
         </FormItem>
-        <FormItem label="付款银行账户">
+        <FormItem label="付款银行账户" prop="B">
         <Input></Input>
       </FormItem>
-        <FormItem label="付款银行账号">
+        <FormItem label="付款银行账号" prop="C">
           <Input></Input>
         </FormItem>
-        <FormItem label="操作时间">
+        <FormItem label="操作时间" prop="D">
           <DatePicker format="yyyy/MM/dd" type="date" style="width:250px"></DatePicker>
         </FormItem>
-        <FormItem label="操作人">
+        <FormItem label="操作人" prop="E">
           <Select  placeholder="请选择操作人">
             <Option v-for="(item, index) in personList"
                     :key="index" :value="item.id">{{item.name}}
             </Option>
           </Select>
         </FormItem>
-        <FormItem label="打款截图">
-          <!--<DatePicker format="yyyy/MM/dd" type="date" style="width:250px"></DatePicker>-->
+        <FormItem label="打款截图" prop="F">
+         <img64 @back="back"></img64>
+        </FormItem>
+      </Form>
+      <!--stage == 2 提现失败原因-->
+      <Form ref="errorData" :rules="rule1" :model="errorData" :label-width="120" style="width:370px;" v-show="stage == 2">
+        <FormItem label="付款失败原因" prop="A">
+        <Input v-model="formData.A"></Input>
+      </FormItem>
+        <FormItem label="操作时间" prop="B">
+          <Input v-model="formData.B"></Input>
+        </FormItem>
+        <FormItem label="操作人" prop="C">
+          <Select  placeholder="请选择操作人">
+            <Option v-for="(item, index) in personList"
+                    :key="index" :value="item.id">{{item.name}}
+            </Option>
+          </Select>
         </FormItem>
       </Form>
       <div slot="footer">
@@ -63,15 +80,41 @@
 
 <script>
   import commonTable from '@/hxx-components/common-table.vue'
+  import img64 from '@/hxx-components/img64.vue'
     export default {
         name: "extract-record",
-        components:{commonTable},
+        components:{commonTable,img64},
       data(){
           return{
             tableData:[],
-            showModal:true,
-            formData:{},
-            rule:{},
+            showModal:false,
+            stage:2,
+            formData:{
+              A:'',
+              B:'',
+              C:'',
+              D:'',
+              E:'',
+              F:'',
+            },
+            errorData:{
+              A:'',
+              B:'',
+              C:'',
+            },
+            rule:{
+              A:{required:true,message:'必填'},
+              B:{required:true,message:'必填'},
+              C:{required:true,message:'必填'},
+              D:{required:true,message:'必填'},
+              E:{required:true,message:'必填'},
+              F:{required:true,message:'图片必填'},
+            },
+            rule1:{
+              A:{required:true,message:'必填'},
+              B:{required:true,message:'必填'},
+              C:{required:true,message:'必填'},
+            },
             columns:[
               {title: '序号',  width: 70,align:'center',
                 render: (h, params) => h('span', (this.page-1)*this.limit+params.index+1 )
@@ -115,6 +158,10 @@
           this.getList();
       },
       methods:{
+        back(resource){
+         if(resource != null) this.formData.F = resource;
+         else this.formData.F = "";
+        },
         changePageSize(size){
           this.limit = size;
           this.getList();

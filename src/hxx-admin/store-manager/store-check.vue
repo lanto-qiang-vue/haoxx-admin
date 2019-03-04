@@ -36,6 +36,17 @@
         <Button type="error" @click="goback">返回</Button>
       </div>
     </Modal>
+    <Modal v-model="errorModal" title="不通过" :width="450" :mask-closable="false" :closable="false">
+      <Form ref="errorData" :rules="rule1" :model="errorData" :label-width="120" style="width:370px;">
+        <FormItem label="失败原因" prop="FAIL_REASON">
+          <Input type="textarea" v-model="errorData.FAIL_REASON"></Input>
+        </FormItem>
+      </Form>
+      <div slot="footer">
+        <Button @click="errorModal=false">取消</Button>
+        <Button type="primary" @click="confirmNo">保存</Button>
+      </div>
+    </Modal>
   </common-table>
 </template>
 <script>
@@ -59,6 +70,9 @@
         clearType: false,
         showModal: false,
         showTable: false,
+        errorModal: false,
+        rule1: {FAIL_REASON: {required: true, message: '失败原因必填'}},
+        errorData: {FAIL_REASON: ''},
         columns: [
           {title: '序号', key: 'TENANT_NUM', sortable: true, minWidth: 100},
           {title: '门店商户号', key: 'TENANT_NAME', sortable: true, minWidth: 140},
@@ -88,12 +102,12 @@
       OK() {
         if (!this.detailData.BUSINESS_TYPE) {
           this.$Modal.error({
-            title:'系统提示',
-            content:'门店经营类型未选择,请前往门店信息修改',
+            title: '系统提示',
+            content: '门店经营类型未选择,请前往门店信息修改',
           });
           return false;
         }
-        this.$Modal.confirm({title:'系统提示',content:'确认要审核通过吗?',onOk:this.saveOk})
+        this.$Modal.confirm({title: '系统提示', content: '确认要审核通过吗?', onOk: this.saveOk})
       },
       saveOk() {
         this.save({
@@ -105,8 +119,9 @@
       saveNo() {
         this.save({
           TENANT_ID: this.obj.TENANT_ID,
-          REMARK: this.obj.REMARK ? this.obj.REMARK : "",
-          CHECK_STATUS: "10351003"
+          // REMARK: this.obj.REMARK ? this.obj.REMARK : "",
+          CHECK_STATUS: "10351003",
+          FAIL_REASON:this.errorData.FAIL_REASON
         });
       },
       getRemark(data) {
@@ -124,11 +139,20 @@
           if (res.success === true) {
             this.showModal = false;
             this.getList();
+            this.errorModal = false;
           }
         })
       },
       NO() {
-        this.$Modal.confirm({title: '系统提示', content: '确认要审核通过不通过吗?', onOk: this.saveNo})
+        this.errorModal = true;
+        this.$refs.errorData.resetFields();
+      },
+      confirmNo() {
+        this.$refs.errorData.validate((valid) => {
+          if (valid) {
+            this.$Modal.confirm({title: '系统提示', content: '确认要审核通过不通过吗?', onOk: this.saveNo})
+          }
+        });
       },
       visibleChange() {
         this.clearsection();

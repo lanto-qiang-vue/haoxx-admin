@@ -328,8 +328,26 @@
             // },
         },
         mounted() {
+		         let rateArr = getDictGroup(this.$store.state.app.dict,'1054');
+		         let rate = [];
+             for(let i in rateArr){
+              rate.push(parseFloat(rateArr[i].name));
+             }
+             rate.sort(function(a,b){
+               return a - b;
+             });
+         this.initRateArr = [
+            {code:0,name:"0%"},
+          ];
+         for(let i in rate){
+           this.initRateArr.push({code:rate[i]/100,name:rate[i]+"%"});
+         }
+          // {code:0,name:"0%"},
+          // {code:0.03,name:"3%"},
+          // {code:0.06,name:"6%"},
+          // {code:0.13,name:"13%"},
+		      //    console.log(JSON.stringify(rate));
             this.initUnitArr=getDictGroup(this.$store.state.app.dict, '1015');
-            
             this.initPartSource=getDictGroup(this.$store.state.app.dict, '1017');
         },
         computed:{

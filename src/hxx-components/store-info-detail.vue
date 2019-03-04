@@ -73,10 +73,10 @@
           </FormItem>
           <div></div>
           <FormItem prop="TENANT_NUM" label="其它说明" v-if="isCheck || type == 1">
-            <Input type="textarea" v-model="info.REMARK"></Input>
+            <Input type="textarea" v-model="info.REMARK" :readonly="!editAble"></Input>
           </FormItem>
           <FormItem  label="失败说明" v-if="reason" >
-            <Input type="textarea" value=""></Input>
+          <span style="color:red;">{{info.FAIL_REASON}}</span>
           </FormItem>
         </Form>
       </Panel>
@@ -342,6 +342,7 @@
             // console.log(this.info['CHECK_STATUS']);
             if(this.info['CHECK_STATUS'] == '10351003'){
               this.reason = this.editAble = true;
+              this.info['FAIL_REASON'] = this.data['FAIL_REASON'];
               this.buttonName = "再次提交";
             }else{
               this.buttonName = "注册门店";

@@ -1066,7 +1066,7 @@ export default [
           lgType: "1001",
           access: '100506',
         },
-        component: () => import('@/hxx-admin/carInsure-marketing/img64.vue')
+        component: () => import('@/hxx-admin/carInsure-marketing/extract-record.vue')
       }
     ]
   },
