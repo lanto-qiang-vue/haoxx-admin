@@ -118,13 +118,15 @@
           },
           {title:'操作人角色',key:'userName',minWidth:140},
           {title:'车牌号',key:'licenseNo',minWidth:140},
-          {title:'保险到期时间',key:'insuranceDays',minWidth:140},
+          {title:'商业险到期时间',key:'insuranceDays',minWidth:140},
+          {title:'交强险到期时间',key:'insuranceDays',minWidth:140},
           {title:'扫车牌时间',key:'createDate',minWidth:140,
             render: (h, params) => h('span',params.row.createDate.substr(0,16))
           },
           {title:'培训成功次数',key:'trainNum',minWidth:140,align:'right'},
           {title:'拨打次数',key:'callNum',minWidth:140,align:'right'},
-          {title:'扫车牌数',key:'licenseNum',minWidth:140,align:'right'}
+          {title:'扫车牌数',key:'licenseNum',minWidth:140,align:'right'},
+          {title:'备注',key:'RESULT',minWidth:140,align:'right'}
         ],
         total:0,
         showTable:false,

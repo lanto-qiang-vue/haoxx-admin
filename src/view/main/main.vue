@@ -144,11 +144,20 @@ export default {
       this.setTagNavList(res)
       let openName = ''
       if (type === 'all') {
-        this.turnToPage('home')
+        if(this.$store.state.user.userInfo.user.lgType == 1001){
+          this.turnToPage('admin-home')
+        }else{
+          this.turnToPage('home')
+        }
         openName = 'home'
       } else if (this.$route.name === name) {
-        this.$router.push({ name: nextName })
-        openName = nextName
+        if(this.$store.state.user.userInfo.user.lgType == 1001 && nextName == 'home'){
+          this.$router.push({ name:"admin-home"})
+          openName = "admin-home"
+        }else{
+          this.$router.push({ name: nextName })
+          openName = nextName
+        }
       }
       this.$refs.sideMenu.updateOpenName(openName)
     },

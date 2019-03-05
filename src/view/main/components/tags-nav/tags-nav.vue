@@ -89,14 +89,19 @@ export default {
     },
     handleTagsOption (type) {
       if (type === 'close-all') {
-        let res = this.list.filter(item => item.name === 'home')
+        let res;
+        if(this.$store.state.user.userInfo.user.lgType == 1001){
+          res = this.list.filter(item => item.name === 'admin-home')
+        }else{
+          res = this.list.filter(item => item.name === 'home');
+        }
         this.$emit('on-close', res, 'all')
       } else {
         // 关闭除当前页和home页的其他页
         let currentName = ''
         let res = this.list.filter(item => {
           if (item.name === this.value.name) currentName = item.name
-          return item.name === this.value.name || item.name === 'home'
+          return item.name === this.value.name || item.name === 'home' || item.name === 'admin-home'
         })
         this.$emit('on-close', res, 'others')
         setTimeout(() => {
