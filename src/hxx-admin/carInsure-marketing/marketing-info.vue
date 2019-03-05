@@ -86,7 +86,7 @@
                       this.formData.id = params.row.id;
                       this.formData.tenantId = params.row.tenantId;
                       this.formData.trainNum = params.row.trainNum || 0;
-                      this.formData.result = "";
+                      this.formData.result = params.row.RESULT;
                       this.formData.claminResult = this.resultList[0].id;
                     }
                   }
@@ -119,7 +119,7 @@
           {title:'操作人角色',key:'userName',minWidth:140},
           {title:'车牌号',key:'licenseNo',minWidth:140},
           {title:'商业险到期时间',key:'insuranceDays',minWidth:140},
-          {title:'交强险到期时间',key:'insuranceDays',minWidth:140},
+          // {title:'交强险到期时间',key:'insuranceDays',minWidth:140},
           {title:'扫车牌时间',key:'createDate',minWidth:140,
             render: (h, params) => h('span',params.row.createDate.substr(0,16))
           },
@@ -205,6 +205,7 @@
               data: {
                 access_token: this.$store.state.user.token,
                 id:this.formData.id,
+                result:this.formData.result,
                 claminResult:this.formData.claminResult,
                 claminId:this.formData.claminId,
                 tenantId:this.formData.tenantId,

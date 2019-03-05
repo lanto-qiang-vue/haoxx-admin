@@ -44,7 +44,8 @@
           {title: '工单数', key: 'TOTAL', sortable: true, minWidth: 140,align:'center'},
           {title: '结算单数', key: 'NUM', sortable: true, minWidth: 140,align:'center'},
           {title: '区域', key: 'name', sortable: true, minWidth: 140},
-          {title: '更新时间', key: 'UPDATE_TIME', sortable: true, minWidth: 140},
+          // {title: '更新时间', key: 'UPDATE_TIME', sortable: true, minWidth: 140},
+          {title: '更新时间', key: 'CREATE_TIME', sortable: true, minWidth: 140},
         ],
         search: {
           keyword: '',
