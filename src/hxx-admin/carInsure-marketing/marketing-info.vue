@@ -103,7 +103,7 @@
                   },
                   on: {
                     click: (index) => {
-                      this.callPhone(params.row.id,params.row.telPhone);
+                      this.callPhone(params.row.id,params.row.telPhone,params.row.tenantId);
                     }
                   }
                 }, '拨打电话')
@@ -150,7 +150,7 @@
         }
         return result;
       },
-      callPhone(detailId,telphone){
+      callPhone(detailId,telphone,tenantId){
         this.$Modal.confirm({
           title:'系统提示',
           content:'确认呼叫电话?',
@@ -163,6 +163,7 @@
                 access_token: this.$store.state.user.token,
                 telphone:telphone,
                 detailId:detailId,
+                tenantId:tenantId,
               },
             }).then(res => {
               if (res.success === true) {

@@ -41,8 +41,8 @@ module.exports = {
   devServer: {
     proxy: {
       '/proxy/': {
-        target: 'http://192.168.169.106:8761/',
-        // target: 'http://developer.hxx.hoxiuxiu.com/',
+        // target: 'http://192.168.169.106:8761/',
+        target: 'http://developer.hxx.hoxiuxiu.com/',
         // target:'https://hxx.test.hoxiuxiu.com/',
         // target:'http://api.hxx.hoxiuxiu.com/',
         pathRewrite: {'^/proxy/': ''},
@@ -55,7 +55,7 @@ module.exports = {
         secure: false
       },
       '/poxy-next/':{
-        target:'http://192.168.169.106:8289/',
+        target:'https://callcenter.test.hoxiuxiu.com/',
         pathRewrite: {'^/poxy-next/': ''},
         secure: false
       }
