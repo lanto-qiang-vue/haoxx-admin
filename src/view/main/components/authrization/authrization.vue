@@ -1,5 +1,5 @@
 <template>
-  <Tooltip class="picking-number"  content="总店授权">
+  <Tooltip v-show="show" class="picking-number"  content="总店授权">
     <div class="text" @click="authrization">
       <span>{{value == 0 ? '总店授权' : '取消总店授权'}}</span>
     </div>
@@ -13,6 +13,7 @@
       data(){
           return {
             value:0,
+            show:false,
           }
       },
        methods:{
@@ -43,6 +44,13 @@
          }
        },
       mounted(){
+        let data = this.$store.state.user.accessMenu;
+        for(let i in data){
+          if(data[i].funcId == 1010){
+            this.show = true;
+            break;
+          }
+        }
         this.value = getIsAuthorize();
       }
     }
