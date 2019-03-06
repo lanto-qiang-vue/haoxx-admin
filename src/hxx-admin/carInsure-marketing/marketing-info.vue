@@ -126,7 +126,7 @@
           {title:'培训成功次数',key:'trainNum',minWidth:140,align:'right'},
           {title:'拨打次数',key:'callNum',minWidth:140,align:'right'},
           {title:'扫车牌数',key:'licenseNum',minWidth:140,align:'right'},
-          {title:'备注',key:'RESULT',minWidth:140,align:'right'}
+          {title:'备注',key:'result',minWidth:140,align:'right'}
         ],
         total:0,
         showTable:false,
