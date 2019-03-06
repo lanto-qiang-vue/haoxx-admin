@@ -1064,7 +1064,7 @@ export default [
           icon: 'md-funnel',
           title: '提现记录',
           lgType: "1001",
-          access: '100506',
+          access: '999999',
         },
         component: () => import('@/hxx-admin/carInsure-marketing/extract-record.vue')
       }
