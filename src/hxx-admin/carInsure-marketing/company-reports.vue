@@ -54,10 +54,10 @@
           {title: '精准报价数', minWidth: 140, key: 'preciseNo'},
           {title: '成功购买数', minWidth: 140, key: 'purchaseNo'},
           {title: '精准报价转换率', minWidth: 140, key: 'preciseConversion',
-            render: (h, params) => h('span',params.row.preciseConversion * 100 + "%")
+            render: (h, params) => h('span',parseInt(params.row.preciseConversion*10000)/100+ "%")
           },
           {title: '购买转换率', minWidth: 140, key: 'purchaseConversion',
-            render: (h, params) => h('span',params.row.purchaseConversion * 100 + "%")
+            render: (h, params) => h('span',parseInt(params.row.purchaseConversion*10000) / 100 + "%")
           },
         ],
         monthList: [{code: 0, name: '请选择月份'}],

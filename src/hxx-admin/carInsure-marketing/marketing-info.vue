@@ -86,7 +86,7 @@
                       this.formData.id = params.row.id;
                       this.formData.tenantId = params.row.tenantId;
                       this.formData.trainNum = params.row.trainNum || 0;
-                      this.formData.result = params.row.RESULT;
+                      this.formData.result = params.row.result || '';
                       this.formData.claminResult = this.resultList[0].id;
                     }
                   }
@@ -110,6 +110,7 @@
               ]);
             }
           },
+          {title:'联系电话',key:'telPhone',minWidth:140,align:'center'},
           {title: '培训结果', key: 'claimResult', minWidth: 140,
             render: (h, params) => h('span',this.toString(params.row.claimResult))
           },
@@ -126,7 +127,9 @@
           {title:'培训成功次数',key:'trainNum',minWidth:140,align:'right'},
           {title:'拨打次数',key:'callNum',minWidth:140,align:'right'},
           {title:'扫车牌数',key:'licenseNum',minWidth:140,align:'right'},
-          {title:'备注',key:'result',minWidth:140,align:'right'}
+          {title:'备注',key:'result',minWidth:140,align:'right',
+            render: (h, params) => h('span',params.row.result || '')
+          }
         ],
         total:0,
         showTable:false,
