@@ -114,7 +114,6 @@
           },
           {
             title: '联系电话', key: 'telPhone', minWidth: 140, align: 'center',
-            render: (h, params) => h('span',params.row.telPhone || '')
           },
           {
             title: '培训结果', key: 'claimResult', minWidth: 140,
@@ -137,7 +136,6 @@
           {title: '扫车牌数', key: 'licenseNum', minWidth: 140, align: 'right'},
           {
             title: '备注', key: 'result', minWidth: 140, align: 'right',
-            render: (h, params) => h('span', params.row.result || '')
           }
         ],
         total: 0,

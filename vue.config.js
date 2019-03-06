@@ -55,8 +55,8 @@ module.exports = {
         secure: false
       },
       '/poxy-next/':{
-        target:'http://192.168.169.105:8289/',
-        // target:'https://callcenter.test.hoxiuxiu.com/',
+        // target:'http://192.168.169.105:8289/',
+        target:'https://callcenter.test.hoxiuxiu.com/',
         pathRewrite: {'^/poxy-next/': ''},
         secure: false
       }
