@@ -1786,6 +1786,14 @@
       handleCommit(name) {
         this.$refs[name].validate((valid) => {
           if (valid) {
+            //维修项目为空,不能派工
+            if(this.commitItem.length < 1){
+              this.$Modal.error({
+                title:'系统提示',
+                content:'派工需要选择至少一条维修项目',
+              });
+              return false;
+            }
             if (this.listSearch.VEHICLE_MODEL&&this.listSearch.VIN_NO) {
               if(this.listSearch.CUSTOMER_NAME){
                   this.$Modal.confirm({
@@ -2188,9 +2196,9 @@
       },
       //获取维修项目数据-------
       sTenanceItem(val) {
-        
         this.getItem = val;
         this.commitItem = [];
+        let WORK_CLASS_ID =  this.vehicleTeamArr[0] && (this.vehicleTeamArr[0]['itemId']||1);
         for (let j in this.getItem) {
           var listItemsModel = {
             "DETAIL_ID": "",
@@ -2230,7 +2238,7 @@
             "ORDER_DATE": null,
             "IS_SEL": true,
             "REMARK": "",
-            "WORK_CLASS_ID": this.vehicleTeamArr[0]['itemId']||1,
+            "WORK_CLASS_ID": WORK_CLASS_ID,
             "WORK_CLASS_NAME": "",
           }
           for (let i in this.getItem[j]) {

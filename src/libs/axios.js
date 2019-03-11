@@ -70,7 +70,6 @@ class httpRequest {
           }else{
             Message.error(data.title || '服务内部错误2')
           }
-
         }else{
           Message.error(data.title || '服务内部错误1')
         }

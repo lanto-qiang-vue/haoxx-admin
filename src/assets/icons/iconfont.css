@@ -14,7 +14,6 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
 .icon-bear:before { content: "\e600"; }
 
 .icon-resize-vertical:before { content: "\e7c3"; }
