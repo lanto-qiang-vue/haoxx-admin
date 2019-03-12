@@ -1830,6 +1830,7 @@
         
         this.listSearch.PLAN_END_DATE = formatDate(this.listSearch.PLAN_END_DATE);
         //提交维修项目套餐
+        //2019/03/12 后端王旭要求派工传递sign = 1;
         this.axios.request({
           url: '/tenant/repair/ttrepairworkorder/saveOrSubmit',
           method: 'post',
@@ -1839,7 +1840,8 @@
             itemGroups: JSON.stringify(this.commitItemGroup),
             parts: JSON.stringify(this.commitParts),
             otherItems: JSON.stringify(this.commitOtherItem),
-            access_token: this.$store.state.user.token
+            access_token: this.$store.state.user.token,
+            sign:1,
           }
         }).then(res => {
           if (res.success === true) {

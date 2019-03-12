@@ -127,7 +127,12 @@
               }
               if(buttonStatus == 'success' && params.row.CLIENTAUTHORIZATION != 1) disabled = true;
               if(params.row.TENANT_ID == this.tenantId){
-
+                /*
+                * 登录时存储登录门店id
+                * 注册列表页门店id 等于 登录时候门店id 时 这个店就是这个用户的
+                * 无视CLIENTAUTHORIZATION 值,允许切换...
+                */
+                disabled = false;
               }
               return h('div', [
                 h('Button', {

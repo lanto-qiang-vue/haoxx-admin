@@ -45,6 +45,7 @@
       <Button type="primary" :disabled="!detailData" @click="setStore" v-if="accessBtn('setversion')">设置门店版本</Button>
       <!--<Button type="primary" :disabled="canReset" @click="resetStore" v-if="accessBtn('resetzh')">重置健康档案账号</Button>-->
       <Button type="error" :disabled="!detailData" @click="storeDelete" v-if="accessBtn('deltenant')">门店删除</Button>
+      <Button type="primary" :disabled="!detailData" @click="authorization">授权管理</Button>
     </div>
 
     <Modal v-model="showAddModal" @on-visible-change="visibleChange" title="新增电子健康档案账号" :width="400">
@@ -65,18 +66,34 @@
       </div>
     </Modal>
     <Modal v-model="setModal" @on-visible-change="visibleChange" title="选择门店版本" :width="400">
-      <Form ref="setData" :rules="setRule" :model="setData" :label-width="120">
-        <FormItem label="选择门店版本" prop="ROLE_ID">
-          <Select v-model="setData.ROLE_ID">
-            <Option v-for="(item, index) in versionList"
-                    :key="index" :value="item.ROLE_ID">{{item.ROLE_NAME}}
+    <Form ref="setData" :rules="setRule" :model="setData" :label-width="120">
+      <FormItem label="选择门店版本" prop="ROLE_ID">
+        <Select v-model="setData.ROLE_ID">
+          <Option v-for="(item, index) in versionList"
+                  :key="index" :value="item.ROLE_ID">{{item.ROLE_NAME}}
+          </Option>
+        </Select>
+      </FormItem>
+    </Form>
+    <div slot="footer">
+      <Button @click="setModal=false">取消</Button>
+      <Button type="primary" @click="saveVersion('setData')">保存</Button>
+    </div>
+  </Modal>
+    <!--授权管理-->
+    <Modal v-model="authorizationModal" title="授权类型" :width="400">
+      <Form ref="authorizationData" :rules="authorizationRule" :model="authorizationData" :label-width="100">
+        <FormItem label="选择类型" prop="clientStatus">
+          <Select v-model="authorizationData.clientStatus">
+            <Option v-for="(item, index) in authorizationList"
+                    :key="index" :value="item.id">{{item.name}}
             </Option>
           </Select>
         </FormItem>
       </Form>
       <div slot="footer">
-        <Button @click="setModal=false">取消</Button>
-        <Button type="primary" @click="saveVersion('setData')">保存</Button>
+        <Button @click="authorizationModal=false">取消</Button>
+        <Button type="primary" @click="saveAuthorization">保存</Button>
       </div>
     </Modal>
     <Modal v-model="resetModal" @on-visible-change="visibleChange" title="重置健康档案账号" :width="400">
@@ -101,6 +118,8 @@
 </template>
 
 <script>
+  /*2019/03/12 增加授权管理 列表增加字段CLIENTAUTHORIZATION
+   */
   import mixin from '@/hxx-components/mixin'
   import CommonTable from '@/hxx-components/common-table.vue'
   import StoreInfoDetail from '@/hxx-components/store-info-detail.vue'
@@ -119,6 +138,22 @@
         }
       }
       return {
+        authorizationModal:false,
+        authorizationData:{
+          access_token:this.$store.state.user.token,
+          tenantId:'',
+          clientStatus:-1,
+        },
+        authorizationList:[
+          {id:-1,name:'请选择类型'},
+          {id:0,name:'门店取消授权'},
+          {id:1,name:'门店授权总店'},
+          {id:2,name:'强连锁'},
+        ],
+        authorizationRule:{clientStatus:[{required:true,message:'必填'},{validator:(rule, value, callback)=>{
+              if(value == -1) callback(new Error('请选类型'));
+              callback();
+            }}]},
         versionList:[
           // {code:0,name:'基础版本'},
           // {code:1,name:'专业版本'},
@@ -170,6 +205,8 @@
           {title: '门店名称', key: 'TENANT_NAME', sortable: true, minWidth: 200},
           {title: '门店版本', key: 'ROLE_TYPE', sortable: true, minWidth: 150,
             // render: (h, params) => h('span', getName(this.versionList, params.row.ROLE_TYPE))
+          },
+          {title: '授权类型', key: 'CLIENTAUTHORIZATION', sortable: true, minWidth: 150,
           },
           {title: '门店地址', key: 'TENANT_ADD', sortable: true, minWidth: 150},
           {title: '联系人姓名', key: 'LINK_MAN', sortable: true, minWidth: 130},
@@ -228,6 +265,29 @@
       this.getList()
     },
     methods: {
+      saveAuthorization(){
+       this.$refs.authorizationData.validate((valid)=>{
+         if(valid){
+           this.axios.request({
+             url: '/manage/info/tenantinfo/updateClient',
+             method: 'post',
+             data:this.authorizationData,
+           }).then(res => {
+             if (res.success === true) {
+               this.$Message.success("授权成功");
+               this.getList();
+               this.authorizationModal = false;
+             }
+           })
+         }
+       })
+      },
+      authorization(){
+        //授权管理按钮点击事件
+        this.authorizationModal = true;
+        this.$refs.authorizationData.resetFields();
+        this.authorizationData.tenantId = this.detailData.TENANT_ID;
+      },
       storeDelete(){
         this.$Modal.confirm({
           title:'系统提示',
@@ -272,7 +332,7 @@
         })
       },
       visibleChange(){
-        this.detailData = null;
+        // this.detailData = null;
       },
       saveReset(name) {
         this.$refs[name].validate((valid) => {
@@ -360,7 +420,7 @@
       },
       setStore() {
         this.setData.tenantId = this.detailData.TENANT_ID;
-        this.setData.ROLE_ID = 0;
+        this.setData.ROLE_ID = '0';
         this.getVersion();
         this.setModal = true;
       },

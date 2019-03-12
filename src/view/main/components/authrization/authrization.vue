@@ -45,13 +45,20 @@
        },
       mounted(){
         let data = this.$store.state.user.accessMenu;
-        for(let i in data){
-          if(data[i].funcId == 1010){
-            this.show = true;
-            break;
-          }
-        }
+        /* 0 未授权 1 已授权 2 加强连锁
+         * 为加强连锁 跳过权限 直接不显示
+         */
         this.value = getIsAuthorize();
+        if(this.value != 2){
+          for(let i in data){
+            if(data[i].funcId == 1010){
+              this.show = true;
+              break;
+            }
+          }
+        }else{
+
+        }
       }
     }
 </script>

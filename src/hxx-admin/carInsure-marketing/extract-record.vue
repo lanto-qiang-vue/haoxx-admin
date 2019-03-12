@@ -99,7 +99,8 @@
         showModal: false,
         time: [],
         stage: 2,
-        oldValue:'',
+        oldValue: '',
+        //提现成功信息
         formData: {
           id: '',
           access_token: this.$store.state.user.token,
@@ -110,6 +111,7 @@
           HANDLE_ID: '',
           CASH_IMAGE: '',
         },
+        //提现失败信息
         errorData: {
           id: '',
           access_token: this.$store.state.user.token,
@@ -117,6 +119,7 @@
           HANDLE_DATE: '',
           HANDLE_ID: '',
         },
+        //formData 规则
         rule: {
           PAY_BANK: {required: true, message: '必填'},
           PAY_ACCOUNT: {required: true, message: '必填'},
@@ -125,6 +128,7 @@
           HANDLE_ID: {required: true, message: '必填'},
           CASH_IMAGE: {required: true, message: '图片必填'},
         },
+        // errorData 规则
         rule1: {
           REMARK: {required: true, message: '必填'},
           HANDLE_DATE: {required: true, message: '必填'},
@@ -175,30 +179,37 @@
     },
     methods: {
       up(event) {
-        //银行格式...
+        /*银行格式处理:
+         * split 分割 join 拼接 过滤 空
+         * 当值为空 值为空
+         * 正则 验证 是否为数字类型 不为数字 将值设为 旧值 反之 将更新旧值
+         * 每四位拼接 空
+         * 过滤两端 空
+         */
         let text = event.target.value.split(' ');
         text = text.join('');
         let reg = /^\d+$/;
-        if(reg.test(text)){
+        if (reg.test(text)) {
           this.oldValue = text;
-        }else{
-          if(text == ''){
+        } else {
+          if (text == '') {
             text = '';
-          }else{
+          } else {
             text = this.oldValue;
           }
         }
         let str = "";
-          for(let i = 0;i<text.length;i++){
-            str += text[i];
-            if((i+1)%4 == 0){
-              str += " ";
-            }
+        for (let i = 0; i < text.length; i++) {
+          str += text[i];
+          if ((i + 1) % 4 == 0) {
+            str += " ";
+          }
         }
-         str = str.trim();
-         event.target.value = str;
+        str = str.trim();
+        event.target.value = str;
       },
       look() {
+        //查看打款图
         let id = this.row.id;
         this.clear();
         this.axios.request({
@@ -216,6 +227,7 @@
         })
       },
       extractError() {
+        //提取失败
         this.getPerson();
         this.showModal = Math.random();
         this.stage = 2;
@@ -227,6 +239,7 @@
         this.clear();
       },
       cancel(message) {
+        //取消提现成功，提现失败
         let id = this.row.id;
         this.clear();
         this.$Modal.confirm({
@@ -249,16 +262,19 @@
         });
       },
       clear() {
+        //清空选中数据
         this.clearSelect = Math.random();
         this.row = "";
       },
       statusToString(id) {
+        //状态数字变中文
         for (let i in this.statusList) {
           if (this.statusList[i].id == id) return this.statusList[i].name;
         }
         return '';
       },
       save() {
+        //保存 通过阶段stage 区分
         if (this.stage == 1) {
           this.$refs.formData.validate((valid) => {
             if (valid) {
@@ -315,6 +331,7 @@
         }
       },
       extractSuccess() {
+        //提现成功
         this.showModal = true;
         this.stage = 1;
         this.$refs.formData.resetFields();
@@ -326,6 +343,7 @@
         this.clear();
       },
       getPerson() {
+        //获取操作人下拉
         this.axios.request({
           url: '/manage/hxxpay/cashFlow/sysUserList',
           method: 'post',
@@ -339,6 +357,7 @@
         })
       },
       back(resource) {
+        //组件img64 回调
         if (resource != null) this.formData.CASH_IMAGE = resource;
         else this.formData.CASH_IMAGE = "";
         this.$refs.formData.validate('CASH_IMAGE');
@@ -355,14 +374,17 @@
         this.row = row;
       },
       startTime(time) {
+        //起始时间处理
         if (time == '') return '';
         return time.getFullYear() + "-" + this.fillZero(time.getMonth() + 1) + "-" + this.fillZero(time.getDate()) + " 00:00:00";
       },
       endTime(time) {
+        //结束时间处理
         if (time == '') return '';
         return time.getFullYear() + "-" + this.fillZero(time.getMonth() + 1) + "-" + this.fillZero(time.getDate()) + " 23:59:59";
       },
       fillZero(val) {
+        //时间填充  1 => 01
         return val >= 10 ? val : '0' + val;
       },
       getList() {

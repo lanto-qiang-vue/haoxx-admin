@@ -37,12 +37,11 @@ module.exports = {
   },
   // 打包时不生成.map文件
   productionSourceMap: false,
-
   devServer: {
     proxy: {
       '/proxy/': {
-        // target: 'http://192.168.169.113:8761/',
-        target: 'http://developer.hxx.hoxiuxiu.com/',
+        target: 'http://192.168.169.113:8761/',
+        // target: 'http://developer.hxx.hoxiuxiu.com/',
         // target:'https://hxx.test.hoxiuxiu.com/',
         // target:'http://api.hxx.hoxiuxiu.com/',
         pathRewrite: {'^/proxy/': ''},
