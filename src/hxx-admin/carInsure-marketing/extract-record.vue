@@ -182,7 +182,11 @@
         if(reg.test(text)){
           this.oldValue = text;
         }else{
-          text = this.oldValue;
+          if(text == ''){
+            text = '';
+          }else{
+            text = this.oldValue;
+          }
         }
         let str = "";
           for(let i = 0;i<text.length;i++){
