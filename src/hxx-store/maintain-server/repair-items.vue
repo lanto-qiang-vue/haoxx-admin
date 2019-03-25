@@ -38,7 +38,7 @@
           <!--</div>-->
         </div>
         <div slot="operate" style="margin-top:-10px;">
-          <Button type="primary" @click="impor()" v-if="accessBtn('export')">导入标准库</Button>
+          <Button type="primary" @click="impor(),importData = []" v-if="accessBtn('export')">导入标准库</Button>
           <Button type="success" :disabled="isdisabled" @click="add()">新增</Button>
           <Button type="error" :disabled="cando" @click="del()">删除</Button>
           <Button type="info" :disabled="cando" @click="edit()" v-if="accessBtn('edit')">修改</Button>
@@ -399,6 +399,11 @@
             this.doImport(ids);
             this.showModal = false;
           }
+        }else{
+          this.$Modal.info({
+            title:'系统提示',
+            content:'请选择要导入的项目',
+          });
         }
       },
       find3(data, da) {
@@ -425,6 +430,7 @@
         }).then(res => {
           if (res.success === true) {
             this.$Message.success('导入成功');
+            this.importData = [];
           }
         })
       },

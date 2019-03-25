@@ -192,7 +192,7 @@
         if(Object.prototype.toString.call(data)==='[object Object]'){
             this.getList(data.type,data.id);
         }
-        console.log(JSON.stringify(data));
+        // console.log(JSON.stringify(data));
         // if (data.length > 0 || data) {
         //   let type = data instanceof Array ? data[0].type : data.type
         //   let id = data instanceof Array ? data[0].id : data.id

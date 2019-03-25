@@ -885,6 +885,17 @@ export default [
         },
         component: () => import('@/hxx-store/system-manage/health-file.vue')
       },
+      {
+        path: '/operation-description',
+        name: 'operation-description',
+        meta: {
+          icon: 'md-funnel',
+          title: '操作指南',
+          lgType: "1002",
+          access: '100708',
+        },
+        component: () => import('@/hxx-store/system-manage//operation-description.vue')
+      },
     ]
   },
 
@@ -1249,6 +1260,30 @@ export default [
       //   },
       //   component: () => import('@/hxx-admin/stystem-management/user-management.vue')
       // },
+    ]
+  },
+  {
+    path: '/operation-publish',
+    name: 'operation-publish',
+    meta: {
+      icon: 'logo-buffer',
+      title: '运营发布',
+      lgType: "1001",
+      access: '1007',
+    },
+    component: Main,
+    children:[
+      {
+        path: '/app-version',
+        name: 'app-version',
+        meta: {
+          icon: 'md-funnel',
+          title: 'APP版本发布',
+          lgType: "1001",
+          access: '100701',
+        },
+        component: () => import('@/hxx-admin/operation-publish/app-version.vue')
+      }
     ]
   },
   {
