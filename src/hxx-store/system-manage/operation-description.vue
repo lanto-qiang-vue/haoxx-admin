@@ -2,7 +2,7 @@
   <div style="width:100%;height:100%;position:relative;">
     <div class="main-body" v-show="!showModal">
       <!--<div style="width:100%;text-align: center;font-size:24px;padding-top: 20px;"><b>操作指南</b></div>-->
-      <div class="box" v-for="item in list">
+      <div class="box" v-if="item.show" v-for="item in list">
         <div class="small-box" @click="to(item.imgList,item.button || [],item.paging || [])" :style="{background:item.background}">
           <div>{{item.title}}</div>
         </div>
@@ -57,6 +57,7 @@
         nextType: false,
         showModal: false,
         pagingList:[],
+        isShow:false,
         buttonList: [
 
         ],
@@ -70,7 +71,8 @@
               {title: '门店<br/>配件档案',id:6,url:[6]},
               {title: '门店<br/>客户车辆',id:7,url:[7,8]},
               {title: '门店<br/>参数维护',id:9,url:[9],flag:true},
-            ]
+            ],
+            show:true
           },
           {title: 'pc接车', background: '#5FBCF4', imgList: [{id:10,url: [10,11]}],button:[
               {title: '接车录入',id:10,url:[10,11]},
@@ -80,7 +82,9 @@
               {title: '结算并自动上传电<br/>子健康档案',id:15,url:[15]},
               {title: '收款',id:16,url:[16],flag:true},
               {title: '反向操作',id:17,url:[17],flag:true},
-            ]},
+            ],
+           show:true,
+          },
           {title: 'APP接车', background: '#F45F5F', imgList: [{id:18,url: [18,19]}],
           button:[
             {title:'APP下载',id:18,flag:true,url:[18,19]},
@@ -90,6 +94,7 @@
             {title:'结算并自动上传电<br/>子健康档案',id:24,url:[24]},
             {title:'收款',id:25,flag:true,url:[25]}
             ],
+            show:true,
           },
           {
             title: '卖车险(工单入口)', background: '#F2C61C', imgList: [{
@@ -99,7 +104,8 @@
             paging:[
               {id:26,nextId:27,text:"下一页",nextUrl:[27,28,29,30,31,32,33,34,35,36]},
               {id:27,nextId:26,text:"上一页",nextUrl:[26]}
-            ]
+            ],
+            show:true,
           },
           {
             title: '卖车险(首页入口)', background: '#5FBCF4', imgList: [
@@ -112,6 +118,7 @@
               {id:37,nextId:27,text:"下一页",nextUrl:[27,28,29,30,31,32,33,34,35,36]},
               {id:27,nextId:37,text:"上一页",nextUrl:[37,38]}
             ],
+            show:true
           },
           {title: '门店进销存', background: '#9F5FF4', imgList: [{id:39,url: [39]}],button:[
               {title:'供应商丶配件',id:39,url:[39]},
@@ -122,7 +129,9 @@
               {title:'销售退货',id:47,url:[47,48]},
               {title:'仓库盘点',id:49,url:[49,50]},
               {title:'库存查询',flag:true,id:51,url:[51,52]}
-            ]},
+            ],
+            show:true,
+          },
           {title: '会员卡充值/消费', background: '#D4D3D0', imgList: [{id:53,url: [53]}],
           button:[
             {title:'储值卡产品管理',id:53,url:[53]},
@@ -131,9 +140,17 @@
             {title:'会员储值消费',id:57,url:[57]},
             {title:'储值消费记录',id:58,url:[58],flag:true},
           ],
+            show:true,
           },
         ]
       }
+    },
+    mounted(){
+      // this.isShow = (this.$store.state.user.userInfo.tenant.areaId == '0');
+      this.list[3].show = this.$store.state.user.userInfo.tenant.areaId == '0';
+      this.list[4].show = this.$store.state.user.userInfo.tenant.areaId == '0';
+      // this.isShow = true;
+      // console.log(this.isShow);
     },
     methods: {
       goTop(){
