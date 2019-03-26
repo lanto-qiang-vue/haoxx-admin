@@ -6,11 +6,11 @@
             style="width:350px;">
         <FormItem label="系统类型" prop="type">
           <RadioGroup v-model="formData.type" ref="formData">
-            <Radio :label="1">
+            <Radio :label="1" :disabled="formData.type != 1">
               <Icon type="logo-apple"></Icon>
               <span>IOS</span>
             </Radio>
-            <Radio :label="0">
+            <Radio :label="0" :disabled="formData.type != 0">
               <Icon type="logo-android"></Icon>
               <span>Android</span>
             </Radio>
