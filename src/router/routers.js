@@ -992,6 +992,30 @@ export default [
     ]
   },
   {
+    path: '/member-manage',
+    name: 'member-manage',
+    meta: {
+      icon: 'logo-buffer',
+      title: '会员管理',
+      lgType: "1001",
+      access: '1008',
+    },
+    component: Main,
+    children:[
+      {
+        path: '/member-list',
+        name: 'member-list',
+        meta: {
+          icon: 'md-funnel',
+          title: '会员信息',
+          lgType: "1001",
+          access: '100801',
+        },
+        component: () => import('@/hxx-admin/member-manage/member-list.vue')
+      },
+    ]
+  },
+  {
     path: '/carInsure-marketing',
     name: 'carInsure-marketing',
     meta: {

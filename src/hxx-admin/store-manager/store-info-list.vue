@@ -107,10 +107,10 @@
         <Button type="primary" @click="saveReset('resetData')">重置</Button>
       </div>
     </Modal>
-    <Modal v-model="showStoreModal" title="门店注册信息" :width="90" footer-hide :transfer="false"
-           class="table-modal-detail store-modal" :transition-names="['', '']">
+    <Modal v-model="showStoreModal"  title="门店注册信息" :width="90" footer-hide :transfer="false"
+           class="table-modal-detail store-modal storeClass" :transition-names="['', '']">
       <div style="height: 100%">
-        <store-info-detail :data="detailData" :locale="'admin'" :show="showStoreModal"
+        <store-info-detail :data="updateData" :locale="'admin'" :show="showStoreModal"
                            @save="saveStoreInfo"></store-info-detail>
       </div>
     </Modal>
@@ -124,6 +124,7 @@
   import CommonTable from '@/hxx-components/common-table.vue'
   import StoreInfoDetail from '@/hxx-components/store-info-detail.vue'
   import {getName, getDictGroup} from '@/libs/util.js'
+  import {deepClone} from "../../libs/util";
 
   export default {
     components: {CommonTable, StoreInfoDetail},
@@ -159,6 +160,7 @@
           // {code:1,name:'专业版本'},
           // {code:2,name:'上传电子健康档案'},
         ],
+        updateData:{},
         storeName:'',
         setModal: false,//控制设置门店版本
         resetModal: false,//重置健康档案
@@ -259,12 +261,31 @@
         return flag;
       }
     },
+    activated(){
+      this.getInfo(this.$route.query.id);
+    },
     mounted() {
-      // console.log('mounted')
+      console.log('mounted')
       this.showTable = true
       this.getList()
     },
     methods: {
+      getInfo(id){
+        if(!id) return false;
+        this.axios.request({
+          url: 'manage/member/tenantMessage',
+          method: 'post',
+          data:{
+            TENANT_ID:id,
+            access_token:this.$store.state.user.token,
+          },
+        }).then(res => {
+          if (res.success === true) {
+              this.updateData = res.data[0];
+              this.showStoreModal = true;
+          }
+        })
+      },
       saveAuthorization(){
        this.$refs.authorizationData.validate((valid)=>{
          if(valid){
@@ -310,9 +331,9 @@
         });
       },
       edit(){
-        this.getImg(this.detailData.TENANT_ID);
+        this.getImg(this.detailData.TENANT_ID,this.detailData);
       },
-      getImg(id){
+      getImg(id,data = {}){
         //通过门店id获取对应上传图片 /manage/info/tenantinfo/getTenantPic
         this.axios.request({
           url: '/manage/info/tenantinfo/getTenantPic',
@@ -323,10 +344,11 @@
           }
         }).then(res => {
           if (res.success === true) {
-            this.detailData["ROAD_FILE_PATH"] = res.data[0].ROAD_FILE_PATH;
-            this.detailData["BUS_FILE_PATH"] = res.data[0].BUS_FILE_PATH;
-            this.detailData["TENANT_FILE_PATH"] = res.data[0].TENANT_FILE_PATH;
+            data["ROAD_FILE_PATH"] = res.data[0].ROAD_FILE_PATH;
+            data["BUS_FILE_PATH"] = res.data[0].BUS_FILE_PATH;
+            data["TENANT_FILE_PATH"] = res.data[0].TENANT_FILE_PATH;
             // console.log(JSON.stringify(this.detailData));
+            this.updateData = deepClone(data);
             this.showStoreModal= true;
           }
         })
@@ -541,7 +563,11 @@
     }
   }
 </script>
-
+<style>
+ .storeClass .ivu-modal-wrap .ivu-modal .ivu-modal-content .ivu-modal-body{
+    bottom: 0px;
+  }
+</style>
 <style lang="less">
   .store-info-list {
     .store-modal {

@@ -169,6 +169,11 @@
     name: 'parts-purchase',
     components: {commonTable, selectSupply, selectPartsGroup, unitInput,ModalTitle},
     mixins: [mixin],
+    watch:{
+      'formData.PURCHASE_DATE'(val){
+        console.log("时间",val);
+      }
+    },
     activated() {
       let queryData = this.$route.query;
       if (queryData.type) {
