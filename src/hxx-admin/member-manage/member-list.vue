@@ -23,7 +23,7 @@
   import commonTable from '@/hxx-components/common-table.vue'
   export default {
     name: "member-list",
-    components: {commonTable,expandRow},
+    components: {commonTable},
     data(){
       return{
         tableData:[],
@@ -35,18 +35,13 @@
           {title: '会员账号',key:'userCode', width: 200},
           {title: '是否门店员工',key:'isStaff', width: 140},
           {title: '是否门店管理员',key:'isManager', width: 140},
-          {
-            type: 'expand',
-            width: 50,
-            render: (h, params) => {
-              return h(expandRow, {
-                props: {
-                  row: params.row
-                }
-              })
-            }
+          {title: '门店名称',key:'tenantNames', minWidth: 140,
+            render: (h, params) => h('a',{on:{
+              click:()=>{
+                this.to(params.row.tenantIds);
+              }
+              }},params.row.tenantNames)
           },
-          {title: '门店名称',key:'tenantNames', minWidth: 140},
           {title: '注册时间',key:'createTime', width: 200,
             render: (h, params) => h('span',params.row.createTime.substr(0,16))
           },
@@ -64,6 +59,9 @@
       this.showTable = Math.random();
     },
     methods:{
+      to(id){
+        this.$router.push({path:'/store-info-list',query:{id:id}});
+      },
       getList(){
         this.axios.request({
           url: '/manage/member/list',
