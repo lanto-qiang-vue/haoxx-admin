@@ -26,7 +26,7 @@
       <Button type="success" @click="add()" v-if="accessBtn('add')">新增</Button>
       <Button type="info" :disabled="cando" @click="edit()" v-if="accessBtn('edit')">修改</Button>
       <!--<Button type="error" :disabled="cando" @click="remove()" v-if="accessBtn('delete')">作废</Button>-->
-      <Button type="error" :disabled="cando" @click="changeType">{{buttonName}}</Button>
+      <Button type="error" :disabled="cando" v-if="accessBtn('relevanceStatus')" @click="changeType">{{buttonName}}</Button>
       <!--<Button type="success" :disabled="cando" @click="reset()" v-if="accessBtn('reset_pass')">重置密码</Button>-->
     </div>
     <Modal
@@ -419,6 +419,13 @@
         })
       },
       changeType() {
+        if(this.list.USER_TYPE == '10021001'){
+          this.$Modal.info({
+            title:'系统提示',
+            content:'此账号无法取消关联',
+          });
+          return false;
+        }
         let id = this.list.USER_ID;
         let status = this.list.STATUS;
         let content;
