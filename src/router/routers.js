@@ -996,7 +996,7 @@ export default [
     name: 'member-manage',
     meta: {
       icon: 'logo-buffer',
-      title: '会员管理',
+      title: '运营管理',
       lgType: "1001",
       access: '1008',
     },
