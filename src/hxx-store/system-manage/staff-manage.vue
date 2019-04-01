@@ -78,9 +78,9 @@
               <FormItem label="员工姓名:" style="width:90%;">
                 <Input v-model="formData.USER_NAME" type="text" placeholder="员工姓名(请避免重名),列如:张三"> </Input>
               </FormItem>
-              <FormItem label="登录密码:" v-if="!isdisabled" style="width:90%;" prop="PWD">
-                <Input v-model="formData.PWD" @on-keyup="kg" type="text" placeholder="密码应为6-18位字母数字及下划线"> </Input>
-              </FormItem>
+              <!--<FormItem label="登录密码:" v-if="!isdisabled" style="width:90%;" prop="PWD">-->
+                <!--<Input v-model="formData.PWD" @on-keyup="kg" type="text" placeholder="密码应为6-18位字母数字及下划线"> </Input>-->
+              <!--</FormItem>-->
               <FormItem label="职务:" style="width:90%;" prop="PROFESSION">
                 <Select v-model="formData.PROFESSION">
                   <Option v-for="(item, index) in classList"
@@ -222,7 +222,7 @@
           USER_CODE: "",
           telcode: "",
           USER_NAME: "",
-          PWD: "",//密码
+          // PWD: "",//密码
           PROFESSION: "",//职务
           SEX: "",//性别
           EMAIL: "",//邮箱
@@ -419,13 +419,13 @@
         })
       },
       changeType() {
-        if(this.list.USER_TYPE == '10021001'){
-          this.$Modal.info({
-            title:'系统提示',
-            content:'此账号无法取消关联',
-          });
-          return false;
-        }
+        // if(this.list.USER_TYPE == '10021001'){
+        //   this.$Modal.info({
+        //     title:'系统提示',
+        //     content:'此账号无法取消关联',
+        //   });
+        //   return false;
+        // }
         let id = this.list.USER_ID;
         let status = this.list.STATUS;
         let content;

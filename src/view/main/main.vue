@@ -18,11 +18,11 @@
           <fullscreen v-model="isFullscreen"/>
           <!--<change-password></change-password>-->
           <picking-number ></picking-number>
-
           <user slot="right" :user-avator="userAvator"/>
           <!--<shop slot="right"></shop>-->
           <!--<authrization slot="right" v-if="!this.$store.state.user.userInfo.isManage && this.$store.state.user.userInfo.user.lgType == 1002"></authrization>-->
           <authrization slot="right" v-if="this.$store.state.user.userInfo.user.lgType == 1002"></authrization>
+          <operation-description slot="right"></operation-description>
           <!--<language @on-lang-change="setLocal" style="margin-right: 10px;" :lang="local"/>-->
         </header-bar>
       </Header>
@@ -47,6 +47,7 @@
 import SideMenu from './components/side-menu'
 import Shop from './components/shop/shop.vue';
 import Authrization from './components/authrization/authrization.vue';
+import OperationDescription from './components/operation-description/operation-description.vue';
 import HeaderBar from './components/header-bar'
 import TagsNav from './components/tags-nav'
 import User from './components/user'
@@ -72,7 +73,8 @@ export default {
     ChangePassword,
     Shop,
     protocol,
-    Authrization
+    Authrization,
+    OperationDescription
   },
   data () {
     return {

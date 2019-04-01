@@ -42,7 +42,7 @@ module.exports = {
       '/proxy/': {
         // target: 'http://192.168.169.113:8761/',
         target: 'http://developer.hxx.hoxiuxiu.com/',
-        // target:'http://192.168.169.117:8761/',
+        // target:'http://192.168.169.106:8761/',
         // target:'http://api.hxx.hoxiuxiu.com/',
         pathRewrite: {'^/proxy/': ''},
         secure: false
