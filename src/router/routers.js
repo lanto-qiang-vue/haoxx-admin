@@ -901,6 +901,30 @@ export default [
 
   //⬇好修修-后台管理系统⬇
   {
+    path: '/service-staff',
+    name: 'service-staff',
+    meta: {
+      icon: 'logo-buffer',
+      title: '服务人员管理',
+      lgType: "1001",
+      // access: '1001',
+    },
+    component: Main,
+    children:[
+      {
+        path: '/service-staff-list',
+        name: 'service-staff-list',
+        meta: {
+          icon: 'md-funnel',
+          title: '服务人员信息',
+          lgType: "1001",
+          // access: '100101',
+        },
+        component: () => import('@/hxx-admin/service-staff/service-staff-list.vue')
+      },
+    ]
+  },
+  {
     path: '/manage-store',
     name: 'manage-store',
     meta: {
