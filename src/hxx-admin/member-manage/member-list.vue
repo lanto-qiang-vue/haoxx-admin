@@ -35,6 +35,7 @@
           {title: '会员账号',key:'userCode', width: 200},
           {title: '是否门店员工',key:'isStaff', width: 140},
           {title: '是否门店管理员',key:'isManager', width: 140},
+          {title: '是否线下服务人员',key:'type', width: 140},
           {title: '门店名称',key:'tenantNames', minWidth: 140,
             render: (h, params) => h('a',{on:{
               click:()=>{
