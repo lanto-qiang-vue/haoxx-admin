@@ -10,7 +10,6 @@ import parentView from '@/components/parent-view'
  *  icon: (-) 该页面在左侧菜单、面包屑和标签导航处显示的图标，如果是自定义图标，需要在图标名称前加下划线'_'
  * }
  */
-
 export default [
   {
     path: '/login',
@@ -921,6 +920,28 @@ export default [
           // access: '100101',
         },
         component: () => import('@/hxx-admin/service-staff/service-staff-list.vue')
+      },
+      {
+        path: '/daily-count',
+        name: 'daily-count',
+        meta: {
+          icon: 'md-funnel',
+          title: '日常服务统计',
+          lgType: "1001",
+          // access: '100101',
+        },
+        component: () => import('@/hxx-admin/service-staff/daily-count.vue')
+      },
+      {
+        path: '/service-list',
+        name: 'service-list',
+        meta: {
+          icon: 'md-funnel',
+          title: '服务明细',
+          lgType: "1001",
+          // access: '100101',
+        },
+        component: () => import('@/hxx-admin/service-staff/service-list.vue')
       },
     ]
   },
