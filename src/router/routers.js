@@ -906,7 +906,7 @@ export default [
       icon: 'logo-buffer',
       title: '服务人员管理',
       lgType: "1001",
-      // access: '1001',
+      access: '1009',
     },
     component: Main,
     children:[
@@ -917,7 +917,7 @@ export default [
           icon: 'md-funnel',
           title: '服务人员信息',
           lgType: "1001",
-          // access: '100101',
+          access: '100901',
         },
         component: () => import('@/hxx-admin/service-staff/service-staff-list.vue')
       },
@@ -928,7 +928,7 @@ export default [
           icon: 'md-funnel',
           title: '日常服务统计',
           lgType: "1001",
-          // access: '100101',
+          access: '100902',
         },
         component: () => import('@/hxx-admin/service-staff/daily-count.vue')
       },
@@ -939,7 +939,7 @@ export default [
           icon: 'md-funnel',
           title: '服务明细',
           lgType: "1001",
-          // access: '100101',
+          access: '100903',
         },
         component: () => import('@/hxx-admin/service-staff/service-list.vue')
       },
