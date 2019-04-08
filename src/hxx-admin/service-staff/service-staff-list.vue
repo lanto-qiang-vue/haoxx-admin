@@ -52,7 +52,7 @@
             title: '照片', key: 'B', width: 100,
             render: (h, params) => h('div',{style:{width:"100px",height:"100px",marginLeft:"-10px",cursor:"pointer"},on:{
               click:()=>{
-                alert(1);
+                // alert(1);
               }
               }},"")
           },
