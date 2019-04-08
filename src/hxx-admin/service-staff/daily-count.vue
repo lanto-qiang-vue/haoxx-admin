@@ -44,7 +44,7 @@
             title: '申请服务数(次)', key: 'apply', width: 140,
             render: (h, params) => h('a', {
               attrs:{
-                // disabled:params.row.apply > 0 ? false : true
+                disabled:params.row.apply > 0 ? false : true
               },
               on: {
                 click: () => {
@@ -101,8 +101,8 @@
               }
             }, params.row.error)
           },
-          {title: '申请服务门店数(次)', key: 'applytenants', minWidth: 180},
-          {title: '服务门店数(次)', key: 'servicetenants', width: 140},
+          {title: '申请服务门店数(家)', key: 'applytenants', minWidth: 180},
+          {title: '服务门店数(家)', key: 'servicetenants', width: 140},
         ],
         total: 0,
         page: 1,
