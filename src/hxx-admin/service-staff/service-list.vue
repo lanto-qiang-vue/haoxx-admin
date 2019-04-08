@@ -6,7 +6,8 @@
         <Input placeholder="会员账号/姓名" v-model="KEYWORD"></Input>
       </div>
       <div class="search-block">
-        <DatePicker type="daterange" :value="value" :options="option" format="yyyy-MM-dd" placeholder="" style="width:100%;" @on-change="onChange"></DatePicker>
+        <DatePicker type="daterange" :value="value" :options="option" format="yyyy-MM-dd" placeholder=""
+                    style="width:100%;" @on-change="onChange"></DatePicker>
       </div>
       <div class="search-block">
         <Select v-model="status" placeholder="请选择接单状态">
@@ -27,23 +28,25 @@
 <script>
   import commonTable from '@/hxx-components/common-table.vue'
   import {find} from "../../libs/util";
+
   export default {
     name: "service-list",
     components: {commonTable},
     data() {
       return {
         tableData: [],
-        option:{
+        active: false,
+        option: {
           disabledDate(date) {
             return date > new Date();
           }
         },
-        KEYWORD:"",
-        startTime:"",
-        clickStartTime:"",
-        clickEndTime:"",
-        endTime:"",
-        status:"请选择服务单状态",
+        KEYWORD: "",
+        startTime: "",
+        clickStartTime: "",
+        clickEndTime: "",
+        status:"",
+        endTime: "",
         columns: [
           {
             title: '序号', width: 70,
@@ -55,36 +58,55 @@
           {title: '申请时间', key: 'apply_date', width: 160},
           {title: '开始服务时间', key: 'start_date', width: 160},
           {title: '完成服务时间', key: 'finish_date', width: 160},
-          {title: '服务状态', key: 'status', minWidth: 80,
-            render:(h,params) => h('span',find(this.statusList,['id','name',params.row.status]))
+          {
+            title: '服务状态', key: 'status', minWidth: 80,
+            render: (h, params) => h('span', find(this.statusList, ['id', 'name', params.row.status]))
           },
           {title: '撤销时间', key: 'cancel_date', width: 160},
           {title: '异常时间', key: 'error_date', width: 160},
-          {title:'异常类型',key:'error_detail',minWidth:140}
+          {title: '异常类型', key: 'error_detail', minWidth: 140}
         ],
         total: 0,
-        value:[],
+        value: [],
         page: 1,
         limit: 25,
         loading: false,
         showTable: false,
         search: {
           name: '',
-          status: 0,
+          status: "请选择服务单状态",
         },
         statusList: [
-          {id:'请选择服务单状态',name:'请选择服务单状态'},
+          {id: '请选择服务单状态', name: '请选择服务单状态'},
           {id: 0, name: '已申请'},
           {id: 1, name: '已撤销'},
           {id: 2, name: '已开始'},
           {id: 3, name: '已完成'},
-          {id:4,name:'任务异常'},
+          {id: 4, name: '任务异常'},
         ],
       }
     },
-    activated(){
+    activated() {
+      if(this.$route.query.key){
+        if(this.active) this.activeAfter();
+        else this.active = true;
+      }
+    },
+    mounted() {
+      if(this.$route.query.key){
+        this.activeAfter();
+        this.active = false;
+      }else{
+        this.status = "请选择服务单状态";
+        this.getList();
+        this.active = true;
+      }
+      this.showTable = Math.random();
+    },
+    methods: {
+      activeAfter() {
         let key = this.$route.query.key || '';
-        switch(key){
+        switch (key) {
           case 'apply':
             this.status = "请选择服务单状态";
             break;
@@ -101,19 +123,14 @@
         this.KEYWORD = this.$route.query.KEYWORD || "";
         this.startTime = this.$route.query.startTime || "";
         this.endTime = this.$route.query.endTime || "";
-        this.value = [this.startTime,this.endTime]
+        this.value = [this.startTime, this.endTime]
         this.getList();
-    },
-    mounted() {
-      this.getList();
-      this.showTable = Math.random();
-    },
-    methods: {
-      onChange(value){
-      if(value.length == 2){
-        this.startTime = value[0];
-        this.endTime = value[1];
-      }
+      },
+      onChange(value) {
+        if (value.length == 2) {
+          this.startTime = value[0];
+          this.endTime = value[1];
+        }
       },
       getList() {
         this.clickStartTime = this.startTime;
@@ -123,12 +140,12 @@
           method: 'get',
           params: {
             access_token: this.$store.state.user.token,
-            limit:this.limit,
-            page:this.page,
-            KEYWORD:this.KEYWORD,
-            startTime:this.startTime,
-            endTime:this.endTime,
-            status:this.status == "请选择服务单状态" ? "" : this.status,
+            limit: this.limit,
+            page: this.page,
+            KEYWORD: this.KEYWORD,
+            startTime: this.startTime,
+            endTime: this.endTime,
+            status: this.status == "请选择服务单状态" ? "" : this.status,
           },
         }).then(res => {
           if (res.success === true) {
