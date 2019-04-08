@@ -3,13 +3,13 @@
                 :total="total" :show="showTable" :page="page" :loading="loading">
     <div slot="search">
       <div class="search-block">
-        <Input placeholder="会员账号/姓名" v-model="search.name"></Input>
+        <Input placeholder="会员账号/姓名" v-model="KEYWORD"></Input>
       </div>
       <div class="search-block">
-        <DatePicker type="datetimerange" format="yyyy-MM-dd" placeholder="" style="width:100%;" @on-change="onChange"></DatePicker>
+        <DatePicker type="daterange" :value="value" :options="option" format="yyyy-MM-dd" placeholder="" style="width:100%;" @on-change="onChange"></DatePicker>
       </div>
       <div class="search-block">
-        <Select v-model="search.status" placeholder="请选择接单状态">
+        <Select v-model="status" placeholder="请选择接单状态">
           <Option v-for="(item, index) in statusList"
                   :key="index" :value="item.id">{{item.name}}
           </Option>
@@ -26,30 +26,44 @@
 
 <script>
   import commonTable from '@/hxx-components/common-table.vue'
-
+  import {find} from "../../libs/util";
   export default {
-    name: "service-staff-list",
+    name: "service-list",
     components: {commonTable},
     data() {
       return {
         tableData: [],
+        option:{
+          disabledDate(date) {
+            return date > new Date();
+          }
+        },
+        KEYWORD:"",
+        startTime:"",
+        clickStartTime:"",
+        clickEndTime:"",
+        endTime:"",
+        status:"请选择服务单状态",
         columns: [
           {
-            title: '序号', width: 100,
+            title: '序号', width: 70,
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
-          {title: '会员账号', key: 'A', width: 200},
-          {title: '姓名', key: 'B', width: 180},
-          {title: '申请服务门店', key: 'C', width: 140},
-          {title: '申请时间', key: 'D', width: 140},
-          {title: '开始服务时间', key: 'E', width: 140},
-          {title: '完成服务时间', key: 'F', width: 140},
-          {title: '服务状态', key: 'G', minWidth: 140},
-          {title: '撤销时间', key: 'H', width: 140},
-          {title: '异常时间', key: 'I', width: 140},
-          {title:'异常类型',key:'J',minWidth:140}
+          {title: '会员账号', key: 'user_account', width: 140},
+          {title: '姓名', key: 'user_name', width: 100},
+          {title: '申请服务门店', key: 'store_name', minWidth: 300},
+          {title: '申请时间', key: 'apply_date', width: 160},
+          {title: '开始服务时间', key: 'start_date', width: 160},
+          {title: '完成服务时间', key: 'finish_date', width: 160},
+          {title: '服务状态', key: 'status', minWidth: 80,
+            render:(h,params) => h('span',find(this.statusList,['id','name',params.row.status]))
+          },
+          {title: '撤销时间', key: 'cancel_date', width: 160},
+          {title: '异常时间', key: 'error_date', width: 160},
+          {title:'异常类型',key:'error_detail',minWidth:140}
         ],
         total: 0,
+        value:[],
         page: 1,
         limit: 25,
         loading: false,
@@ -59,27 +73,70 @@
           status: 0,
         },
         statusList: [
-          {id: 0, name: '请选择服务单状态'},
-          {id: 1, name: '待服务'},
-          {id: 2, name: '服务中'},
+          {id:'请选择服务单状态',name:'请选择服务单状态'},
+          {id: 0, name: '已申请'},
+          {id: 1, name: '已撤销'},
+          {id: 2, name: '已开始'},
           {id: 3, name: '已完成'},
-          {id:4,name:'已撤销'},
-          {id:5,name:'任务异常'}
+          {id:4,name:'任务异常'},
         ],
       }
     },
+    activated(){
+        let key = this.$route.query.key || '';
+        switch(key){
+          case 'apply':
+            this.status = "请选择服务单状态";
+            break;
+          case 'finish':
+            this.status = 3;
+            break;
+          case 'cancel':
+            this.status = 1;
+            break;
+          case 'error':
+            this.status = 4;
+            break;
+        }
+        this.KEYWORD = this.$route.query.KEYWORD || "";
+        this.startTime = this.$route.query.startTime || "";
+        this.endTime = this.$route.query.endTime || "";
+        this.value = [this.startTime,this.endTime]
+        this.getList();
+    },
     mounted() {
+      this.getList();
       this.showTable = Math.random();
-      this.tableData = [
-        {A: "1", B: "2", C: "3", D: "4", E: "5", F: "6",G:"7",H:"8","I":9,"J":10},
-      ]
     },
     methods: {
       onChange(value){
-        console.log(value);
+      if(value.length == 2){
+        this.startTime = value[0];
+        this.endTime = value[1];
+      }
       },
       getList() {
-
+        this.clickStartTime = this.startTime;
+        this.clickEndTime = this.endTime;
+        this.axios.request({
+          url: '/manage/service/detail',
+          method: 'get',
+          params: {
+            access_token: this.$store.state.user.token,
+            limit:this.limit,
+            page:this.page,
+            KEYWORD:this.KEYWORD,
+            startTime:this.startTime,
+            endTime:this.endTime,
+            status:this.status == "请选择服务单状态" ? "" : this.status,
+          },
+        }).then(res => {
+          if (res.success === true) {
+            this.showModal = false;
+            this.total = res.total;
+            this.tableData = res.data;
+          }
+        })
       },
       changePageSize(size) {
         this.limit = size;

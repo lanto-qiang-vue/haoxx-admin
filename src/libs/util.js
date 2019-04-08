@@ -392,7 +392,18 @@ export const findNodeDownward = (ele, tag) => {
 export const showByAccess = (access, canViewAccess) => {
   return hasOneOf(canViewAccess, access)
 }
-
+/**
+ * resource Array
+ * parameters [keyName,returnName,findValue]
+ * */
+export const find = (resource,parameters)=>{
+   for(let i in resource){
+     if(resource[i][parameters[0]] == parameters[2]){
+       return resource[i][parameters[1]];
+     }
+   }
+   return "";
+}
 export const getName = (arr, code) => {
   for (let i in arr){
     if(arr[i].code==code)

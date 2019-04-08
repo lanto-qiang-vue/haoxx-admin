@@ -43,7 +43,7 @@
           render:(h,params) => h('a',{
             on:{
               click:()=>{
-                this.$router.push({path:'/daily-count'})
+                this.$router.push({path:'/daily-count',query:{id:params.row.username}})
               }
             }
           },params.row.username)
