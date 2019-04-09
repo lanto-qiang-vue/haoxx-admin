@@ -22,7 +22,7 @@
   import commonTable from '@/hxx-components/common-table.vue'
 
   export default {
-    name: "service-staff-list",
+    name: "daily-count",
     components: {commonTable},
     data() {
       return {
