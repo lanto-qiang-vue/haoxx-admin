@@ -111,7 +111,7 @@
                           params: {
                             access_token: this.$store.state.user.token,
                             id:params.row.id,
-                            state:params.row.state > 0 ? 0 : 1,
+                            type:params.row.state > 0 ? 0 : 1,
                           },
                         }).then(res => {
                           if (res.success === true) {
