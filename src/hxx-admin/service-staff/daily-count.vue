@@ -110,6 +110,7 @@
         startTime: '',
         endTime: '',
         value: [],
+        active:false,
         loading: false,
         showTable: false,
         search: {
@@ -119,18 +120,26 @@
       }
     },
     mounted() {
-      console.log("mounted");
-      this.getList();
+      if(this.$route.query.id){
+        this.activeAfter();
+        this.active = false;
+      }else{
+        this.getList();
+        this.active = true;
+      }
       this.showTable = Math.random();
     },
     activated() {
-      console.log("activated");
       if (this.$route.query.id) {
-        this.KEYWORD = this.$route.query.id;
-        this.getList();
+        if(this.active) this.activeAfter();
+        else this.active = true;
       }
     },
     methods: {
+      activeAfter(){
+        this.KEYWORD = this.$route.query.id;
+        this.getList();
+      },
       routePush(key,KEYWORD){
         this.$router.push({path:'/service-list',query:{key:key,startTime:this.startTime,endTime:this.endTime,KEYWORD:KEYWORD}});
       },
