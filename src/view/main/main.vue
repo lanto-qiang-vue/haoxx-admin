@@ -20,7 +20,7 @@
           <picking-number ></picking-number>
           <user slot="right" :user-avator="userAvator"/>
           <!--<shop slot="right"></shop>-->
-          <!--<authrization slot="right" v-if="!this.$store.state.user.userInfo.isManage && this.$store.state.user.userInfo.user.lgType == 1002"></authrization>-->
+          <!--<authrization slot="right" v-if="!this.$store.state.user.userInfo.isManage && 09u8.lgType == 1002"></authrization>-->
           <authrization slot="right" v-if="this.$store.state.user.userInfo.user.lgType == 1002"></authrization>
           <operation-description slot="right"></operation-description>
           <!--<language @on-lang-change="setLocal" style="margin-right: 10px;" :lang="local"/>-->

@@ -176,6 +176,7 @@
       return getDictGroup(this.$store.state.app.dict,'1035');
       },
       loginName(){
+        console.log("执行");
         return  this.$store.state.user.userInfo.user.userName;
       }
     },

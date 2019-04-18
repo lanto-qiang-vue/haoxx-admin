@@ -28,7 +28,8 @@ router.beforeEach((to, from, next) => {
   } else if (!isLogin && (to.name === LOGIN_PAGE_NAME || to.name === LOGIN_PAGE_NAME2)) {
     console.log('2未登陆且要跳转的页面是登录页')
     // 未登陆且要跳转的页面是登录页
-    next() // 跳转
+      next()
+    // 跳转
     // iView.LoadingBar.finish()
   } else if (isLogin && (to.name === LOGIN_PAGE_NAME || to.name === LOGIN_PAGE_NAME2)) {
     console.log('3已登录且要跳转的页面是登录页')
