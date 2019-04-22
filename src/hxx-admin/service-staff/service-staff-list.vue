@@ -49,8 +49,8 @@
           },params.row.username)
           },
           {
-            title: '照片', key: 'B', width: 100,
-            render: (h, params) => h('div',{style:{width:"100px",height:"100px",marginLeft:"-10px",cursor:"pointer"},on:{
+            title: '照片', key: 'pic', width: 100,
+            render: (h, params) => h('img',{attrs:{src:params.row.pic},style:{width:"100px",height:"100px",marginLeft:"-10px",cursor:"pointer"},on:{
               click:()=>{
                 // alert(1);
               }
