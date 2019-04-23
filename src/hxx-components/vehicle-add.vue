@@ -219,7 +219,11 @@
 				},
 				ruleValidate:{
 					 PLATE_NUM:[{required: true, message: '车牌号必填', trigger: 'blur' },
-					 { type:'string',pattern:/^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-Z0-9]{4}[A-Z0-9挂学警港澳]{1,2}$/, message:'请输入正确的车牌号码', trigger:'change,blur'}
+					 { type:'string',
+             // pattern:/^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-Z0-9]{4}[A-Z0-9挂学警港澳]{1,2}$/,
+             pattern:/^[^(~)|(!)|(！)|(@)|(#)|($)|(￥)|(%)|(^)|(&)|(*)|(/)|(:)|(：)|(;)|(；)|(.)|(。)|(,)|(，)|(?)|(？)|(")|(')|(\\)|({)|(})|(\[)|(\])|(\-)|(_)|(\+)|(=)|(`)|(<)|(>)|(、)|(《)|(》)]+$/,
+             message:'请输入正确的车牌号码',
+             trigger:'change,blur'}
 					 ],
 					 VIN_NO:[{required: true, message: '车架号必填', trigger: 'blur,change' },
 					 	{ validator: validatePass, trigger: 'change' },
