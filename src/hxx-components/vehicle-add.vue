@@ -308,9 +308,6 @@
         if (this.formData.VEHICLE_MODEL != "") {
           return false;
         }
-        if (!checkVin(val)) {
-          return false;
-        }
         //能否根据车架号获取到车型...
         this.axios.request({
           url: '/tenant/basedata/ttvehiclefile/get_vehicle_model',
@@ -416,8 +413,7 @@
 
       },
       changeVinFun(event) {
-        var p1 = /\d?[A-Z]+\d?/
-        if (!p1.test(event.target.value) || event.target.value.length !== 17) {
+        if (!checkVin(event.target.value)) {
         } else {
           this.checkCart(event.target.value);
         }
