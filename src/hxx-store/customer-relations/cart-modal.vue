@@ -204,7 +204,7 @@
   </Modal>
 </template>
 <script>
-  import {getName, getDictGroup, getCreate,getUserInfo} from '@/libs/util.js'
+  import {getName, getDictGroup, getCreate,getUserInfo,checkVin} from '@/libs/util.js'
   import selectCustomer from '@/hxx-components/select-customer.vue'
   import commonTable from '@/hxx-components/common-table.vue'
   import vehicleModel from '@/hxx-components/vehicle-model.vue'
@@ -223,20 +223,17 @@
     },
     data() {
       const validatePass = (rule, value, callback) => {
-        var p1 = /\d?[A-Z]+\d?/
-        if (!p1.test(value) || value.length !== 17) {
-          callback(new Error('输入正确的车架号'));
-        } else {
+        if(checkVin(value)){
           callback();
+        }else{
+          callback(new Error('输入正确的车架号'));
         }
       };
       const servicePass = (rule, value, callback) => {
-        var p1 = /\d?[A-Z]+\d?/
-        if (p1.test(value) && value.length == 17) {
-
+        if(checkVin(value)){
           callback();
-        } else {
-          callback(new Error('请输入正确的车架号'));
+        }else{
+          callback(new Error('输入正确的车架号'));
         }
       }
       return {
@@ -378,6 +375,9 @@
       checkCart(val,token) {
         // 能否根据车架号获取到车型...
         if(this.formData.VEHICLE_MODEL != ""){
+          return false;
+        }
+        if(!checkVin(val)){
           return false;
         }
         this.axios.request({
@@ -580,11 +580,11 @@
           this.formData.TID= ""
           this.searchTableData="";
       },
-      onRowSelect(val){ 
+      onRowSelect(val){
           console.log('sfsdfsdfdsfsd',val);
           this.formData.VEHICLE_MODEL= val.MODEL_NAME
           this.formData.TID= val.TID
-          
+
       },
       changeVinFun(){
         let val = this.formData.VIN_NO;
