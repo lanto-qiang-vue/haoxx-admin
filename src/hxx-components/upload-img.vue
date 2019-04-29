@@ -3,14 +3,15 @@
       <Upload
         ref="upload"
         :on-success="uploadSuccess"
-        :data="$store.state.user.token"
-        max-size="2048"
+        :data="token"
+        :max-size="2048"
+        :name="uploadName"
         :on-format-error="handleFormatError"
         :on-exceeded-size="handleMaxSize"
         :format="['jpg','jpeg','png']"
         accept="image/png,image/jpeg"
         :action="actionUrl">
-       <Button type="primary">上传图片</Button>
+      {{buttonName}}
       </Upload>
     </div>
 </template>
@@ -18,6 +19,16 @@
     export default {
         name: "upload-img",
       props:{
+        uploadName:{
+            default(){
+              return 'file';
+            }
+          },
+        max:{
+          default(){
+            return 2048;
+          }
+        },
         actionUrl:{
           default(){
             return ''
@@ -31,9 +42,12 @@
       },
        data(){
           return {
-            token:'',
+            token: {access_token: ''},
           }
        },
+      mounted(){
+          this.token.access_token = this.$store.state.user.token;
+      },
       methods:{
         uploadSuccess(response){
           this.$emit('uploadSuccess',response);
