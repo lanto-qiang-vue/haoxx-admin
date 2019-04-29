@@ -1406,7 +1406,7 @@ export default [
           icon: 'md-funnel',
           title: '上传图片管理',
           lgType: "1001",
-          // access: '100402',
+          access: '100406',
         },
         component: () => import('@/hxx-admin/stystem-management/upload-img-manage.vue')
       },
