@@ -602,3 +602,69 @@ export const formatMoney =(val, decimals, dec_point, thousands_sep)=> {
   }
   return s.join(dec);
 }
+export  const checkVin = (str)=>{
+  if(str.length != 17){
+    console.log("车架号长度不够");
+    return false;
+  }
+  var vin = {
+    "0":0,
+    "1":1,
+    "2":2,
+    "3":3,
+    "4":4,
+    "5":5,
+    "6":6,
+    "7":7,
+    "8":8,
+    "9":9,
+    "A":1,
+    "B":2,
+    "C":3,
+    "D":4,
+    "E":5,
+    "F":6,
+    "G":7,
+    "H":8,
+    "J":1,
+    "K":2,
+    "L":3,
+    "M":4,
+    "N":5,
+    "P":7,
+    "R":9,
+    "S":2,
+    "T":3,
+    "U":4,
+    "V":5,
+    "W":6,
+    "X":7,
+    "Y":8,
+    "Z":9,
+  }
+  var power = [8,7,6,5,4,3,2,10,0,9,8,7,6,5,4,3,2];
+  var value = 0;
+  for(let i =0;i<str.length;i++){
+    if(!vin[str[i]] && str[i] != 0){
+      //0为false 特殊处理...
+      console.log("出现陌生字母",str[i]);
+      return false;
+    }else{
+      value += vin[str[i]] * power[i];
+    }
+  }
+  console.log("计算完毕",value);
+  var y =  value % 11;
+  console.log("余数",y);
+  //转X为10
+  var x = 0;
+  if(str[8] == "X") x = 10
+  else x = str[8];
+  if(y == x){
+    console.log("校验通过");
+    return true;
+  }else{
+    console.log("校验失败");
+    return false;
+  }
+}

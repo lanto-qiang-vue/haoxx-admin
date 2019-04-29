@@ -204,7 +204,7 @@
   </Modal>
 </template>
 <script>
-  import {getName, getDictGroup, getCreate,getUserInfo} from '@/libs/util.js'
+  import {getName, getDictGroup, getCreate,getUserInfo,checkVin} from '@/libs/util.js'
   import selectCustomer from '@/hxx-components/select-customer.vue'
   import commonTable from '@/hxx-components/common-table.vue'
   import vehicleModel from '@/hxx-components/vehicle-model.vue'
@@ -223,20 +223,17 @@
     },
     data() {
       const validatePass = (rule, value, callback) => {
-        var p1 = /\d?[A-Z]+\d?/
-        if (!p1.test(value) || value.length !== 17) {
-          callback(new Error('输入正确的车架号'));
-        } else {
+        if(checkVin(value)){
           callback();
+        }else{
+          callback(new Error('输入正确的车架号'));
         }
       };
       const servicePass = (rule, value, callback) => {
-        var p1 = /\d?[A-Z]+\d?/
-        if (p1.test(value) && value.length == 17) {
-
+        if(checkVin(value)){
           callback();
-        } else {
-          callback(new Error('请输入正确的车架号'));
+        }else{
+          callback(new Error('输入正确的车架号'));
         }
       }
       return {
@@ -580,16 +577,15 @@
           this.formData.TID= ""
           this.searchTableData="";
       },
-      onRowSelect(val){ 
+      onRowSelect(val){
           console.log('sfsdfsdfdsfsd',val);
           this.formData.VEHICLE_MODEL= val.MODEL_NAME
           this.formData.TID= val.TID
-          
+
       },
       changeVinFun(){
         let val = this.formData.VIN_NO;
-          let p1 = /\d?[A-Z]+\d?/
-          if (!p1.test(val) || val.length !== 17) {
+          if (!checkVin(val)) {
           }else{
                 // this.checkCart('LSGGF53W8CH066445','f7ff5ee7985d31ebde226c66ca4f17af5908f43cdba7997e46dfe202b48c8e810605f19147d09ea713638ced39f39649d07561542460a8bcaf6cdd752b29928fc5d2d5f77d2426c3b278c11d0d175aaf133547a4f4e88d8b15c6157ea292d4dbe5e1cfbb35694bb719bc83c3cdf2e232eeeb6d17514fbb02fba66cb8dbb7dcdca0aba1725a9202591b54a651422f9bffeb24332b265ddff8');
                 this.checkCart(val,this.$store.state.user.token);
