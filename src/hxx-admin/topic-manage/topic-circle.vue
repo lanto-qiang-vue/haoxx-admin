@@ -66,7 +66,7 @@
         tableData: [],
         KEYWORD: '',
         showTable:false,
-        checkModal:true,
+        checkModal:false,
         detail:{},
         columns: [
           {
@@ -113,13 +113,22 @@
 
       },
       getList() {
-        this.tableData = [
-          {A: 1, B: 2, C: "门店A"},
-          {A: 1, B: 2, C: "门店B"},
-          {A: 1, B: 2, C: "门店C"},
-          {A: 1, B: 2, C: "门店D"},
-          {A: 1, B: 2, C: "门店E"},
-        ];
+        this.axios.request({
+          url: '/manage/topicmanage/insertTopic',
+          method: 'post',
+          params: {
+            access_token: this.$store.state.user.token,
+            keyWord:this.keyWord,
+            limit: this.limit,
+            page: this.page,
+          },
+        }).then(res => {
+          if (res.success) {
+            this.tableData = res.data;
+            this.total = res.total;
+            this.loading = false;
+          }
+        })
       },
       changePageSize(size) {
         this.limit = size;
