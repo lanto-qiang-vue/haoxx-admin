@@ -108,76 +108,6 @@
   import {formatDate} from '@/libs/tools.js'
   import vehicleModel from '@/hxx-components/vehicle-model.vue'
   import unitSearchInput from '@/hxx-components/unit-search-input.vue'
-
-<<<<<<< HEAD
-                	  callback();
-                }
-            };
-            const validatePass1 = (rule, value, callback) => {
-			     	var p1 = /\d?[A-Z]+\d?/
-                if (!p1.test(value) || value.length !== 17) {
-                    callback(new Error('大写字母和数字组成,长度不超过17位1'));
-                }else{
-                      
-                	  callback();
-                }
-            };
-            return{
-                showVehicleModel:false,
-                showType:false,
-                showOnoff:false,
-                collapse:["1",'2'],
-                initColorArr:[],
-                listSearch:{
-                    "VEHICLE_ID":"",
-                    "TID":"",
-                    "PLATE_NUM":"沪A",
-                    "VEHICLE_COLOR":"",
-                    "ENGINE_NO":"",
-                    "VIN_NO":"",
-                    "VEHICLE_MODEL":"",
-                    "LEAVE_FACTORY_DATE":"",
-                    "CUSTOMER_ID":"",
-                    "NAME":"",
-                    "MOBILE_PHONE":"",
-                    "ADDRESS":"",
-                    "QQ_NO":"",
-                    "WEIXIN_NO":"",
-                    "BIRTHDAY":""
-                },
-                initList:{
-                    "VEHICLE_ID":"",
-                    "TID":"",
-                    "PLATE_NUM":"沪A",
-                    "VEHICLE_COLOR":"",
-                    "ENGINE_NO":"",
-                    "VIN_NO":"",
-                    "VEHICLE_MODEL":"",
-                    "LEAVE_FACTORY_DATE":"",
-                    "CUSTOMER_ID":"",
-                    "NAME":"",
-                    "MOBILE_PHONE":"",
-                    "ADDRESS":"",
-                    "QQ_NO":"",
-                    "WEIXIN_NO":"",
-                    "BIRTHDAY":""
-                },
-                ruleValidate:{
-					 PLATE_NUM:[{required: true, message: '车牌号必填', trigger: 'blur' },
-					 { type:'string',
-             // pattern:/^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-Z0-9]{4}[A-Z0-9挂学警港澳]{1,2}$/,
-             pattern:/^[^(~)|(!)|(！)|(@)|(#)|($)|(￥)|(%)|(^)|(&)|(*)|(/)|(:)|(：)|(;)|(；)|(.)|(。)|(,)|(，)|(?)|(？)|(")|(')|(\\)|({)|(})|(\[)|(\])|(\-)|(_)|(\+)|(=)|(`)|(<)|(>)|(、)|(《)|(》)]+$/,
-             message:'请输入正确的车牌号码', trigger:'change'}
-					 ],
-					 VIN_NO:[{required: true, message: '车架号必填', trigger: 'blur' },
-					 	{ validator: validatePass, trigger: 'change' },
-					 	{ validator: validatePass1, trigger: 'blur' }
-					 ],
-
-				},
-                searchTableData:'',
-                showChange:null,
-=======
   export default {
     name: "select-addVehicle",
     props: ['showAddVehicle'],
@@ -244,7 +174,6 @@
               // pattern:/^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-Z0-9]{4}[A-Z0-9挂学警港澳]{1,2}$/,
               pattern: /^[^(~)|(!)|(！)|(@)|(#)|($)|(￥)|(%)|(^)|(&)|(*)|(/)|(:)|(：)|(;)|(；)|(.)|(。)|(,)|(，)|(?)|(？)|(")|(')|(\\)|({)|(})|(\[)|(\])|(\-)|(_)|(\+)|(=)|(`)|(<)|(>)|(、)|(《)|(》)]+$/,
               message: '请输入正确的车牌号码', trigger: 'change'
->>>>>>> master
             }
           ],
           VIN_NO: [{required: true, message: '车架号必填', trigger: 'blur'},
