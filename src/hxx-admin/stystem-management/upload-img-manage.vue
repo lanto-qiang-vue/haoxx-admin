@@ -55,7 +55,8 @@
                          method: 'post',
                          params: {
                            access_token: this.$store.state.user.token,
-                           path:params.row.url
+                           path:params.row.url,
+                           id:params.row.id
                          },
                        }).then(res => {
                          if (res.success) {
