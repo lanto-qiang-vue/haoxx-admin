@@ -898,7 +898,31 @@ export default [
     ]
   },
 
-  //⬇好修修-后台管理系统⬇
+  //⬇好修修-后台管理系统
+  {
+    path: '/topic-manage',
+    name: 'topic-manage',
+    meta: {
+      icon: 'logo-buffer',
+      title: '车谈管理',
+      lgType: "1001",
+      access: '1009',
+    },
+    component: Main,
+    children:[
+      {
+        path: '/topic-circle',
+        name: 'topic-circle',
+        meta: {
+          icon: 'md-funnel',
+          title: '话题圈管理',
+          lgType: "1001",
+          // access: '100901',
+        },
+        component: () => import('@/hxx-admin/topic-manage/topic-circle.vue')
+      },
+    ]
+  },
   {
     path: '/service-staff',
     name: 'service-staff',
@@ -942,6 +966,17 @@ export default [
           access: '100903',
         },
         component: () => import('@/hxx-admin/service-staff/service-list.vue')
+      },
+      {
+        path: '/tast-list',
+        name: 'tast-list',
+        meta: {
+          icon: 'md-funnel',
+          title: '任务列表',
+          lgType: "1001",
+          // access: '100903',
+        },
+        component: () => import('@/hxx-admin/service-staff/tast-list.vue')
       },
     ]
   },
