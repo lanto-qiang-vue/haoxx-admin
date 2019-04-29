@@ -898,7 +898,31 @@ export default [
     ]
   },
 
-  //⬇好修修-后台管理系统⬇
+  //⬇好修修-后台管理系统
+  {
+    path: '/topic-manage',
+    name: 'topic-manage',
+    meta: {
+      icon: 'logo-buffer',
+      title: '车谈管理',
+      lgType: "1001",
+      access: '1009',
+    },
+    component: Main,
+    children:[
+      {
+        path: '/topic-circle',
+        name: 'topic-circle',
+        meta: {
+          icon: 'md-funnel',
+          title: '话题圈管理',
+          lgType: "1001",
+          // access: '100901',
+        },
+        component: () => import('@/hxx-admin/topic-manage/topic-circle.vue')
+      },
+    ]
+  },
   {
     path: '/service-staff',
     name: 'service-staff',
