@@ -34,7 +34,6 @@
     </div>
   </common-table>
 </template>
-
 <script>
   import commonTable from '@/hxx-components/common-table.vue'
 

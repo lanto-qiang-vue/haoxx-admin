@@ -911,6 +911,17 @@ export default [
     component: Main,
     children:[
       {
+        path: '/topic-list',
+        name: 'topic-list',
+        meta: {
+          icon: 'md-funnel',
+          title: '话题管理',
+          lgType: "1001",
+          // access: '100901',
+        },
+        component: () => import('@/hxx-admin/topic-manage/topic-list.vue')
+      },
+      {
         path: '/topic-circle',
         name: 'topic-circle',
         meta: {

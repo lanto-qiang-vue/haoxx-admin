@@ -18,6 +18,9 @@
         </Button>
       </ButtonGroup>
     </div>
+    <div slot="operate">
+      <Button type="primary" @click="checkModal=true">新增</Button>
+    </div>
     <Modal
       v-model="checkModal"
       width="400px"
