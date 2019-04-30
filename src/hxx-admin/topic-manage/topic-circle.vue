@@ -36,6 +36,10 @@
             </Input>
           </FormItem>
           <FormItem>
+            <Input :value="detail.A" placeholder="请输入颜色">
+            </Input>
+          </FormItem>
+          <FormItem>
             <img src="/img/no_img.32c20fc5.png" style="width:100%;"/>
           </FormItem>
         </Form>
@@ -46,7 +50,7 @@
         </Button>
       </div>
       <div slot="footer">
-        <upload-img style="float:left;" actionUrl="/proxy/upload" @uploadSuccess="uploadSuccess"></upload-img>
+        <Button><upload-img style="float:left;" actionUrl="/proxy/upload" @uploadSuccess="uploadSuccess"></upload-img></Button>
         <Button type="primary">保存并停用</Button>
         <Button type="primary">保存并启用</Button>
       </div>
@@ -66,7 +70,8 @@
         tableData: [],
         KEYWORD: '',
         showTable:false,
-        checkModal:false,
+        checkModal:true,
+        baseUrl:'/poxy-after/',
         detail:{},
         columns: [
           {
@@ -114,19 +119,18 @@
       },
       getList() {
         this.axios.request({
-          url: '/manage/topicmanage/insertTopic',
+          baseURL:this.baseUrl,
+          url: 'manage/topicmanage/getTopicList',
           method: 'post',
           params: {
             access_token: this.$store.state.user.token,
-            keyWord:this.keyWord,
+            keyWord:this.KEYWORD,
             limit: this.limit,
             page: this.page,
           },
         }).then(res => {
           if (res.success) {
-            this.tableData = res.data;
-            this.total = res.total;
-            this.loading = false;
+
           }
         })
       },
