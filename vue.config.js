@@ -40,16 +40,12 @@ module.exports = {
   devServer: {
     proxy: {
       '/proxy/': {
-        target: 'http://192.168.169.114:8761/',
-        // target: 'http://192.168.169.121:8761',
-        // target: 'http://developer.hxx.hoxiuxiu.com/',
-        // target:'http://192.168.169.118:8761/',
-        // target:'http://api.hxx.hoxiuxiu.com/',
+        // target: 'http://192.168.169.106:8761',
+        target: 'http://developer.hxx.hoxiuxiu.com/',
         pathRewrite: {'^/proxy/': ''},
         secure: false
       },
       '/other/': {
-        // target: 'http://api.hoxiuxiu.com/',
         target:'http://api.hoxiuxiu.com/',
         pathRewrite: {'^/other/': ''},
         secure: false
