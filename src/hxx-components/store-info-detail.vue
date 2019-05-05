@@ -306,6 +306,7 @@
 		    this.$emit('goback');
       },
       getImg( name, e){
+        console.log('这是什么',e.target.files[0])
         imgToBase64(e.target.files[0], (base64, fileName)=> {
           this.info[name]= base64
         })
@@ -405,8 +406,8 @@
             this.info["ROAD_FILE_PATH"] = res.data[0].ROAD_FILE_PATH;
             this.info["BUS_FILE_PATH"] = res.data[0].BUS_FILE_PATH;
             this.info["TENANT_FILE_PATH"] = res.data[0].TENANT_FILE_PATH;
-            
-            
+
+
           }
         })
       },

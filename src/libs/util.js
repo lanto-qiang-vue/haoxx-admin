@@ -2,7 +2,6 @@
 // cookie保存的天数
 // import config from '@/config'
 import { forEach, hasOneOf } from '@/libs/tools'
-
 export const TOKEN_KEY = 'ACCESSTOKEN'
 export const USERINFO_KEY = 'USERINFO'
 export const ACCESSMENU_KEY = 'ACCESSMENU'
