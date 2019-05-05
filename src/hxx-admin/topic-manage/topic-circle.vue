@@ -33,7 +33,7 @@
       title="新增话题圈"
     >
       <div>
-        <Form >
+        <Form>
           <FormItem>
             <Input :value="detail.A" placeholder="请输入圈子名称">
             </Input>
@@ -53,7 +53,9 @@
         </Button>
       </div>
       <div slot="footer">
-        <Button><upload-img style="float:left;" actionUrl="/proxy/upload" @uploadSuccess="uploadSuccess"></upload-img></Button>
+        <Button>
+          <upload-img style="float:left;" actionUrl="/proxy/upload" @uploadSuccess="uploadSuccess"></upload-img>
+        </Button>
         <Button type="primary">保存并停用</Button>
         <Button type="primary">保存并启用</Button>
       </div>
@@ -72,36 +74,62 @@
         showModal: true,
         tableData: [],
         KEYWORD: '',
-        showTable:false,
-        checkModal:true,
-        baseUrl:'/poxy-after/',
-        detail:{},
+        showTable: false,
+        checkModal: false,
+        baseUrl: '/poxy-after/',
+        detail: {},
         columns: [
           {
             title: '序号', width: 100,
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
-          {title: '话题圈', key: 'A', minWidth: 100},
-          {title: '创建人', key: 'B', minWidth: 100},
-          {title: '创建人角色', key: 'C', minWidth: 100},
-          {title: '创建时间', key: 'D', minWidth: 100},
-          {title: '状态', key: 'E', minWidth: 100},
-          {title: '已发布话题', key: 'E', minWidth: 100},
+          {title: '话题圈', key: 'content', minWidth: 100},
+          {title: '创建人', key: 'createName', minWidth: 100},
+          {title: '创建人角色', key: 'role', minWidth: 100},
+          {title: '创建时间', key: 'createDate', width: 180},
           {
-            title: '操作', key: 'F', minWidth: 300, align: 'center',
-            render: (h, params) => h('Button',{props:{type:'default'}},"启用/停用")
+            title: '状态', key: 'state', minWidth: 100,
+            render: (h, params) => h('span', this.stateHandler(params.row.state))
+          },
+          {title: '已发布话题', key: 'number', minWidth: 100},
+          {
+            title: '操作', key: 'F', width: 150, align: 'center',
+            render: (h, params) => h('Button', {
+              props: {type: 'default'}, on: {
+                click: () => {
+                  this.$Modal.confirm({
+                    title: '系统提示', content: "确认" + (params.row.state == 1 ? "停用" : "启用") + '吗？', onOk: () => {
+                      this.axios.request({
+                        baseURL: this.baseUrl,
+                        url: '/manage/topicmanage/updateState',
+                        method: 'post',
+                        params: {
+                          access_token: this.$store.state.user.token,
+                          state: params.row.state == 1 ? 0 : 1,
+                          id: params.row.id
+                        },
+                      }).then(res => {
+                        if (res.success) {
+                          this.$Message.success("话题已" + (params.row.state == 1 ? "停用" : "启用"));
+                          this.getList();
+                        }
+                      })
+                    }
+                  });
+                }
+              }
+            }, params.row.state == 1 ? "停用" : "启用")
           }
         ],
         total: 0,
         page: 1,
         limit: 25,
         loading: false,
-        typeStatus:'请选择状态',
+        typeStatus: '请选择状态',
         typeList: [
           {id: "请选择状态", name: '请选择状态'},
-          {id: 0, name: '启用'},
-          {id: 1, name: '禁用'},
-          {id: 2, name: '待用'},
+          {id: 1, name: '启用'},
+          {id: 0, name: '禁用'},
         ],
         tagList: [
           {name: '保你满意', checked: false},
@@ -117,23 +145,37 @@
       this.getList();
     },
     methods: {
-      uploadSuccess(response){
+      stateHandler(state) {
+        switch (state) {
+          case 0:
+            return "禁用";
+            break;
+          case 1:
+            return "启用";
+            break;
+        }
+      },
+      uploadSuccess(response) {
 
       },
       getList() {
+        this.loading = true;
         this.axios.request({
-          baseURL:this.baseUrl,
+          baseURL: this.baseUrl,
           url: 'manage/topicmanage/getTopicList',
           method: 'post',
           params: {
             access_token: this.$store.state.user.token,
-            keyWord:this.KEYWORD,
+            keyWord: this.KEYWORD,
             limit: this.limit,
             page: this.page,
+            state:this.typeStatus == "请选择状态" ? "" : this.typeStatus
           },
         }).then(res => {
           if (res.success) {
-
+            this.total = res.total;
+            this.tableData = res.data;
+            this.loading = false;
           }
         })
       },
