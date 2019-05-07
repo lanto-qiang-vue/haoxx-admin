@@ -40,7 +40,7 @@ module.exports = {
   devServer: {
     proxy: {
       '/proxy/': {
-        // target: 'http://192.168.169.114:8761',
+        // target: 'http://192.168.169.120:8761',
         target: 'http://developer.hxx.hoxiuxiu.com/',
         pathRewrite: {'^/proxy/': ''},
         secure: false
@@ -57,7 +57,7 @@ module.exports = {
         secure: false
       },
       '/poxy-after/':{
-        target:'http://192.168.169.121:8871',
+        target:'http://192.168.169.112:8872',
         pathRewrite: {'^/poxy-after/': ''},
         secure: false
       }

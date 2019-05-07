@@ -1,6 +1,6 @@
 <template>
   <common-table v-model="tableData" :columns="columns" @changePageSize="changePageSize" @changePage="changePage"
-                :total="total" :show="showTable" :page="page" :loading="loading">
+                :total="total" :show="showTable" :page="page" :loading="loading" @onRowClick="onRowClick" :clearSelect="clearType">
     <div slot="search">
       <div class="search-block">
         <Input placeholder="圈子名称" v-model="KEYWORD"></Input>
@@ -20,6 +20,7 @@
     </div>
     <div slot="operate">
       <Button type="primary" @click="checkModal=true">新增</Button>
+      <Button type="primary" :disabled="!list" @click="checkModal=true,detail = deepClone(list),list = '',clearType = Math.random()">修改</Button>
     </div>
     <Modal
       v-model="checkModal"
@@ -33,31 +34,27 @@
       title="新增话题圈"
     >
       <div>
-        <Form>
-          <FormItem>
-            <Input :value="detail.A" placeholder="请输入圈子名称">
+        <Form :model="detail" ref="detail" :rules="rules">
+          <FormItem prop="content">
+            <Input v-model="detail.content" placeholder="请输入圈子名称">
             </Input>
           </FormItem>
-          <FormItem>
-            <Input :value="detail.A" placeholder="请输入颜色">
+          <FormItem prop="colour">
+            <Input v-model="detail.colour" placeholder="请输入颜色">
             </Input>
           </FormItem>
-          <FormItem>
-            <img src="/img/no_img.32c20fc5.png" style="width:100%;"/>
+          <FormItem prop="icon">
+            <img :src="detail.icon ? detail.icon : '/img/no_img.32c20fc5.png'" style="width:200px;display:block;margin:0 auto;"/>
           </FormItem>
         </Form>
       </div>
-      <div class="tag" v-show="false" style="text-align:center;">
-        <Button v-for="item in tagList" :type="item.checked ? 'primary' : 'default'"
-                @click="item.checked = !item.checked">{{item.name}}
-        </Button>
-      </div>
       <div slot="footer">
         <Button>
-          <upload-img style="float:left;" actionUrl="/proxy/upload" @uploadSuccess="uploadSuccess"></upload-img>
+          <upload-img style="float:left;" actionUrl="/proxy/manage/sys/picture/upload?thumbnail=true"
+                      @uploadSuccess="uploadSuccess"></upload-img>
         </Button>
-        <Button type="primary">保存并停用</Button>
-        <Button type="primary">保存并启用</Button>
+        <Button type="primary" @click="submit(0)">保存并停用</Button>
+        <Button type="primary" @click="submit(1)">保存并启用</Button>
       </div>
     </Modal>
   </common-table>
@@ -65,19 +62,30 @@
 <script>
   import commonTable from '@/hxx-components/common-table.vue'
   import uploadImg from '@/hxx-components/upload-img.vue'
-
+  import {deepClone} from "../../libs/util";
   export default {
     name: "topic-circle",
     components: {commonTable, uploadImg},
     data() {
       return {
+        detail: {
+          id:'',
+          icon:'http://192.168.169.233:8888/fdfs/file/download?uri=group1/M00/00/09/wKip1FzPpYmATlxpAABprhZxD30808.jpg',
+          content: '',
+          colour: '',
+          state:'',
+        },
+        rules: {
+          content: {required: true, message: '必填'},
+          colour: {required: true, message: '必填'},
+          icon: {required: true, message: '图片必填'}
+        },
         showModal: true,
         tableData: [],
         KEYWORD: '',
         showTable: false,
         checkModal: false,
         baseUrl: '/poxy-after/',
-        detail: {},
         columns: [
           {
             title: '序号', width: 100,
@@ -125,26 +133,61 @@
         page: 1,
         limit: 25,
         loading: false,
+        clearType:false,
         typeStatus: '请选择状态',
         typeList: [
           {id: "请选择状态", name: '请选择状态'},
           {id: 1, name: '启用'},
           {id: 0, name: '禁用'},
         ],
-        tagList: [
-          {name: '保你满意', checked: false},
-          {name: '标签二', checked: false},
-          {name: '一年365天营业,24小时', checked: false},
-          {name: '标签四', checked: false},
-          {name: '标签五', checked: false},
-        ],
+        list:'',
       }
     },
     mounted() {
       this.showTable = Math.random();
       this.getList();
     },
+    watch: {
+      checkModal(type) {
+        if (type) {
+          this.$refs.detail.resetFields();
+        }
+      }
+    },
     methods: {
+      deepClone(resource){
+        return deepClone(resource);
+      },
+      onRowClick(res){
+        this.list = res;
+      },
+      submit(state) {
+        this.$refs.detail.validate((validate) => {
+          if (validate) {
+            this.$Modal.confirm({
+              title: '系统提示!',
+              content: '确认保存吗',
+              onOk: () => {
+                this.detail.state = state;
+                this.axios.request({
+                  baseURL: this.baseUrl,
+                  url: '/manage/topicmanage/saveOrUpdateTopic',
+                  method: 'post',
+                  params: {
+                    access_token: this.$store.state.user.token,
+                    data:this.detail,
+                  },
+                }).then(res => {
+                  this.getList();
+                  this.$Message.success("保存成功");
+                })
+              }
+            });
+          } else {
+            this.$Message.error("请校验必填字段");
+          }
+        });
+      },
       stateHandler(state) {
         switch (state) {
           case 0:
@@ -156,7 +199,7 @@
         }
       },
       uploadSuccess(response) {
-
+        console.log(response);
       },
       getList() {
         this.loading = true;
@@ -169,7 +212,7 @@
             keyWord: this.KEYWORD,
             limit: this.limit,
             page: this.page,
-            state:this.typeStatus == "请选择状态" ? "" : this.typeStatus
+            state: this.typeStatus == "请选择状态" ? "" : this.typeStatus
           },
         }).then(res => {
           if (res.success) {
