@@ -1434,6 +1434,17 @@ export default [
         },
         component: () => import('@/hxx-admin/stystem-management/admin-roles.vue')
       },
+      {
+        path: '/upload-img-manage',
+        name: '/upload-img-manage',
+        meta: {
+          icon: 'md-funnel',
+          title: '上传图片管理',
+          lgType: "1001",
+          access: '100406',
+        },
+        component: () => import('@/hxx-admin/stystem-management/upload-img-manage.vue')
+      },
     ]
   },
   {
