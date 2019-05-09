@@ -60,7 +60,12 @@ module.exports = {
         target:'http://192.168.169.112:8871',
         pathRewrite: {'^/poxy-after/': ''},
         secure: false
-      }
+      },
+      '/poxy-shqx/':{
+        target:'http://118.25.13.140:8888',
+        pathRewrite: {'^/poxy-shqx/': ''},
+        secure: false
+       }
     }
   }
 
