@@ -950,7 +950,7 @@ export default [
           icon: 'md-funnel',
           title: '任务列表',
           lgType: "1001",
-          // access: '100903',
+          access: '100904',
         },
         component: () => import('@/hxx-admin/service-staff/tast-list.vue')
       },
