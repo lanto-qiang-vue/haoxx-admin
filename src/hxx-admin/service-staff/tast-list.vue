@@ -35,7 +35,7 @@
       :transfer="false"
       :footer-hide="openName == 'list'"
       :transition-names="['', '']">
-      <modal-title slot="header" :title="(openName == 'detail' ? '任务详情' : taskObject[type] +'提交记录')" :state="openName == 'detail' ? storeName : ''" @clickBack="showModal=false"></modal-title>
+      <modal-title slot="header" :title="(openName == 'detail' ? '任务详情' : taskObject[type] +'提交记录')" :state="openName == 'list' ? storeName : ''" @clickBack="showModal=false"></modal-title>
       <common-table v-show="openName == 'list'" v-model="recordData" :columns="recordColumns"
                     @changePageSize="recordChangePageSize"
                     @changePage="recordChangePage"
