@@ -126,7 +126,7 @@
       :transfer="false"
       :footer-hide="false"
       :transition-names="['', '']"
-      title="审核"
+      :title="stage == 3 ? '勾选要删除的标签' : '审核' "
     >
       <div v-show="stage != 3">
         <Form :label-width="100" :model="failData" ref="failData" :rules="failRule">
@@ -474,6 +474,7 @@
             this.$fly.patch(url, params).then(res => {
               if(res && !res.code){
                 this.showModal = false;
+                this.checkModal = false;
                 this.getList();
               }
               //坐等同一处理....
