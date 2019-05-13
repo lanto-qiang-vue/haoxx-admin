@@ -2,8 +2,8 @@
   <common-table v-model="tableData" :columns="columns" @changePageSize="changePageSize" @changePage="changePage"
                 :total="total" :show="showTable" :clearSelect="clearType" @onRowClick="onRowClick" :page="page" :loading="loading">
     <div slot="operate">
-      <Button type="primary"><upload-img actionUrl='/proxy/manage/sys/picture/upload?thumbnail=false' @uploadSuccess="uploadSuccess"></upload-img></Button>
-      <Button type="primary"><upload-img actionUrl='/proxy/manage/sys/picture/upload?thumbnail=true' @uploadSuccess="uploadSuccess" buttonName="上传图片(压缩)"></upload-img></Button>
+      <Button type="primary"><upload-img actionUrl='/manage/sys/picture/upload?thumbnail=false' @uploadSuccess="uploadSuccess"></upload-img></Button>
+      <Button type="primary"><upload-img actionUrl='/manage/sys/picture/upload?thumbnail=true' @uploadSuccess="uploadSuccess" buttonName="上传图片(压缩)"></upload-img></Button>
       <Button type="primary" @click="getList()">刷新</Button>
     </div>
   </common-table>

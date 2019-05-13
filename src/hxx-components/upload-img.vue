@@ -10,12 +10,13 @@
       :on-exceeded-size="handleMaxSize"
       :format="['jpg','jpeg','png']"
       accept="image/png,image/jpeg"
-      :action="actionUrl">
+      :action="baseUrl+actionUrl">
       {{buttonName}}
     </Upload>
   </div>
 </template>
 <script>
+  import env from '_conf/url'
   export default {
     name: "upload-img",
     props: {
@@ -43,9 +44,11 @@
     data() {
       return {
         token: {access_token: ''},
+        baseUrl:'',
       }
     },
     mounted() {
+      this.baseUrl = env;
       this.token.access_token = this.$store.state.user.token;
     },
     methods: {
