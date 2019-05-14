@@ -1,9 +1,16 @@
 <template>
   <common-table v-model="tableData" :columns="columns" @changePageSize="changePageSize" @changePage="changePage"
-                :total="total" :show="showTable" :clearSelect="clearType" @onRowClick="onRowClick" :page="page" :loading="loading">
+                :total="total" :show="showTable" :clearSelect="clearType" @onRowClick="onRowClick" :page="page"
+                :loading="loading">
     <div slot="operate">
-      <Button type="primary"><upload-img actionUrl='/manage/sys/picture/upload?thumbnail=false' @uploadSuccess="uploadSuccess"></upload-img></Button>
-      <Button type="primary"><upload-img actionUrl='/manage/sys/picture/upload?thumbnail=true' @uploadSuccess="uploadSuccess" buttonName="上传图片(压缩)"></upload-img></Button>
+      <div style="float:left;padding-right:10px;">
+        <upload-img ref="up" actionUrl='/manage/sys/picture/upload?thumbnail=false'
+                    @uploadSuccess="uploadSuccess"></upload-img>
+      </div>
+      <div style="float:left;padding-right:10px;">
+        <upload-img actionUrl='/manage/sys/picture/upload?thumbnail=true' @uploadSuccess="uploadSuccess"
+                    buttonName="上传图片(压缩)"></upload-img>
+      </div>
       <Button type="primary" @click="getList()">刷新</Button>
     </div>
   </common-table>
@@ -12,9 +19,10 @@
 <script>
   import commonTable from '@/hxx-components/common-table.vue'
   import uploadImg from '@/hxx-components/upload-img.vue'
+
   export default {
     name: "upload-img-manage",
-    components: {commonTable,uploadImg},
+    components: {commonTable, uploadImg},
     data() {
       return {
         total: 0,
@@ -23,7 +31,7 @@
         showTable: false,
         clearType: false,
         tableData: [],
-        loading:false,
+        loading: false,
         columns: [
           {
             title: '序号', width: 120,
@@ -31,44 +39,50 @@
           },
           {
             title: '图片', key: 'url', width: 100,
-            render: (h, params) => h('img',{attrs:{src:params.row.url},style:{width:"100px",height:"100px",marginLeft:"-10px",display:'block'},on:{
-                click:()=>{
+            render: (h, params) => h('img', {
+              attrs: {src: params.row.url},
+              style: {width: "100px", height: "100px", marginLeft: "-10px", display: 'block'},
+              on: {
+                click: () => {
                   // alert(1);
                 }
-              }},"")
+              }
+            }, "")
           },
           {
-            title:'url',key:'url',minWidth:300,
+            title: 'url', key: 'url', minWidth: 300,
           },
           {
             title: '上传时间', key: 'upload_date', width: 160,
           },
           {
-            title:'操作',width:100,align:'center',
-            render: (h, params) => h('Button',{props:{type:'error'},on:{
-                click:()=>{
-                   this.$Modal.confirm({
-                     title:'系统提示!',
-                     content:'确认删除吗?',
-                     onOk:()=>{
-                       this.axios.request({
-                         url: '/manage/sys/picture/delete',
-                         method: 'post',
-                         params: {
-                           access_token: this.$store.state.user.token,
-                           path:params.row.url,
-                           id:params.row.id
-                         },
-                       }).then(res => {
-                         if (res.success) {
-                         this.$Message.success("删除成功");
-                         this.getList();
-                         }
-                       })
-                     }
-                   })
+            title: '操作', width: 100, align: 'center',
+            render: (h, params) => h('Button', {
+              props: {type: 'error'}, on: {
+                click: () => {
+                  this.$Modal.confirm({
+                    title: '系统提示!',
+                    content: '确认删除吗?',
+                    onOk: () => {
+                      this.axios.request({
+                        url: '/manage/sys/picture/delete',
+                        method: 'post',
+                        params: {
+                          access_token: this.$store.state.user.token,
+                          path: params.row.url,
+                          id: params.row.id
+                        },
+                      }).then(res => {
+                        if (res.success) {
+                          this.$Message.success("删除成功");
+                          this.getList();
+                        }
+                      })
+                    }
+                  })
                 }
-              }},"删除")
+              }
+            }, "删除")
           },
         ],
         list: '',
@@ -76,14 +90,16 @@
     },
     mounted() {
       this.getList();
+      // this.$refs.up.click();
+      // console.log(this.$refs.up);
       this.showTable = Math.random();
     },
     methods: {
-      uploadSuccess(response){
-       if(response.success){
-         this.$Message.success("上传成功");
-         this.getList();
-       }
+      uploadSuccess(response) {
+        if (response.success) {
+          this.$Message.success("上传成功");
+          this.getList();
+        }
       },
       getList() {
         this.loading = true;

@@ -1,5 +1,4 @@
 <template>
-  <div style="width:100px;">
     <Upload
       ref="upload"
       :on-success="uploadSuccess"
@@ -8,12 +7,12 @@
       :name="uploadName"
       :on-format-error="handleFormatError"
       :on-exceeded-size="handleMaxSize"
+      :show-upload-list="false"
       :format="['jpg','jpeg','png']"
       accept="image/png,image/jpeg"
       :action="baseUrl+actionUrl">
-      {{buttonName}}
+      <Button>{{buttonName}}</Button>
     </Upload>
-  </div>
 </template>
 <script>
   import env from '_conf/url'

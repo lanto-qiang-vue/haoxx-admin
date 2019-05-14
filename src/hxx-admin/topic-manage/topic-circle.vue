@@ -49,11 +49,11 @@
         </Form>
       </div>
       <div slot="footer">
-        <Button>
-          <upload-img style="float:left;" actionUrl="/proxy/manage/sys/picture/upload?thumbnail=true"
+        <div style="float:left;padding-right:10px;">
+          <upload-img  actionUrl="/manage/sys/picture/upload?thumbnail=true"
                       @uploadSuccess="uploadSuccess"></upload-img>
-        </Button>
-        <Button type="primary" @click="submit(0)">保存并停用</Button>
+        </div>
+        <Button type="primary"  @click="submit(0)">保存并停用</Button>
         <Button type="primary" @click="submit(1)">保存并启用</Button>
       </div>
     </Modal>
@@ -70,7 +70,7 @@
       return {
         detail: {
           id:'',
-          icon:'http://192.168.169.233:8888/fdfs/file/download?uri=group1/M00/00/09/wKip1FzPpYmATlxpAABprhZxD30808.jpg',
+          icon:'',
           content: '',
           colour: '',
           state:'',
@@ -119,6 +119,7 @@
                       }).then(res => {
                         if (res.success) {
                           this.$Message.success("话题已" + (params.row.state == 1 ? "停用" : "启用"));
+                          this.checkModal = false;
                           this.getList();
                         }
                       })
@@ -179,6 +180,7 @@
                   },
                 }).then(res => {
                   this.getList();
+                  this.checkModal = false;
                   this.$Message.success("保存成功");
                 })
               }
@@ -199,10 +201,13 @@
         }
       },
       uploadSuccess(response) {
-        console.log(response);
+        if(response.success){
+          this.detail.icon = response.data.path;
+        }
       },
       getList() {
         this.loading = true;
+        this.list = "";
         this.axios.request({
           baseURL: this.baseUrl,
           url: 'manage/topicmanage/getTopicList',
