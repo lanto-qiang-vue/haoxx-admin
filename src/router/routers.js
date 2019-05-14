@@ -978,6 +978,17 @@ export default [
         },
         component: () => import('@/hxx-admin/service-staff/service-list.vue')
       },
+      {
+        path: '/tast-list',
+        name: 'tast-list',
+        meta: {
+          icon: 'md-funnel',
+          title: '任务列表',
+          lgType: "1001",
+          access: '100904',
+        },
+        component: () => import('@/hxx-admin/service-staff/tast-list.vue')
+      },
     ]
   },
   {

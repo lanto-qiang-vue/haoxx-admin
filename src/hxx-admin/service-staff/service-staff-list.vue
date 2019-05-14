@@ -48,6 +48,7 @@
             ref="upload"
             :before-upload="beforeUpload"
             :on-success="uploadSuccess"
+            :show-upload-list="false"
             :data="token"
             :max-size="2048"
              name="file"
@@ -55,7 +56,7 @@
             :on-exceeded-size="handleMaxSize"
             :format="['jpg','jpeg','png']"
             accept="image/png,image/jpeg"
-            :action="actionUrl">
+            :action="baseUrl+actionUrl">
             选择证件照
           </Upload>
         </Button>
@@ -69,6 +70,7 @@
 <script>
   import commonTable from '@/hxx-components/common-table.vue'
   import {imgToBase64,reg} from "../../libs/util";
+  import env from '_conf/url'
   export default {
     name: "service-staff-list",
     components: {commonTable},
@@ -78,7 +80,8 @@
         token: {
           access_token: '',
         },
-        actionUrl:'/proxy/manage/person/insertOperate',
+        baseUrl:'',
+        actionUrl:'/manage/person/insertOperate',
         formData: {
           img64:'',
           nickname:'',
@@ -219,6 +222,7 @@
     },
     mounted() {
       this.showTable = Math.random();
+      this.baseUrl = env;
       this.getList();
     },
     methods: {
@@ -233,8 +237,15 @@
         return false;
       },
       uploadSuccess(response){
+        console.log(response);
         if(response.success){
           this.getList();
+        }else{
+           if(response.hasOwnProperty('Exception')){
+             this.$Message.error(response.Exception.message);
+           }else{
+             this.$Message.error(response.title);
+           }
         }
       },
       handleMaxSize(){

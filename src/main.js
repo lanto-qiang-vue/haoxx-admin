@@ -23,7 +23,7 @@ import env from '../config/env'
 // env === 'development' ? require('@/mock') : ''
 
 import axios from '@/libs/api.request'
-
+import fly  from '@/libs/fly'
 Vue.use(iView, {
   i18n: (key, value) => i18n.t(key, value)
 })
@@ -40,7 +40,7 @@ importDirective(Vue)
 
 //全局axios
 Vue.prototype.axios = axios;
-
+Vue.prototype.$fly = fly;
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

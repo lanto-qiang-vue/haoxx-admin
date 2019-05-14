@@ -4,7 +4,6 @@ const fs = require('fs')
 const resolve = dir => {
   return path.join(__dirname, dir)
 }
-
 const env = process.env.NODE_ENV || 'development'
 fs.writeFileSync(path.join(__dirname, './config/env.js'), `export default '${env}'
 `)
@@ -40,8 +39,13 @@ module.exports = {
   devServer: {
     proxy: {
       '/proxy/': {
+<<<<<<< HEAD
         // target: 'http://192.168.169.120:8761',
         target: 'http://developer.hxx.hoxiuxiu.com/',
+=======
+        target: 'http://192.168.169.110:8761',
+        // target: 'http://developer.hxx.hoxiuxiu.com/',
+>>>>>>> master
         pathRewrite: {'^/proxy/': ''},
         secure: false
       },
@@ -57,10 +61,22 @@ module.exports = {
         secure: false
       },
       '/poxy-after/':{
+<<<<<<< HEAD
         target:'http://192.168.169.112:8872',
         pathRewrite: {'^/poxy-after/': ''},
         secure: false
       }
+=======
+        target:'http://192.168.169.112:8871',
+        pathRewrite: {'^/poxy-after/': ''},
+        secure: false
+      },
+      '/poxy-shqx/':{
+        target:'http://118.25.13.140:8888',
+        pathRewrite: {'^/poxy-shqx/': ''},
+        secure: false
+       }
+>>>>>>> master
     }
   }
 

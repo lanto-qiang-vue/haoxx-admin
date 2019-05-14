@@ -108,7 +108,6 @@
   import {formatDate} from '@/libs/tools.js'
   import vehicleModel from '@/hxx-components/vehicle-model.vue'
   import unitSearchInput from '@/hxx-components/unit-search-input.vue'
-
   export default {
     name: "select-addVehicle",
     props: ['showAddVehicle'],
