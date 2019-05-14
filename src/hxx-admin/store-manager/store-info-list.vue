@@ -194,7 +194,7 @@
         },
         showTable: false,
         total: 0,
-        loading: true,
+        loading: false,
 
         tableData: [],
         columns: [
@@ -265,9 +265,9 @@
       this.getInfo(this.$route.query.id);
     },
     mounted() {
-      console.log('mounted')
+      // console.log('mounted')
       this.showTable = true
-      this.getList()
+      // this.getList()
     },
     methods: {
       getInfo(id){
