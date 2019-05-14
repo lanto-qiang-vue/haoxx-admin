@@ -194,7 +194,7 @@
         },
         showTable: false,
         total: 0,
-        loading: true,
+        loading: false,
 
         tableData: [],
         columns: [
@@ -265,9 +265,8 @@
       this.getInfo(this.$route.query.id);
     },
     mounted() {
-      console.log('mounted')
       this.showTable = true
-      this.getList()
+      // this.getList()
     },
     methods: {
       getInfo(id){
@@ -447,10 +446,16 @@
         this.setModal = true;
       },
       getList() {
-        this.detailData = null
-        this.loading = true
         for (let key in this.query) {
           (this.query[key] === undefined || this.query[key] === null) ? this.query[key] = '' : ''
+        }
+        if(this.query.KEYWORD.trim() || this.query.CHECK_STATUS_eq || this.query.STATUS_eq){
+          this.detailData = null
+          this.loading = true
+        }else{
+          this.tableData = [];
+          this.total = 0;
+          return false;
         }
         this.axios.request({
           url: '/manage/info/tenantinfo/list',
