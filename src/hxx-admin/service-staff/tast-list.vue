@@ -448,10 +448,10 @@
             url = '/shop/dap-review/hxx_mgt/headpic/' + this.id + '/status';
             break;
           case 2:
-            url = "/shop/dap-review/hxx_mgt/station/" + this.id + "/status";
+            url = "/shop/dap-review/hxx_mgt/stationpic/" + this.id + "/status";
             break;
           case 3:
-            url = "/shop/dap-review/hxx_mgt/serveTag/" + this.id + "/status";
+            url = "/shop/dap-review/hxx_mgt/servetag/" + this.id + "/status";
             let tag = [];
             for (let i in this.tagList) {
               if (!this.tagList[i].checked) {
