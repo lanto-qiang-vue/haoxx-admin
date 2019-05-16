@@ -9,7 +9,7 @@
         <Input v-model="query.KEYWORD" placeholder="关键字搜索..."></Input>
       </div>
       <div class="search-block">
-        <Select v-model="query.CHECK_STATUS_eq" clearable placeholder="审核状态...">
+      <Select v-model="query.CHECK_STATUS_eq" clearable placeholder="审核状态...">
           <Option v-for="(item, index) in CHECK_STATUS_group"
                   :key="index" :value="item.code">{{item.name}}
           </Option>
