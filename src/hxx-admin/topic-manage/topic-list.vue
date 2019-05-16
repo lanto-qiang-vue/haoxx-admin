@@ -43,147 +43,72 @@
       <modal-title slot="header" :title="title" @clickBack="showModal=false"></modal-title>
       <Form :label-width="140" class="form-3">
         <FormItem label="话题发布人:" prop="PLATE_NUM">
-          <Input>
-          </Input>
+          <Input :value="detail.nickname" readonly></Input>
         </FormItem>
         <FormItem label="话题发布时间:" prop="PLATE_NUM">
-          <Input>
-          </Input>
+         <Input :value="detail.createDate" readonly></Input>
         </FormItem>
         <div style="clear:both;"></div>
         <FormItem label="状态:" prop="PLATE_NUM">
-          <Input>
-          </Input>
+          <Input :value="detail.isdelEq" readonly></Input>
         </FormItem>
         <FormItem label="话题评论数:" prop="PLATE_NUM">
-          <Input>
-          </Input>
+          <Input :value="detail.number" readonly></Input>
         </FormItem>
         <div style="clear:both;"></div>
         <FormItem label="话题:" prop="PLATE_NUM" style="width:67%;">
-          <div><b>汽车多久需要保养?</b>&nbsp;&nbsp;&nbsp;<Button>恢复/关闭</Button></div>
-          <div>
-            汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车,多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养
-            汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养
-          </div>
+          <div><b>{{title}}</b>&nbsp;&nbsp;&nbsp;<Button @click="updateType(detail.isdelEq == '正常' ? '关闭' : '恢复',detail.id
+          )">{{detail.isdelEq == '正常' ? '关闭' : '恢复'}}</Button></div>
+        </FormItem>
+        <div style="clear:both;"></div>
+        <FormItem  prop="PLATE_NUM" style="width:67%;">
+          <Input type="textarea" :value="detail.content" readonly></Input>
         </FormItem>
       </Form>
       <!--底部评论搜索-->
       <div>
         <div class="search-block">
-          <Input placeholder="账号/昵称" v-model="KEYWORD"></Input>
+          <Input placeholder="账号/昵称" v-model="keyWord"></Input>
         </div>
         <div class="search-block">
-          <DatePicker type="daterange" :value="value" :options="option" format="yyyy-MM-dd" placeholder="请选择时间"
+          <DatePicker type="daterange" :value="value2" :options="option" format="yyyy-MM-dd" placeholder="请选择时间"
                       style="width:100%;"
-                      @on-change="onChange"></DatePicker>
+                      @on-change="onChange2"></DatePicker>
         </div>
         <ButtonGroup size="small">
-          <Button type="primary" @click="page=1;getList()">
+          <Button type="primary" @click="page2=1;getComment()">
             <Icon type="ios-search" size="24"/>
           </Button>
         </ButtonGroup>
       </div>
       <!--底部评论列表-->
-      <div class="comment">
+      <div class="comment" v-for="item in comment">
         <div class="title">
-          <div class="f200">评论人:18799887656</div>
-          <div class="f250">评论时间:2019-04-19 10:04:20</div>
-          <div class="f250">点赞数:999</div>
+          <div class="f200">评论人:{{item.nickname}}</div>
+          <div class="f250">评论时间:{{item.createDate}}</div>
+          <div class="f250">点赞数:{{item.praise}}</div>
           <div style="clear:both;"></div>
-          <div>评论内容: 汽车多
+          <div>评论内容: {{item.commentContent}}
           </div>
-          <Button class="button">删除</Button>
+          <Button class="button" @click="del(item.id,1)">删除</Button>
         </div>
-        <div class="content">
+        <div class="content" v-for="a in item.replys">
           <div style="width:100%;">
-            <div style="float:left;width:300px;">13918765667->18799887656</div>
-            <div style="float:left;">2019-04-19 10:05:10</div>
+            <div style="float:left;width:300px;">{{a.replyname}}->{{a.replytousername}}</div>
+            <div style="float:left;">{{a.createDate}}</div>
           </div>
           <div style="clear:both;"></div>
           <div>
-            回复内容:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+            回复内容:{{a.content}}
           </div>
-          <Button class="button">删除</Button>
-        </div>
-        <div style="border-bottom:1px solid black;"></div>
-      </div>
-      <div class="comment">
-        <div class="title">
-          <div class="f200">评论人:18799887656</div>
-          <div class="f250">评论时间:2019-04-19 10:04:20</div>
-          <div class="f250">点赞数:999</div>
-          <div style="clear:both;"></div>
-          <div>评论内容: 汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车,多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养
-            汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽
-          </div>
-          <Button class="button">删除</Button>
-        </div>
-        <div class="content">
-          <div style="width:100%;">
-            <div style="float:left;width:300px;">13918765667->18799887656</div>
-            <div style="float:left;">2019-04-19 10:05:10</div>
-          </div>
-          <div style="clear:both;"></div>
-          <div>
-            回复内容:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-          </div>
-          <Button class="button">删除</Button>
-        </div>
-        <div style="border-bottom:1px solid black;"></div>
-      </div>
-      <div class="comment">
-        <div class="title">
-          <div class="f200">评论人:18799887656</div>
-          <div class="f250">评论时间:2019-04-19 10:04:20</div>
-          <div class="f250">点赞数:999</div>
-          <div style="clear:both;"></div>
-          <div>评论内容: 汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车,多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养
-            汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽
-          </div>
-          <Button class="button">删除</Button>
-        </div>
-        <div class="content">
-          <div style="width:100%;">
-            <div style="float:left;width:300px;">13918765667->18799887656</div>
-            <div style="float:left;">2019-04-19 10:05:10</div>
-          </div>
-          <div style="clear:both;"></div>
-          <div>
-            回复内容:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-          </div>
-          <Button class="button">删除</Button>
-        </div>
-        <div style="border-bottom:1px solid black;"></div>
-      </div>
-      <div class="comment">
-        <div class="title">
-          <div class="f200">评论人:18799887656</div>
-          <div class="f250">评论时间:2019-04-19 10:04:20</div>
-          <div class="f250">点赞数:999</div>
-          <div style="clear:both;"></div>
-          <div>评论内容: 汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车,多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养
-            汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽车多久需要保养汽
-          </div>
-          <Button class="button">删除</Button>
-        </div>
-        <div class="content">
-          <div style="width:100%;">
-            <div style="float:left;width:300px;">13918765667->18799887656</div>
-            <div style="float:left;">2019-04-19 10:05:10</div>
-          </div>
-          <div style="clear:both;"></div>
-          <div>
-            回复内容:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-          </div>
-          <Button class="button">删除</Button>
+          <Button class="button" @click="del(a.id,2)">删除</Button>
         </div>
         <div style="border-bottom:1px solid black;"></div>
       </div>
       <div class="table-bottom" style="line-height:40px;">
-        <Page :current="page" size="small" :page-size="25" show-sizer show-elevator show-total :page-size-opts="[25, 50, 100, 150]"
-              placement="top" :total="total" @on-change="changePage" @on-page-size-change="changePageSize"/>
-        <Button size="small" class="refresh" @click="changePage(page)"><Icon type="md-refresh" size="20"/></Button>
+        <Page :current="page2" size="small" :page-size="25" show-sizer show-elevator show-total :page-size-opts="[25, 50, 100, 150]"
+              placement="top" :total="total2" @on-change="changePage2" @on-page-size-change="changePageSize2"/>
+        <Button size="small" class="refresh" @click="changePage2(page2)"><Icon type="md-refresh" size="20"/></Button>
       </div>
     </Modal>
   </common-table>
@@ -197,45 +122,83 @@
     components: {commonTable, ModalTitle},
     data() {
       return {
+        page2:1,
+        keyWord:'',
+        total2:0,
+        limit2:25,
         title: '话题详情',
         topicId: '请选择话题圈',
         typeId: '请选择状态',
+        detail:{},
+        comment:[],
+        id:'',
         typeList: [
           {id: '请选择状态', name: '请选择状态'},
-          {id: '1', name: '话题圈1'},
-          {id: '2', name: '话题圈2'},
+          {id: 1, name: '正常'},
+          {id: 0, name: '已关闭'},
         ],
         topicList: [
           {id: '请选择话题圈', name: '请选择话题圈'},
-          {id: '1', name: '话题圈1'},
-          {id: '2', name: '话题圈2'},
         ],
-        value: [],
+        value: ["",""],
+        value2:["",""],
         tableData: [],
+        circle:{},
         columns: [
           {
             title: '序号', width: 100,
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
-          {title: '发布人', key: 'A', minWidth: 100},
-          {title: '话题', key: 'B', minWidth: 100},
-          {title: '话题圈', key: 'C', minWidth: 100},
-          {title: '发布时间', key: 'D', minWidth: 100},
-          {title: '评论数', key: 'E', minWidth: 100},
-          {title: '状态', key: 'E', minWidth: 100},
+          {title: '发布人', key: 'nickname', width: 200,
+            render: (h, params) => h('span',params.row.username+"/"+params.row.nickname)
+          },
+          {title: '话题', key: 'title', minWidth: 300},
+          {title: '话题圈', key: 'bbsTopicId', minWidth: 100,
+            render: (h, params) => h('span',this.circle[params.row.bbsTopicId])
+          },
+          {title: '发布时间', key: 'createDate', width: 200},
+          {title: '评论数', key: 'number', width: 150},
+          {title: '状态', key: 'isdelEq', width: 100},
           {
-            title: '操作', key: 'E', minWidth: 100,
+            title: '操作', key: 'E', width: 200,
             render: (h, params) => {
               let button = [];
-              button.push(h('Button', {type: 'primary'}, '关闭/恢复'));
-              button.push(h('Button', {type: 'primary', style: {marginLeft: '10px'}}, '查看详情'));
+              let buttonName = params.row.isdelEq == "正常" ? "关闭" : "恢复";
+              button.push(h('Button', {type: 'primary',on:{
+                click:()=>{
+                    this.updateType(buttonName,params.row.id);
+                }
+                }},buttonName));
+              button.push(h('Button', {type: 'primary', style: {marginLeft: '10px'},on:{
+                click:()=>{
+                  this.id = params.row.id;
+                  this.keyWord = "";
+                  this.value2 = ["",""];
+                  this.getComment();
+                  this.axios.request({
+                    baseURL: this.baseUrl,
+                    url: '/manage/contentmanage/selectContentDetail',
+                    method: 'post',
+                    params: {
+                      access_token: this.$store.state.user.token,
+                      id:params.row.id,
+                    },
+                  }).then(res => {
+                    if(res.success){
+                        this.detail = res.data;
+                        this.showModal = true;
+                    }
+                  })
+                }
+                }}, '查看详情'));
               return h('div', button);
             }
           },
         ],
         showTable: false,
         loading: false,
-        showModal: true,
+        showModal: false,
+        baseUrl: '/poxy-after/',
         total: 0,
         page: 1,
         limit: 25,
@@ -249,15 +212,132 @@
     },
     mounted() {
       this.showTable = Math.random();
-      this.getList();
+      this.getCircle();
     },
     methods: {
+      del(id,type){
+        this.$Modal.confirm({
+          title:'系统提示',
+          content:'确认删除吗?',
+          onOk:()=>{
+            this.axios.request({
+              baseURL: this.baseUrl,
+              url: 'manage/contentmanage/updateCommentsOrReply',
+              method: 'post',
+              params: {
+                access_token: this.$store.state.user.token,
+                id:id,
+                type:type
+              },
+            }).then(res => {
+              if(res.success){
+                this.$Message.success("删除成功");
+               this.getComment();
+              }
+            })
+          }
+        });
+      },
+      updateType(buttonName,id){
+        this.$Modal.confirm({
+          title:'系统提示',
+          content:'确认'+buttonName+"吗?",
+          onOk:()=>{
+            this.axios.request({
+              baseURL: this.baseUrl,
+              url: 'manage/contentmanage/updateContentState',
+              method: 'post',
+              params: {
+                access_token: this.$store.state.user.token,
+                id:id,
+                isdel:buttonName == '关闭' ? 0 : 1,
+              },
+            }).then(res => {
+              if(res.success){
+                this.getList();
+                if(buttonName == '关闭'){
+                  this.detail.isdelEq = "已关闭";
+                }else{
+                  this.detail.isdelEq = "正常";
+                }
+                this.$Message.success("已"+buttonName);
+              }
+            })
+          }
+        });
+      },
+      getComment(){
+        this.axios.request({
+          baseURL: this.baseUrl,
+          url: 'manage/contentmanage/selectCommentsFuzzy',
+          method: 'post',
+          params: {
+            access_token: this.$store.state.user.token,
+            id:this.id,
+            limit: this.limit2,
+            page: this.page2,
+            keyWord:this.keyWord,
+            startTime:this.value2[0] == "" ? "" : this.value2[0] + " 00:00:00",
+            endTime:this.value[1] == "" ? "" : this.value2[1] + " 23:59:59",
+          },
+        }).then(res => {
+          this.total2 = res.total;
+           this.comment = res.data;
+        })
+      },
+      getCircle(){
+        this.axios.request({
+          baseURL: this.baseUrl,
+          url: 'manage/topicmanage/getTopicList',
+          method: 'post',
+          params: {
+            access_token: this.$store.state.user.token,
+            keyWord: "",
+            limit: 100,
+            page: 1,
+            state: "",
+          },
+        }).then(res => {
+          if (res.success) {
+             let data = res.data;
+             for(let i in data){
+               this.topicList.push({id:data[i].id,name:data[i].content});
+               this.circle[data[i].id] = data[i].content;
+             }
+            this.getList();
+          }
+        })
+      },
       getList() {
-        this.tableData = [{A: 'A'}, {B: 'B'}];
+        this.loading = true;
+        this.list = "";
+        this.axios.request({
+          baseURL: this.baseUrl,
+          url: 'manage/contentmanage/selectContentManageList',
+          method: 'post',
+          params: {
+            access_token: this.$store.state.user.token,
+            keyWord: this.KEYWORD,
+            limit: this.limit,
+            page: this.page,
+            bbsTopicId:this.topicId == '请选择话题圈' ? "" : this.topicId,
+            isdel:this.typeId == '请选择状态' ? "" : this.typeId,
+            startTime:this.value[0] == "" ? "" : this.value[0] + " 00:00:00",
+            endTime:this.value[1] == "" ? "" : this.value[1] + " 23:59:59",
+          },
+        }).then(res => {
+          if (res.success) {
+            this.total = res.total;
+            this.tableData = res.data;
+            this.loading = false;
+          }
+        })
       },
       onChange(val) {
         this.value = val;
-        console.log(this.value);
+      },
+      onChange2(val) {
+        this.value2 = val;
       },
       changePageSize(size) {
         this.limit = size;
@@ -266,6 +346,14 @@
       changePage(page) {
         this.page = page;
         this.getList();
+      },
+      changePage2(page){
+        this.page2 = page;
+        this.getComment();
+      },
+      changePageSize2(size){
+        this.limit2 = size;
+        this.getComment();
       },
     }
   }
@@ -313,6 +401,7 @@
 
   .form-3 {
     padding-top: 20px;
+    padding-bottom:20px;
   }
 
   .form-3 .ivu-form-item {

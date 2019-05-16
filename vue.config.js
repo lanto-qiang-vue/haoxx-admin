@@ -58,7 +58,7 @@ module.exports = {
         secure: false
       },
       '/poxy-after/':{
-        target:'http://192.168.169.112:8872',
+        target:'http://192.168.169.126:8872',
         pathRewrite: {'^/poxy-after/': ''},
         secure: false
       },
