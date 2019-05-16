@@ -65,6 +65,11 @@
         this.getList();
       },
       getList() {
+        if(!this.search.keyword.trim()){
+          this.tableData = [];
+          this.total = 0;
+          return false;
+        }
         this.axios.request({
           url: 'manage/info/upload/list',
           method: 'post',

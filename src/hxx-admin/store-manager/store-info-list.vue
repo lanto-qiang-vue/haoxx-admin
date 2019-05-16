@@ -9,7 +9,7 @@
         <Input v-model="query.KEYWORD" placeholder="关键字搜索..."></Input>
       </div>
       <div class="search-block">
-        <Select v-model="query.CHECK_STATUS_eq" clearable placeholder="审核状态...">
+      <Select v-model="query.CHECK_STATUS_eq" clearable placeholder="审核状态...">
           <Option v-for="(item, index) in CHECK_STATUS_group"
                   :key="index" :value="item.code">{{item.name}}
           </Option>
@@ -265,7 +265,6 @@
       this.getInfo(this.$route.query.id);
     },
     mounted() {
-      // console.log('mounted')
       this.showTable = true
       // this.getList()
     },
@@ -447,10 +446,16 @@
         this.setModal = true;
       },
       getList() {
-        this.detailData = null
-        this.loading = true
         for (let key in this.query) {
           (this.query[key] === undefined || this.query[key] === null) ? this.query[key] = '' : ''
+        }
+        if(this.query.KEYWORD.trim() || this.query.CHECK_STATUS_eq || this.query.STATUS_eq){
+          this.detailData = null
+          this.loading = true
+        }else{
+          this.tableData = [];
+          this.total = 0;
+          return false;
         }
         this.axios.request({
           url: '/manage/info/tenantinfo/list',
