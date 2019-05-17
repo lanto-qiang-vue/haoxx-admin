@@ -1,4 +1,5 @@
 <template>
+  <div class="tast-list" style="width:100%;height:100%;">
   <common-table v-model="tableData" :columns="columns" @changePageSize="changePageSize" @changePage="changePage"
                 :total="total" :show="showTable" :page="page" :loading="loading">
     <div slot="search">
@@ -25,6 +26,9 @@
         </Button>
       </ButtonGroup>
     </div>
+
+  </common-table>
+
     <Modal
       v-model="showModal"
       class="table-modal-detail full-height"
@@ -156,12 +160,11 @@
         <Button type="primary" @click="check">保存</Button>
       </div>
     </Modal>
-  </common-table>
+  </div>
 </template>
 <script>
   import commonTable from '@/hxx-components/common-table.vue'
   import ModalTitle from '@/hxx-components/modal-title.vue'
-  import {deepClone} from "../../libs/util";
 
   export default {
     name: "tast-list",
@@ -274,7 +277,7 @@
                   }
                 }
               }, '查看详情'));
-              if (true) return h('div', btn)
+              return h('div', btn)
             }
           },
         ],
@@ -311,8 +314,9 @@
       }
     },
     mounted() {
-
+      console.log("mounted-start");
       this.getList();
+      console.log("mounted-end");
       // this.showRecord = Math.random();
     },
     watch: {

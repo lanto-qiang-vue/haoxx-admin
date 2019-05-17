@@ -1,6 +1,7 @@
 import axios from 'axios'
 import store from '@/store'
 import { Message } from 'iview'
+console.log("fly-create");
 const fly = axios.create({
   baseURL: '/poxy-shqx/',
   timeout: 1000,
@@ -8,6 +9,7 @@ const fly = axios.create({
     return JSON.stringify(data)
   }],
 });
+
 fly.interceptors.request.use(function (config) {
   console.log("请求开始!");
   config.headers = {'token':store.state.user.token,'Content-Type': 'application/json; charset=utf-8'}
@@ -25,6 +27,7 @@ fly.interceptors.request.use(function (config) {
   // 对请求错误做些什么
   return Promise.reject(error);
 });
+
 fly.interceptors.response.use(function (response) {
   // 对响应数据做点什么
   console.log("response原始",response);
