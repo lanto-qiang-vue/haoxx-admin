@@ -400,13 +400,15 @@
             type: this.tastStatus == '请选择任务' ? '' : this.tastStatus,
             page: this.page - 1,
             size: this.limit,
-          }
+          },
         }).then(res => {
+          console.log("获取返回值",res);
           if (res.content) {
-            this.showTable = Math.random();
             this.tableData = res.content;
             this.total = res.totalElements;
+            this.showTable = Math.random();
           }
+          console.log("tableData",this.tableData);
         })
       },
       getRecord() {

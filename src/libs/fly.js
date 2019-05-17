@@ -9,7 +9,12 @@ const fly = axios.create({
   }],
 });
 fly.interceptors.request.use(function (config) {
+  console.log("请求开始!");
   config.headers = {'token':store.state.user.token,'Content-Type': 'application/json; charset=utf-8'}
+  if (config.method == 'get') {
+    config.data = true
+  }
+  config.headers['Content-Type'] = 'application/json;charset=UTF-8'
   if(config.url.indexOf("?") > -1){
     config.url = config.url + "&userId="+ store.state.user.userInfo.user.userId;
   }else{
@@ -21,12 +26,13 @@ fly.interceptors.request.use(function (config) {
   return Promise.reject(error);
 });
 fly.interceptors.response.use(function (response) {
-  console.log('response',JSON.stringify(response));
   // 对响应数据做点什么
+  console.log("response原始",response);
   if(response.data.code &&response.data.code != 0) Message.info(response.data.status);
   return response.data;
 }, function (error) {
   // 对响应错误做点什么
+  console.log("error",error);
   return Promise.reject(error);
 });
 export default fly;

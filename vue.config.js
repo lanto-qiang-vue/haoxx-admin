@@ -64,6 +64,7 @@ module.exports = {
       '/poxy-shqx/':{
         // target:'http://118.25.13.140:8888',
         target:'https://hxx.hoxiuxiu.com/poxy-shqx/',
+        // target:'https://www.shanghaiqixiu.org/proxy/',
         pathRewrite: {'^/poxy-shqx/': ''},
         secure: false
        }
