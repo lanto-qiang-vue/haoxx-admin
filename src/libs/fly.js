@@ -21,6 +21,7 @@ fly.interceptors.request.use(function (config) {
   return Promise.reject(error);
 });
 fly.interceptors.response.use(function (response) {
+  console.log('response',JSON.stringify(response));
   // 对响应数据做点什么
   if(response.data.code &&response.data.code != 0) Message.info(response.data.status);
   return response.data;

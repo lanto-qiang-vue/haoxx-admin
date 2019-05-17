@@ -39,8 +39,8 @@ module.exports = {
   devServer: {
     proxy: {
       '/proxy/': {
-        target: 'http://192.168.169.110:8761',
-        // target: 'http://developer.hxx.hoxiuxiu.com/',
+        // target: 'http://192.168.169.110:8761',
+        target: 'http://developer.hxx.hoxiuxiu.com/',
         pathRewrite: {'^/proxy/': ''},
         secure: false
       },
