@@ -167,7 +167,7 @@
   import ModalTitle from '@/hxx-components/modal-title.vue'
 
   export default {
-    name: "tast-list",
+    name: "tast-test2",
     components: {commonTable, ModalTitle},
     data() {
       return {
@@ -323,7 +323,7 @@
       checkModal(val) {
         if (val && this.stage == 3) {
           this.tagList = [];
-          let data = this.detail.tagJson || [];
+          let data = this.detail.tagJson;
           for (let i in data) {
             if (!data[i].status) this.tagList.push({tag: data[i].tag, status: data[i].status, checked: false});
           }
@@ -333,22 +333,26 @@
     },
     computed: {
       canShow() {
-        let flag= false
         switch (this.stage) {
           case 1:
           case 2:
             console.log(this.detail.status);
             if (this.detail.status != 'pass' && this.detail.status != 'no_need') {
-              flag= true;
+              return true;
+            } else {
+              return false;
             }
             break;
           case 3:
-            for (let i in (this.detail.tagJson || [])) {
-              if (!this.detail.tagJson[i].status) flag = true;
+            for (let i in this.detail.tagJson) {
+              if (!this.detail.tagJson[i].status) return true;
             }
+            return false;
+            break;
+          case 4:
+            return false;
             break;
         }
-        return flag;
       }
     },
     methods: {

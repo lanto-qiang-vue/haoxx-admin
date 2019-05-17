@@ -35,7 +35,7 @@
   import ModalTitle from '@/hxx-components/modal-title.vue'
 
   export default {
-    name: "tast-list",
+    name: "tast-test",
     components: {commonTable, ModalTitle},
     data() {
       return {
@@ -119,6 +119,34 @@
           {title: '门店名称', key: 'shopName', minWidth: 100},
           {
             title: '操作', key: 'F', width: 300, align: 'center',
+            render: (h, params) => {
+              let btn = [h('Button', {
+                props: {type: 'primary', size: 'small'}, style: {marginLeft: "10px"}, on: {
+                  click: () => {
+                    this.openName = 'list';
+                    this.showModal = true;
+                    this.detailKeyword = "";
+                    this.id = params.row.shopNo;
+                    this.storeName = params.row.shopName;
+                    this.showRecord = Math.random();
+                    this.type = params.row.daqType;
+                    this.getRecord();
+                  }
+                }
+              }, '查看提交记录')];
+              if (params.row.daqType != 'promowxpa') btn.unshift(h('Button', {
+                props: {type: 'primary', size: 'small'}, on: {
+                  click: () => {
+                    this.id = params.row.shopNo;
+                    this.stage = this.strToInt[params.row.daqType];
+                    this.getDetail(this.strToInt[params.row.daqType]);
+                    this.openName = 'detail';
+                    this.showModal = true;
+                  }
+                }
+              }, '查看详情'));
+              return h('div', btn)
+            }
           },
         ],
         total: 0,
