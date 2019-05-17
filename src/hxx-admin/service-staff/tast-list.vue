@@ -105,7 +105,7 @@
         </Input>
       </FormItem>
       <!--图片-->
-      <FormItem label="标签:" v-show="stage == 3" style="width:100%;" class="tag">
+      <FormItem label="标签:" v-show="stage == 3" style="width:100%;" class="tag" >
         <Button type="default" v-for="(item, key) in (detail.tagJson ||[])" :key="key">{{item.tag}}</Button>
       </FormItem>
       <FormItem label="门店门头照:" v-show="stage == 1" prop="PLATE_NUM" style="width:33%">
@@ -479,7 +479,7 @@
           content: '确认提交吗?',
           onOk: () => {
             //patch ->put
-            this.$fly.put(url, params).then(res => {
+            this.$fly.patch(url, params).then(res => {
               if(res && !res.code){
                 this.showModal = false;
                 this.checkModal = false;
