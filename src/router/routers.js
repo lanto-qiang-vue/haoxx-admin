@@ -953,29 +953,7 @@ export default [
           access: '100904',
         },
         component: () => import('@/hxx-admin/service-staff/tast-list.vue')
-      },
-      {
-        path: '/tast-test',
-        name: 'tast-test',
-        meta: {
-          icon: 'md-funnel',
-          title: '测试',
-          lgType: "1001",
-          // access: '100904',
-        },
-        component: () => import('@/hxx-admin/service-staff/tast-test.vue')
-      },
-      {
-        path: '/tast-test2',
-        name: 'tast-test2',
-        meta: {
-          icon: 'md-funnel',
-          title: '测试2',
-          lgType: "1001",
-          // access: '100904',
-        },
-        component: () => import('@/hxx-admin/service-staff/tast-test2.vue')
-      },
+      }
     ]
   },
   {

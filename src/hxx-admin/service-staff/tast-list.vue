@@ -1,5 +1,5 @@
 <template>
-  <div class="tast-list" style="width:100%;height:100%;position: relative;">
+  <div class="tast-list" style="width:100%;height:100%;position: relative;padding: 0px;">
   <common-table v-model="tableData" :columns="columns" @changePageSize="changePageSize" @changePage="changePage"
                 :total="total" :show="showTable" :page="page" :loading="loading">
     <div slot="search">
@@ -416,6 +416,8 @@
         })
       },
       getRecord() {
+        this.recordData = [];
+        this.recordTotal = 0;
         this.$fly.get('/shop/dap-review/hxx_mgt/log/query', {
           params: {
             shopNo: this.id,
