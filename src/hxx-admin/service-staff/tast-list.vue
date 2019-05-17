@@ -471,7 +471,8 @@
           title: '系统提示',
           content: '确认提交吗?',
           onOk: () => {
-            this.$fly.patch(url, params).then(res => {
+            //patch ->put
+            this.$fly.put(url, params).then(res => {
               if(res && !res.code){
                 this.showModal = false;
                 this.checkModal = false;
