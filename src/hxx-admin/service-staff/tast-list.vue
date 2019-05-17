@@ -311,9 +311,9 @@
       }
     },
     mounted() {
-      this.showTable = Math.random();
+
       this.getList();
-      this.showRecord = Math.random();
+      // this.showRecord = Math.random();
     },
     watch: {
       checkModal(val) {
@@ -403,6 +403,7 @@
           }
         }).then(res => {
           if (res.content) {
+            this.showTable = Math.random();
             this.tableData = res.content;
             this.total = res.totalElements;
           }
