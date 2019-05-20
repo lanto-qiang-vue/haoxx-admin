@@ -934,63 +934,63 @@ export default [
       },
     ]
   },
-  // {
-  //   path: '/service-staff',
-  //   name: 'service-staff',
-  //   meta: {
-  //     icon: 'logo-buffer',
-  //     title: '服务人员管理',
-  //     lgType: "1001",
-  //     access: '1009',
-  //   },
-  //   component: Main,
-  //   children:[
-  //     {
-  //       path: '/service-staff-list',
-  //       name: 'service-staff-list',
-  //       meta: {
-  //         icon: 'md-funnel',
-  //         title: '服务人员信息',
-  //         lgType: "1001",
-  //         access: '100901',
-  //       },
-  //       component: () => import('@/hxx-admin/service-staff/service-staff-list.vue')
-  //     },
-  //     {
-  //       path: '/daily-count',
-  //       name: 'daily-count',
-  //       meta: {
-  //         icon: 'md-funnel',
-  //         title: '日常服务统计',
-  //         lgType: "1001",
-  //         access: '100902',
-  //       },
-  //       component: () => import('@/hxx-admin/service-staff/daily-count.vue')
-  //     },
-  //     {
-  //       path: '/service-list',
-  //       name: 'service-list',
-  //       meta: {
-  //         icon: 'md-funnel',
-  //         title: '服务明细',
-  //         lgType: "1001",
-  //         access: '100903',
-  //       },
-  //       component: () => import('@/hxx-admin/service-staff/service-list.vue')
-  //     },
-  //     {
-  //       path: '/tast-list',
-  //       name: 'tast-list',
-  //       meta: {
-  //         icon: 'md-funnel',
-  //         title: '任务列表',
-  //         lgType: "1001",
-  //         access: '100904',
-  //       },
-  //       component: () => import('@/hxx-admin/service-staff/tast-list.vue')
-  //     }
-  //   ]
-  // },
+  {
+    path: '/service-staff',
+    name: 'service-staff',
+    meta: {
+      icon: 'logo-buffer',
+      title: '服务人员管理',
+      lgType: "1001",
+      access: '1009',
+    },
+    component: Main,
+    children:[
+      {
+        path: '/service-staff-list',
+        name: 'service-staff-list',
+        meta: {
+          icon: 'md-funnel',
+          title: '服务人员信息',
+          lgType: "1001",
+          access: '100901',
+        },
+        component: () => import('@/hxx-admin/service-staff/service-staff-list.vue')
+      },
+      {
+        path: '/daily-count',
+        name: 'daily-count',
+        meta: {
+          icon: 'md-funnel',
+          title: '日常服务统计',
+          lgType: "1001",
+          access: '100902',
+        },
+        component: () => import('@/hxx-admin/service-staff/daily-count.vue')
+      },
+      {
+        path: '/service-list',
+        name: 'service-list',
+        meta: {
+          icon: 'md-funnel',
+          title: '服务明细',
+          lgType: "1001",
+          access: '100903',
+        },
+        component: () => import('@/hxx-admin/service-staff/service-list.vue')
+      },
+      {
+        path: '/tast-list',
+        name: 'tast-list',
+        meta: {
+          icon: 'md-funnel',
+          title: '任务列表',
+          lgType: "1001",
+          access: '100904',
+        },
+        component: () => import('@/hxx-admin/service-staff/tast-list.vue')
+      }
+    ]
+  },
   {
     path: '/manage-store',
     name: 'manage-store',
