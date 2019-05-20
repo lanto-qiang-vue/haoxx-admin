@@ -150,7 +150,12 @@
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
           {title: '发布人', key: 'nickname', width: 200,
-            render: (h, params) => h('span',params.row.username+"/"+params.row.nickname)
+            render: (h, params) => h('a',{on:{
+              click:()=>{
+                this.KEYWORD = "";
+                this.getList(params.row.username);
+              }
+              }},params.row.username+"/"+params.row.nickname)
           },
           {title: '话题', key: 'title', minWidth: 300},
           {title: '话题圈', key: 'bbsTopicId', minWidth: 100,
@@ -278,7 +283,7 @@
             page: this.page2,
             keyWord:this.keyWord,
             startTime:this.value2[0] == "" ? "" : this.value2[0] + " 00:00:00",
-            endTime:this.value[1] == "" ? "" : this.value2[1] + " 23:59:59",
+            endTime:this.value2[1] == "" ? "" : this.value2[1] + " 23:59:59",
           },
         }).then(res => {
           this.total2 = res.total;
@@ -308,7 +313,7 @@
           }
         })
       },
-      getList() {
+      getList(account = "") {
         this.loading = true;
         this.list = "";
         this.axios.request({
@@ -317,7 +322,7 @@
           method: 'post',
           params: {
             access_token: this.$store.state.user.token,
-            keyWord: this.KEYWORD,
+            keyWord: account ? account : this.KEYWORD,
             limit: this.limit,
             page: this.page,
             bbsTopicId:this.topicId == '请选择话题圈' ? "" : this.topicId,
