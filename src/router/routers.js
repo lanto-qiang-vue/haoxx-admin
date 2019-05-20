@@ -906,7 +906,7 @@ export default [
       icon: 'logo-buffer',
       title: '车谈管理',
       lgType: "1001",
-      access: '1009',
+      // access: '1009',
     },
     component: Main,
     children:[
