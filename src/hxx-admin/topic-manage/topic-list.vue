@@ -198,7 +198,7 @@
         showTable: false,
         loading: false,
         showModal: false,
-        baseUrl: '/poxy-after/',
+        baseUrl: '/poxy-shqx/',
         total: 0,
         page: 1,
         limit: 25,

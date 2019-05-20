@@ -988,7 +988,7 @@ export default [
           access: '100904',
         },
         component: () => import('@/hxx-admin/service-staff/tast-list.vue')
-      },
+      }
     ]
   },
   {

@@ -39,10 +39,9 @@ module.exports = {
   devServer: {
     proxy: {
       '/proxy/': {
-        // target: 'http://192.168.169.120:8761',
-        target: 'http://developer.hxx.hoxiuxiu.com/',
         // target: 'http://192.168.169.110:8761',
-        // target: 'http://developer.hxx.hoxiuxiu.com/',
+        target: 'http://developer.hxx.hoxiuxiu.com/',
+        // target:'https://hxx.hoxiuxiu.com/api/',
         pathRewrite: {'^/proxy/': ''},
         secure: false
       },
@@ -63,7 +62,9 @@ module.exports = {
         secure: false
       },
       '/poxy-shqx/':{
-        target:'http://118.25.13.140:8888',
+        target:'http://192.168.169.231:8888/',
+        // target:'https://hxx.hoxiuxiu.com/poxy-shqx/',
+        // target:'https://www.shanghaiqixiu.org/proxy/',
         pathRewrite: {'^/poxy-shqx/': ''},
         secure: false
        }

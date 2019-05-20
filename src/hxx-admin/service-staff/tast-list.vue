@@ -1,4 +1,5 @@
 <template>
+  <div class="tast-list" style="width:100%;height:100%;position: relative;padding: 0px;">
   <common-table v-model="tableData" :columns="columns" @changePageSize="changePageSize" @changePage="changePage"
                 :total="total" :show="showTable" :page="page" :loading="loading">
     <div slot="search">
@@ -25,98 +26,101 @@
         </Button>
       </ButtonGroup>
     </div>
+
+  </common-table>
+
     <Modal
-      v-model="showModal"
-      class="table-modal-detail full-height"
-      width="100"
-      heigh="100"
-      :mask-closable="false"
-      :scrollable="true"
-      :transfer="false"
-      :footer-hide="openName == 'list'"
-      :transition-names="['', '']">
-      <modal-title slot="header" :title="(openName == 'detail' ? '任务详情' : taskObject[type] +'提交记录')" :state="openName == 'list' ? storeName : ''" @clickBack="showModal=false"></modal-title>
-      <common-table v-show="openName == 'list'" v-model="recordData" :columns="recordColumns"
-                    @changePageSize="recordChangePageSize"
-                    @changePage="recordChangePage"
-                    :total="recordTotal" :show="showRecord" :page="recordPage">
-        <div slot="search">
-          <div class="search-block">
-            <Input placeholder="会员账号/姓名" v-model="detailKeyword"></Input>
-          </div>
-          <ButtonGroup size="small">
-            <Button type="primary" @click="recordPage=1;getRecord()">
-              <Icon type="ios-search" size="24"/>
-            </Button>
-          </ButtonGroup>
+    v-model="showModal"
+    class="table-modal-detail full-height"
+    width="100"
+    heigh="100"
+    :mask-closable="false"
+    :scrollable="true"
+    :transfer="false"
+    :footer-hide="openName == 'list'"
+    :transition-names="['', '']">
+    <modal-title slot="header" :title="(openName == 'detail' ? '任务详情' : taskObject[type] +'提交记录')" :state="openName == 'list' ? storeName : ''" @clickBack="showModal=false"></modal-title>
+    <common-table v-show="openName == 'list'" v-model="recordData" :columns="recordColumns"
+                  @changePageSize="recordChangePageSize"
+                  @changePage="recordChangePage"
+                  :total="recordTotal" :show="showRecord" :page="recordPage">
+      <div slot="search">
+        <div class="search-block">
+          <Input placeholder="会员账号/姓名" v-model="detailKeyword"></Input>
         </div>
-      </common-table>
-      <!--门头照-->
-      <Form :label-width="140" v-show="openName == 'detail'" class="form-3">
-        <FormItem label="任务名称:" prop="PLATE_NUM">
-          <Input :value="title" readonly>
-          </Input>
-        </FormItem>
-        <FormItem label="门店:" prop="PLATE_NUM">
-          <Input :value="detail.shopName" readonly>
-          </Input>
-        </FormItem>
-        <FormItem label="审核状态:" v-show="stage == 1 || stage == 2 || stage == 3" prop="PLATE_NUM">
-          <Input :value="statusObject[detail.status] || ''" readonly>
-          </Input>
-        </FormItem>
-        <FormItem label="服务人员账号:" prop="PLATE_NUM">
-          <Input :value="detail.createdAn" readonly>
-          </Input>
-        </FormItem>
-        <FormItem label="服务人员姓名:" prop="PLATE_NUM">
-          <Input :value="detail.createdBy" readonly>
-          </Input>
-        </FormItem>
-        <FormItem label="任务完成时间:" v-show="stage == 4" prop="PLATE_NUM">
-          <Input :value="detail.modifiedDate" readonly>
-          </Input>
-        </FormItem>
-        <FormItem label="任务提交时间:" v-show="stage == 1 || stage == 2 || stage == 3" prop="PLATE_NUM">
-          <Input :value="detail.createdDate" readonly>
-          </Input>
-        </FormItem>
-        <FormItem label="营业时间:" v-show="stage == 4" prop="PLATE_NUM">
-          <Input :value="businessTime" readonly>
-          </Input>
-        </FormItem>
-        <FormItem label="工位总数:" v-show="stage == 4" prop="PLATE_NUM">
-          <span>{{workDetail}}</span>
-        </FormItem>
-        <FormItem label="审核人员账号:" v-show="stage == 3" prop="PLATE_NUM">
-          <Input :value="detail.modifiedAn" readonly>
-          </Input>
-        </FormItem>
-        <FormItem label="审核人:" v-show="stage == 2 && detail.status == 'pass'" prop="PLATE_NUM">
-          <Input :value="detail.modifiedAn" readonly>
-          </Input>
-        </FormItem>
-        <FormItem label="审核时间:" v-show="(stage == 2 || stage == 3) && detail.status == 'pass'" prop="PLATE_NUM">
-          <Input :value="detail.modifiedDate" readonly>
-          </Input>
-        </FormItem>
-        <!--图片-->
-        <FormItem label="标签:" v-show="stage == 3" style="width:100%;" class="tag">
-          <Button type="default" v-for="item in detail.tagJson">{{item.tag}}</Button>
-        </FormItem>
-        <FormItem label="门店门头照:" v-show="stage == 1" prop="PLATE_NUM" style="width:33%">
-          <img :src="detail.picUrl" style="max-width:100%;max-height:300px;">
-          <!--<div style="width:45%;float:left;height:200px;background:pink;"></div>-->
-          <!--<div style="width:45%;float:left;height:200px;background:blue;"></div>-->
-        </FormItem>
-        <FormItem label="门店工位照:" v-show="stage == 2" prop="PLATE_NUM" style="width:100%;">
-          <img v-for="item in imgList" style="max-width:33%;margin-left:10px;max-height:400px;" :src="item">
-        </FormItem>
-      </Form>
-      <div slot="footer">
-        <Button type="primary" @click="checkModal=true" v-show="canShow">审核</Button>
+        <ButtonGroup size="small">
+          <Button type="primary" @click="recordPage=1;getRecord()">
+            <Icon type="ios-search" size="24"/>
+          </Button>
+        </ButtonGroup>
       </div>
-    </Modal>
+    </common-table>
+    <!--门头照-->
+    <Form :label-width="140" v-show="openName == 'detail'" class="form-3">
+      <FormItem label="任务名称:" prop="PLATE_NUM">
+        <Input :value="title" readonly>
+        </Input>
+      </FormItem>
+      <FormItem label="门店:" prop="PLATE_NUM">
+        <Input :value="detail.shopName" readonly>
+        </Input>
+      </FormItem>
+      <FormItem label="审核状态:" v-show="stage == 1 || stage == 2 || stage == 3" prop="PLATE_NUM">
+        <Input :value="statusObject[detail.status ||'null'] || ''" readonly>
+        </Input>
+      </FormItem>
+      <FormItem label="服务人员账号:" prop="PLATE_NUM">
+        <Input :value="detail.createdAn" readonly>
+        </Input>
+      </FormItem>
+      <FormItem label="服务人员姓名:" prop="PLATE_NUM">
+        <Input :value="detail.createdBy" readonly>
+        </Input>
+      </FormItem>
+      <FormItem label="任务完成时间:" v-show="stage == 4" prop="PLATE_NUM">
+        <Input :value="detail.modifiedDate" readonly>
+        </Input>
+      </FormItem>
+      <FormItem label="任务提交时间:" v-show="stage == 1 || stage == 2 || stage == 3" prop="PLATE_NUM">
+        <Input :value="detail.createdDate" readonly>
+        </Input>
+      </FormItem>
+      <FormItem label="营业时间:" v-show="stage == 4" prop="PLATE_NUM">
+        <Input :value="businessTime" readonly>
+        </Input>
+      </FormItem>
+      <FormItem label="工位总数:" v-show="stage == 4" prop="PLATE_NUM">
+        <span>{{workDetail}}</span>
+      </FormItem>
+      <FormItem label="审核人员账号:" v-show="stage == 3" prop="PLATE_NUM">
+        <Input :value="detail.modifiedAn" readonly>
+        </Input>
+      </FormItem>
+      <FormItem label="审核人:" v-show="stage == 2 && detail.status == 'pass'" prop="PLATE_NUM">
+        <Input :value="detail.modifiedAn" readonly>
+        </Input>
+      </FormItem>
+      <FormItem label="审核时间:" v-show="(stage == 2 || stage == 3) && detail.status == 'pass'" prop="PLATE_NUM">
+        <Input :value="detail.modifiedDate" readonly>
+        </Input>
+      </FormItem>
+      <!--图片-->
+      <FormItem label="标签:" v-show="stage == 3" style="width:100%;" class="tag" >
+        <Button type="default" v-for="(item, key) in (detail.tagJson ||[])" :key="key">{{item.tag}}</Button>
+      </FormItem>
+      <FormItem label="门店门头照:" v-show="stage == 1" prop="PLATE_NUM" style="width:33%">
+        <img :src="detail.picUrl" style="max-width:100%;max-height:300px;">
+        <!--<div style="width:45%;float:left;height:200px;background:pink;"></div>-->
+        <!--<div style="width:45%;float:left;height:200px;background:blue;"></div>-->
+      </FormItem>
+      <FormItem label="门店工位照:" v-show="stage == 2" prop="PLATE_NUM" style="width:100%;">
+        <img v-for="(item, key) in imgList" :key="key" style="max-width:33%;margin-left:10px;max-height:400px;" :src="item">
+      </FormItem>
+    </Form>
+    <div slot="footer">
+      <Button type="primary" @click="checkModal=true" v-show="canShow">审核</Button>
+    </div>
+  </Modal>
     <Modal
       v-model="checkModal"
       width="400px"
@@ -156,12 +160,11 @@
         <Button type="primary" @click="check">保存</Button>
       </div>
     </Modal>
-  </common-table>
+  </div>
 </template>
 <script>
   import commonTable from '@/hxx-components/common-table.vue'
   import ModalTitle from '@/hxx-components/modal-title.vue'
-  import {deepClone} from "../../libs/util";
 
   export default {
     name: "tast-list",
@@ -274,7 +277,7 @@
                   }
                 }
               }, '查看详情'));
-              if (true) return h('div', btn)
+              return h('div', btn)
             }
           },
         ],
@@ -311,15 +314,16 @@
       }
     },
     mounted() {
-      this.showTable = Math.random();
+      console.log("mounted-start");
       this.getList();
-      this.showRecord = Math.random();
+      console.log("mounted-end");
+      // this.showRecord = Math.random();
     },
     watch: {
       checkModal(val) {
         if (val && this.stage == 3) {
           this.tagList = [];
-          let data = this.detail.tagJson;
+          let data = this.detail.tagJson || [];
           for (let i in data) {
             if (!data[i].status) this.tagList.push({tag: data[i].tag, status: data[i].status, checked: false});
           }
@@ -329,52 +333,51 @@
     },
     computed: {
       canShow() {
+        let flag= false
         switch (this.stage) {
           case 1:
-          case 2:
+          case 2:{
             console.log(this.detail.status);
             if (this.detail.status != 'pass' && this.detail.status != 'no_need') {
-              return true;
-            } else {
-              return false;
+              flag= true;
             }
             break;
-          case 3:
-            for (let i in this.detail.tagJson) {
-              if (!this.detail.tagJson[i].status) return true;
+          }
+          case 3:{
+            for (let i in (this.detail.tagJson || [])) {
+              if (!this.detail.tagJson[i].status) flag = true;
             }
-            return false;
             break;
-          case 4:
-            return false;
-            break;
+          }
         }
+        return flag;
       }
     },
     methods: {
       getDetail(val){
           switch (val) {
-            case 1:
+            case 1: {
               this.title = "上传门头照";
               this.$fly.get('shop/daq/hxx_mgt/headpic/' + this.id).then(res => {
                 this.detail = res;
               })
               break;
-            case 2:
-              this.title = "上传工位照";
+            }
+            case 2:{            this.title = "上传工位照";
               this.$fly.get('/shop/daq/hxx_mgt/stationpic/' + this.id).then(res => {
                 if (res.picUrl) this.imgList = res.picUrl.split(",");
                 this.detail = res;
               })
-              break;
-            case 3:
+              break;}
+            case 3:{
               this.$fly.get('/shop/daq/hxx_mgt/servetag/' + this.id).then(res => {
                 this.title = "门店特色与优势";
                 res.tagJson = JSON.parse(res.tagJson);
                 this.detail = res;
               });
               break;
-            case 4:
+            }
+            case 4:{
               this.title = "营业时间及工位数";
               this.$fly.get('/shop/daq/hxx_mgt/otherattr/' + this.id).then(res => {
                 if (res.attrJson) {
@@ -390,6 +393,7 @@
                 this.detail = res;
               });
               break;
+            }
           }
       },
       getList() {
@@ -400,15 +404,20 @@
             type: this.tastStatus == '请选择任务' ? '' : this.tastStatus,
             page: this.page - 1,
             size: this.limit,
-          }
+          },
         }).then(res => {
+          console.log("获取返回值",res);
           if (res.content) {
             this.tableData = res.content;
             this.total = res.totalElements;
+            this.showTable = Math.random();
           }
+          console.log("tableData",this.tableData);
         })
       },
       getRecord() {
+        this.recordData = [];
+        this.recordTotal = 0;
         this.$fly.get('/shop/dap-review/hxx_mgt/log/query', {
           params: {
             shopNo: this.id,
@@ -448,10 +457,10 @@
             url = '/shop/dap-review/hxx_mgt/headpic/' + this.id + '/status';
             break;
           case 2:
-            url = "/shop/dap-review/hxx_mgt/station/" + this.id + "/status";
+            url = "/shop/dap-review/hxx_mgt/stationpic/" + this.id + "/status";
             break;
           case 3:
-            url = "/shop/dap-review/hxx_mgt/serveTag/" + this.id + "/status";
+            url = "/shop/dap-review/hxx_mgt/servetag/" + this.id + "/status";
             let tag = [];
             for (let i in this.tagList) {
               if (!this.tagList[i].checked) {
@@ -471,6 +480,7 @@
           title: '系统提示',
           content: '确认提交吗?',
           onOk: () => {
+            //patch ->put
             this.$fly.patch(url, params).then(res => {
               if(res && !res.code){
                 this.showModal = false;

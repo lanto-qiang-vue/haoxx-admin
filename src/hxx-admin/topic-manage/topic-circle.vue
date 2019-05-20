@@ -85,7 +85,7 @@
         KEYWORD: '',
         showTable: false,
         checkModal: false,
-        baseUrl: '/poxy-after/',
+        baseUrl: '/poxy-shqx/',
         columns: [
           {
             title: '序号', width: 100,
