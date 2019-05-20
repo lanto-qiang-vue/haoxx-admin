@@ -178,6 +178,7 @@
     watch: {
       checkModal(type) {
         if (type) {
+         delete this.detail.id;
           this.$refs.detail.resetFields();
         }
       }
