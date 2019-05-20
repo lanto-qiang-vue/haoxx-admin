@@ -83,11 +83,11 @@
                     callback();
                   }else{
                     //处理16进制...
-                    if(/^#{0,1}[A-F|\d+]{6}$/.test(s)){
+                    if(/^#{0,1}[\d+|[a-f]{6}$/.test(s)){
                       if(s.indexOf("#") > -1){
 
                       }else{
-                        this.detail.colour = "#"+s;
+                        this.detail.colour = "#"+s.toUpperCase();
                       }
                       callback();
                     }else if(/^rgb[a]{0,1}\([\d+]{1,3},[\d+]{1,3},[\d+]{1,3}(,0\.\d{1,2}){0,1}\)$|^[\d+]{1,3},[\d+]{1,3},[\d+]{1,3}(,0\.\d{1,2}){0,1}$/.test(s)){
