@@ -40,7 +40,7 @@
             </Input>
           </FormItem>
           <FormItem prop="colour">
-            <Input v-model="detail.colour" placeholder="请输入颜色">
+            <Input v-model="detail.colour" placeholder="支持RGB和十六进制。RGB支持第四位透明度参数">
             </Input>
           </FormItem>
           <FormItem prop="icon">
@@ -77,7 +77,34 @@
         },
         rules: {
           content: {required: true, message: '必填'},
-          colour: {required: true, message: '必填'},
+          colour: { validator: (rule, value, callback) => {
+                   let s = value.toLowerCase();
+                  if(s == ""){
+                    callback();
+                  }else{
+                    //处理16进制...
+                    if(/^#{0,1}[A-F|\d+]{6}$/.test(s)){
+                      if(s.indexOf("#") > -1){
+
+                      }else{
+                        this.detail.colour = "#"+s;
+                      }
+                      callback();
+                    }else if(/^rgb[a]{0,1}\([\d+]{1,3},[\d+]{1,3},[\d+]{1,3}(,0\.\d{1,2}){0,1}\)$|^[\d+]{1,3},[\d+]{1,3},[\d+]{1,3}(,0\.\d{1,2}){0,1}$/.test(s)){
+                      let a = value.replace(/rgb[a]{0,1}\((\S+)\)/,'$1');
+                      let b = a.split(",");
+                      for(let i = 0;i<3;i++){
+                        if(parseInt(b[i])> 255){
+                          callback(new Error('请输入正确的色号'));
+                        }
+                      }
+                      this.detail.colour = 'rgb('+ b.join(",") + ")";
+                      callback();
+                    }else{
+                      callback(new Error('请输入正确的色号'));
+                    }
+                  }
+              }, trigger: 'change,blur', required: true },
           icon: {required: true, message: '图片必填'}
         },
         showModal: true,
