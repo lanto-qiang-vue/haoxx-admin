@@ -32,7 +32,7 @@
     </div>
     <Modal
       v-model="showModal"
-      class="table-modal-detail full-height"
+      class="table-modal-detail full-height tableOne"
       width="100"
       heigh="100"
       :mask-closable="false"
@@ -367,6 +367,11 @@
   }
 </script>
 <style lang="less">
+  .tableOne .ivu-modal-wrap .ivu-modal .ivu-modal-content .ivu-modal-body {
+    height: ~"calc(100% - 45px)";
+  }
+</style>
+<style lang="less" scoped>
   .f200{
     float:left;
     width:200px;
@@ -402,11 +407,6 @@
       }
     }
   }
-
-  .table-modal-detail .ivu-modal-wrap .ivu-modal .ivu-modal-content .ivu-modal-body {
-    height: ~"calc(100% - 45px)";
-  }
-
   .form-3 {
     padding-top: 20px;
     padding-bottom:20px;

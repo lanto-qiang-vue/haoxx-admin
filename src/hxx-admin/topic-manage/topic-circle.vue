@@ -266,7 +266,7 @@
     }
   }
 </script>
-<style lang="less">
+<style lang="less" scoped>
   .table-modal-detail .ivu-modal-wrap .ivu-modal .ivu-modal-content .ivu-modal-body {
     height: calc(100% - 45px);
   }
