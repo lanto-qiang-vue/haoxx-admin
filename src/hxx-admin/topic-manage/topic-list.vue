@@ -82,7 +82,9 @@
         </ButtonGroup>
       </div>
       <!--底部评论列表-->
-      <div class="comment" v-for="item in comment">
+      <div style="height:20px;"></div>
+      <div class="comment" v-for="item in comment" style="border-top:1px dashed black;">
+        <div style="height: 10px;"></div>
         <div class="title">
           <div class="f200">评论人:{{item.nickname}}</div>
           <div class="f250">评论时间:{{item.createDate}}</div>
@@ -103,7 +105,8 @@
           </div>
           <Button class="button" @click="del(a.id,2)">删除</Button>
         </div>
-        <div style="border-bottom:1px solid black;"></div>
+        <div style="height: 10px;"></div>
+        <!--<div style="border-bottom:1px dashed black;"></div>-->
       </div>
       <div class="table-bottom" style="line-height:40px;">
         <Page :current="page2" size="small" :page-size="25" show-sizer show-elevator show-total :page-size-opts="[25, 50, 100, 150]"
