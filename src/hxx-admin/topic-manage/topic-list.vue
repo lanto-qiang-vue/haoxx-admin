@@ -57,7 +57,7 @@
         </FormItem>
         <div style="clear:both;"></div>
         <FormItem label="话题:" prop="PLATE_NUM" style="width:67%;">
-          <div><b>{{title}}</b>&nbsp;&nbsp;&nbsp;<Button @click="updateType(detail.isdelEq == '正常' ? '关闭' : '恢复',detail.id
+          <div><b>{{detail.title}}</b>&nbsp;&nbsp;&nbsp;<Button :type="detail.isdelEq == '正常' ? 'error' : 'primary'" @click="updateType(detail.isdelEq == '正常' ? '关闭' : '恢复',detail.id
           )">{{detail.isdelEq == '正常' ? '关闭' : '恢复'}}</Button></div>
         </FormItem>
         <div style="clear:both;"></div>
@@ -83,7 +83,7 @@
       </div>
       <!--底部评论列表-->
       <div style="height:20px;"></div>
-      <div class="comment" v-for="item in comment" style="border-top:1px dashed black;">
+      <div class="comment" v-for="item in comment" style="border-top:1px solid #e9e9e9;">
         <div style="height: 10px;"></div>
         <div class="title">
           <div class="f200">评论人:{{item.nickname}}</div>
