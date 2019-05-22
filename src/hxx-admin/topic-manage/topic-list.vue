@@ -232,7 +232,7 @@
               baseURL: this.baseUrl,
               url: 'manage/contentmanage/updateCommentsOrReply',
               method: 'post',
-              params: {
+              data: {
                 access_token: this.$store.state.user.token,
                 id:id,
                 type:type
@@ -255,7 +255,7 @@
               baseURL: this.baseUrl,
               url: 'manage/contentmanage/updateContentState',
               method: 'post',
-              params: {
+              data: {
                 access_token: this.$store.state.user.token,
                 id:id,
                 isdel:buttonName == '关闭' ? 0 : 1,
@@ -279,7 +279,7 @@
           baseURL: this.baseUrl,
           url: 'manage/contentmanage/selectCommentsFuzzy',
           method: 'post',
-          params: {
+          data: {
             access_token: this.$store.state.user.token,
             id:this.id,
             limit: this.limit2,
@@ -298,7 +298,7 @@
           baseURL: this.baseUrl,
           url: 'manage/topicmanage/getTopicList',
           method: 'post',
-          params: {
+          data: {
             access_token: this.$store.state.user.token,
             keyWord: "",
             limit: 100,
@@ -323,7 +323,7 @@
           baseURL: this.baseUrl,
           url: 'manage/contentmanage/selectContentManageList',
           method: 'post',
-          params: {
+          data: {
             access_token: this.$store.state.user.token,
             keyWord: account ? account : this.KEYWORD,
             limit: this.limit,

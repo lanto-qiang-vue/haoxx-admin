@@ -19,7 +19,7 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="primary" @click="checkModal=true">新增</Button>
+      <Button type="primary" @click="checkModal=true;detail.id = ''">新增</Button>
       <Button type="primary" :disabled="!list" @click="checkModal=true,detail = deepClone(list),list = '',clearType = Math.random()">修改</Button>
     </div>
     <Modal
@@ -138,7 +138,7 @@
                         baseURL: this.baseUrl,
                         url: '/manage/topicmanage/updateState',
                         method: 'post',
-                        params: {
+                        data: {
                           access_token: this.$store.state.user.token,
                           state: params.row.state == 1 ? 0 : 1,
                           id: params.row.id
@@ -178,7 +178,6 @@
     watch: {
       checkModal(type) {
         if (type) {
-         delete this.detail.id;
           this.$refs.detail.resetFields();
         }
       }
@@ -202,10 +201,9 @@
                   baseURL: this.baseUrl,
                   url: '/manage/topicmanage/saveOrUpdateTopic',
                   method: 'post',
-                  params: {
+                  data: {
                     access_token: this.$store.state.user.token,
-                    colour:"#FFFFFF",
-                    data:this.detail,
+                    data:JSON.stringify(this.detail),
                   },
                 }).then(res => {
                   this.getList();
@@ -241,7 +239,7 @@
           baseURL: this.baseUrl,
           url: 'manage/topicmanage/getTopicList',
           method: 'post',
-          params: {
+          data: {
             access_token: this.$store.state.user.token,
             keyWord: this.KEYWORD,
             limit: this.limit,
