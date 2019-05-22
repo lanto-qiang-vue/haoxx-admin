@@ -204,6 +204,7 @@
                   method: 'post',
                   params: {
                     access_token: this.$store.state.user.token,
+                    colour:"#FFFFFF",
                     data:this.detail,
                   },
                 }).then(res => {
