@@ -17,7 +17,6 @@
     </div>
     <div slot="operate">
       <Button type="success" v-if="accessBtn('add')" @click="detailData=null,showDetail=Math.random()">新增</Button>
-
       <Button type="info" v-if="" @click="auditButton" :disabled="buttonStateArr.audit">审核</Button>
       <Button type="info" v-if="" @click="reAuditButton" :disabled="buttonStateArr.reAudit">反审核</Button>
       <Button type="error" v-if="accessBtn('del')"  @click="deleteDetailData" :disabled="buttonStateArr.ban">作废</Button>
@@ -27,7 +26,6 @@
     <policy-manage-detail class="table-modal-detail" :showDetail="showDetail"
                              :detailData="detailData" @closeDetail="closeDetail" @closeGetList="closeGetList"
       ></policy-manage-detail>
-
   </common-table>
 </template>
 <script>

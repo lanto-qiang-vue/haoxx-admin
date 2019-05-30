@@ -906,7 +906,7 @@ export default [
       icon: 'logo-buffer',
       title: '车谈管理',
       lgType: "1001",
-      // access: '1009',
+      access: '1010',
     },
     component: Main,
     children:[
@@ -917,7 +917,7 @@ export default [
           icon: 'md-funnel',
           title: '话题管理',
           lgType: "1001",
-          // access: '100901',
+          access: '101001',
         },
         component: () => import('@/hxx-admin/topic-manage/topic-list.vue')
       },
@@ -928,7 +928,7 @@ export default [
           icon: 'md-funnel',
           title: '话题圈管理',
           lgType: "1001",
-          // access: '100901',
+          access: '101002',
         },
         component: () => import('@/hxx-admin/topic-manage/topic-circle.vue')
       },

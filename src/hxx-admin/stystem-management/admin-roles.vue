@@ -101,7 +101,7 @@
   import {getName, getDictGroup, getCreate} from '@/libs/util.js'
 
   export default {
-    name: "index-roles",
+    name: "admin-roles",
     components: {xunitTree, commonTable},
     computed: {
       statusList() {
