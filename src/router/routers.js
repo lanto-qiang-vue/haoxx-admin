@@ -1104,6 +1104,28 @@ export default [
         },
         component: () => import('@/hxx-admin/member-manage/member-list.vue')
       },
+      {
+        path: '/product-list',
+        name: 'product-list',
+        meta: {
+          icon: 'md-funnel',
+          title: '产品信息',
+          lgType: "1001",
+          // access: '100801',
+        },
+        component: () => import('@/hxx-admin/member-manage/product-list.vue')
+      },
+      {
+        path: '/order-list',
+        name: 'order-list',
+        meta: {
+          icon: 'md-funnel',
+          title: '订单信息',
+          lgType: "1001",
+          // access: '100801',
+        },
+        component: () => import('@/hxx-admin/member-manage/order-list.vue')
+      },
     ]
   },
   {

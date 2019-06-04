@@ -11,7 +11,6 @@ const fly = axios.create({
 });
 
 fly.interceptors.request.use(function (config) {
-  console.log("请求开始!");
   config.headers = {'token':store.state.user.token,'Content-Type': 'application/json; charset=utf-8'}
   if (config.method == 'get') {
     config.data = true
@@ -30,7 +29,6 @@ fly.interceptors.request.use(function (config) {
 
 fly.interceptors.response.use(function (response) {
   // 对响应数据做点什么
-  console.log("response原始",response);
   if(response.data.code &&response.data.code != 0) Message.info(response.data.status);
   return response.data;
 }, function (error) {
