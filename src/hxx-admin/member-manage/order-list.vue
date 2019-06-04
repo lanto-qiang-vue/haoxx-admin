@@ -77,24 +77,24 @@
         },
         columns: [
           {
-            title: '订单编号', width: 250,key:'no'
+            title: '订单编号', width: 250,key:'no',sortable:true,
           },
-          {title: '车架号', key: 'vin', width: 180},
-          {title: '产品编码', key: 'type', width: 120},
-          {title: '价格', key: 'amount', width: 100},
-          {title: '支付状态', key: 'payType', width: 120,
+          {title: '车架号', key: 'vin', width: 180,sortable:true},
+          {title: '产品编码', key: 'type', width: 120,sortable:true},
+          {title: '价格', key: 'amount', width: 100,sortable:true},
+          {title: '支付状态', key: 'payType', width: 120,sortable:true,
             render: (h, params) => h('span',params.row.status.name)
           },
-          {title: '账户名', key: 'accountName', minWidth: 120,
-            render: (h, params) => h('span',params.row.user.name)
+          {title: '账户名', key: 'accountName', minWidth: 120,sortable:true,
+            // render: (h, params) => h('span',params.row.user.name)
           },
-          {title:'是否详细版本',key:'detailVersion',width:120,
+          {title:'是否详细版本',key:'detailVersion',width:120,sortable:true,
             render: (h, params) => h('span',params.row.detailVersion ? '是' : '否')
           },
-          {title: '订单是否无效状态', key: 'state', width: 140,
+          {title: '订单是否无效状态', key: 'state', width: 140,sortable:true,
             render: (h, params) => h('span',params.row.state ? '订单无效' : '订单有效')
           },
-          {title: '订单时间', key: 'createTime', width: 180,
+          {title: '订单时间', key: 'createTime', width: 180,sortable:true,
           },
         ],
         total: 0,
@@ -155,8 +155,12 @@
           pageNo: this.page,
           pageSize: this.limit,
         }).then(res => {
+          let data = res.items;
+          for(let i in data){
+            data[i]['accountName'] = data[i].user.name;
+          }
           this.total = res.total;
-          this.tableData = res.items;
+          this.tableData = data;
         })
       },
       changePageSize(size) {

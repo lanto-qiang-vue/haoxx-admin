@@ -62,8 +62,9 @@ module.exports = {
       },
       '/poxy-shqx/':{
         // target:'http://192.168.169.231:8888/',
-        target:'http://192.168.169.144:8186',
+        // target:'http://192.168.169.144:8186',
         // target:'https://hxx.hoxiuxiu.com/poxy-shqx/',
+        target:'https://hxx.test.hoxiuxiu.com/poxy-shqx',
         // target:'https://www.shanghaiqixiu.org/proxy/',
         pathRewrite: {'^/poxy-shqx/': ''},
         secure: false
