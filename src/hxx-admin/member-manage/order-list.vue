@@ -149,7 +149,7 @@
           userCode:this.userCode,
           startDate:this.value[0],
           endDate:this.value[1],
-          state:this.status == '请选是否无效状态' ? null : (this.status == 1 ? true : false),
+          state:this.state == '请选是否无效状态' ? null : (this.state == 1 ? true : false),
           type:this.type == '请选择产品编码' ? "" : this.type,
           status:this.status == '请选择订单支付状态' ? null : this.status,
           pageNo: this.page,
