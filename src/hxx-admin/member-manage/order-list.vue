@@ -11,13 +11,13 @@
       <div class="search-block">
         <Input placeholder="订单编号" v-model="no"></Input>
       </div>
-      <div class="search-block">
-        <Select v-model="type" placeholder="请选择产品编码">
-          <Option v-for="(item, index) in productList"
-                  :key="index" :value="item.id">{{item.name}}
-          </Option>
-        </Select>
-      </div>
+      <!--<div class="search-block">-->
+        <!--<Select v-model="type" placeholder="请选择产品编码">-->
+          <!--<Option v-for="(item, index) in productList"-->
+                  <!--:key="index" :value="item.id">{{item.name}}-->
+          <!--</Option>-->
+        <!--</Select>-->
+      <!--</div>-->
       <div class="search-block">
         <Select v-model="state" placeholder="请选是否无效状态">
           <Option v-for="(item, index) in stateList"
@@ -76,25 +76,27 @@
           }
         },
         columns: [
+          {title:'序号',width:80,key:'index',
+          render:(h,params) => h('span',params.index + (this.page - 1) * this.limit +1)
+          },
+          {title: '会员账号', key: 'accountName', minWidth: 120,sortable:true,
+          },
           {
             title: '订单编号', width: 250,key:'no',sortable:true,
           },
-          {title: '车架号', key: 'vin', width: 180,sortable:true},
-          {title: '产品编码', key: 'type', width: 120,sortable:true},
-          {title: '价格', key: 'amount', width: 100,sortable:true},
+          {title: '查询车架号', key: 'vin', width: 180,sortable:true},
+          {title: '产品编码', key: 'type', width: 150,sortable:true},
+          {title: '支付金额', key: 'amount', width: 100,sortable:true},
+          {title: '下单时间', key: 'createTime', width: 180,sortable:true,
+          },
           {title: '支付状态', key: 'payType', width: 120,sortable:true,
             render: (h, params) => h('span',params.row.status.name)
-          },
-          {title: '账户名', key: 'accountName', minWidth: 120,sortable:true,
-            // render: (h, params) => h('span',params.row.user.name)
           },
           {title:'是否详细版本',key:'detailVersion',width:120,sortable:true,
             render: (h, params) => h('span',params.row.detailVersion ? '是' : '否')
           },
           {title: '订单是否无效状态', key: 'state', width: 140,sortable:true,
             render: (h, params) => h('span',params.row.state ? '订单无效' : '订单有效')
-          },
-          {title: '订单时间', key: 'createTime', width: 180,sortable:true,
           },
         ],
         total: 0,
@@ -150,7 +152,7 @@
           startDate:this.value[0],
           endDate:this.value[1],
           state:this.state == '请选是否无效状态' ? null : (this.state == 1 ? true : false),
-          type:this.type == '请选择产品编码' ? "" : this.type,
+          // type:this.type == '请选择产品编码' ? "" : this.type,
           status:this.status == '请选择订单支付状态' ? null : this.status,
           pageNo: this.page,
           pageSize: this.limit,

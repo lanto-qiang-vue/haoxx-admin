@@ -3,10 +3,21 @@
                 :total="total" :show="showTable" :clearSelect="clearType" :page="page" @onRowClick="onRowClick">
     <div slot="search">
       <div class="search-block">
-        <Input placeholder="按编号搜索" v-model="code"></Input>
+      <Input placeholder="按名称搜索" v-model="KEYWORD"></Input>
+    </div>
+      <div class="search-block">
+      <Select v-model="status" placeholder="请选择是否已上架">
+        <Option v-for="(item, index) in statusList"
+                :key="index" :value="item.id">{{item.name}}
+        </Option>
+      </Select>
       </div>
       <div class="search-block">
-        <Input placeholder="按名称搜索" v-model="KEYWORD"></Input>
+        <Select v-model="bind" placeholder="是否为绑定车辆">
+          <Option v-for="(item, index) in bindList"
+                  :key="index" :value="item.id">{{item.name}}
+          </Option>
+        </Select>
       </div>
       <ButtonGroup size="small">
         <Button type="primary" @click="page=1;getList()">
@@ -31,16 +42,32 @@
     >
       <div>
         <Form :model="detail" ref="detail" :rules="rules">
-          <FormItem prop="code">
-          <Input v-model="detail.code" placeholder="请输入产品编号(非0启始数字)">
-          </Input>
-        </FormItem>
           <FormItem prop="name">
           <Input v-model="detail.name" placeholder="请输入产品名称">
           </Input>
         </FormItem>
           <FormItem prop="detailVersion" label="是否详细版本:">
             <RadioGroup v-model="detail.detailVersion">
+              <Radio label="是">
+                <span>是</span>
+              </Radio>
+              <Radio label="否">
+                <span>否</span>
+              </Radio>
+            </RadioGroup>
+          </FormItem>
+          <FormItem prop="bind" label="是否为绑定车辆:">
+            <RadioGroup v-model="detail.bind">
+              <Radio label="是">
+                <span>是</span>
+              </Radio>
+              <Radio label="否">
+                <span>否</span>
+              </Radio>
+            </RadioGroup>
+          </FormItem>
+          <FormItem prop="status" label="是否上架">
+            <RadioGroup v-model="detail.status">
               <Radio label="是">
                 <span>是</span>
               </Radio>
@@ -73,8 +100,22 @@
     data() {
       return {
         list:'',
+        status:'请选择是否已上架',
+        bind:'是否为绑定车辆',
+        statusList:[
+          {id:'请选择是否已上架',name:'请选择是否已上架'},
+          {id:1,name:'是'},
+          {id:2,name:'否'}
+        ],
+        bindList:[
+          {id:'是否为绑定车辆',name:'是否为绑定车辆'},
+          {id:1,name:'是'},
+          {id:2,name:'否'}
+        ],
         detail:{
-          code:'',
+          bind:'是',
+          status:'是',
+          // code:'',
           name:'',
           id:'',
           detailVersion:'是',
@@ -87,21 +128,21 @@
             title: '序号', width: 70,
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
-          {title: '编号', key: 'code', minWidth: 120},
+
           {title: '名称', key: 'name', minWidth: 120},
+          {title:'是否上架',key:'status',minWidth:120,
+            render:(h,params) => h('span',params.row.status ? '是' : '否')
+          },
+          {
+            title:'是否为绑定车辆',key:'bind',minWidth:120,
+            render:(h,params) => h('span',params.row.bind ? '是' : '否')
+          },
           {title: '是否详细版本', key: 'detailVersion', minWidth: 140,
             render: (h, params) => h('span',params.row.detailVersion ? "是" : '否')
           },
           {title: '单价', key: 'price', minWidth: 140},
         ],
         rules:{
-          code:[{required:true,message:'产品编号必填'}, { validator: (rule, value, callback) => {
-                  if(/^[1-9]{1}[\d+]{0,5}$/.test(value)){
-                   callback();
-                  }else{
-                   callback(new Error("请输入非0启始的数字,1-6位数字"));
-                  }
-            }, trigger: 'change,blur', required: true }],
           name:{required:true,message:'产品名称必填'},
         },
         KEYWORD: '',
@@ -127,6 +168,8 @@
         let data = deepClone(this.list);
         this.list = '';
         data.detailVersion = data.detailVersion ? "是" : "否";
+        data.bind = data.bind ? "是" : "否";
+        data.status = data.status ? "是" : "否";
         data.price = parseFloat(data.price);
         this.detail = data;
         this.checkModal = true;
@@ -144,6 +187,8 @@
               onOk:()=>{
                 let data = deepClone(this.detail);
                 data.detailVersion = data.detailVersion == "是" ? true : false;
+                data.bind = data.bind == "是" ? true : false;
+                data.status = data.status == "是" ? true : false;
                 data.price = data.price.toFixed(2);
                 let url;
                 if(data.id){
@@ -175,7 +220,8 @@
       },
       getList() {
         this.$fly.post('/hxxdc/product/find', {
-          code: this.code,
+          status:this.status == '请选择是否已上架' ? null : (this.status == 1 ? true : false),
+          bind:this.bind == '请选择是否已绑定' ? null : (this.bind == 1 ? true : false),
           name: this.KEYWORD,
           pageNo: this.page,
           pageSize: this.limit,
