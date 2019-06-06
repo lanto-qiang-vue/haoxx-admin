@@ -165,6 +165,7 @@
     },
     methods: {
       update(){
+        this.clearType = Math.random();
         let data = deepClone(this.list);
         this.list = '';
         data.detailVersion = data.detailVersion ? "是" : "否";
@@ -219,9 +220,10 @@
         }
       },
       getList() {
+        this.clearType = Math.random();
         this.$fly.post('/hxxdc/product/find', {
           status:this.status == '请选择是否已上架' ? null : (this.status == 1 ? true : false),
-          bind:this.bind == '请选择是否已绑定' ? null : (this.bind == 1 ? true : false),
+          bind:this.bind == '是否为绑定车辆' ? null : (this.bind == 1 ? true : false),
           name: this.KEYWORD,
           pageNo: this.page,
           pageSize: this.limit,

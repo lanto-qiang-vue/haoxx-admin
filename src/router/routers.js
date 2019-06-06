@@ -1128,6 +1128,30 @@ export default [
       },
     ]
   },
+  // {
+  //   path: '/discounts-manage',
+  //   name: 'discounts-manage',
+  //   meta: {
+  //     icon: 'logo-buffer',
+  //     title: '优惠券管理',
+  //     // lgType: "1001",
+  //     // access: '1008',
+  //   },
+  //   component: Main,
+  //   children:[
+  //     {
+  //       path: '/discounts-list',
+  //       name: 'discounts-list',
+  //       meta: {
+  //         icon: 'md-funnel',
+  //         title: '优惠券列表',
+  //         // lgType: "1001",
+  //         // access: '100801',
+  //       },
+  //       component: () => import('@/hxx-admin/discounts-manage/discounts-list.vue')
+  //     },
+  //   ]
+  // },
   {
     path: '/carInsure-marketing',
     name: 'carInsure-marketing',

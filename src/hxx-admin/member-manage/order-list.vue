@@ -11,13 +11,6 @@
       <div class="search-block">
         <Input placeholder="订单编号" v-model="no"></Input>
       </div>
-      <!--<div class="search-block">-->
-        <!--<Select v-model="type" placeholder="请选择产品编码">-->
-          <!--<Option v-for="(item, index) in productList"-->
-                  <!--:key="index" :value="item.id">{{item.name}}-->
-          <!--</Option>-->
-        <!--</Select>-->
-      <!--</div>-->
       <div class="search-block">
         <Select v-model="state" placeholder="请选是否无效状态">
           <Option v-for="(item, index) in stateList"
@@ -46,7 +39,6 @@
   </common-table>
 </template>
 <script>
-  import expandRow from './expand.vue'
   import commonTable from '@/hxx-components/common-table.vue'
   import {deepClone} from "../../libs/util";
 
@@ -85,7 +77,7 @@
             title: '订单编号', width: 250,key:'no',sortable:true,
           },
           {title: '查询车架号', key: 'vin', width: 180,sortable:true},
-          {title: '产品编码', key: 'type', width: 150,sortable:true},
+          {title: '产品名称', key: 'type', width: 150,sortable:true},
           {title: '支付金额', key: 'amount', width: 100,sortable:true},
           {title: '下单时间', key: 'createTime', width: 180,sortable:true,
           },
