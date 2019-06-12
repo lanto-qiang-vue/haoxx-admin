@@ -4,7 +4,7 @@ import { Message } from 'iview'
 import baseURL from '_conf/url'
 const fxios = axios.create({
   baseURL:baseURL,
-  timeout: 1000,
+  timeout: 10000,
 });
 
 fxios.interceptors.request.use(function (config) {

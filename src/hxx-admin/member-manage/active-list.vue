@@ -138,7 +138,7 @@
         let data = deepClone(this.list);
         this.list = '';
         data.open = data.open == true ? '开启' : '关闭';
-        let a = data.uri.split(",");
+        let a = data.uri ? data.uri.split(",") : [""];
         let store = [];
         for(let i in a){
           store.push({url:a[i],});
