@@ -1111,7 +1111,7 @@ export default [
           icon: 'md-funnel',
           title: '产品信息',
           lgType: "1001",
-          // access: '100801',
+          access: '100802',
         },
         component: () => import('@/hxx-admin/member-manage/product-list.vue')
       },
@@ -1122,7 +1122,7 @@ export default [
           icon: 'md-funnel',
           title: '订单信息',
           lgType: "1001",
-          // access: '100801',
+          access: '100803',
         },
         component: () => import('@/hxx-admin/member-manage/order-list.vue')
       },
@@ -1133,7 +1133,7 @@ export default [
           icon: 'md-funnel',
           title: '内测活动管理',
           lgType: "1001",
-          // access: '100801',
+          access: '100804',
         },
         component: () => import('@/hxx-admin/member-manage/active-list.vue')
       },
