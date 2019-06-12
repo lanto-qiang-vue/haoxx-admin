@@ -24,6 +24,7 @@ import env from '../config/env'
 
 import axios from '@/libs/api.request'
 import fly  from '@/libs/fly'
+import fxios from '@/libs/fxios'
 Vue.use(iView, {
   i18n: (key, value) => i18n.t(key, value)
 })
@@ -41,6 +42,7 @@ importDirective(Vue)
 //全局axios
 Vue.prototype.axios = axios;
 Vue.prototype.$fly = fly;
+Vue.prototype.$fxios = fxios;
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
