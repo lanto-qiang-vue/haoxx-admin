@@ -1126,6 +1126,17 @@ export default [
         },
         component: () => import('@/hxx-admin/member-manage/order-list.vue')
       },
+      {
+        path: '/active-list',
+        name: 'active-list',
+        meta: {
+          icon: 'md-funnel',
+          title: '这里是活动',
+          lgType: "1001",
+          // access: '100801',
+        },
+        component: () => import('@/hxx-admin/member-manage/active-list.vue')
+      },
     ]
   },
   // {
