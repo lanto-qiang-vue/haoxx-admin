@@ -20,6 +20,7 @@
     </div>
     <div slot="operate">
       <Button type="primary" @click="add">新增</Button>
+      <!--<input type="file" @change="getImg('TENANT_FILE_PATH', $event)">-->
     </div>
     <Modal v-model="showModal" title="新增" :width="680" :mask-closable="false">
       <!--stage == 1 成功应该提交的-->
@@ -64,6 +65,8 @@
         <Button type="primary" @click="submit">保存</Button>
       </div>
     </Modal>
+    <!--修改特例-->
+
   </common-table>
 </template>
 
@@ -130,6 +133,8 @@
             }, "")
           },
           {title: '姓名', key: 'nickname', width: 180},
+          {title:'职位',key:'title',width:120},
+          {title:'组名',key:'grouopname',width:120},
           {
             title: '在线状态', key: 'is_online', width: 140, align: "center",
             render: (h, params) => h('b', {
@@ -147,7 +152,7 @@
             }, this.order_state_list[params.row.order_state])
           },
           {
-            title: '操作', key: 'F', minWidth: 300, align: 'center',
+            title: '操作', key: 'F', minWidth: 350, align: 'center',
             render: (h, params) => h('div', [
               h('Button', {
                 props: {type: params.row.order_state > 0 ? "default" : "primary"}, on: {
@@ -203,7 +208,10 @@
                     );
                   }
                 }
-              }, params.row.state > 0 ? "解除角色" : "绑定角色")
+              }, params.row.state > 0 ? "解除角色" : "绑定角色"),
+              h('Button',{style:{marginLeft:'10px'},on:{click:()=>{
+                alert(params.row.id);
+                  }}},'编辑')
             ])
           },
         ],
@@ -226,6 +234,26 @@
       this.getList();
     },
     methods: {
+      getImg(name,e){
+       // let file = e.target.files[0]
+       //    let formdata = new FormData();
+       //    formdata.append('file',file);
+       //    formdata.append('access_token',this.$store.state.user.token);
+       //    let data = {
+       //      nickname:'陈鑫',
+       //      work_number:'1001',
+       //      username:'18358330864',
+       //      title:'md'};
+       //    formdata.append('data',JSON.stringify(data));
+       //    this.$fxios.request({
+       //      headers: {'Content-Type': 'multipart/form-data'},
+       //      url: '/manage/person/insertOperate',
+       //      method: 'post',
+       //      data:formdata,
+       //    }).then(res => {
+       //
+       //    })
+      },
       upload(){
         this.$refs.upload.post(this.file);
       },
