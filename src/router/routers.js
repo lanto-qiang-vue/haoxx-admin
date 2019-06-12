@@ -1131,7 +1131,7 @@ export default [
         name: 'active-list',
         meta: {
           icon: 'md-funnel',
-          title: '这里是活动',
+          title: '这里是活动呀呀呀',
           lgType: "1001",
           // access: '100801',
         },
