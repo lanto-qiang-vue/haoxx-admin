@@ -66,19 +66,37 @@
       </div>
     </Modal>
     <!--修改特例-->
-
+    <Modal v-model="updateModal" title="新增" :width="680" :mask-closable="false">
+      <!--stage == 1 成功应该提交的-->
+      <Form ref="formData" :rules="updateRule" :model="updateData" :label-width="80" class="common-form">
+        <FormItem label="姓名" prop="name">
+          <Input v-model="updateData.name"></Input>
+        </FormItem>
+        <!--<FormItem label="手机号" prop="username">-->
+          <!--&lt;!&ndash;<Input v-model="updateData."></Input>&ndash;&gt;-->
+        <!--</FormItem>-->
+      </Form>
+    </Modal>
   </common-table>
 </template>
 
 <script>
   import commonTable from '@/hxx-components/common-table.vue'
-  import {imgToBase64,reg} from "../../libs/util";
+  import {getDictGroup, imgToBase64, reg} from "../../libs/util";
   import env from '_conf/url'
   export default {
     name: "service-staff-list",
     components: {commonTable},
     data() {
       return {
+        updateModal:false,
+        updateRule:{},
+        updateData:{
+          name:'修改姓名',
+          group:'修改分组',
+          userid:'',
+        },
+        groupList:[],
         file:'',
         token: {
           access_token: '',
@@ -231,6 +249,7 @@
     mounted() {
       this.showTable = Math.random();
       this.baseUrl = env;
+      this.groupList =  getDictGroup(this.$store.state.app.dict, '1055');
       this.getList();
     },
     methods: {
