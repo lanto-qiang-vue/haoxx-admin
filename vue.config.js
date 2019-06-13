@@ -40,7 +40,7 @@ module.exports = {
     proxy: {
       '/proxy/': {
         // target: 'http://developer.hxx.hoxiuxiu.com/',
-        target:'http://192.168.169.113:8761',
+        target:'http://192.168.169.111:8761',
         // target:'https://hxx.hoxiuxiu.com/api/',
         pathRewrite: {'^/proxy/': ''},
         secure: false

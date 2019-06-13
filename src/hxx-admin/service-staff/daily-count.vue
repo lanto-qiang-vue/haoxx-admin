@@ -9,6 +9,13 @@
         <DatePicker type="daterange" :value="value" :options="option" format="yyyy-MM-dd" placeholder="请选择时间" style="width:100%;"
                     @on-change="onChange"></DatePicker>
       </div>
+      <div class="search-block">
+      <Select v-model="groupcode" placeholder="请选择分组">
+        <Option v-for="(item, index) in groupList"
+                :key="index" :value="item.code">{{item.name}}
+        </Option>
+      </Select>
+      </div>
       <ButtonGroup size="small">
         <Button type="primary" @click="page=1;getList()">
           <Icon type="ios-search" size="24"/>
@@ -20,12 +27,14 @@
 
 <script>
   import commonTable from '@/hxx-components/common-table.vue'
+  import {getDictGroup, getName} from "../../libs/util";
 
   export default {
     name: "daily-count",
     components: {commonTable},
     data() {
       return {
+        groupcode:'请选择分组',
         tableData: [],
         KEYWORD: "",
         option:{
@@ -38,7 +47,11 @@
             title: '序号', width: 100,
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
+          {title:'工号',width:150,key:'work_number'},
           {title: '会员账号', key: 'user_account', width: 200},
+          {title:'组名',key:'user_type',width:120,
+            render: (h, params) => h('span',getName(this.groupList,params.row.user_type))
+          },
           {title: '姓名', key: 'user_name', width: 180},
           {
             title: '申请服务数(次)', key: 'apply', width: 140,
@@ -110,6 +123,7 @@
         startTime: '',
         endTime: '',
         value: [],
+        groupList:[],
         active:false,
         loading: false,
         showTable: false,
@@ -127,6 +141,8 @@
         this.getList();
         this.active = true;
       }
+      this.groupList = getDictGroup(this.$store.state.app.dict, '1055');
+      this.groupList.unshift({code:'请选择分组',name:'请选择分组'});
       this.showTable = Math.random();
     },
     activated() {
@@ -160,6 +176,7 @@
             KEYWORD: this.KEYWORD,
             startTime: this.startTime,
             endTime: this.endTime,
+            groupcode:this.groupcode == '请选择分组' ? '' : this.groupcode,
           },
         }).then(res => {
           if (res.success === true) {

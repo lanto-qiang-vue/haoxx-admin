@@ -151,6 +151,7 @@
             title: '序号', width: 100,
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
+          {title:'工号',width:150,key:'work_number'},
           {
             title: '会员账号', key: 'username', width: 200,
             render: (h, params) => h('a', {
