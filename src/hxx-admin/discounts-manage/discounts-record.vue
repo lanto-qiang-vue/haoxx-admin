@@ -11,7 +11,7 @@
       </div>
       <div class="search-block">
         <DatePicker type="daterange" :options="option" format="yyyy-MM-dd" placeholder="未知时间2"
-                    style="width:100%;"></DatePicker>
+                                                                         style="width:100%;"></DatePicker>
       </div>
       <div class="search-block">
         <Select placeholder="请选择卷用途">

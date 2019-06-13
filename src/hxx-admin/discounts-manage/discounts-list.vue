@@ -86,7 +86,7 @@
                       style="width:100%;"></DatePicker>
       </FormItem>
       </Form>
-      <div style="padding-left:30px;font-size:14px;">
+      <div class="checkBox">
         <div style="line-height:40px;"> <Checkbox v-model="oneModal" style="float:left;">是否门店消核</Checkbox><div style="float:left" v-show="oneModal">&nbsp;&nbsp;<b style="color:red;">*</b>选择适用门店:已选0家&nbsp;&nbsp;&nbsp;&nbsp;<a @click="showType=Math.random()">添加/编辑</a>&nbsp;&nbsp;<a>导入门店</a></div></div>
         <div style="line-height:40px;clear:both;"><Checkbox v-model="twoModal" style="float:left;">是否从保险公司导入会员</Checkbox><div style="float:left;" v-show="twoModal"><a style="float:left;padding-left:20px;">导入会员</a><span style="float:left;padding-left:10px;">已导入0人</span>
         <div style="float:left;width:200px;padding-left:20px;">
@@ -98,8 +98,15 @@
         </div>
         </div>
         </div>
-        <div style="clear:both;"></div>
-        <div><Checkbox :value="threeModal">是否需自行领取</Checkbox></div>
+        <div style="line-height:40px;clear:both;">
+          <Checkbox v-model="threeModal" style="float:left;">是否需自行领取</Checkbox>
+          <div style="float:left;" v-show="threeModal">
+          <div style="float:left;padding-left:20px;"><b style="color:red;">*</b>可领取日期区间:</div>
+            <div style="float:left;width:250px;padding-left:20px;">
+            <DatePicker type="daterange" style="width:100%;" :options="option" format="yyyy-MM-dd" placeholder="开始日期-结束日期"></DatePicker>
+            </div>
+          </div>
+        </div>
       </div>
       <!---->
       <div slot="footer">
@@ -107,7 +114,6 @@
         <Button type="primary">提交</Button>
       </div>
     </Modal>
-
     <!--下拉框添加用途-->
     <Modal
       v-model="checkModal"
@@ -276,6 +282,9 @@
 
   .discounts-modal .form-3 {
     padding-top: 20px;
+    .checkBox{
+      padding-left:30px;font-size:14px;
+    }
   }
 
   .discounts-modal .form-3 .ivu-form-item {
