@@ -88,9 +88,18 @@
       </Form>
       <div style="padding-left:30px;font-size:14px;">
         <div style="line-height:40px;"> <Checkbox v-model="oneModal" style="float:left;">是否门店消核</Checkbox><div style="float:left" v-show="oneModal">&nbsp;&nbsp;<b style="color:red;">*</b>选择适用门店:已选0家&nbsp;&nbsp;&nbsp;&nbsp;<a @click="showType=Math.random()">添加/编辑</a>&nbsp;&nbsp;<a>导入门店</a></div></div>
-        <!--<div style="clear:both;"></div>-->
-        <!--<div><Checkbox :value="twoModal">是否从保险公司导入会员</Checkbox></div>-->
-        <!--<div><Checkbox :value="threeModal">是否需自行领取</Checkbox></div>-->
+        <div style="line-height:40px;clear:both;"><Checkbox v-model="twoModal" style="float:left;">是否从保险公司导入会员</Checkbox><div style="float:left;" v-show="twoModal"><a style="float:left;padding-left:20px;">导入会员</a><span style="float:left;padding-left:10px;">已导入0人</span>
+        <div style="float:left;width:200px;padding-left:20px;">
+          <Select placeholder="请选择保险公司名称">
+            <Option v-for="(item, index) in stateList"
+                    :key="index" :value="item.id">{{item.name}}
+            </Option>
+          </Select>
+        </div>
+        </div>
+        </div>
+        <div style="clear:both;"></div>
+        <div><Checkbox :value="threeModal">是否需自行领取</Checkbox></div>
       </div>
       <!---->
       <div slot="footer">
@@ -142,7 +151,7 @@
     data() {
       return {
         oneModal:false,
-        checkId:[2,3,7],
+        checkId:[],
         twoModal:false,
         threeModal:false,
         title:'优惠券详情',

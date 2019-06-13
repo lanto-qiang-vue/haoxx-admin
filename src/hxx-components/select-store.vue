@@ -62,6 +62,7 @@
         ],
         page: 1,
         limit: 25,
+        checkObject:{},
         total: 0,
         tableData: [],
         showModal: false,
@@ -71,7 +72,7 @@
         columns: [
           {type: 'selection',align:'center',width:70},
           {
-            title: '序号', width: 70,align:'center',
+            title: '序号2', width: 70,align:'center',
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
           {title: '区域', key: 'A', sortable: true, minWidth: 140,align:'left'},
@@ -85,7 +86,17 @@
     },
     methods: {
       changeSelect(row){
-      console.log(row);
+       let obj = {};
+       for(let i in this.tableData){
+         obj[this.tableData[i].id] = 0;
+       }
+       for(let i in row){
+         obj[row[i].id] = 1;
+       }
+       for(let i in obj){
+         this.checkObject[i] = obj[i];
+       }
+       console.log(JSON.stringify(this.checkObject));
       },
       visibleChange() {
         this.clearsection();
@@ -113,12 +124,14 @@
           {id:11,A:'A',B:'B',C:'C'},
           {id:12,A:'A',B:'B',C:'C'},
         ];
-        for(let i in this.checkId){
-           for(let a in data){
-             console.log(this.checkId[i],data[a].id);
-            if(this.checkId[i] == data[a].id) data[a]['_checked'] = true;
-           continue;
-           }
+        for(let i in this.checkObject){
+              if(this.checkObject[i] == 1){
+                for(let a in data){
+                  if(data[a].id == i){
+                     data[a]['_checked'] = true;
+                  }
+                }
+              }
         }
         this.tableData = data;
       },
@@ -137,7 +150,19 @@
       showType() {
         this.showModal = true;
         this.showTable = Math.random();
-        console.log(this.checkId);
+        for(let i in this.checkId){
+          this.checkObject[this.checkId[i]] = 1;
+        }
+        this.columns = [
+          {type: 'selection',align:'center',width:70},
+          {
+            title: '序号', width: 70,align:'center',
+            render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
+          },
+          {title: '区域', key: 'A', sortable: true, minWidth: 140,align:'left'},
+          {title: '类型', key: 'B', sortable: true, minWidth: 140,align:'left'},
+          {title: '门店名称', key: 'C', sortable: true, minWidth: 140,align:'left'},
+        ]
         this.showTable = Math.random();
         this.getList();
       },
