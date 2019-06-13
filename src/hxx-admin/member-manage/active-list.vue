@@ -64,7 +64,7 @@
   import {deepClone} from "../../libs/util";
 
   export default {
-    name: "member-list",
+    name: "active-list",
     components: {commonTable},
     data() {
       return {

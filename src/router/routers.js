@@ -1137,6 +1137,17 @@ export default [
         },
         component: () => import('@/hxx-admin/member-manage/active-list.vue')
       },
+      {
+        path: '/active-phone',
+        name: 'active-phone',
+        meta: {
+          icon: 'md-funnel',
+          title: '内测手机号管理',
+          // lgType: "1001",
+          // access: '100804',
+        },
+        component: () => import('@/hxx-admin/member-manage/active-phone.vue')
+      },
     ]
   },
   // {
