@@ -17,7 +17,7 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="primary" @click="checkModal=true;stage=1">新增</Button>
+      <Button type="primary" @click="checkModal=true;stage=1;reset()">新增</Button>
       <Button type="info" :disabled="list == ''" @click="update">修改</Button>
       <Button type="error" :disabled="list == ''" @click="del">删除</Button>
     </div>
@@ -104,14 +104,11 @@
       this.getActive();
       this.getList();
     },
-    watch:{
-      checkModal(type){
-        if(type) this.$refs.detail.resetFields();
-      }
-    },
     methods: {
+      reset(){
+        this.$refs.detail.resetFields();
+      },
       del(){
-        console.log('md');
         let store = this.list;
         this.list = '';
         this.$Modal.confirm({
@@ -122,8 +119,7 @@
               activityId:store.activityId,
               mobileNo:store.mobileNo,
             };
-            // console.log(data);
-            this.$fly.delete('/hxxdc/activity/user',{data}).then(res=>{
+            this.$fly.post('/hxxdc/activity/user',data).then(res=>{
               if(res.code == 0){
                 this.$Message.success('删除成功!');
                this.getList();
@@ -183,6 +179,8 @@
         })
       },
       update(){
+        this.clearType =Math.random();
+        this.reset();
         this.stage = 2;
         this.oldPhone = this.list.mobileNo;
         this.checkModal = true;
