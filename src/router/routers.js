@@ -1172,6 +1172,17 @@ export default [
         },
         component: () => import('@/hxx-admin/discounts-manage/discounts-record-detail.vue')
       },
+      {
+        path: '/activity-trace',
+        name: 'activity-trace',
+        meta: {
+          icon: 'md-funnel',
+          title: '活动跟踪管理',
+          // lgType: "1001",
+          // access: '100801',
+        },
+        component: () => import('@/hxx-admin/discounts-manage/activity-trace.vue')
+      },
     ]
   },
   {
