@@ -3,16 +3,16 @@
                 :total="total" :show="showTable" :clearSelect="clearType" :page="page" @onRowClick="onRowClick">
     <div slot="search">
       <div class="search-block">
-        <Input placeholder="会员账号/门店名称/兑换码"></Input>
+        <Input placeholder="会员账号/门店名称/兑换码" v-model="keyWord"></Input>
       </div>
       <div class="search-block">
-        <DatePicker type="daterange" :options="option" format="yyyy-MM-dd" placeholder="未知时间1"
-                    style="width:100%;"></DatePicker>
+        <DatePicker type="daterange" :options="option" :value="value" format="yyyy-MM-dd" placeholder="使用时间开始-使用时间结束"
+                    style="width:100%;" @change="onChange"></DatePicker>
       </div>
-      <div class="search-block">
-        <DatePicker type="daterange" :options="option" format="yyyy-MM-dd" placeholder="未知时间2"
-                    style="width:100%;"></DatePicker>
-      </div>
+      <!--<div class="search-block">-->
+        <!--<DatePicker type="daterange" :options="option" format="yyyy-MM-dd" placeholder=""-->
+                    <!--style="width:100%;"></DatePicker>-->
+      <!--</div>-->
       <div class="search-block">
         <Select placeholder="请选择卷用途">
           <Option v-for="(item, index) in stateList"
@@ -134,12 +134,19 @@
     components: {commonTable, ModalTitle,selectStroe},
     data() {
       return {
+        value:["",""],
+        keyWord:'',
+        type:'',
+        startTime_eq:'',
+        endTime_eq:'',
+        useType:'',
+        isuse:'',
         title:'优惠券详情',
         showType:false,
         showModal: true,
         tableData: [],
         stateList: [
-          {id: 1, name: '这是？'}
+          {id: 1, name: '这是？'},
         ],
         option: {
           disabledDate(date) {
@@ -185,6 +192,9 @@
       }
     },
     methods: {
+      onChange(val){
+        this.value = val;
+      },
       goto(type,string){
         switch(type){
           case 1:
