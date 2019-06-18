@@ -1,36 +1,36 @@
 <template>
   <common-table v-model="tableData" :columns="columns" @changePageSize="changePageSize" @changePage="changePage"
-                :total="total" :show="showTable" :clearSelect="clearType" :page="page" @onRowClick="onRowClick">
+                :total="total" :show="showTable" :clearSelect="clearType" :page="page" :loading="loading" @onRowClick="onRowClick">
     <div slot="search">
       <div class="search-block">
         <Input placeholder="会员账号/门店名称/兑换码" v-model="keyWord"></Input>
       </div>
       <div class="search-block">
         <DatePicker type="daterange" :options="option" :value="value" format="yyyy-MM-dd" placeholder="使用时间开始-使用时间结束"
-                    style="width:100%;" @change="onChange"></DatePicker>
+                    style="width:100%;" @on-change="onChange"></DatePicker>
       </div>
       <!--<div class="search-block">-->
-        <!--<DatePicker type="daterange" :options="option" format="yyyy-MM-dd" placeholder=""-->
-                    <!--style="width:100%;"></DatePicker>-->
+      <!--<DatePicker type="daterange" :options="option" format="yyyy-MM-dd" placeholder=""-->
+      <!--style="width:100%;"></DatePicker>-->
       <!--</div>-->
       <div class="search-block">
-        <Select placeholder="请选择卷用途">
-          <Option v-for="(item, index) in stateList"
+        <Select placeholder="请选择卷用途" v-model="type">
+          <Option v-for="(item, index) in typeList"
                   :key="index" :value="item.id">{{item.name}}
           </Option>
         </Select>
       </div>
       <div class="search-block">
-        <Select placeholder="请选择卷类型">
-          <Option v-for="(item, index) in stateList"
-                  :key="index" :value="item.id">{{item.name}}
+        <Select placeholder="请选择卷类型" v-model="useType">
+          <Option v-for="(item, index) in useTypeList"
+                  :key="index" :value="item.code">{{item.name}}
           </Option>
         </Select>
       </div>
       <div class="search-block">
-        <Select placeholder="请选择状态">
-          <Option v-for="(item, index) in stateList"
-                  :key="index" :value="item.id">{{item.name}}
+        <Select placeholder="请选择状态" v-model="isuse">
+          <Option v-for="(item, index) in isUseList"
+                  :key="index" :value="item.code">{{item.name}}
           </Option>
         </Select>
       </div>
@@ -122,7 +122,7 @@
   import commonTable from '@/hxx-components/common-table.vue'
   import selectStroe from '@/hxx-components/select-store.vue';
   import ModalTitle from '@/hxx-components/modal-title.vue'
-  import {deepClone} from "../../libs/util";
+  import {deepClone, getDictGroup, getName,find} from "../../libs/util";
   let useList = [
     {name:'请选择'},
     {name:'洗车类'},
@@ -134,16 +134,30 @@
     components: {commonTable, ModalTitle,selectStroe},
     data() {
       return {
+        loading:false,
         value:["",""],
         keyWord:'',
-        type:'',
+        type:'请选择卷用途',
         startTime_eq:'',
         endTime_eq:'',
-        useType:'',
-        isuse:'',
+        useType:'请选择卷类型',
+        isuse:'请选择状态',
         title:'优惠券详情',
+        useTypeList:[
+          {code:'请选择卷类型',name:'请选择卷类型'}
+        ],
+        typeList:[
+          {id:'请选择卷用途',name:'请选择卷用途'}
+        ],
+        isUseList:[
+          {code:'请选择状态',name:'请选择状态'},
+          {code:0,name:'未领用'},
+          {code:1,name:'领用中'},
+          {code:2,name:'已使用'},
+          {code:3,name:'已过期'},
+        ],
         showType:false,
-        showModal: true,
+        showModal: false,
         tableData: [],
         stateList: [
           {id: 1, name: '这是？'},
@@ -158,15 +172,24 @@
             title: '序号', width: 70,
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
-          {title: '会员账号', key: 'name', minWidth: 120},
-          {title: '优惠卷名称', key: 'price', minWidth: 140},
-          {title: '卷类型', key: 'price', minWidth: 140},
-          {title: '兑换码', key: 'price', minWidth: 140},
-          {title: '状态', key: 'price', minWidth: 140},
-          {title: '领取时间', key: 'price', minWidth: 140},
-          {title: '有效时间', key: 'price', minWidth: 140},
-          {title: '使用时间', key: 'price', minWidth: 140},
-          {title: '使用门店', key: 'price', minWidth: 140},
+          {title: '会员账号', key: 'username', width: 120},
+          {title: '优惠卷名称', key: 'name', width: 140},
+          {title: '卷用途', key: 'coupname', width: 140,
+            // render: (h, params) => h('span',find(this.typeList,['id','name',params.row.type]))
+          },
+          {title: '卷类型', key: 'useType', width: 140,
+            render: (h, params) => h('span',getName(this.useTypeList,params.row.useType))
+          },
+          {title: '兑换码', key: 'code', width: 140},
+          {title: '状态', key: 'isuse', width: 140,
+            render: (h, params) => h('span',find(this.isUseList,['code','name',params.row.isuse]))
+          },
+          {title: '领取时间', key: 'recipientsTime', width: 160},
+          {title: '有效时间', key: 'price', width: 320,
+            render: (h, params) => h('span',params.row.beginTime + ' ---- ' + params.row.endTime)
+          },
+          {title: '使用时间', key: 'spendingTime', width: 160},
+          {title: '使用门店', key: 'tenantName', minWidth: 140},
         ],
         rules: {
           name: {required: true, message: '产品名称必填'},
@@ -179,8 +202,11 @@
       }
     },
     mounted() {
-      this.stage = 2;
-      this.showModal = true;
+       let data = getDictGroup(this.$store.state.app.dict,'1056');
+       for(let i in data){
+         this.useTypeList.push(data[i]);
+       }
+       this.getType();
       this.showTable = Math.random();
       this.getList();
     },
@@ -192,8 +218,26 @@
       }
     },
     methods: {
+      getType(){
+        this.axios.request({
+          url: '/manage/cupon/typeList',
+          method: 'post',
+          data: {
+            access_token: this.$store.state.user.token,
+          }
+        }).then(res => {
+          if(res.success == true){
+            let data = res.data;
+            for(let i in data){
+              this.typeList.push(data[i]);
+            }
+            console.log(JSON.stringify(this.typeList));
+          }
+        })
+      },
       onChange(val){
         this.value = val;
+        console.log(val);
       },
       goto(type,string){
         switch(type){
@@ -208,7 +252,28 @@
         this.list = list;
       },
       getList() {
-
+        this.loading = true;
+        this.axios.request({
+          url: '/manage/cupon/queryCouponList',
+          method: 'post',
+          data: {
+            access_token: this.$store.state.user.token,
+            keyWord:this.keyWord,
+            startTime_eq:this.value[0],
+            endTime_eq:this.value[1],
+            type:this.type == '请选择卷用途' ? '' : this.type,
+            useType:this.useType == '请选择卷类型' ? '' : this.useType,
+            isuse:this.isuse == '请选择状态' ? '' : this.isuse,
+            page:this.page,
+            limit:this.limit,
+          }
+        }).then(res => {
+          if(res.success == true){
+            this.total = res.total;
+            this.tableData = res.data;
+          }
+          this.loading = false;
+        })
       },
       changePageSize(size) {
         this.limit = size;
