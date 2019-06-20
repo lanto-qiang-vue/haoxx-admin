@@ -16,11 +16,14 @@ fly.interceptors.request.use(function (config) {
     config.data = true
   }
   config.headers['Content-Type'] = 'application/json;charset=UTF-8'
-  if(config.url.indexOf("?") > -1){
-    config.url = config.url + "&userId="+ store.state.user.userInfo.user.userId;
-  }else{
-    config.url = config.url + "?userId="+store.state.user.userInfo.user.userId;
+  if(config.method != 'delete'){
+    if(config.url.indexOf("?") > -1){
+      config.url = config.url + "&userId="+ store.state.user.userInfo.user.userId;
+    }else{
+      config.url = config.url + "?userId="+store.state.user.userInfo.user.userId;
+    }
   }
+
   return config;
 }, function (error) {
   // 对请求错误做些什么

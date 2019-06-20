@@ -1,12 +1,12 @@
 <template>
-  <common-table v-model="tableData" :columns="columns" @changePageSize="changePageSize" @changePage="changePage"
-                :total="total" :show="showTable" :page="page" :loading="loading">
+  <common-table v-model="tableData" class="mtable" :columns="columns" @changePageSize="changePageSize" @changePage="changePage"
+                :total="total" :show="showTable" :page="page" :loading="loading" @sortChange="sortChange">
     <div slot="search">
       <div class="search-block">
         <Input placeholder="会员账号/话题" v-model="KEYWORD"></Input>
       </div>
       <div class="search-block">
-        <DatePicker type="daterange" :value="value" :options="option" format="yyyy-MM-dd" placeholder="请选择时间"
+        <DatePicker type="daterange" :value="value" :options="option" format="yyyy-MM-dd" placeholder="请选择发布时间"
                     style="width:100%;"
                     @on-change="onChange"></DatePicker>
       </div>
@@ -18,11 +18,23 @@
         </Select>
       </div>
       <div class="search-block">
+        <Select v-model="stick" placeholder="请选择置顶状态">
+          <Option v-for="(item, index) in stickList"
+                  :key="index" :value="item.id">{{item.name}}
+          </Option>
+        </Select>
+      </div>
+      <div class="search-block">
         <Select v-model="typeId" placeholder="请选择状态">
           <Option v-for="(item, index) in typeList"
                   :key="index" :value="item.id">{{item.name}}
           </Option>
         </Select>
+      </div>
+      <div class="search-block">
+        <DatePicker type="daterange" :value="lastValue" :options="option" format="yyyy-MM-dd" placeholder="请选择最后评论/回复时间"
+                    style="width:100%;"
+                    @on-change="lastChange"></DatePicker>
       </div>
       <ButtonGroup size="small">
         <Button type="primary" @click="page=1;getList()">
@@ -30,6 +42,33 @@
         </Button>
       </ButtonGroup>
     </div>
+    <Modal
+      v-model="stickModal"
+      width="400px"
+      heigh="100"
+      :mask-closable="false"
+      :scrollable="true"
+      :transfer="false"
+      :footer-hide="false"
+      :transition-names="['', '']"
+      title="置顶设置"
+    >
+      <div>
+        <Form>
+          <Checkbox v-model="top">
+            车生活首页置顶
+          </Checkbox>
+          &nbsp;&nbsp;&nbsp;&nbsp;
+          <Checkbox v-model="hometop">
+            话题圈内置顶
+          </Checkbox>
+        </Form>
+      </div>
+      <div slot="footer">
+        <Button @click="stickModal=false">取消</Button>
+        <Button type="primary" @click="stickSubmit">保存并启用</Button>
+      </div>
+    </Modal>
     <Modal
       v-model="showModal"
       class="table-modal-detail full-height tableOne"
@@ -46,7 +85,7 @@
           <Input :value="detail.nickname" readonly></Input>
         </FormItem>
         <FormItem label="话题发布时间:" prop="PLATE_NUM">
-         <Input :value="detail.createDate" readonly></Input>
+          <Input :value="detail.createDate" readonly></Input>
         </FormItem>
         <div style="clear:both;"></div>
         <FormItem label="状态:" prop="PLATE_NUM">
@@ -57,11 +96,14 @@
         </FormItem>
         <div style="clear:both;"></div>
         <FormItem label="话题:" prop="PLATE_NUM" style="width:67%;">
-          <div><b>{{detail.title}}</b>&nbsp;&nbsp;&nbsp;<Button :type="detail.isdelEq == '正常' ? 'error' : 'primary'" @click="updateType(detail.isdelEq == '正常' ? '关闭' : '恢复',detail.id
-          )">{{detail.isdelEq == '正常' ? '关闭' : '恢复'}}</Button></div>
+          <div><b>{{detail.title}}</b>&nbsp;&nbsp;&nbsp;<Button :type="detail.isdelEq == '正常' ? 'error' : 'primary'"
+                                                                @click="updateType(detail.isdelEq == '正常' ? '关闭' : '恢复',detail.id
+          )">{{detail.isdelEq == '正常' ? '关闭' : '恢复'}}
+          </Button>
+          </div>
         </FormItem>
         <div style="clear:both;"></div>
-        <FormItem  prop="PLATE_NUM" style="width:67%;">
+        <FormItem prop="PLATE_NUM" style="width:67%;">
           <Input type="textarea" :value="detail.content" readonly></Input>
         </FormItem>
       </Form>
@@ -109,9 +151,12 @@
         <!--<div style="border-bottom:1px dashed black;"></div>-->
       </div>
       <div class="table-bottom" style="line-height:40px;">
-        <Page :current="page2" size="small" :page-size="25" show-sizer show-elevator show-total :page-size-opts="[25, 50, 100, 150]"
-              placement="top" :total="total2" @on-change="changePage2" @on-page-size-change="changePageSize2"/>
-        <Button size="small" class="refresh" @click="changePage2(page2)"><Icon type="md-refresh" size="20"/></Button>
+        <Page :current="page2" size="small" :page-size="25" show-sizer show-elevator show-total
+              :page-size-opts="[25, 50, 100, 150]"
+              placement="top" :total="total2" @on-change="changePage2" @on-page-size-change="changePageSize2"></Page>
+        <Button size="small" class="refresh" @click="changePage2(page2)">
+          <Icon type="md-refresh" size="20"/>
+        </Button>
       </div>
     </Modal>
   </common-table>
@@ -125,16 +170,30 @@
     components: {commonTable, ModalTitle},
     data() {
       return {
-        page2:1,
-        keyWord:'',
-        total2:0,
-        limit2:25,
+        key:'lasttime',
+        by:'desc',
+        lastValue:["",""],
+        hometop: false,
+        top: false,
+        id: 0,
+        stickModal: false,
+        rules: {},
+        stickList: [
+          {id: '请选择置顶状态', name: '请选择置顶状态'},
+          {id: 1, name: '车生活首页置顶'},
+          {id: 2, name: '话题圈内置顶'}
+        ],
+        stick: "请选择置顶状态",
+        page2: 1,
+        keyWord: '',
+        total2: 0,
+        limit2: 25,
         title: '话题详情',
         topicId: '请选择话题圈',
         typeId: '请选择状态',
-        detail:{},
-        comment:[],
-        id:'',
+        detail: {},
+        comment: [],
+        id: '',
         typeList: [
           {id: '请选择状态', name: '请选择状态'},
           {id: 1, name: '正常'},
@@ -143,62 +202,90 @@
         topicList: [
           {id: '请选择话题圈', name: '请选择话题圈'},
         ],
-        value: ["",""],
-        value2:["",""],
+        value: ["", ""],
+        value2: ["", ""],
         tableData: [],
-        circle:{},
+        circle: {},
         columns: [
           {
             title: '序号', width: 100,
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
-          {title: '发布人', key: 'nickname', width: 200,
-            render: (h, params) => h('a',{on:{
-              click:()=>{
-                this.KEYWORD = "";
-                this.getList(params.row.username);
+          {
+            title: '发布人', key: 'nickname', width: 240,
+            render: (h, params) => {
+              let name = "";
+              if(params.row.nickname){
+                name = params.row.username + "/" + params.row.nickname;
+              }else{
+                name = params.row.username;
               }
-              }},params.row.username+"/"+params.row.nickname)
+            return  h('a', {
+                on: {
+                  click: () => {
+                    this.KEYWORD = "";
+                    this.getList(params.row.username,this.key,this.by);
+                  }
+                }
+              }, name)
+            }
           },
           {title: '话题', key: 'title', minWidth: 300},
-          {title: '话题圈', key: 'bbsTopicId', minWidth: 100,
-            render: (h, params) => h('span',this.circle[params.row.bbsTopicId])
-          },
-          {title: '发布时间', key: 'createDate', width: 200},
-          {title: '评论数', key: 'number', width: 150},
-          {title: '状态', key: 'isdelEq', width: 100},
           {
-            title: '操作', key: 'E', width: 200,
+            title: '话题圈', key: 'bbsTopicId', minWidth: 100,
+            render: (h, params) => h('span', this.circle[params.row.bbsTopicId])
+          },
+          {title: '发布时间', key: 'createDate', width: 200,sortable: "custom"},
+          {title:'最后评论/回复时间',key:'lasttime',width:200,sortable: "custom"},
+          {title: '评论数', key: 'number', width: 150, sortable: "custom"},
+          {title: '状态', key: 'isdelEq', width: 100},
+          {title: '置顶状态', key: 'zd', width: 200},
+          {
+            title: '操作', key: 'E', width: 290,
             render: (h, params) => {
               let button = [];
               let buttonName = params.row.isdelEq == "正常" ? "关闭" : "恢复";
-              button.push(h('Button', {type: 'primary',on:{
-                click:()=>{
-                    this.updateType(buttonName,params.row.id);
+              button.push(h('Button', {
+                type: 'primary', on: {
+                  click: () => {
+                    this.updateType(buttonName, params.row.id);
+                  }
                 }
-                }},buttonName));
-              button.push(h('Button', {type: 'primary', style: {marginLeft: '10px'},on:{
-                click:()=>{
-                  this.id = params.row.id;
-                  this.keyWord = "";
-                  this.value2 = ["",""];
-                  this.getComment();
-                  this.axios.request({
-                    baseURL: this.baseUrl,
-                    url: '/manage/contentmanage/selectContentDetail',
-                    method: 'post',
-                    params: {
-                      access_token: this.$store.state.user.token,
-                      id:params.row.id,
-                    },
-                  }).then(res => {
-                    if(res.success){
+              }, buttonName));
+              button.push(h('Button', {
+                style: {marginLeft: '10px'}, on: {
+                  click: () => {
+                    this.top = params.row.top == 1;
+                    this.hometop = params.row.hometop == 1;
+                    this.id = params.row.id;
+                    this.stickModal = true;
+                  }
+                }
+              }, '置顶设置'));
+              button.push(h('Button', {
+                type: 'primary', style: {marginLeft: '10px'}, on: {
+                  click: () => {
+                    this.id = params.row.id;
+                    this.keyWord = "";
+                    this.value2 = ["", ""];
+                    this.getComment();
+                    this.axios.request({
+                      baseURL: this.baseUrl,
+                      url: '/manage/contentmanage/selectContentDetail',
+                      method: 'post',
+                      params: {
+                        access_token: this.$store.state.user.token,
+                        id: params.row.id,
+                      },
+                    }).then(res => {
+                      if (res.success) {
                         this.detail = res.data;
                         this.showModal = true;
-                    }
-                  })
+                      }
+                    })
+                  }
                 }
-                }}, '查看详情'));
+              }, '查看详情'));
               return h('div', button);
             }
           },
@@ -223,77 +310,113 @@
       this.getCircle();
     },
     methods: {
-      del(id,type){
+      stickSubmit() {
         this.$Modal.confirm({
-          title:'系统提示',
-          content:'确认删除吗?',
-          onOk:()=>{
+          title: '系统提示!',
+          content: '确认保存吗?',
+          onOk: () => {
+            this.axios.request({
+              baseURL: this.baseUrl,
+              url: '/manage/contentmanage/updateContentTop',
+              method: 'post',
+              data: {
+                access_token: this.$store.state.user.token,
+                id: this.id,
+                top: this.top ? 1 : 0,
+                hometop: this.hometop ? 1 : 0,
+              },
+            }).then(res => {
+              if (res.success) {
+                this.stickModal = false;
+                this.getList();
+              }
+            })
+          }
+        })
+      },
+      zdToString(params) {
+        //置顶转中文
+        let str = [];
+        if (params.top == 1) str.push("车生活首页置顶");
+        if (params.hometop == 1) str.push("话题圈内置顶");
+        return str.join(",");
+      },
+      sortChange(object) {
+        this.key = object.key;
+        this.by = object.order;
+       this.getList("",this.key,this.by);
+      },
+      del(id, type) {
+        this.$Modal.confirm({
+          title: '系统提示',
+          content: '确认删除吗?',
+          onOk: () => {
             this.axios.request({
               baseURL: this.baseUrl,
               url: 'manage/contentmanage/updateCommentsOrReply',
               method: 'post',
               data: {
                 access_token: this.$store.state.user.token,
-                id:id,
-                type:type
+                id: id,
+                type: type
               },
             }).then(res => {
-              if(res.success){
+              if (res.success) {
                 this.$Message.success("删除成功");
-               this.getComment();
+                this.getComment();
               }
             })
           }
         });
       },
-      updateType(buttonName,id){
+      updateType(buttonName, id) {
         this.$Modal.confirm({
-          title:'系统提示',
-          content:'确认'+buttonName+"吗?",
-          onOk:()=>{
+          title: '系统提示',
+          content: '确认' + buttonName + "吗?",
+          onOk: () => {
             this.axios.request({
               baseURL: this.baseUrl,
               url: 'manage/contentmanage/updateContentState',
               method: 'post',
               data: {
                 access_token: this.$store.state.user.token,
-                id:id,
-                isdel:buttonName == '关闭' ? 0 : 1,
+                id: id,
+                isdel: buttonName == '关闭' ? 0 : 1,
               },
             }).then(res => {
-              if(res.success){
+              if (res.success) {
                 this.getList();
-                if(buttonName == '关闭'){
+                if (buttonName == '关闭') {
                   this.detail.isdelEq = "已关闭";
-                }else{
+                } else {
                   this.detail.isdelEq = "正常";
                 }
-                this.$Message.success("已"+buttonName);
+                this.$Message.success("已" + buttonName);
               }
             })
           }
         });
       },
-      getComment(){
+      getComment() {
         this.axios.request({
           baseURL: this.baseUrl,
           url: 'manage/contentmanage/selectCommentsFuzzy',
           method: 'post',
           data: {
             access_token: this.$store.state.user.token,
-            id:this.id,
+            id: this.id,
             limit: this.limit2,
             page: this.page2,
-            keyWord:this.keyWord,
-            startTime:this.value2[0] == "" ? "" : this.value2[0] + " 00:00:00",
-            endTime:this.value2[1] == "" ? "" : this.value2[1] + " 23:59:59",
+            keyWord: this.keyWord,
+            startTime: this.value2[0] == "" ? "" : this.value2[0] + " 00:00:00",
+            endTime: this.value2[1] == "" ? "" : this.value2[1] + " 23:59:59",
           },
         }).then(res => {
           this.total2 = res.total;
-           this.comment = res.data;
+          this.comment = res.data;
         })
       },
-      getCircle(){
+      getCircle() {
         this.axios.request({
           baseURL: this.baseUrl,
           url: 'manage/topicmanage/getTopicList',
@@ -307,16 +430,28 @@
           },
         }).then(res => {
           if (res.success) {
-             let data = res.data;
-             for(let i in data){
-               this.topicList.push({id:data[i].id,name:data[i].content});
-               this.circle[data[i].id] = data[i].content;
-             }
+            let data = res.data;
+            for (let i in data) {
+              this.topicList.push({id: data[i].id, name: data[i].content});
+              this.circle[data[i].id] = data[i].content;
+            }
             this.getList();
           }
         })
       },
-      getList(account = "") {
+      getList(account = "",key = 'lasttime',by = 'desc') {
+        let top = '';
+        let hometop = '';
+        if(this.stick != '请选择置顶状态'){
+          switch (this.stick) {
+            case 1:
+              top = 1;
+              break;
+            case 2:
+               hometop = 1;
+              break;
+          }
+        }
         this.loading = true;
         this.list = "";
         this.axios.request({
@@ -328,21 +463,34 @@
             keyWord: account ? account : this.KEYWORD,
             limit: this.limit,
             page: this.page,
-            bbsTopicId:this.topicId == '请选择话题圈' ? "" : this.topicId,
-            isdel:this.typeId == '请选择状态' ? "" : this.typeId,
-            startTime:this.value[0] == "" ? "" : this.value[0] + " 00:00:00",
-            endTime:this.value[1] == "" ? "" : this.value[1] + " 23:59:59",
+            bbsTopicId: this.topicId == '请选择话题圈' ? "" : this.topicId,
+            isdel: this.typeId == '请选择状态' ? "" : this.typeId,
+            startTime: this.value[0] == "" ? "" : this.value[0] + " 00:00:00",
+            endTime: this.value[1] == "" ? "" : this.value[1] + " 23:59:59",
+            top:top,
+            hometop:hometop,
+            sDate:this.lastValue[0] ? this.lastValue[0] + " 00:00:00" : '',
+            eDate:this.lastValue[1] ? this.lastValue[1] + " 23:59:59" : '',
+            sort:by,
+            sortField:key,
           },
         }).then(res => {
           if (res.success) {
             this.total = res.total;
-            this.tableData = res.data;
+            let data = res.data;
+            for (let i in data) {
+              data[i]['zd'] = this.zdToString(data[i]) || "无";
+            }
+            this.tableData = data;
             this.loading = false;
           }
         })
       },
       onChange(val) {
         this.value = val;
+      },
+      lastChange(val){
+        this.lastValue = val;
       },
       onChange2(val) {
         this.value2 = val;
@@ -355,11 +503,11 @@
         this.page = page;
         this.getList();
       },
-      changePage2(page){
+      changePage2(page) {
         this.page2 = page;
         this.getComment();
       },
-      changePageSize2(size){
+      changePageSize2(size) {
         this.limit2 = size;
         this.getComment();
       },
@@ -370,16 +518,21 @@
   .tableOne .ivu-modal-wrap .ivu-modal .ivu-modal-content .ivu-modal-body {
     height: ~"calc(100% - 45px)";
   }
+  .common-table .main-table .ivu-table-cell .ivu-table-sort{
+    display: inline-block;
+  }
 </style>
 <style lang="less" scoped>
-  .f200{
-    float:left;
-    width:200px;
+  .f200 {
+    float: left;
+    width: 200px;
   }
-  .f250{
-    float:left;
-    width:250px;
+
+  .f250 {
+    float: left;
+    width: 250px;
   }
+
   .comment {
     font-size: 14px;
     line-height: 30px;
@@ -407,9 +560,10 @@
       }
     }
   }
+
   .form-3 {
     padding-top: 20px;
-    padding-bottom:20px;
+    padding-bottom: 20px;
   }
 
   .form-3 .ivu-form-item {
