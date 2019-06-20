@@ -66,7 +66,7 @@
       </div>
       <div slot="footer">
         <Button @click="stickModal=false">取消</Button>
-        <Button type="primary" @click="stickSubmit">保存并启用</Button>
+        <Button type="primary" @click="stickSubmit">保存</Button>
       </div>
     </Modal>
     <Modal
@@ -100,6 +100,7 @@
                                                                 @click="updateType(detail.isdelEq == '正常' ? '关闭' : '恢复',detail.id
           )">{{detail.isdelEq == '正常' ? '关闭' : '恢复'}}
           </Button>
+            <Button @click="innerStick">置顶设置</Button>
           </div>
         </FormItem>
         <div style="clear:both;"></div>
@@ -170,6 +171,10 @@
     components: {commonTable, ModalTitle},
     data() {
       return {
+        back:{
+          hometop: false,
+          top: false,
+        },
         key:'lasttime',
         by:'desc',
         lastValue:["",""],
@@ -193,7 +198,6 @@
         typeId: '请选择状态',
         detail: {},
         comment: [],
-        id: '',
         typeList: [
           {id: '请选择状态', name: '请选择状态'},
           {id: 1, name: '正常'},
@@ -266,6 +270,8 @@
                 type: 'primary', style: {marginLeft: '10px'}, on: {
                   click: () => {
                     this.id = params.row.id;
+                    this.back.top = params.row.top == 1;
+                    this.back.hometop = params.row.hometop == 1;
                     this.keyWord = "";
                     this.value2 = ["", ""];
                     this.getComment();
@@ -310,6 +316,11 @@
       this.getCircle();
     },
     methods: {
+      innerStick(){
+        this.top = this.back.top;
+        this.hometop = this.back.hometop;
+       this.stickModal = true;
+      },
       stickSubmit() {
         this.$Modal.confirm({
           title: '系统提示!',
@@ -327,6 +338,8 @@
               },
             }).then(res => {
               if (res.success) {
+                this.back.top = this.top;
+                this.back.hometop = this.hometop;
                 this.stickModal = false;
                 this.getList();
               }
