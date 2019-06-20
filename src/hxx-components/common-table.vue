@@ -36,6 +36,7 @@
     @on-row-click="onRowClick"
     @on-row-dblclick="onRowDblclick"
     @on-current-change="onCurrentChange"
+    @on-sort-change="sortChange"
   >
   </Table>
   <div class="table-bottom" v-show="showPage">
@@ -170,7 +171,7 @@
         return this.$store.state.app.windowInnerHeight
       },
       tableColumns(){
-        
+
         let arr= deepClone(this.columns)
         for (let i in arr){
           arr[i].ellipsis= true
@@ -257,6 +258,9 @@
       },
       onCurrentChange(currentRow, oldCurrentRow){
         this.$emit('onCurrentChange',currentRow, oldCurrentRow);
+      },
+      sortChange(column,key,order){
+          this.$emit('sortChange',column,key,order);
       }
     },
     activated(){
