@@ -45,7 +45,7 @@
               }},params.row.tenantNames)
           },
           {title: '注册时间',key:'createTime', width: 150,
-            render: (h, params) => h('span',params.row.createTime.substr(0,16))
+            render: (h, params) => h('span',params.row.createTime  ? params.row.createTime.substr(0,16) : '')
           },
         ],
         KEYWORD:'',
@@ -54,11 +54,27 @@
         clearType:false,
         page:1,
         limit:25,
+        active:false,
       }
     },
     mounted(){
+      if(this.$route.query.phone && !this.active){
+          this.KEYWORD = this.$route.query.phone;
+      }else{
+
+      }
       this.getList();
       this.showTable = Math.random();
+    },
+    activated() {
+      if(this.active){
+        if (this.$route.query.phone) {
+          this.KEYWORD = this.$route.query.phone;
+          this.getList();
+        }
+      }else{
+          this.active = true;
+      }
     },
     methods:{
       to(id){

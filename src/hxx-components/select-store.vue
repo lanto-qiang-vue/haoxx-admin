@@ -11,11 +11,11 @@
     :footer-hide="false"
     :transition-names="['', '']">
     <common-table v-model="tableData" :columns="columns" @changePageSize="changePageSize" @changePage="changePage"
-                  :total="total" :show="showTable" :page="page" :clearSelect="clearType" @changeSelect="changeSelect"
+                  :total="total" :show="showTable" :loading="loading" :page="page" :clearSelect="clearType" @changeSelect="changeSelect"
                   :showOperate="false">
       <div slot="search">
         <div class="search-block">
-          <Input v-model="search.keyword" placeholder="门店名称"></Input>
+          <Input v-model="keyword" placeholder="门店名称"></Input>
         </div>
         <div class="search-block">
           <Select placeholder="请选择区域">
@@ -38,6 +38,10 @@
         </ButtonGroup>
       </div>
     </common-table>
+    <div slot="footer">
+      <Button @click="showModal=false">取消</Button>
+      <Button type="primary" v-show="openSelect">确定</Button>
+    </div>
   </Modal>
 </template>
 <script>
@@ -48,6 +52,12 @@
     props: {
       showType:{
       default:false,
+      },
+      code:{
+        default:false,
+      },
+      openSelect:{
+        default:false,
       },
       checkId:{
         default:function(){
@@ -60,8 +70,10 @@
         stateList:[
           {id:1,name:'选择呀'}
         ],
+        keyword:'',
         page: 1,
         limit: 25,
+        loading:false,
         checkObject:{},
         total: 0,
         tableData: [],
@@ -79,12 +91,25 @@
           {title: '类型', key: 'B', sortable: true, minWidth: 140,align:'left'},
           {title: '门店名称', key: 'C', sortable: true, minWidth: 140,align:'left'},
         ],
-        search: {
-          keyword: '',
-        },
       }
     },
     methods: {
+      getArea(){
+        this.axios.request({
+          baseURL: '/poxy-shqx/',
+          url: '/manage/cupon/insertType',
+          method: 'post',
+          data: {
+            access_token: this.$store.state.user.token,
+            code: this.code,
+          }
+        }).then(res => {
+          if (res.success == true) {
+            // this.detail = res.data;
+            // this.showModal = true;
+          }
+        })
+      },
       changeSelect(row){
        let obj = {};
        for(let i in this.tableData){
@@ -110,30 +135,36 @@
         this.getList();
       },
       getList() {
-      let data = [
-          {id:1,A:'A',B:'B',C:'C'},
-          {id:2,A:'A',B:'B',C:'C'},
-          {id:3,A:'A',B:'B',C:'C'},
-          {id:4,A:'A',B:'B',C:'C'},
-          {id:5,A:'A',B:'B',C:'C'},
-          {id:6,A:'A',B:'B',C:'C'},
-          {id:7,A:'A',B:'B',C:'C'},
-          {id:8,A:'A',B:'B',C:'C'},
-          {id:9,A:'A',B:'B',C:'C'},
-          {id:10,A:'A',B:'B',C:'C'},
-          {id:11,A:'A',B:'B',C:'C'},
-          {id:12,A:'A',B:'B',C:'C'},
-        ];
-        for(let i in this.checkObject){
+        this.loading = true;
+        this.axios.request({
+          baseURL: '/poxy-shqx/',
+          url: '/manage/cupon/queryTotalTenant',
+          method: 'post',
+          data: {
+            access_token: this.$store.state.user.token,
+            code:this.code,
+            corpName:this.keyword,
+            category:'',
+            areaKey:'',
+            page:this.page,
+            limit:this.limit,
+          }
+        }).then(res => {
+          this.loading = false;
+          if (res.success == true) {
+            let data = res.data;
+            for(let i in this.checkObject){
               if(this.checkObject[i] == 1){
                 for(let a in data){
                   if(data[a].id == i){
-                     data[a]['_checked'] = true;
+                    data[a]['_checked'] = true;
                   }
                 }
               }
-        }
-        this.tableData = data;
+            }
+            this.tableData = data;
+          }
+        })
       },
       clear() {
         this.search.keyword = '';
@@ -144,25 +175,25 @@
       }
     },
     mounted() {
-
     },
     watch: {
       showType() {
         this.showModal = true;
         this.showTable = Math.random();
-        for(let i in this.checkId){
-          this.checkObject[this.checkId[i]] = 1;
-        }
+        this.getArea();
         this.columns = [
-          {type: 'selection',align:'center',width:70},
-          {
-            title: '序号', width: 70,align:'center',
-            render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
+          {title: '区域', key: 'area', sortable: true, minWidth: 100,align:'center',
+            render: (h, params) => h('span',params.row.area.name)
           },
-          {title: '区域', key: 'A', sortable: true, minWidth: 140,align:'left'},
           {title: '类型', key: 'B', sortable: true, minWidth: 140,align:'left'},
-          {title: '门店名称', key: 'C', sortable: true, minWidth: 140,align:'left'},
+          {title: '门店名称', key: 'corpName', sortable: true, minWidth: 240,align:'left'},
         ]
+        if(this.openSelect){
+          for(let i in this.checkId){
+            this.checkObject[this.checkId[i]] = 1;
+          }
+          this.unshift({type: 'selection',align:'center',width:70});
+        }
         this.showTable = Math.random();
         this.getList();
       },

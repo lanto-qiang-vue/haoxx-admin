@@ -1,6 +1,7 @@
 <template>
   <common-table v-model="tableData" :columns="columns" @changePageSize="changePageSize" @changePage="changePage"
-                :total="total" :show="showTable" :clearSelect="clearType" :page="page" :loading="loading" @onRowClick="onRowClick">
+                :total="total" :show="showTable" :clearSelect="clearType" :page="page" :loading="loading"
+                @onRowClick="onRowClick">
     <div slot="search">
       <div class="search-block">
         <Input placeholder="会员账号/门店名称/兑换码" v-model="keyWord"></Input>
@@ -41,7 +42,7 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="info" @click="showModal=true;title='优惠券详情'">查看</Button>
+      <Button type="info" :disabled="list== ''" @click="title='优惠券详情';look()">查看</Button>
     </div>
     <Modal
       v-model="showModal"
@@ -57,106 +58,108 @@
       <!--详情部分-->
       <Form :label-width="170" class="form-3">
         <FormItem label="优惠券名称:" style="width:30%">
-          <Input value="买保险送洗车券" readonly/>
+          <Input :value="detail.name" readonly/>
         </FormItem>
-        <FormItem label="优惠用途:"  style="width:30%">
-          <Input value="洗车类" readonly/>
+        <FormItem label="优惠用途:" style="width:30%">
+          <Input :value="findName(typeList,['id','name',detail.type])" readonly/>
         </FormItem>
-        <FormItem label="优惠券类型:"  style="width:30%">
-          <Input value="免费卷" readonly/>
-        </FormItem>
-        <!---->
-        <FormItem label="优惠券兑换码:"  style="width:30%">
-          <Input value="123ERGg" readonly/>
-        </FormItem>
-        <FormItem label="使用有效期:"  style="width:30%">
-          <Input value="2019-06-01 ～2019-06-30" readonly/>
-        </FormItem>
-        <FormItem label="可领取日期:"  style="width:30%">
-          <Input value="2019-06-01 ～2019-06-30" readonly/>
+        <FormItem label="优惠券类型:" style="width:30%">
+          <Input :value="findName(useTypeList,['code','name',detail.useType])" readonly/>
         </FormItem>
         <!---->
-        <FormItem label="适用门店:"  style="width:30%">
-          <a @click="showType=Math.random();">100家</a>
+        <FormItem label="优惠券兑换码:" style="width:30%">
+          <Input :value="detail.code" readonly/>
         </FormItem>
-        <FormItem label="领取时间:"  style="width:30%">
-          <Input value="2019-06-01 ～2019-06-30" readonly/>
+        <FormItem label="使用有效期:" style="width:30%">
+          <Input :value="detail.beginTime + '～' + detail.endTime" readonly/>
         </FormItem>
-        <FormItem label="会员账号/昵称:"  style="width:30%">
-          <a @click="goto(1,'18358330864/楚留香传奇')">18358330864/楚留香传奇</a>
+        <FormItem label="可领取日期:" style="width:30%">
+          <Input value="去问写接口的人" readonly/>
         </FormItem>
         <!---->
-        <FormItem label="限用车牌号:"  style="width:30%">
-          <Input value="2019-06-01 ～2019-06-30" readonly/>
+        <FormItem label="适用门店:" style="width:30%">
+          <a @click="showType=Math.random();">{{detail.tenantnsum}}家</a>
         </FormItem>
-        <FormItem label="是否保险公司导入名单:"style="width:30%">
-          <Input value="2019-06-01 ～2019-06-30" readonly/>
+        <FormItem label="领取时间:" style="width:30%">
+          <Input :value="detail.recipientsTime" readonly/>
         </FormItem>
-        <FormItem label="使用门店:"  style="width:30%">
-          <Input value="2019-06-01 ～2019-06-30" readonly/>
+        <FormItem label="会员账号/昵称:" style="width:30%">
+          <a @click="goto(1,detail.username)">{{detail.username}}{{detail.nickname ? '/'+detail.nickname : ''}}</a>
+        </FormItem>
+        <!---->
+        <FormItem label="限用车牌号:" style="width:30%">
+          <Input :value="detail.license" readonly/>
+        </FormItem>
+        <FormItem label="是否保险公司导入名单:" style="width:30%">
+          <Input :value="detail.recommended == 1 ? '是' : '否'" readonly/>
+        </FormItem>
+        <FormItem label="使用门店:" style="width:30%">
+          <Input :value="detail.tenantName" readonly/>
         </FormItem>
         <!---->
         <FormItem label="使用时间:" style="width:30%">
-          <Input value="2019-06-01 ～2019-06-30" readonly/>
+          <Input :value="detail.spendingTime" readonly/>
         </FormItem>
-        <FormItem label="发卷时间:"  style="width:30%">
-          <Input value="2019-06-01 ～2019-06-30" readonly/>
+        <FormItem label="发卷时间:" style="width:30%">
+          <Input :value="detail.createDate" readonly/>
         </FormItem>
         <FormItem>
 
         </FormItem>
         <!---->
-        <FormItem label="发卷人账号/名称:"  style="width:30%">
-          <a>15325677659/张三</a>
+        <FormItem label="发卷人账号/名称:" style="width:30%">
+          <a @click="goto(2,detail.userCode)">{{detail.userCode}}{{detail.operationName ? '/'+detail.operationName : detail.operationName}}</a>
         </FormItem>
       </Form>
       <div slot="footer">
         <Button @click="showModal=false">取消</Button>
-        <Button type="primary">提交</Button>
       </div>
     </Modal>
-    <select-stroe :showType="showType"></select-stroe>
+    <select-stroe :showType="showType" :code="detail.code"></select-stroe>
   </common-table>
 </template>
 <script>
   import commonTable from '@/hxx-components/common-table.vue'
   import selectStroe from '@/hxx-components/select-store.vue';
   import ModalTitle from '@/hxx-components/modal-title.vue'
-  import {deepClone, getDictGroup, getName,find} from "../../libs/util";
+  import {deepClone, getDictGroup, getName, find} from "../../libs/util";
+
   let useList = [
-    {name:'请选择'},
-    {name:'洗车类'},
-    {name:'保养类'},
-    {name:'油漆类'}
+    {name: '请选择'},
+    {name: '洗车类'},
+    {name: '保养类'},
+    {name: '油漆类'}
   ]
   export default {
     name: "discounts-record-detail",
-    components: {commonTable, ModalTitle,selectStroe},
+    components: {commonTable, ModalTitle, selectStroe},
     data() {
       return {
-        loading:false,
-        value:["",""],
-        keyWord:'',
-        type:'请选择卷用途',
-        startTime_eq:'',
-        endTime_eq:'',
-        useType:'请选择卷类型',
-        isuse:'请选择状态',
-        title:'优惠券详情',
-        useTypeList:[
-          {code:'请选择卷类型',name:'请选择卷类型'}
+        loading: false,
+        value: ["", ""],
+        list: '',
+        keyWord: '',
+        type: '请选择卷用途',
+        startTime_eq: '',
+        endTime_eq: '',
+        useType: '请选择卷类型',
+        isuse: '请选择状态',
+        title: '优惠券详情',
+        detail: {},
+        useTypeList: [
+          {code: '请选择卷类型', name: '请选择卷类型'}
         ],
-        typeList:[
-          {id:'请选择卷用途',name:'请选择卷用途'}
+        typeList: [
+          {id: '请选择卷用途', name: '请选择卷用途'}
         ],
-        isUseList:[
-          {code:'请选择状态',name:'请选择状态'},
-          {code:0,name:'未领用'},
-          {code:1,name:'领用中'},
-          {code:2,name:'已使用'},
-          {code:3,name:'已过期'},
+        isUseList: [
+          {code: '请选择状态', name: '请选择状态'},
+          {code: 0, name: '未领用'},
+          {code: 1, name: '领用中'},
+          {code: 2, name: '已使用'},
+          {code: 3, name: '已过期'},
         ],
-        showType:false,
+        showType: false,
         showModal: false,
         tableData: [],
         stateList: [
@@ -174,19 +177,23 @@
           },
           {title: '会员账号', key: 'username', width: 120},
           {title: '优惠卷名称', key: 'name', width: 140},
-          {title: '卷用途', key: 'coupname', width: 140,
+          {
+            title: '卷用途', key: 'coupname', width: 140,
             // render: (h, params) => h('span',find(this.typeList,['id','name',params.row.type]))
           },
-          {title: '卷类型', key: 'useType', width: 140,
-            render: (h, params) => h('span',getName(this.useTypeList,params.row.useType))
+          {
+            title: '卷类型', key: 'useType', width: 140,
+            render: (h, params) => h('span', getName(this.useTypeList, params.row.useType))
           },
           {title: '兑换码', key: 'code', width: 140},
-          {title: '状态', key: 'isuse', width: 140,
-            render: (h, params) => h('span',find(this.isUseList,['code','name',params.row.isuse]))
+          {
+            title: '状态', key: 'isuse', width: 140,
+            render: (h, params) => h('span', find(this.isUseList, ['code', 'name', params.row.isuse]))
           },
           {title: '领取时间', key: 'recipientsTime', width: 160},
-          {title: '有效时间', key: 'price', width: 320,
-            render: (h, params) => h('span',params.row.beginTime + ' ---- ' + params.row.endTime)
+          {
+            title: '有效时间', key: 'price', width: 320,
+            render: (h, params) => h('span', params.row.beginTime + ' ---- ' + params.row.endTime)
           },
           {title: '使用时间', key: 'spendingTime', width: 160},
           {title: '使用门店', key: 'tenantName', minWidth: 140},
@@ -202,73 +209,101 @@
       }
     },
     mounted() {
-       let data = getDictGroup(this.$store.state.app.dict,'1056');
-       for(let i in data){
-         this.useTypeList.push(data[i]);
-       }
-       this.getType();
+      let data = getDictGroup(this.$store.state.app.dict, '1056');
+      for (let i in data) {
+        this.useTypeList.push(data[i]);
+      }
+      this.getType();
       this.showTable = Math.random();
       this.getList();
     },
-    watch:{
-      showModal(val){
-        if(val){
+    watch: {
+      showModal(val) {
+        if (val) {
           this.useList = deepClone(useList);
         }
       }
     },
     methods: {
-      getType(){
+      findName(a,b){
+        return find(a,b);
+      },
+      clear(){
+        this.list = '';
+        this.clearType = Math.random();
+      },
+      look() {
+        let code = this.list.code;
+        this.clear();
         this.axios.request({
+          baseURL: '/poxy-shqx/',
+          url: '/manage/cupon/queryCouponDetail',
+          method: 'post',
+          data: {
+            access_token: this.$store.state.user.token,
+            code: code
+          }
+        }).then(res => {
+          if (res.success == true) {
+            this.detail = res.data;
+            this.showModal = true;
+          }
+        })
+      },
+      getType() {
+        this.axios.request({
+          baseURL: '/poxy-shqx/',
           url: '/manage/cupon/typeList',
           method: 'post',
           data: {
             access_token: this.$store.state.user.token,
           }
         }).then(res => {
-          if(res.success == true){
+          if (res.success == true) {
             let data = res.data;
-            for(let i in data){
+            for (let i in data) {
               this.typeList.push(data[i]);
             }
             console.log(JSON.stringify(this.typeList));
           }
         })
       },
-      onChange(val){
+      onChange(val) {
         this.value = val;
         console.log(val);
       },
-      goto(type,string){
-        switch(type){
+      goto(type, string) {
+        switch (type) {
           case 1:
+            this.$router.push({path:'/member-list',query:{phone:string}});
             break;
           case 2:
+            this.$router.push({path:'/user-management',query:{account:string}});
             break;
         }
       },
       onRowClick(list) {
-        console.log(list);
         this.list = list;
       },
       getList() {
         this.loading = true;
         this.axios.request({
+          baseURL: '/poxy-shqx/',
           url: '/manage/cupon/queryCouponList',
           method: 'post',
           data: {
             access_token: this.$store.state.user.token,
-            keyWord:this.keyWord,
-            startTime_eq:this.value[0],
-            endTime_eq:this.value[1],
-            type:this.type == '请选择卷用途' ? '' : this.type,
-            useType:this.useType == '请选择卷类型' ? '' : this.useType,
-            isuse:this.isuse == '请选择状态' ? '' : this.isuse,
-            page:this.page,
-            limit:this.limit,
+            keyWord: this.keyWord,
+            startTime_eq: this.value[0],
+            endTime_eq: this.value[1],
+            type: this.type == '请选择卷用途' ? '' : this.type,
+            useType: this.useType == '请选择卷类型' ? '' : this.useType,
+            isuse: this.isuse == '请选择状态' ? '' : this.isuse,
+            page: this.page,
+            limit: this.limit,
           }
         }).then(res => {
-          if(res.success == true){
+          if (res.success == true) {
             this.total = res.total;
             this.tableData = res.data;
           }

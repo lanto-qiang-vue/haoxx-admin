@@ -130,6 +130,7 @@
         }
       };
       return {
+        active:false,
         split:0.3,
         title:'标题',
         setPasswordModal:false,
@@ -208,6 +209,9 @@
       }
     },
     methods:{
+      closeModal(){
+        this.setPasswordModal = this.showModal = false;
+      },
       reset(){
         this.$refs['list1'].resetFields();
         console.log(JSON.stringify(this.list));
@@ -339,7 +343,6 @@
         this.getList();
       },
       getList(){
-        console.log(this.search.status);
         this.axios.request({
           url: '/manage/sys/users/list',
           method: 'post',
@@ -405,8 +408,24 @@
       }
     },
     mounted(){
+      if(this.$route.query.account && !this.active){
+         this.search.keyword = this.$route.query.account;
+      }else{
+
+      }
       this.showTable = Math.random();
       this.getList();
+    },
+    activated() {
+      if(this.active){
+        if (this.$route.query.account) {
+          this.closeModal();
+          this.search.keyword = this.$route.query.account;
+          this.getList();
+        }
+      }else{
+        this.active = true;
+      }
     },
     computed:{
       cando(){
