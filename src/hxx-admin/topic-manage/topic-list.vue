@@ -1,12 +1,12 @@
 <template>
-  <common-table v-model="tableData" :columns="columns" @changePageSize="changePageSize" @changePage="changePage"
+  <common-table v-model="tableData" class="mtable" :columns="columns" @changePageSize="changePageSize" @changePage="changePage"
                 :total="total" :show="showTable" :page="page" :loading="loading" @sortChange="sortChange">
     <div slot="search">
       <div class="search-block">
         <Input placeholder="会员账号/话题" v-model="KEYWORD"></Input>
       </div>
       <div class="search-block">
-        <DatePicker type="daterange" :value="value" :options="option" format="yyyy-MM-dd" placeholder="请选择时间"
+        <DatePicker type="daterange" :value="value" :options="option" format="yyyy-MM-dd" placeholder="请选择发布时间"
                     style="width:100%;"
                     @on-change="onChange"></DatePicker>
       </div>
@@ -31,6 +31,11 @@
           </Option>
         </Select>
       </div>
+      <div class="search-block">
+        <DatePicker type="daterange" :value="lastValue" :options="option" format="yyyy-MM-dd" placeholder="请选择最后评论/回复时间"
+                    style="width:100%;"
+                    @on-change="lastChange"></DatePicker>
+      </div>
       <ButtonGroup size="small">
         <Button type="primary" @click="page=1;getList()">
           <Icon type="ios-search" size="24"/>
@@ -49,7 +54,7 @@
       title="置顶设置"
     >
       <div>
-        <Form :model="stick" ref="stick" :rules="rules">
+        <Form>
           <Checkbox v-model="top">
             车生活首页置顶
           </Checkbox>
@@ -165,6 +170,9 @@
     components: {commonTable, ModalTitle},
     data() {
       return {
+        key:'lasttime',
+        by:'desc',
+        lastValue:["",""],
         hometop: false,
         top: false,
         id: 0,
@@ -204,22 +212,31 @@
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
           {
-            title: '发布人', key: 'nickname', width: 200,
-            render: (h, params) => h('a', {
-              on: {
-                click: () => {
-                  this.KEYWORD = "";
-                  this.getList(params.row.username);
-                }
+            title: '发布人', key: 'nickname', width: 240,
+            render: (h, params) => {
+              let name = "";
+              if(params.row.nickname){
+                name = params.row.username + "/" + params.row.nickname;
+              }else{
+                name = params.row.username;
               }
-            }, params.row.username + "/" + params.row.nickname)
+            return  h('a', {
+                on: {
+                  click: () => {
+                    this.KEYWORD = "";
+                    this.getList(params.row.username,this.key,this.by);
+                  }
+                }
+              }, name)
+            }
           },
           {title: '话题', key: 'title', minWidth: 300},
           {
             title: '话题圈', key: 'bbsTopicId', minWidth: 100,
             render: (h, params) => h('span', this.circle[params.row.bbsTopicId])
           },
-          {title: '发布时间', key: 'createDate', width: 200},
+          {title: '发布时间', key: 'createDate', width: 200,sortable: "custom"},
+          {title:'最后评论/回复时间',key:'lasttime',width:200,sortable: "custom"},
           {title: '评论数', key: 'number', width: 150, sortable: "custom"},
           {title: '状态', key: 'isdelEq', width: 100},
           {title: '置顶状态', key: 'zd', width: 200},
@@ -325,7 +342,9 @@
         return str.join(",");
       },
       sortChange(object) {
-        console.log(object);
+        this.key = object.key;
+        this.by = object.order;
+       this.getList("",this.key,this.by);
       },
       del(id, type) {
         this.$Modal.confirm({
@@ -420,7 +439,7 @@
           }
         })
       },
-      getList(account = "") {
+      getList(account = "",key = 'lasttime',by = 'desc') {
         let top = '';
         let hometop = '';
         if(this.stick != '请选择置顶状态'){
@@ -450,6 +469,10 @@
             endTime: this.value[1] == "" ? "" : this.value[1] + " 23:59:59",
             top:top,
             hometop:hometop,
+            sDate:this.lastValue[0] ? this.lastValue[0] + " 00:00:00" : '',
+            eDate:this.lastValue[1] ? this.lastValue[1] + " 23:59:59" : '',
+            sort:by,
+            sortField:key,
           },
         }).then(res => {
           if (res.success) {
@@ -465,6 +488,9 @@
       },
       onChange(val) {
         this.value = val;
+      },
+      lastChange(val){
+        this.lastValue = val;
       },
       onChange2(val) {
         this.value2 = val;
@@ -491,6 +517,9 @@
 <style lang="less">
   .tableOne .ivu-modal-wrap .ivu-modal .ivu-modal-content .ivu-modal-body {
     height: ~"calc(100% - 45px)";
+  }
+  .common-table .main-table .ivu-table-cell .ivu-table-sort{
+    display: inline-block;
   }
 </style>
 <style lang="less" scoped>
