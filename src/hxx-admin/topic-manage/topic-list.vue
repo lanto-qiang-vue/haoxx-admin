@@ -350,8 +350,8 @@
       zdToString(params) {
         //置顶转中文
         let str = [];
-        if (params.top == 1) str.push("车生活首页置顶");
-        if (params.hometop == 1) str.push("话题圈内置顶");
+        if (params.top == 1) str.push("话题圈内置顶");
+        if (params.hometop == 1) str.push("车生活首页置顶");
         return str.join(",");
       },
       sortChange(object) {
