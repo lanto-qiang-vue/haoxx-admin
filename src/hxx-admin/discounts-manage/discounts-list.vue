@@ -227,8 +227,10 @@
       }
     },
     mounted() {
-      this.stage = 2;
-      this.title = "发放优惠券";
+      this.stage=1;
+      this.showModal=true;
+      // this.stage = 2;
+      // this.title = "发放优惠券";
       this.showModal = true;
       this.showTable = Math.random();
       this.getList();
@@ -249,9 +251,25 @@
       addOption(){
         this.$refs.useData.validate(validator=>{
           if(validator){
-            this.useList.push({name:this.useData.name});
-             this.detail.use = this.useData.name;
-             this.checkModal = false;
+            this.axios.request({
+              baseURL: '/poxy-shqx/',
+              url: '/manage/cupon/insertType',
+              method: 'post',
+              data: {
+                access_token: this.$store.state.user.token,
+                name:this.useData.name,
+              }
+            }).then(res => {
+              if (res.success == true) {
+                // let data = res.data;
+                // for (let i in data) {
+                //   this.typeList.push(data[i]);
+                // }
+              }
+            })
+            // this.useList.push({name:this.useData.name});
+            //  this.detail.use = this.useData.name;
+            //  this.checkModal = false;
           }else{
           this.$Message.error("请校对必填字段!");
           }

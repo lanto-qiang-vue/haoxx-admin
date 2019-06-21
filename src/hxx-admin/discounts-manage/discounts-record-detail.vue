@@ -78,7 +78,7 @@
         </FormItem>
         <!---->
         <FormItem label="适用门店:" style="width:30%">
-          <a @click="showType=Math.random();">{{detail.tenantnsum}}家</a>
+          <a @click="showType=Math.random();" :disabled="detail.tenantnsum  < 1">{{detail.tenantnsum}}家</a>
         </FormItem>
         <FormItem label="领取时间:" style="width:30%">
           <Input :value="detail.recipientsTime" readonly/>
@@ -115,7 +115,7 @@
         <Button @click="showModal=false">取消</Button>
       </div>
     </Modal>
-    <select-stroe :showType="showType" :code="detail.code"></select-stroe>
+    <select-stroe :showType="showType" :code="detail.type"></select-stroe>
   </common-table>
 </template>
 <script>
@@ -264,7 +264,6 @@
             for (let i in data) {
               this.typeList.push(data[i]);
             }
-            console.log(JSON.stringify(this.typeList));
           }
         })
       },
