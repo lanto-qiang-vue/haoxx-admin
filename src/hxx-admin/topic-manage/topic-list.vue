@@ -55,11 +55,11 @@
     >
       <div>
         <Form>
-          <Checkbox v-model="top">
+          <Checkbox v-model="hometop">
             车生活首页置顶
           </Checkbox>
           &nbsp;&nbsp;&nbsp;&nbsp;
-          <Checkbox v-model="hometop">
+          <Checkbox v-model="top">
             话题圈内置顶
           </Checkbox>
         </Form>
