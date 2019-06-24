@@ -11,7 +11,7 @@
       </div>
       <div class="search-block">
         <Select placeholder="请选择卷用途">
-          <Option v-for="(item, index) in stateList"
+          <Option v-for="(item, index) in typeList"
                   :key="index" :value="item.id">{{item.name}}
           </Option>
         </Select>
@@ -50,8 +50,8 @@
         </FormItem>
         <FormItem label="优惠用途:" prop="PLATE_NUM" style="width:30%">
           <Select placeholder="请选择卷用途" v-model="detail.use">
-            <Option v-for="(item, index) in useList"
-                    :key="index" :value="item.name">{{item.name}}
+            <Option v-for="(item, index) in typeList"
+                    :key="index" :value="item.id">{{item.name}}
             </Option>
           </Select>
         </FormItem>
@@ -168,6 +168,9 @@
         detail:{
           use:'请选择',
         },
+        typeList:[
+          {id:'请选择卷用途',name:'请选择卷用途'},
+        ],
         useRule:{
           name:{required:true,message:'用途必填'},
         },
@@ -229,10 +232,9 @@
     mounted() {
       this.stage=1;
       this.showModal=true;
-      // this.stage = 2;
-      // this.title = "发放优惠券";
       this.showModal = true;
       this.showTable = Math.random();
+      this.getType();
       this.getList();
     },
     watch:{
@@ -248,6 +250,24 @@
       }
     },
     methods: {
+      //优惠券用途
+      getType(){
+        this.axios.request({
+          baseURL: '/poxy-shqx/',
+          url: '/manage/cupon/typeList',
+          method: 'post',
+          data: {
+            access_token: this.$store.state.user.token,
+          }
+        }).then(res => {
+          if (res.success == true) {
+            let data = res.data;
+            for (let i in data) {
+              this.typeList.push(data[i]);
+            }
+          }
+        })
+      },
       addOption(){
         this.$refs.useData.validate(validator=>{
           if(validator){
@@ -261,15 +281,10 @@
               }
             }).then(res => {
               if (res.success == true) {
-                // let data = res.data;
-                // for (let i in data) {
-                //   this.typeList.push(data[i]);
-                // }
+                this.getType();
+                this.checkModal = false;
               }
             })
-            // this.useList.push({name:this.useData.name});
-            //  this.detail.use = this.useData.name;
-            //  this.checkModal = false;
           }else{
           this.$Message.error("请校对必填字段!");
           }
