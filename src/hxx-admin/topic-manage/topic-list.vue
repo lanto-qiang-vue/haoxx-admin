@@ -55,11 +55,11 @@
     >
       <div>
         <Form>
-          <Checkbox v-model="top">
+          <Checkbox v-model="hometop">
             车生活首页置顶
           </Checkbox>
           &nbsp;&nbsp;&nbsp;&nbsp;
-          <Checkbox v-model="hometop">
+          <Checkbox v-model="top">
             话题圈内置顶
           </Checkbox>
         </Form>
@@ -185,8 +185,8 @@
         rules: {},
         stickList: [
           {id: '请选择置顶状态', name: '请选择置顶状态'},
-          {id: 1, name: '车生活首页置顶'},
-          {id: 2, name: '话题圈内置顶'}
+          {id: 2, name: '车生活首页置顶'},
+          {id: 1, name: '话题圈内置顶'}
         ],
         stick: "请选择置顶状态",
         page2: 1,
@@ -350,8 +350,8 @@
       zdToString(params) {
         //置顶转中文
         let str = [];
-        if (params.top == 1) str.push("车生活首页置顶");
-        if (params.hometop == 1) str.push("话题圈内置顶");
+        if (params.top == 1) str.push("话题圈内置顶");
+        if (params.hometop == 1) str.push("车生活首页置顶");
         return str.join(",");
       },
       sortChange(object) {
