@@ -19,7 +19,7 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="primary" @click="add">新增</Button>
+      <Button type="primary" @click="add" v-if="accessBtn('operateAdd')">新增</Button>
       <!--<input type="file" @change="getImg('TENANT_FILE_PATH', $event)">-->
     </div>
     <Modal v-model="showModal" title="新增" :width="680" :mask-closable="false">
