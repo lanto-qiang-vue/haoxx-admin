@@ -99,12 +99,14 @@
 
 <script>
   import commonTable from '@/hxx-components/common-table.vue'
+  import mixin from '@/hxx-components/mixin'
   import {getDictGroup, imgToBase64, reg} from "../../libs/util";
   import env from '_conf/url'
 
   export default {
     name: "service-staff-list",
     components: {commonTable},
+    mixins: [mixin],
     data() {
       return {
         updateModal: false,
@@ -195,8 +197,10 @@
           },
           {
             title: '操作', key: 'F', minWidth: 350, align: 'center',
-            render: (h, params) => h('div', [
-              h('Button', {
+            render: (h, params) => {
+              let button = [
+              ];
+              if(this.accessBtn('switchOrderState')) button.push( h('Button', {
                 props: {type: params.row.order_state > 0 ? "default" : "primary"}, on: {
                   click: () => {
                     let content = params.row.order_state > 0 ? "确认切换到不可接单状态码?" : "确认切换到可接单状态吗?";
@@ -222,8 +226,8 @@
 
                   }
                 }
-              }, params.row.order_state > 0 ? "切换到不可接单" : "切换到可接单"),
-              h('Button', {
+              }, params.row.order_state > 0 ? "切换到不可接单" : "切换到可接单"));
+              if(this.accessBtn('removeRole')) button.push(h('Button', {
                 props: {type: params.row.state > 0 ? "default" : "primary"}, style: {marginLeft: "10px"}, on: {
                   click: () => {
                     let content = params.row.order_state > 0 ? "确认解除角色吗?" : "确认绑定角色吗?";
@@ -250,8 +254,8 @@
                     );
                   }
                 }
-              }, params.row.state > 0 ? "解除角色" : "绑定角色"),
-              h('Button', {
+              }, params.row.state > 0 ? "解除角色" : "绑定角色"));
+              if(this.accessBtn('operateEdit')) button.push(h('Button', {
                 style: {marginLeft: '10px'}, on: {
                   click: () => {
                     this.updateData.userid = params.row.id;
@@ -262,8 +266,9 @@
                     this.updateModal = true;
                   }
                 }
-              }, '编辑')
-            ])
+              }, '编辑'));
+            return  h('div',button)
+            }
           },
         ],
         total: 0,
