@@ -1166,7 +1166,7 @@ export default [
         name: 'manage_etc_userdetail',
         meta: {
           icon: 'md-funnel',
-          title: '用户数据管理',
+          title: 'ETC访问统计',
           lgType: "1001",
           access: '100805',
         },
