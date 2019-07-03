@@ -42,7 +42,7 @@
 <script>
   import echarts from 'echarts'
     export default {
-      name: "ETC-data",
+      name: "etc-data",
       data() {
         return {
             checkButton:"1003",

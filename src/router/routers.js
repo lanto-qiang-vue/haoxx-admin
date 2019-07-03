@@ -1149,15 +1149,15 @@ export default [
         component: () => import('@/hxx-admin/etc-manage/manage_etc_userdetail.vue')
       },
       {
-        path: '/ETC-data',
-        name: 'ETC-data',
+        path: '/etc-data',
+        name: 'etc-data',
         meta: {
           icon: 'md-funnel',
           title: 'ETC活动数据统计',
           lgType: "1001",
           access: '100806',
         },
-        component: () => import('@/hxx-admin/etc-manage/ETC-data.vue')
+        component: () => import('@/hxx-admin/etc-manage/etc-data.vue')
       },
       {
         path: '/active-phone',
