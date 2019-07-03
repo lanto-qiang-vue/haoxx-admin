@@ -1157,7 +1157,7 @@ export default [
           lgType: "1001",
           access: '100806',
         },
-        component: () => import('@/hxx-admin/etc-manage/ETC-data.vue')
+        component: () => import('@/hxx-admin/etc-manage/etc-data.vue')
       },
       {
         path: '/active-phone',
