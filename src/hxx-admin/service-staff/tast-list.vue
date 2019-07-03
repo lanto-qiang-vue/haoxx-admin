@@ -39,7 +39,7 @@
     :transfer="false"
     :footer-hide="openName == 'list'"
     :transition-names="['', '']">
-    <modal-title slot="header" :title="(openName == 'detail' ? '任务详情' : taskObject[type] +'提交记录')" :state="openName == 'list' ? storeName : ''" @clickBack="showModal=false"></modal-title>
+    <modal-title slot="header" :title="(openName == 'detail' ? '任务详情' : taskObject[type] +'提交记录')" :state="openName == 'list' ? storeName : ''" @clickBack="showModal=false,imgList = []"></modal-title>
     <common-table v-show="openName == 'list'" v-model="recordData" :columns="recordColumns"
                   @changePageSize="recordChangePageSize"
                   @changePage="recordChangePage"
@@ -109,12 +109,12 @@
         <Button type="default" v-for="(item, key) in (detail.tagJson ||[])" :key="key">{{item.tag}}</Button>
       </FormItem>
       <FormItem label="门店门头照:" v-show="stage == 1" prop="PLATE_NUM" style="width:33%">
-        <img :src="detail.picUrl" style="max-width:100%;max-height:300px;">
+        <img :src="detail.picUrl" style="max-width:100%;max-height:300px;" @error="errorGoodsImg">
         <!--<div style="width:45%;float:left;height:200px;background:pink;"></div>-->
         <!--<div style="width:45%;float:left;height:200px;background:blue;"></div>-->
       </FormItem>
       <FormItem label="门店工位照:" v-show="stage == 2" prop="PLATE_NUM" style="width:100%;">
-        <img v-for="(item, key) in imgList" :key="key" style="max-width:33%;margin-left:10px;max-height:400px;" :src="item">
+        <img v-for="(item, key) in imgList" :key="key" alt="图片加载失败"  style="max-width:33%;margin-left:10px;max-height:400px;" :src="item" @error="errorGoodsImg">
       </FormItem>
     </Form>
     <div slot="footer">
@@ -314,10 +314,7 @@
       }
     },
     mounted() {
-      console.log("mounted-start");
       this.getList();
-      console.log("mounted-end");
-      // this.showRecord = Math.random();
     },
     watch: {
       checkModal(val) {
@@ -337,7 +334,6 @@
         switch (this.stage) {
           case 1:
           case 2:{
-            console.log(this.detail.status);
             if (this.detail.status != 'pass' && this.detail.status != 'no_need') {
               flag= true;
             }
@@ -354,6 +350,12 @@
       }
     },
     methods: {
+      errorGoodsImg(){
+        console.log("重新加载图片!");
+        let img = event.srcElement;
+        img.src = img.src + "&id="+Math.random();
+        img.onerror = null;
+      },
       getDetail(val){
           switch (val) {
             case 1: {
@@ -366,6 +368,7 @@
             case 2:{            this.title = "上传工位照";
               this.$fly.get('/shop/daq/hxx_mgt/stationpic/' + this.id).then(res => {
                 if (res.picUrl) this.imgList = res.picUrl.split(",");
+                // this.imgList = ['1.jpg','2.jpg','3.jpg'];
                 this.detail = res;
               })
               break;}
@@ -382,7 +385,7 @@
               this.$fly.get('/shop/daq/hxx_mgt/otherattr/' + this.id).then(res => {
                 if (res.attrJson) {
                   let data = JSON.parse(res.attrJson);
-                  console.log(JSON.stringify(data));
+                  // console.log(JSON.stringify(data));
                   this.businessTime = data.openHours.start + "～" + data.openHours.end;
                   let a = parseInt(data.stationNum.washing);
                   let b = parseInt(data.stationNum.lifting);
@@ -406,13 +409,12 @@
             size: this.limit,
           },
         }).then(res => {
-          console.log("获取返回值",res);
           if (res.content) {
             this.tableData = res.content;
             this.total = res.totalElements;
             this.showTable = Math.random();
           }
-          console.log("tableData",this.tableData);
+          // console.log("tableData",this.tableData);
         })
       },
       getRecord() {
