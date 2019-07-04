@@ -104,9 +104,10 @@
         getList(){
           this.$fly.request({
             baseURL: '/poxy-shqx',
-            url: '/operate/etc/count',
+            url: '/operate/etc/count?access_token='+this.$store.state.user.token,
             method: 'post',
             data: this.sendData,
+            
           }).then(res => {
               console.log('res',res);
              if(res.success === true){
@@ -132,7 +133,7 @@
                     },
                     formatter: function(params) {
                         let company = params[0].axisValue
-                        console.log('dataObj',company);
+                        // console.log('dataObj',company);
                         let str=company+ '<br/>';
                         switch(company){
                             case '分享成功数':
