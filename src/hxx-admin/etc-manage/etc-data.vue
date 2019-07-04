@@ -112,6 +112,7 @@
               console.log('res',res);
              if(res.success === true){
                this.listData=res.data;
+               
                let data=[res.data['newuser_etc'],res.data['newFollows'],res.data['car_register'],res.data['etc_share']];
                let data1=['','',''];
                let temData=res.data['etc_application']-res.data['etc_share'];
@@ -143,7 +144,7 @@
                                 str += '<div style="display:inline-block;margin-right:5px;border-radius:10px;width:9px;height:9px;background-color:#BA6D15"></div>公众号新增关注数:' + resData[1] + '<br/>'
                             break;
                             case '车生活新增注册用户数':
-                            str += '<div style="display:inline-block;margin-right:5px;border-radius:10px;width:9px;height:9px;background-color:#808695"></div>车生活新增注册用户数:' + resData[2] + '<br/>'
+                            str += '<div style="display:inline-block;margin-right:5px;border-radius:10px;width:9px;height:9px;background-color:#399F06"></div>车生活新增注册用户数:' + resData[2] + '<br/>'
                             break;
                             case '点击“下一步”按钮用户数':
                             str += '<div style="display:inline-block;margin-right:5px;border-radius:10px;width:9px;height:9px;background-color:#ed4014"></div>由分享点击:' + resData[3] + '<br/>'
@@ -177,7 +178,7 @@
                             normal: {
                                 color: function(params) {
                                     var colorList = [
-                                    '#2b85e4','#BA6D15','#808695','#ed4014'
+                                    '#2b85e4','#BA6D15','#399F06','#ed4014'
                                     ];
                                     return colorList[params.dataIndex]
                                 },

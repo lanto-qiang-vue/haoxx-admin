@@ -63,7 +63,7 @@ module.exports = {
       },
       '/poxy-shqx/':{
 
-        target:'http://192.168.169.231:8888/',
+        target:'http://192.168.169.110:8289/',
         // target:'http://192.168.169.118:8871',
         // target:'https://hxx.hoxiuxiu.com/poxy-shqx/',
         // target:'https://hxx.test.hoxiuxiu.com/poxy-shqx',
