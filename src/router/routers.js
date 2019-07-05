@@ -934,30 +934,6 @@ export default [
       },
     ]
   },
-  // {
-  //   path: '/etc-manage',
-  //   name: 'etc-manage',
-  //   meta: {
-  //     icon: 'logo-buffer',
-  //     title: '用户数据管理',
-  //     // lgType: "1001",
-  //     // access: '1010',
-  //   },
-  //   component: Main,
-  //   children:[
-  //     {
-  //       path: '/etc-data',
-  //       name: 'etc-data',
-  //       meta: {
-  //         icon: 'md-funnel',
-  //         title: 'etc数据',
-  //         lgType: "1001",
-  //         access: '100805',
-  //       },
-  //       component: () => import('@/hxx-admin/etc-manage/etc-data.vue')
-  //     },
-  //   ]
-  // },
   {
     path: '/service-staff',
     name: 'service-staff',
@@ -1169,6 +1145,17 @@ export default [
           title: 'ETC访问统计',
           lgType: "1001",
           access: '100805',
+        },
+        component: () => import('@/hxx-admin/etc-manage/manage_etc_userdetail.vue')
+      },
+      {
+        path: '/etc-data',
+        name: 'etc-data',
+        meta: {
+          icon: 'md-funnel',
+          title: 'ETC活动数据统计',
+          lgType: "1001",
+          access: '100806',
         },
         component: () => import('@/hxx-admin/etc-manage/etc-data.vue')
       },
