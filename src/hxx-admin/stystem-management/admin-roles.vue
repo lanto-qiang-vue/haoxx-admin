@@ -283,8 +283,6 @@
               }
               this.data4[0].children.splice(i,1,newData.children[i]);
             }
-            // console.log(JSON.stringify(newData));
-            // this.data4 = [newData];
           }
         })
           }

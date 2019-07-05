@@ -171,6 +171,7 @@
     components: {commonTable, ModalTitle},
     data() {
       return {
+        //多个
         InterVal:null,
         InterVal2:null,
         InterVal3:null,
