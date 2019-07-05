@@ -109,12 +109,12 @@
         <Button type="default" v-for="(item, key) in (detail.tagJson ||[])" :key="key">{{item.tag}}</Button>
       </FormItem>
       <FormItem label="门店门头照:" v-show="stage == 1" prop="PLATE_NUM" style="width:33%">
-        <img :src="detail.picUrl" style="max-width:100%;max-height:300px;" @error="errorGoodsImg">
+        <img :src="detail.picUrl" v-if="stage == 1" style="max-width:100%;max-height:300px;" @error="errorGoodsImg(0)">
         <!--<div style="width:45%;float:left;height:200px;background:pink;"></div>-->
         <!--<div style="width:45%;float:left;height:200px;background:blue;"></div>-->
       </FormItem>
       <FormItem label="门店工位照:" v-show="stage == 2" prop="PLATE_NUM" style="width:100%;">
-        <img v-for="(item, key) in imgList" :key="key" alt="图片加载失败"  style="max-width:33%;margin-left:10px;max-height:400px;" :src="item" @error="errorGoodsImg">
+        <img v-for="(item, key) in imgList" :key="key" alt="图片加载失败"  style="max-width:33%;margin-left:10px;max-height:400px;" :src="item" @error="errorGoodsImg(key)">
       </FormItem>
     </Form>
     <div slot="footer">
@@ -171,6 +171,9 @@
     components: {commonTable, ModalTitle},
     data() {
       return {
+        InterVal:null,
+        InterVal2:null,
+        InterVal3:null,
         recordData: [],
         id: 310000009775,
         type: '',
@@ -270,6 +273,9 @@
                 props: {type: 'primary', size: 'small'}, on: {
                   click: () => {
                     this.id = params.row.shopNo;
+                    clearInterval(this.InterVal);
+                    clearInterval(this.InterVal2);
+                    clearInterval(this.InterVal3);
                     this.stage = this.strToInt[params.row.daqType];
                     this.getDetail(this.strToInt[params.row.daqType]);
                     this.openName = 'detail';
@@ -350,11 +356,33 @@
       }
     },
     methods: {
-      errorGoodsImg(){
-        console.log("重新加载图片!");
+      errorGoodsImg(k){
+        console.log("重新加载图片!",k);
         let img = event.srcElement;
-        img.src = img.src + "&id="+Math.random();
         img.onerror = null;
+           switch(k){
+             case 0:
+               this.InterVal = setInterval(()=>{
+                 img.src = img.src + "&id="+Math.random();
+                 img.onerror = null;
+                 clearInterval(this.InterVal);
+               },1000);
+               break;
+             case 1:
+               this.InterVal2 = setInterval(()=>{
+                 img.src = img.src + "&id="+Math.random();
+                 img.onerror = null;
+                 clearInterval(this.InterVal2);
+               },1000);
+               break;
+             case 2:
+               this.InterVal3 = setInterval(()=>{
+                 img.src = img.src + "&id="+Math.random();
+                 img.onerror = null;
+                 clearInterval(this.InterVal3);
+               },1000);
+               break;
+           }
       },
       getDetail(val){
           switch (val) {
