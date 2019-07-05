@@ -4,7 +4,7 @@ import { Message } from 'iview'
 console.log("fly-create");
 const fly = axios.create({
   baseURL: '/poxy-shqx/',
-  timeout: 1000,
+  timeout: 10000,
   transformRequest: [function (data) {
     return JSON.stringify(data)
   }],
