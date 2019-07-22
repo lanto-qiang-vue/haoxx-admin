@@ -22,7 +22,8 @@ import env from '../config/env'
 /* eslint-disable */
 // env === 'development' ? require('@/mock') : ''
 
-import axios from '@/libs/api.request'
+// import axios from '@/libs/api.request'
+import axios from '@/libs/axios'
 import fly  from '@/libs/fly'
 import fxios from '@/libs/fxios'
 Vue.use(iView, {
