@@ -4,4 +4,5 @@ import env from './env'
 // const DEV_URL = 'http://hxx.test.hoxiuxiu.com/'
 const DEV_URL = '/proxy/'
 const PRO_URL = '/api/'
-export default env === 'development' ? DEV_URL : PRO_URL
+// export default env === 'development' ? DEV_URL : PRO_URL
+export default PRO_URL

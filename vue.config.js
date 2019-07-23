@@ -38,12 +38,12 @@ module.exports = {
   productionSourceMap: false,
   devServer: {
     proxy: {
-      '/proxy/': {
+      '/api/': {
         target: 'http://192.168.169.231:10032/hxx-proxy/',
         // target: 'http://developer.hxx.hoxiuxiu.com/',
         // target:'http://192.168.169.124:8871',
         // target:'https://hxx.hoxiuxiu.com/api/',
-        pathRewrite: {'^/proxy/': ''},
+        pathRewrite: {'^/api/': ''},
         secure: false
       },
       '/other/': {

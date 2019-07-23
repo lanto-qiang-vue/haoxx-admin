@@ -261,6 +261,9 @@
       },
       sortChange(column,key,order){
         this.$emit('sortChange',column,key,order);
+      },
+      clearCurrentRow(){
+        this.$refs.tablesMain.clearCurrentRow()
       }
     },
     activated(){

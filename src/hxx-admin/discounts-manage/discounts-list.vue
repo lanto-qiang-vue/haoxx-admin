@@ -1,6 +1,8 @@
 <template>
   <common-table v-model="tableData" :columns="columns" @changePageSize="changePageSize" @changePage="changePage"
-                :total="total" :show="showTable" :clearSelect="clearType" :page="page" @onRowClick="onRowClick">
+                :total="total" :show="showTable" :clearSelect="clearType" :page="page" @onRowClick="onRowClick"
+                ref="table"
+  class="discounts-list">
     <div slot="search">
       <div class="search-block">
         <Input placeholder="会员账号/门店名称/兑换码" v-model="query.keyWord" clearable></Input>
@@ -30,10 +32,10 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="primary" @click="stage=1;showModal=true;title='优惠券生成'">优惠券生成</Button>
-      <Button type="info" @click="stage=1;showModal=true;title='优惠券修改'" :disabled="true">修改</Button>
-      <Button type="success" @click="" :disabled="true">发放</Button>
-      <Button type="error" @click="" :disabled="true">删除</Button>
+      <Button type="primary" @click="clickCreate">优惠券生成</Button>
+      <Button type="info" @click="showModal=true;" :disabled="!detail.id">查看/编辑</Button>
+      <Button type="success" @click="showGive= true" :disabled="!detail.id">发放</Button>
+      <Button type="error" @click="del" :disabled="!detail.id">删除</Button>
     </div>
     <Modal
       v-model="showModal"
@@ -43,83 +45,100 @@
       :mask-closable="false"
       :scrollable="true"
       :transfer="false"
-      :footer-hide="stage==2"
       :transition-names="['', '']">
-      <modal-title slot="header" :title="title" @clickBack="showModal=false"></modal-title>
-      <Form :label-width="100" class="common-form" v-show="stage == 1" :model="detail" :rules="detailRule"
+      <modal-title slot="header" title="优惠券详情" @clickBack="showModal=false"></modal-title>
+      <Form :label-width="100" class="common-form" :model="detail" :rules="detailRule"
             ref="detail" style="padding-left: 10px">
-        <FormItem label="优惠券名称:" prop="name" style="width:30%">
+        <FormItem label="优惠券名称:" prop="name">
           <Input v-model="detail.name"/>
         </FormItem>
-        <FormItem label="优惠券用途:" prop="userType" style="width:30%">
-          <Select placeholder="请选择用途" v-model="detail.userType">
+
+        <FormItem label="优惠券用途:" prop="type">
+          <Select placeholder="请选择" v-model="detail.type" style="padding-right: 40px">
             <Option v-for="(item, index) in useList"
                     :key="index" :value="item.id">{{item.name}}
             </Option>
           </Select>
+          <a @click="showAddUse=true" style="position: absolute;right: 0">添加</a>
         </FormItem>
-        <FormItem :label-width="0" style="width:50px;">
-          <a @click="checkModal=true">添加</a>
-        </FormItem>
-        <FormItem label="优惠券类型:" prop="type" style="width:30%">
-          <Select placeholder="请选择" v-model="detail.type">
+        <FormItem label="优惠券类型:" prop="userType">
+          <Select placeholder="请选择" v-model="detailuserType">
             <Option v-for="(item, index) in typeList"
                     :key="index" :value="item.code">{{item.name}}</Option>
           </Select>
+        </FormItem>
+        <FormItem v-if="detail.userType &&discountObj[detail.userType]"
+                  :label="discountObj[detail.userType].name" prop="discount">
+          <!--<Input v-model="detail.discount" type="number"/>-->
+          <InputNumber v-model="detail.discount" class="detail-discount"></InputNumber>
+          <span class="unit">{{discountObj[detail.userType].unit}}</span>
         </FormItem>
         <FormItem label="优惠券使用规则说明:" prop="content" style="width: 90%">
           <Input type="textarea" :rows="15" v-model="detail.content" wrap="hard"/>
         </FormItem>
       </Form>
-      <!--发放优惠券-->
-      <Form :label-width="120" class="form-3" v-show="stage == 2">
-      <FormItem label="优惠券名称:" style="width:30%">
-        <Select placeholder="请选择卷类型" filterable value="">
-          <Option v-for="(item, index) in typeList"
-                  :key="index" :value="item.code">{{item.name}}
-          </Option>
-        </Select>
-      </FormItem>
-      <FormItem label="发放数量:"  style="width:30%">
-       <InputNumber style="width:100%"/>
-      </FormItem>
-      <FormItem label="使用有效期:"  style="width:30%">
-          <DatePicker type="daterange"  format="yyyy-MM-dd" placeholder="未知时间2"
-                      style="width:100%;"></DatePicker>
-      </FormItem>
-        <FormItem style="width:100%;">
-          <div style="line-height:40px;"><Checkbox v-model="oneModal" style="float:left;">是否门店消核</Checkbox><div style="float:left" v-show="oneModal"><b style="color:red;">*</b>选择适用门店:已选0家<a @click="showType=Math.random()">添加/编辑</a><a>导入门店</a></div></div>
+
+      <!---->
+      <div slot="footer">
+        <Button @click="showModal=false">取消</Button>
+        <Button v-show="!detail.id" type="primary" @click="create">提交</Button>
+        <Button v-show="detail.id" type="primary" @click="edit">修改</Button>
+      </div>
+    </Modal>
+
+    <Modal
+      v-model="showGive"
+      class="table-modal-detail full-height discounts-modal"
+      width="100"
+      heigh="100"
+      :mask-closable="false"
+      :scrollable="true"
+      :transfer="false"
+      :transition-names="['', '']">
+      <modal-title slot="header" title="优惠券发放" @clickBack="showGive=false"></modal-title>
+      <Form :label-width="120" class="" >
+        <FormItem label="优惠券:">
+          <span>{{detail.name}}</span>
         </FormItem>
-      <FormItem style="width:100%;">
-    <Checkbox v-model="twoModal" style="float:left;">是否从保险公司导入会员</Checkbox><div style="float:left;" v-show="twoModal"><a style="float:left;padding-left:20px;">导入会员</a><span style="float:left;padding-left:10px;">已导入0人</span>
-          <div style="float:left;width:200px;padding-left:20px;">
-            <Select placeholder="请选择保险公司名称">
+        <FormItem label="发放数量:">
+          <InputNumber  v-model="give.num"/>
+        </FormItem>
+        <FormItem label="使用有效期:">
+          <DatePicker type="daterange"  format="yyyy-MM-dd" placeholder="请选择" v-model="give.daterange"
+                      ></DatePicker>
+        </FormItem>
+        <FormItem >
+          <div><Checkbox v-model="give.iswriteoff">是否门店核销</Checkbox><div v-show="give.iswriteoff"><b>*</b>选择适用门店:已选0家<a @click="showStore=Math.random()">添加/编辑</a><a @click="$refs.upStore.open()">导入门店</a></div></div>
+        </FormItem>
+        <FormItem >
+          <Checkbox v-model="give.isleadinuser">是否从保险公司导入会员</Checkbox>
+          <div v-show="give.isleadinuser">
+            <Select placeholder="选择保险公司" v-model="give.insuranceId" style="width: 200px">
               <Option v-for="(item, index) in typeList"
                       :key="index" :value="item.code">{{item.name}}
               </Option>
             </Select>
-          </div>
+            <a @click="$refs.excel.show=true">导入会员</a><span>已导入0人</span>
         </div>
-      </FormItem>
-        <FormItem style="width:100%;">
-          <Checkbox v-model="threeModal" style="float:left;">是否需自行领取</Checkbox>
-          <div style="float:left;" v-show="threeModal">
-            <div style="float:left;padding-left:20px;"><b style="color:red;">*</b>可领取日期区间:</div>
-            <div style="float:left;width:250px;padding-left:20px;">
-              <DatePicker type="daterange" style="width:100%;" :options="option" format="yyyy-MM-dd" placeholder="开始日期-结束日期"></DatePicker>
+        </FormItem>
+        <FormItem >
+          <Checkbox v-model="give.way" style="float:left;">是否需自行领取</Checkbox>
+          <div v-show="give.way">
+            <div><b style="color:red;">*</b>可领取日期区间:</div>
+            <div>
+              <DatePicker type="daterange" :options="option" format="yyyy-MM-dd" placeholder="开始日期-结束日期"></DatePicker>
             </div>
           </div>
         </FormItem>
       </Form>
-      <!---->
       <div slot="footer">
-        <Button @click="showModal=false">取消</Button>
-        <Button type="primary" @click="create">提交</Button>
+        <Button @click="showGive=false">取消</Button>
+        <Button type="primary" @click="toGive">发放</Button>
       </div>
     </Modal>
-    <!--下拉框添加用途-->
+
     <Modal
-      v-model="checkModal"
+      v-model="showAddUse"
       width="400px"
       heigh="100"
       :mask-closable="false"
@@ -134,22 +153,35 @@
           </FormItem>
         </Form>
       <div slot="footer">
-        <Button @click="checkModal=false">取消</Button>
+        <Button @click="showAddUse=false">取消</Button>
         <Button type="primary" @click="addOption">提交</Button>
       </div>
     </Modal>
     <!---->
-    <select-store :showType="showType" :checkId="checkId"></select-store>
+    <select-store :showType="showStore" :checkId="checkId"></select-store>
+
+    <upload-modal ref="upStore" @template="getStoreTep"></upload-modal>
+    <!--<upload-excel ref="excel"></upload-excel>-->
+
   </common-table>
 </template>
 <script>
 import commonTable from '@/hxx-components/common-table.vue'
 import selectStore from '@/hxx-components/select-store.vue';
+import UploadModal from '@/hxx-components/upload-modal.vue'
+// import UploadExcel from '@/hxx-components/upload-excel.vue'
 import ModalTitle from '@/hxx-components/modal-title.vue'
 import {deepClone, getDictGroup} from "@/libs/util";
+let detail={
+    type:'',
+    userType:'',
+    name:'',
+    discount: null,
+    content: '',
+}
 export default {
     name: "discounts-list",
-    components: {commonTable, ModalTitle,selectStore},
+    components: {commonTable, ModalTitle,selectStore, UploadModal},
     data() {
       let rule= {required:true,message:'必填项不能为空'}
       return {
@@ -161,35 +193,24 @@ export default {
           useType: '',
         },
         useList: [],
-        oneModal:false,
+        showGive:false,
         checkId:[],
-        twoModal:false,
-        threeModal:false,
-        title:'优惠券详情',
         useData:{
           name:'',
         },
-        detail:{
-          type:'',
-          userType:'',
-          name:'',
-          discount: 0,
-          content: '',
+        detail: deepClone(detail),
+        give:{
+          way: false,
+          iswriteoff: false,
+          isleadinuser: false,
+          insuranceId: ''
         },
-        detailRule: {
-          type:[rule],
-          userType:[rule],
-          name:[rule],
-          discount: [],
-          content: [rule],
-        },
+
         useRule:{
-          name:{required:true,message:'用途必填'},
+          name: rule,
         },
-        stage:1,
-        use:'请选择',
-        checkModal:false,
-        showType:false,
+        showAddUse:false,
+        showStore:false,
         showModal: false,
         tableData: [],
         option: {
@@ -199,7 +220,7 @@ export default {
         },
 
         rules: {
-          name: {required: true, message: '产品名称必填'},
+          name: rule,
         },
         total: 0,
         showTable: false,
@@ -226,45 +247,88 @@ export default {
         }
         return obj
       },
+      discountObj(){
+        return {
+          "10561002": {
+            name: '支付',
+            unit: '元',
+          },
+          "10561003": {
+            name: '折扣',
+            unit: '折',
+          },
+          "10561004": {
+            name: '抵扣',
+            unit: '元',
+          },
+        }
+      },
+      detailRule(){
+        let rule= {required:true,message:'必填项不能为空'}
+        return  {
+          type:[rule],
+          userType:[rule],
+          name:[rule],
+          discount: { validator:(rule, value, callback) => {
+             if(this.discountObj[this.detail.userType] && !value){
+               callback(new Error('必填项不能为空'));
+             }else{
+               callback();
+             }
+            }
+          },
+          content: [rule],
+        }
+      },
+      detailuserType: {
+        get(){
+          return this.detail.useType? this.detail.useType.toString(): ''
+        },
+        set(val){
+          this.detail.useType= val
+        },
+      },
       columns(){
         return [
           {
             title: '序号', width: 70,
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
-          {title: '操作', key: 'name', minWidth: 120,
-            render:(h,params) => {
-              return h('div',{style:{textAlign:'center'},
-              },[h('a',{style:{marginRight:'10px'},on:{click:()=>{
-                    this.stage = 2;
-                    this.title = "发放优惠券";
-                    this.showModal = true;
-                    // alert("发放");
-                  }
-                }},'发放'),h('a',{on:{click:()=>{
-                    alert("删除");
-                  }}},'删除')]);
-            }
-          },
+          // {title: '操作', key: 'name', minWidth: 120,
+          //   render:(h,params) => {
+          //     return h('div',{style:{textAlign:'center'},
+          //     },[h('a',{style:{marginRight:'10px'},on:{click:()=>{
+          //           this.stage = 2;
+          //           this.title = "发放优惠券";
+          //           this.showModal = true;
+          //           // alert("发放");
+          //         }
+          //       }},'发放'),h('a',{on:{click:()=>{
+          //           alert("删除");
+          //         }}},'删除')]);
+          //   }
+          // },
           {title: '券名称', key: 'name', minWidth: 140},
-          {title: '用途', key: 'useType', minWidth: 140, render:(h,params) => {
-            console.log(' this.useObj[params.row.useType]', this.useObj[params.row.useType])
-              return h('div',  this.useObj[params.row.useType]);
+          {title: '用途', key: 'useType', minWidth: 100, render:(h,params) => {
+            // console.log(' this.useObj[params.row.useType]', this.useObj[params.row.type])
+              return h('div',  this.useObj[params.row.type]);
             }},
-          {title: '类型', key: 'type', minWidth: 140},
-          {title: '创建时间', key: 'D', minWidth: 140},
-          {title: '创建人', key: 'E', minWidth: 140},
+          {title: '类型', key: 'type', minWidth: 100, render:(h,params) => {
+              // console.log(' this.typeObj[params.row.useType]', this.typeObj[params.row.useType])
+              return h('div',  this.typeObj[params.row.useType]);
+            }},
+          {title: '创建时间', key: 'createDate', minWidth: 200},
+          {title: '创建人', key: 'userCode', minWidth: 100},
         ]
       } ,
     },
     mounted() {
-      this.stage=1;
       this.showTable = Math.random();
       this.getType();
       this.getList();
     },
     watch:{
-      checkModal(val){
+      showAddUse(val){
         if(val){
           this.$refs.useData.resetFields();
         }
@@ -290,6 +354,12 @@ export default {
           }
         })
       },
+      clickCreate(){
+        this.$refs.table.clearCurrentRow()
+        this.detail= deepClone(detail)
+        this.$refs.detail.resetFields()
+        this.showModal= true
+      },
       addOption(){
         this.$refs.useData.validate(validator=>{
           if(validator){
@@ -304,19 +374,22 @@ export default {
             }).then(res => {
               if (res.success == true) {
                 this.getType();
-                this.checkModal = false;
+                this.showAddUse = false;
               }
             })
           }else{
-          this.$Message.error("请校对必填字段!");
+          this.$Message.error("请输入必填项");
           }
         });
       },
       create(){
         this.$refs.detail.validate(validator=>{
           if(validator){
+            if(parseInt(this.detail.useType) ==10561003 && this.detail.discount>1){
+              this.detail.discount= this.detail.discount/100
+            }
             this.axios.post('/manage/cupon/createCoupon', {data: this.detail},{baseURL: '/poxy-shqx/'}).then( (res) => {
-               console.log(res)
+               // console.log(res)
               if(res.success){
                  this.showModal= false
                   this.getList()
@@ -325,11 +398,32 @@ export default {
           }
         })
       },
+      edit(){
+
+      },
+      del(){
+        this.$Modal.confirm({
+          title: '确定删除？',
+          onOk:()=>{
+            this.axios.post('/manage/cupon/deleteProvideCoupon', {data: this.detail},{baseURL: '/poxy-shqx/'}).then( (res) => {
+              // console.log(res)
+              if(res.success){
+                this.$Message.success("删除成功");
+                this.getList()
+              }
+            })
+          }
+        })
+      },
+      toGive(){
+
+      },
       onRowClick(item) {
         // console.log(item);
         this.detail = item;
       },
       getList() {
+        this.detail= {}
         this.axios.post('/manage/cupon/queryProvideCouponList', {
           ...this.query,
           limit:this.limit,
@@ -341,6 +435,9 @@ export default {
             this.tableData= res.data
           }
         })
+      },
+      getStoreTep(){
+        window.location.href =  '/api/common/basedata/carlive/tenantTemple?access_token='+this.$store.state.user.token
       },
       changePageSize(size) {
         this.limit = size;
@@ -355,18 +452,19 @@ export default {
   }
 </script>
 <style lang="less">
-.discounts-modal .ivu-modal-wrap .ivu-modal .ivu-modal-content .ivu-modal-body {
-  /*height: ~'calc(100% - 45px)';*/
-}
-
-.discounts-modal .form-3 {
-  padding-top: 20px;
-}
-
-.discounts-modal .form-3 .ivu-form-item {
-  width: 30%;
-  display: inline-block;
-  margin-bottom: 15px;
+.discounts-list{
+  .detail-discount{
+    input{
+      text-align: left;
+    }
+    .ivu-input-number-handler-wrap{
+      display: none;
+    }
+  }
+  .unit{
+    position: absolute;
+    right: 10px;
+  }
 }
 </style>
 
