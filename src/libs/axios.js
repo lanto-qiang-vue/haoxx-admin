@@ -2,6 +2,7 @@ import Axios from 'axios'
 import baseURL from '_conf/url'
 import { Message } from 'iview'
 import store from '@/store'
+import { getParams, setParams} from '@/libs/util.js'
 
 let axiosHxx= Axios.create({
   baseURL: baseURL,
@@ -35,6 +36,35 @@ let axiosHxx= Axios.create({
 
     return ret
   }]
+});
+
+
+axiosHxx.interceptors.request.use(config => {
+  // console.log('config', config)
+  if(config.method=='get'){
+    let obj= getParams(config.url), urlf= config.url.split('?')[0]
+    obj.access_token= store.state.user.token
+    config.url= urlf+ setParams(obj)
+  }
+  // let data= config.data
+  // let contentType= config.headers['Content-Type']
+  // console.log('config.headers', config.headers)
+  // if(contentType.indexOf('application/x-www-form-urlencoded')>=0){
+  // 	let form = new FormData(), res=''
+  // 	if(!data.access_token && store.state.user.hxxtoken){
+  // 	if(!data.access_token && store.state.user.hxxtoken){
+  // 		data.access_token= store.state.user.hxxtoken
+  // 	}
+  // 	for(let key in data){
+  // 		// form.append(key, typeof data[key]=='object'?  JSON.stringify( data[key]): data[key] );
+  //
+  // 	}
+  // 	config.data= form
+  // }
+
+  return config
+}, error => {
+  return Promise.reject(error);
 });
 
 axiosHxx.interceptors.response.use(response => {

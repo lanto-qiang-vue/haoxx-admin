@@ -274,13 +274,22 @@ export const canTurnTo = (name, access, routes) => {
  * @description 从URL中解析参数
  */
 export const getParams = url => {
-  const keyValueArr = url.split('?')[1].split('&')
-  let paramObj = {}
-  keyValueArr.forEach(item => {
-    const keyValue = item.split('=')
-    paramObj[keyValue[0]] = keyValue[1]
-  })
+  let paramObj = {}, arr= url.split('?')
+  if(arr.length>1){
+    let keyValueArr = arr[1].split('&')
+    keyValueArr.forEach(item => {
+      const keyValue = item.split('=')
+      paramObj[keyValue[0]] = keyValue[1]
+    })
+  }
   return paramObj
+}
+export const setParams = obj => {
+  let arr=[]
+  for(let key in obj){
+    arr.push(`${key}=${obj[key]}`)
+  }
+  return `?${arr.join('&')}`
 }
 
 /**

@@ -8,11 +8,11 @@
       <p>2、选择好文件后，点“确定”按钮完成导入</p>
       <input ref="file"  @change="change" type="file" :accept="accept">
     </div>
-    <a v-show="file.name">{{file.name}}</a>
+    <a v-if="file" v-show="file.name">{{file.name}}</a>
     <div slot="footer">
-      <Button type="success" @click="click('template')" style="float: left">下载模板</Button>
-      <Button type="error" @click="show= false;click('close')">关闭</Button>
-      <Button type="primary" @click="click('ok')">确定</Button>
+      <Button type="success" @click="$emit('template')" style="float: left">下载模板</Button>
+      <Button type="error" @click="show= false;$emit('close')">关闭</Button>
+      <Button type="primary" @click="ok">确定</Button>
 
     </div>
   </Modal>
@@ -31,13 +31,13 @@ export default {
   },
   data(){
     return{
-      show: true,
-      file: {}
+      show: false,
+      file: null
     }
   },
   methods:{
     open(){
-      this.file= {}
+      this.file= null
       this.show= true
     },
     close(){
@@ -50,8 +50,12 @@ export default {
       this.$emit('change', file)
       this.$refs.file.value=null;
     },
-    click(name){
-      this.$emit(name)
+    ok(){
+      if(this.file){
+        this.$emit('ok', this.file)
+      }else{
+        this.$Message.error("请选择文件");
+      }
     },
   }
 }

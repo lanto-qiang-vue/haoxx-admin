@@ -33,8 +33,8 @@
     </div>
     <div slot="operate">
       <Button type="primary" @click="clickCreate">优惠券生成</Button>
-      <Button type="info" @click="showModal=true;" :disabled="!detail.id">查看/编辑</Button>
-      <Button type="success" @click="showGive= true" :disabled="!detail.id">发放</Button>
+      <Button type="info" @click="clickEdit" :disabled="!detail.id">查看/编辑</Button>
+      <Button type="success" @click="clickGive" :disabled="!detail.id">发放</Button>
       <Button type="error" @click="del" :disabled="!detail.id">删除</Button>
     </div>
     <Modal
@@ -61,28 +61,27 @@
           </Select>
           <a @click="showAddUse=true" style="position: absolute;right: 0">添加</a>
         </FormItem>
-        <FormItem label="优惠券类型:" prop="userType">
-          <Select placeholder="请选择" v-model="detailuserType">
+        <FormItem label="优惠券类型:" prop="useType">
+          <Select placeholder="请选择" v-model="detailuseType">
             <Option v-for="(item, index) in typeList"
                     :key="index" :value="item.code">{{item.name}}</Option>
           </Select>
         </FormItem>
-        <FormItem v-if="detail.userType &&discountObj[detail.userType]"
-                  :label="discountObj[detail.userType].name" prop="discount">
+        <FormItem v-if="detail.useType &&discountObj[detail.useType]"
+                  :label="discountObj[detail.useType].name" prop="discount">
           <!--<Input v-model="detail.discount" type="number"/>-->
           <InputNumber v-model="detail.discount" class="detail-discount"></InputNumber>
-          <span class="unit">{{discountObj[detail.userType].unit}}</span>
+          <span class="unit">{{discountObj[detail.useType].unit}}</span>
         </FormItem>
         <FormItem label="优惠券使用规则说明:" prop="content" style="width: 90%">
           <Input type="textarea" :rows="15" v-model="detail.content" wrap="hard"/>
         </FormItem>
       </Form>
 
-      <!---->
       <div slot="footer">
         <Button @click="showModal=false">取消</Button>
         <Button v-show="!detail.id" type="primary" @click="create">提交</Button>
-        <Button v-show="detail.id" type="primary" @click="edit">修改</Button>
+        <Button v-show="detail.id" type="primary" @click="edit" :disabled="isGive">修改</Button>
       </div>
     </Modal>
 
@@ -107,28 +106,40 @@
           <DatePicker type="daterange"  format="yyyy-MM-dd" placeholder="请选择" v-model="give.daterange"
                       ></DatePicker>
         </FormItem>
-        <FormItem >
-          <div><Checkbox v-model="give.iswriteoff">是否门店核销</Checkbox><div v-show="give.iswriteoff"><b>*</b>选择适用门店:已选0家<a @click="showStore=Math.random()">添加/编辑</a><a @click="$refs.upStore.open()">导入门店</a></div></div>
+        <FormItem label="是否门店核销:">
+          <i-switch size="large" v-model="give.iswriteoff">
+            <span slot="open">是</span>
+            <span slot="close">否</span>
+          </i-switch>
         </FormItem>
-        <FormItem >
-          <Checkbox v-model="give.isleadinuser">是否从保险公司导入会员</Checkbox>
-          <div v-show="give.isleadinuser">
-            <Select placeholder="选择保险公司" v-model="give.insuranceId" style="width: 200px">
-              <Option v-for="(item, index) in typeList"
-                      :key="index" :value="item.code">{{item.name}}
-              </Option>
-            </Select>
-            <a @click="$refs.excel.show=true">导入会员</a><span>已导入0人</span>
-        </div>
+        <FormItem label="选择适用门店:" v-show="give.iswriteoff" class="others">
+          <Button type="success" @click="$refs.store.open()">添加</Button>
+          <Button type="info" @click="$refs.upStore.open()">导入门店</Button>
+          <span>已选{{(giveOthers.storeUpNum||0) + (giveOthers.storeSelNum||0)}}家</span>
         </FormItem>
-        <FormItem >
-          <Checkbox v-model="give.way" style="float:left;">是否需自行领取</Checkbox>
-          <div v-show="give.way">
-            <div><b style="color:red;">*</b>可领取日期区间:</div>
-            <div>
-              <DatePicker type="daterange" :options="option" format="yyyy-MM-dd" placeholder="开始日期-结束日期"></DatePicker>
-            </div>
-          </div>
+        <FormItem label="是否从保险公司导入会员:">
+          <i-switch size="large" v-model="give.isleadinuser">
+            <span slot="open">是</span>
+            <span slot="close">否</span>
+          </i-switch>
+        </FormItem>
+        <FormItem label="选择保险公司:" v-show="give.isleadinuser" class="others">
+          <Select placeholder="选择保险公司" v-model="give.insuranceId" style="width: 200px">
+            <Option v-for="(item, index) in insuranceComs"
+                    :key="index" :value="item.id">{{item.name}}
+            </Option>
+          </Select>
+          <Button type="info" @click="clickUpUser">导入会员</Button>
+          <span>已导入{{giveOthers.userNum}}人</span>
+        </FormItem>
+        <FormItem label="是否需自行领取:">
+          <i-switch size="large" v-model="give.way" :true-value="1" :false-value="0">
+            <span slot="open">是</span>
+            <span slot="close">否</span>
+          </i-switch>
+        </FormItem>
+        <FormItem label="可领取日期:" v-show="give.way" class="others">
+          <DatePicker type="daterange" format="yyyy-MM-dd" placeholder="请选择日期" transfer style="width: 200px"></DatePicker>
         </FormItem>
       </Form>
       <div slot="footer">
@@ -158,10 +169,12 @@
       </div>
     </Modal>
     <!---->
-    <select-store :showType="showStore" :checkId="checkId"></select-store>
+    <select-store :selection="true" primaryKey="license" ref="store" v-model="checkedStore"
+          @ok="selStoreOk"
+    ></select-store>
 
-    <upload-modal ref="upStore" @template="getStoreTep"></upload-modal>
-    <!--<upload-excel ref="excel"></upload-excel>-->
+    <upload-modal ref="upStore" title="导入门店" @template="getStoreTep" @ok="upStoreOk"></upload-modal>
+    <upload-modal ref="upUser" title="导入会员" @template="getUserTep" @ok="upUserOk"></upload-modal>
 
   </common-table>
 </template>
@@ -174,11 +187,23 @@ import ModalTitle from '@/hxx-components/modal-title.vue'
 import {deepClone, getDictGroup} from "@/libs/util";
 let detail={
     type:'',
-    userType:'',
+    useType:'',
     name:'',
     discount: null,
     content: '',
+    isGive: true
 }
+let give={
+    id: '',
+    num: null,
+    beginTime: '',
+    endTime: '',
+    way: 0,
+    iswriteoff: false,
+    isleadinuser: false,
+    insuranceId: '',
+    batch: '',
+  }
 export default {
     name: "discounts-list",
     components: {commonTable, ModalTitle,selectStore, UploadModal},
@@ -192,33 +217,32 @@ export default {
           type: '',
           useType: '',
         },
+        insuranceComs:[],
         useList: [],
         showGive:false,
-        checkId:[],
+
         useData:{
           name:'',
         },
         detail: deepClone(detail),
-        give:{
-          way: false,
-          iswriteoff: false,
-          isleadinuser: false,
-          insuranceId: ''
+        give: deepClone(give),
+        giveOthers:{
+          storeSelNum: 0,
+          storeUpNum: 0,
+          userNum: 0,
         },
-
         useRule:{
           name: rule,
         },
         showAddUse:false,
-        showStore:false,
         showModal: false,
+        checkedStore:[],
         tableData: [],
         option: {
           disabledDate(date) {
             return date > new Date();
           }
         },
-
         rules: {
           name: rule,
         },
@@ -247,6 +271,9 @@ export default {
         }
         return obj
       },
+      isGive(){
+        return this.detail.isGive
+      },
       discountObj(){
         return {
           "10561002": {
@@ -267,10 +294,10 @@ export default {
         let rule= {required:true,message:'必填项不能为空'}
         return  {
           type:[rule],
-          userType:[rule],
+          useType:[rule],
           name:[rule],
           discount: { validator:(rule, value, callback) => {
-             if(this.discountObj[this.detail.userType] && !value){
+             if(this.discountObj[this.detail.useType] && !value){
                callback(new Error('必填项不能为空'));
              }else{
                callback();
@@ -280,11 +307,12 @@ export default {
           content: [rule],
         }
       },
-      detailuserType: {
+      detailuseType: {
         get(){
           return this.detail.useType? this.detail.useType.toString(): ''
         },
         set(val){
+          // console.log(' set(val)', val)
           this.detail.useType= val
         },
       },
@@ -322,17 +350,18 @@ export default {
         ]
       } ,
     },
-    mounted() {
-      this.showTable = Math.random();
-      this.getType();
-      this.getList();
-    },
     watch:{
       showAddUse(val){
         if(val){
           this.$refs.useData.resetFields();
         }
       },
+    },
+    mounted() {
+      this.showTable = Math.random();
+      this.getType();
+      this.getList();
+      this.getInsuranceComs();
     },
     methods: {
       queryDateC(val){
@@ -354,11 +383,93 @@ export default {
           }
         })
       },
+      getInsuranceComs(){
+        this.axios.get('/common/method/getInsuranceList', {baseURL: '/poxy-shqx/'}).then( (res) => {
+          // console.log(res)
+          if(res.success){
+            this.insuranceComs= res.data
+          }
+        })
+      },
       clickCreate(){
         this.$refs.table.clearCurrentRow()
         this.detail= deepClone(detail)
         this.$refs.detail.resetFields()
         this.showModal= true
+      },
+      clickEdit(){
+        this.showModal=true;
+        this.axios.post('/manage/cupon/queryProvideStatus', this.detail,{baseURL: '/poxy-shqx/'}).then( (res) => {
+          // console.log(res)
+          if(res.success){
+            this.detail.isGive= !res.data.proStatus
+          }
+        })
+      },
+      clickGive(){
+        this.give= deepClone(give),
+        this.showGive= true
+        this.axios.get('/manage/excel/getBatchId').then( (res) => {
+          // console.log(res)
+          if(res.success){
+            this.give.batch= res.data.batch
+          }
+        })
+      },
+      clickUpUser(){
+        if(this.give.insuranceId){
+          this.$refs.upUser.open()
+        }else{
+          this.$Message.error("请选择保险公司");
+        }
+
+      },
+      upStoreOk(file){
+        let formdata = new FormData();
+        formdata.append('uploadFile' , file);
+        formdata.append('batch' , this.give.batch);
+        formdata.append('access_token' ,  this.$store.state.user.token);
+        this.axios.post('/manage/excel/tenantImport', formdata,{
+          headers: {'Content-Type': 'multipart/form-data'},
+        }).then( (res) => {
+          // console.log(res)
+          if(res.success){
+            this.giveOthers.storeUpNum= res.data.num
+            this.$refs.upStore.close()
+          }
+        })
+      },
+      upUserOk(file){
+        let formdata = new FormData();
+        formdata.append('uploadFile' , file);
+        formdata.append('batch' , this.give.batch);
+        formdata.append('INSURANCE_ID' , this.give.insuranceId);
+        formdata.append('access_token' ,  this.$store.state.user.token);
+        this.axios.post('/manage/excel/memberImport', formdata,{
+          headers: {'Content-Type': 'multipart/form-data'},
+        }).then( (res) => {
+          // console.log(res)
+          if(res.success){
+            this.giveOthers.userNum= res.data.sum
+            this.$refs.upUser.close()
+          }
+        })
+      },
+      selStoreOk(arr){
+        this.giveOthers.storeSelNum= arr.length
+        let data= []
+        for(let i in arr){
+          data.push({
+            roadLicense: arr[i].license
+          })
+        }
+        this.axios.post('/manage/excel/tenantDetail', {
+          tenantStr: data,
+          batch: this.give.batch
+        }).then( (res) => {
+          // console.log(res)
+          if(res.success){}
+        })
       },
       addOption(){
         this.$refs.useData.validate(validator=>{
@@ -386,7 +497,7 @@ export default {
         this.$refs.detail.validate(validator=>{
           if(validator){
             if(parseInt(this.detail.useType) ==10561003 && this.detail.discount>1){
-              this.detail.discount= this.detail.discount/100
+              this.detail.discount= this.detail.discount/10
             }
             this.axios.post('/manage/cupon/createCoupon', {data: this.detail},{baseURL: '/poxy-shqx/'}).then( (res) => {
                // console.log(res)
@@ -399,7 +510,22 @@ export default {
         })
       },
       edit(){
-
+        this.$refs.detail.validate(validator=>{
+          if(validator){
+            if(parseInt(this.detail.useType) ==10561003 && this.detail.discount>1){
+              this.detail.discount= this.detail.discount/10
+            }
+            this.axios.post('/manage/cupon/updateCreateCoupon', {
+              data: {...this.detail, 'USE_TYPE': this.detail.useType}
+              },{baseURL: '/poxy-shqx/'}).then( (res) => {
+              // console.log(res)
+              if(res.success){
+                this.showModal= false
+                this.getList()
+              }
+            })
+          }
+        })
       },
       del(){
         this.$Modal.confirm({
@@ -420,6 +546,7 @@ export default {
       },
       onRowClick(item) {
         // console.log(item);
+        item.isGive= true
         this.detail = item;
       },
       getList() {
@@ -437,14 +564,17 @@ export default {
         })
       },
       getStoreTep(){
-        window.location.href =  '/api/common/basedata/carlive/tenantTemple?access_token='+this.$store.state.user.token
+        window.location.href = '/api/common/basedata/carlive/tenantTemple?access_token='+this.$store.state.user.token
+      },
+      getUserTep(){
+        window.location.href = '/api/common/basedata/carlive/memberTemple?access_token='+this.$store.state.user.token
       },
       changePageSize(size) {
         this.limit = size;
         if (this.page == 1) this.getList();
       },
       changePage(page) {
-        console.log("changePage");
+        // console.log("changePage");
         this.page = page;
         this.getList();
       }
@@ -464,6 +594,11 @@ export default {
   .unit{
     position: absolute;
     right: 10px;
+  }
+  .others{
+    .ivu-form-item-content>*{
+      margin-right: 10px;
+    }
   }
 }
 </style>

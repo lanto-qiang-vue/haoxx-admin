@@ -40,6 +40,7 @@ module.exports = {
     proxy: {
       '/api/': {
         target: 'http://192.168.169.231:10032/hxx-proxy/',
+        // target: 'https://weixin.test.hoxiuxiu.com/hxx-proxy/',
         // target: 'http://developer.hxx.hoxiuxiu.com/',
         // target:'http://192.168.169.124:8871',
         // target:'https://hxx.hoxiuxiu.com/api/',
@@ -48,25 +49,28 @@ module.exports = {
       },
       '/other/': {
         target: 'http://192.168.169.231:8888/',
+        // target: 'https://www.test.shanghaiqixiu.org/proxy/',
         // target:'http://api.hoxiuxiu.com/',
         pathRewrite: {'^/other/': ''},
         secure: false
       },
       '/poxy-next/':{
-        // target:'http://192.168.169.105:8289/',
         target:'http://192.168.169.231:8888/',
+        // target: 'https://www.test.shanghaiqixiu.org/proxy/',
         // target:'https://callcenter.test.hoxiuxiu.com/',
         pathRewrite: {'^/poxy-next/': ''},
         secure: false
       },
       '/poxy-after/':{
         target:'http://192.168.169.231:8888/',
+        // target: 'https://www.test.shanghaiqixiu.org/proxy/',
         // target:'http://192.168.169.126:8872',
         pathRewrite: {'^/poxy-after/': ''},
         secure: false
       },
       '/poxy-shqx/':{
         target:'http://192.168.169.231:8888/',
+        // target: 'https://www.test.shanghaiqixiu.org/proxy/',
         // target:'http://192.168.169.118:8871',
         // target:'https://hxx.hoxiuxiu.com/poxy-shqx/',
         // target:'https://hxx.test.hoxiuxiu.com/poxy-shqx',

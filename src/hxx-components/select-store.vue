@@ -1,7 +1,7 @@
 <template>
   <Modal
     v-model="showModal"
-    class="table-modal-detail"
+    class="table-modal-detail select-store"
     title="适用门店"
     width="80"
     :mask-closable="false"
@@ -11,37 +11,35 @@
     :footer-hide="false"
     :transition-names="['', '']">
     <common-table v-model="tableData" :columns="columns" @changePageSize="changePageSize" @changePage="changePage"
-                  :total="total" :show="showTable" :loading="loading" :page="page" :clearSelect="clearType"
-                  @changeSelect="changeSelect"
+                  :total="total" :show="showTable" :loading="loading" :page="page"
+                  ref="table" @on-select="select" @on-select-cancel="selectCancel"
                   :showOperate="false">
       <div slot="search">
         <div class="search-block">
-          <Input v-model="keyword" placeholder="门店名称"></Input>
+          <Input v-model="query.corpName" placeholder="门店名称" clearable></Input>
         </div>
         <div class="search-block">
-          <Select placeholder="请选择区域" v-model="areaKey">
+          <Select placeholder="请选择区域" v-model="query.areaKey" clearable>
             <Option v-for="(item, index) in areaList"
                     :key="index" :value="item.code">{{item.name}}
             </Option>
           </Select>
         </div>
         <div class="search-block">
-          <Select placeholder="请选择类型" v-model="category">
+          <Select placeholder="请选择类型" v-model="query.category" clearable>
             <Option v-for="(item, index) in categoryList"
                     :key="index" :value="item.id">{{item.name}}
             </Option>
           </Select>
         </div>
         <ButtonGroup>
-          <Button type="primary" @click="page=1;getList()">
-            搜索
-          </Button>
+          <Button type="primary" @click="page=1;getList()">搜索</Button>
         </ButtonGroup>
       </div>
     </common-table>
     <div slot="footer">
       <Button @click="showModal=false">取消</Button>
-      <Button type="primary" v-show="openSelect">确定</Button>
+      <Button type="primary" v-show="selection" @click="ok">确定</Button>
     </div>
   </Modal>
 </template>
@@ -52,68 +50,91 @@
     name: 'select-store',
     components: {commonTable},
     props: {
-      showType: {
-        default: false,
-      },
       code: {
+        default: null,
+      },
+      selection: {
         default: false,
       },
-      openSelect: {
-        default: false,
+      value: {
+        default: ()=> []
       },
-      checkId: {
-        default: function () {
-          return [];
-        }
-      }
+      primaryKey: {
+        default: 'id',
+      },
     },
     data() {
       return {
-        categoryList: [{id:'请选择类型',name:'请选择类型'}],
-        areaList:[
-          {code:'请选择区域', name: '请选择区域'}
-        ],
-        keyword: '',
-        category:'请选择类型',
-        areaKey:'请选择区域',
+        categoryList: [],
+        areaList:[],
+        checked: [],
+        query:{
+          // type: false,
+          corpName: '',
+          category: '',
+          areaKey: '',
+        },
         page: 1,
         limit: 25,
         loading: false,
-        checkObject: {},
         total: 0,
         tableData: [],
         showModal: false,
-        clearType: false,
         showTable: false,
-        keyIndex: {},
-        columns: [
-          {type: 'selection', align: 'center', width: 70},
-          {
-            title: '序号2', width: 70, align: 'center',
-            render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
-          },
-          {title: '区域', key: 'A', sortable: true, minWidth: 140, align: 'left'},
-          {title: '类型', key: 'B', sortable: true, minWidth: 140, align: 'left'},
-          {title: '门店名称', key: 'C', sortable: true, minWidth: 140, align: 'left'},
-        ],
       }
     },
+    computed:{
+      columns(){
+        let columns= [
+          {
+            title: '区域', key: 'area', sortable: true, minWidth: 100, align: 'left',
+            render: (h, params) => h('span', params.row.area.name),
+          },
+          {
+            title: '类型', key: 'B', sortable: true, minWidth: 140, align: 'left',
+            render: (h, params) => h('span', params.row.category.name)
+          },
+          {title: '门店名称', key: 'corpName', sortable: true, minWidth: 240, align: 'left'},
+        ]
+        if (this.selection) {
+          columns.unshift({type: 'selection', align: 'center', width: 70});
+        }
+        return columns
+      }
+    },
+    watch: {
+      value:{
+        handler(arr){
+          this.checked= arr
+          this.showChecked()
+        },
+        deep: true
+      }
+    },
+    mounted() {
+      this.getCategory();
+      this.getArea();
+      this.getList()
+    },
     methods: {
+      open(){
+        this.showModal= true
+        this.$refs.table.open()
+      },
+      sc(v1, v2){
+        console.log('v1, v2', v1, v2)
+      },
       getCategory(){
         this.axios.request({
           baseURL: '/poxy-shqx/',
           url: '/manage/cupon/queryCategoryinfo',
           method: 'post',
           data: {
-            access_token: this.$store.state.user.token,
             code: this.code,
           }
         }).then(res => {
           if (res.success == true) {
-           let data = res.data;
-           for(let i in data){
-             this.categoryList.push(data[i]);
-           }
+            this.categoryList = res.data;
           }
         })
       },
@@ -123,31 +144,15 @@
           url: '/manage/cupon/queryAreainfo',
           method: 'post',
           data: {
-            access_token: this.$store.state.user.token,
             code: this.code,
           }
         }).then(res => {
           if (res.success == true) {
-            let data = res.data;
-            for(let i in data){
-              this.areaList.push(data[i]);
-            }
+            this.areaList = res.data;
           }
         })
       },
-      changeSelect(row) {
-        let obj = {};
-        for (let i in this.tableData) {
-          obj[this.tableData[i].id] = 0;
-        }
-        for (let i in row) {
-          obj[row[i].id] = 1;
-        }
-        for (let i in obj) {
-          this.checkObject[i] = obj[i];
-        }
-        console.log(JSON.stringify(this.checkObject));
-      },
+
       visibleChange() {
         this.clearsection();
       },
@@ -166,11 +171,8 @@
           url: '/manage/cupon/queryTotalTenant',
           method: 'post',
           data: {
-            access_token: this.$store.state.user.token,
-            type: this.code,
-            corpName: this.keyword,
-            category:this.category == '请选择类型' ? '' : this.category,
-            areaKey: this.areaKey == '请选择区域' ? '' : this.areaKey,
+            ...this.query,
+            code: this.code,
             page: this.page,
             limit: this.limit,
           }
@@ -178,58 +180,61 @@
           this.loading = false;
           if (res.success == true) {
             let data = res.data;
-            for (let i in this.checkObject) {
-              if (this.checkObject[i] == 1) {
-                for (let a in data) {
-                  if (data[a].id == i) {
-                    data[a]['_checked'] = true;
-                  }
-                }
-              }
-            }
             this.tableData = data;
+            this.total = res.total;
+            this.showChecked()
           }
         })
       },
-      clear() {
-        this.search.keyword = '';
+      showChecked(){
+        let arr1= this.checked, arr2= this.tableData
+        for(let i in arr1){
+          for(let j in arr2){
+            if(arr1[i][this.primaryKey]== arr2[j][this.primaryKey]){
+              arr2[j]['_checked']= true
+            }
+          }
+        }
+      },
+      select(selection, row){
+        this.checked.push(row)
+        // this.$emit('input', this.checked)
+      },
+      selectCancel(selection, row){
+        let arr= this.checked, index= null
+        for(let i in arr){
+          if(arr[i][this.primaryKey]== row[this.primaryKey]){
+            index= i
+          }
+        }
+        arr.splice(i, 1)
+        // this.$emit('input', arr)
       },
       clearsection() {
         this.list = '';
-        this.clearType = Math.random();
+        this.$refs.table.clearCurrentRow()
+      },
+      ok(){
+        this.$emit('input', this.checked)
+        this.$emit('ok', this.checked)
+        this.showModal= false
       }
     },
-    mounted() {
-    },
-    watch: {
-      showType() {
-        this.showModal = true;
-        this.showTable = Math.random();
-        this.getCategory();
-        this.getArea();
-        this.columns = [
-          {
-            title: '区域', key: 'area', sortable: true, minWidth: 100, align: 'center',
-            render: (h, params) => h('span', params.row.area.name)
-          },
-          {
-            title: '类型', key: 'B', sortable: true, minWidth: 140, align: 'left',
-            render: (h, params) => h('span', params.row.category.name)
-          },
-          {title: '门店名称', key: 'corpName', sortable: true, minWidth: 240, align: 'left'},
-        ]
-        if (this.openSelect) {
-          for (let i in this.checkId) {
-            this.checkObject[this.checkId[i]] = 1;
-          }
-          this.unshift({type: 'selection', align: 'center', width: 70});
+  }
+</script>
+
+<style lang="less">
+  .select-store{
+    .ivu-table-header{
+      .ivu-table-cell-with-selection{
+        &:before{
+          content: '请选择';
         }
-        this.showTable = Math.random();
-        this.getList();
-      },
-      refresh() {
-        this.getList();
+        .ivu-checkbox-wrapper{
+          display: none;
+        }
+
       }
     }
   }
-</script>
+</style>

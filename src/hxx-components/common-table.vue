@@ -16,7 +16,6 @@
   <div>
   </div>
   <Table
-    @on-selection-change="changeSelect"
     class="main-table"
     ref="tablesMain"
     :data="value"
@@ -37,6 +36,9 @@
     @on-row-dblclick="onRowDblclick"
     @on-current-change="onCurrentChange"
     @on-sort-change="sortChange"
+    @on-selection-change="changeSelect"
+    @on-select="$emit('on-select', arguments[0], arguments[1])"
+    @on-select-cancel="$emit('on-select-cancel', arguments[0], arguments[1])"
   >
   </Table>
   <div class="table-bottom" v-show="showPage">
@@ -203,6 +205,11 @@
 
     },
     methods:{
+		  open(){
+		    setTimeout(()=>{
+          this.resize(0)
+        },50)
+      },
       resize(time){
         let self= this
         let commonTable=this.$refs.commonTable
@@ -264,7 +271,7 @@
       },
       clearCurrentRow(){
         this.$refs.tablesMain.clearCurrentRow()
-      }
+      },
     },
     activated(){
       this.resize(500)
