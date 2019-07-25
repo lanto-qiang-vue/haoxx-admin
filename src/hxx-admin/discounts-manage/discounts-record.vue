@@ -55,15 +55,21 @@
         useList: [],
         columns: [
           {
-            title: '序号', width: 70,
+            title: '序号', width: 60,
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
-          {title: '发放人', key: 'name', minWidth: 140},
-          {title: '优惠券名称', key: 'price', minWidth: 140},
-          {title: '用途', key: 'price', minWidth: 140},
-          {title: '类型', key: 'price', minWidth: 140},
-          {title: '发放数量', key: 'price', minWidth: 140},
-          {title: '发放时间', key: 'price', minWidth: 140},],
+          {title: '发放人', key: 'userName', minWidth: 160, render:(h,params) => {
+              return h('div',  params.row.userName|| params.row.userCode? `${params.row.userName}/${params.row.userCode}`: '');
+            }},
+          {title: '优惠券名称', key: 'name', minWidth: 140},
+          {title: '用途', key: 'useType', minWidth: 90, render:(h,params) => {
+              return h('div',  this.useObj[params.row.type]);
+            }},
+          {title: '类型', key: 'type', minWidth: 90, render:(h,params) => {
+              return h('div',  this.typeObj[params.row.useType]);
+            }},
+          {title: '发放数量', key: 'num', minWidth: 90},
+          {title: '发放时间', key: 'createDate', minWidth: 160},],
         detail: {},
         total: 0,
         showTable: false,
@@ -121,7 +127,7 @@
       },
       getList() {
         this.detail= {}
-        this.axios.post('/manage/cupon/queryCouponList', {
+        this.axios.post('/manage/cupon/queryProvideDetail', {
           ...this.query,
           limit:this.limit,
           page:this.page,

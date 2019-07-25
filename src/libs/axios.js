@@ -20,7 +20,8 @@ let axiosHxx= Axios.create({
             if (item) hashxxtoken = true;
             else continue
           }
-          ret += (encodeURIComponent(key) + '=' + encodeURIComponent(typeof item == 'object' ? JSON.stringify(item) : item))
+          ret += (encodeURIComponent(key) + '=' + encodeURIComponent(typeof item == 'object' ? JSON.stringify(item) : (item|| '')))
+
         }
         if (!hashxxtoken && token) ret += ('&' + encodeURIComponent('access_token') + '=' + encodeURIComponent(token))
         break

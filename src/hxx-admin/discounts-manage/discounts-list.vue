@@ -46,7 +46,7 @@
       :scrollable="true"
       :transfer="false"
       :transition-names="['', '']">
-      <modal-title slot="header" title="优惠券详情" @clickBack="showModal=false"></modal-title>
+      <modal-title slot="header" title="优惠券详情" @clickBack="closeDetail"></modal-title>
       <Form :label-width="100" class="common-form" :model="detail" :rules="detailRule"
             ref="detail" style="padding-left: 10px">
         <FormItem label="优惠券名称:" prop="name">
@@ -79,7 +79,7 @@
       </Form>
 
       <div slot="footer">
-        <Button @click="showModal=false">取消</Button>
+        <Button @click="closeDetail">取消</Button>
         <Button v-show="!detail.id" type="primary" @click="create">提交</Button>
         <Button v-show="detail.id" type="primary" @click="edit" :disabled="isGive">修改</Button>
       </div>
@@ -95,35 +95,36 @@
       :transfer="false"
       :transition-names="['', '']">
       <modal-title slot="header" title="优惠券发放" @clickBack="showGive=false"></modal-title>
-      <Form :label-width="120" class="" >
+      <Form :label-width="120" ref="give" :model="give" :rules="giveRule" style="padding: 10px">
         <FormItem label="优惠券:">
           <span>{{detail.name}}</span>
         </FormItem>
-        <FormItem label="发放数量:">
+        <FormItem label="发放数量:" prop="num">
           <InputNumber  v-model="give.num"/>
         </FormItem>
-        <FormItem label="使用有效期:">
+        <FormItem label="使用有效期:" prop="daterange">
           <DatePicker type="daterange"  format="yyyy-MM-dd" placeholder="请选择" v-model="give.daterange"
+                      @on-change="changeGiveValidDate" style="width: 200px"
                       ></DatePicker>
         </FormItem>
-        <FormItem label="是否门店核销:">
+        <FormItem label="是否门店核销:" prop="iswriteoff">
           <i-switch size="large" v-model="give.iswriteoff">
             <span slot="open">是</span>
             <span slot="close">否</span>
           </i-switch>
         </FormItem>
-        <FormItem label="选择适用门店:" v-show="give.iswriteoff" class="others">
+        <FormItem label="选择适用门店:" v-show="give.iswriteoff" class="others" prop="storeUp">
           <Button type="success" @click="$refs.store.open()">添加</Button>
           <Button type="info" @click="$refs.upStore.open()">导入门店</Button>
           <span>已选{{(giveOthers.storeUpNum||0) + (giveOthers.storeSelNum||0)}}家</span>
         </FormItem>
-        <FormItem label="是否从保险公司导入会员:">
+        <FormItem label="是否从保险公司导入会员:" prop="isleadinuser">
           <i-switch size="large" v-model="give.isleadinuser">
             <span slot="open">是</span>
             <span slot="close">否</span>
           </i-switch>
         </FormItem>
-        <FormItem label="选择保险公司:" v-show="give.isleadinuser" class="others">
+        <FormItem label="选择保险公司:" v-show="give.isleadinuser" prop="insuranceId" class="others">
           <Select placeholder="选择保险公司" v-model="give.insuranceId" style="width: 200px">
             <Option v-for="(item, index) in insuranceComs"
                     :key="index" :value="item.id">{{item.name}}
@@ -132,14 +133,16 @@
           <Button type="info" @click="clickUpUser">导入会员</Button>
           <span>已导入{{giveOthers.userNum}}人</span>
         </FormItem>
-        <FormItem label="是否需自行领取:">
+        <FormItem label="是否需自行领取:" prop="way">
           <i-switch size="large" v-model="give.way" :true-value="1" :false-value="0">
             <span slot="open">是</span>
             <span slot="close">否</span>
           </i-switch>
         </FormItem>
-        <FormItem label="可领取日期:" v-show="give.way" class="others">
-          <DatePicker type="daterange" format="yyyy-MM-dd" placeholder="请选择日期" transfer style="width: 200px"></DatePicker>
+        <FormItem label="可领取日期:" v-show="give.way" class="others" prop="getrange">
+          <DatePicker type="daterange" format="yyyy-MM-dd" placeholder="请选择日期" transfer
+                      v-model="give.getrange" @on-change="changeGetDate"
+                      style="width: 200px"></DatePicker>
         </FormItem>
       </Form>
       <div slot="footer">
@@ -185,7 +188,7 @@ import UploadModal from '@/hxx-components/upload-modal.vue'
 // import UploadExcel from '@/hxx-components/upload-excel.vue'
 import ModalTitle from '@/hxx-components/modal-title.vue'
 import {deepClone, getDictGroup} from "@/libs/util";
-let detail={
+let detailInit={
     type:'',
     useType:'',
     name:'',
@@ -193,7 +196,7 @@ let detail={
     content: '',
     isGive: true
 }
-let give={
+let giveInit={
     id: '',
     num: null,
     beginTime: '',
@@ -203,7 +206,11 @@ let give={
     isleadinuser: false,
     insuranceId: '',
     batch: '',
-  }
+    daterange: [],
+    getrange: [],
+    wayBegintime: '',
+    wayEndtime: '',
+}
 export default {
     name: "discounts-list",
     components: {commonTable, ModalTitle,selectStore, UploadModal},
@@ -224,8 +231,8 @@ export default {
         useData:{
           name:'',
         },
-        detail: deepClone(detail),
-        give: deepClone(give),
+        detail: deepClone(detailInit),
+        give: deepClone(giveInit),
         giveOthers:{
           storeSelNum: 0,
           storeUpNum: 0,
@@ -307,6 +314,48 @@ export default {
           content: [rule],
         }
       },
+      giveRule(){
+        let rule= {required:true,message:'必填项不能为空'}
+        return {
+          num: rule,
+          daterange: [rule, {
+            validator:(rule, value, callback) => {
+              if(!this.give.beginTime || !this.give.endTime){
+                callback(new Error('必填项不能为空'));
+              }else{
+                callback();
+              }
+            }}],
+          storeUp: {
+            validator:(rule, value, callback) => {
+              if(this.give.iswriteoff && !this.giveOthers.storeUpNum && !this.giveOthers.storeSelNum){
+                callback(new Error('请选择或导入门店'));
+              }else{
+                callback();
+              }
+            }},
+          insuranceId: {
+            validator:(rule, value, callback) => {
+              if(this.give.isleadinuser && !this.giveOthers.userNum){
+                callback(new Error('请导入会员'));
+              }else{
+                callback();
+              }
+            }},
+          getrange: {
+            validator:(rule, value, callback) => {
+              if(this.give.way && (!this.give.wayBegintime || !this.give.wayEndtime )){
+                callback(new Error('请选择领取日期'));
+              }else{
+                if(new Date(this.give.wayEndtime) > new Date(this.give.endTime)){
+                  callback(new Error('领取日期必须小于使用日期'));
+                }else{
+                  callback();
+                }
+              }
+            }},
+        }
+      },
       detailuseType: {
         get(){
           return this.detail.useType? this.detail.useType.toString(): ''
@@ -322,27 +371,11 @@ export default {
             title: '序号', width: 70,
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
-          // {title: '操作', key: 'name', minWidth: 120,
-          //   render:(h,params) => {
-          //     return h('div',{style:{textAlign:'center'},
-          //     },[h('a',{style:{marginRight:'10px'},on:{click:()=>{
-          //           this.stage = 2;
-          //           this.title = "发放优惠券";
-          //           this.showModal = true;
-          //           // alert("发放");
-          //         }
-          //       }},'发放'),h('a',{on:{click:()=>{
-          //           alert("删除");
-          //         }}},'删除')]);
-          //   }
-          // },
           {title: '券名称', key: 'name', minWidth: 140},
           {title: '用途', key: 'useType', minWidth: 100, render:(h,params) => {
-            // console.log(' this.useObj[params.row.useType]', this.useObj[params.row.type])
               return h('div',  this.useObj[params.row.type]);
             }},
           {title: '类型', key: 'type', minWidth: 100, render:(h,params) => {
-              // console.log(' this.typeObj[params.row.useType]', this.typeObj[params.row.useType])
               return h('div',  this.typeObj[params.row.useType]);
             }},
           {title: '创建时间', key: 'createDate', minWidth: 200},
@@ -393,7 +426,7 @@ export default {
       },
       clickCreate(){
         this.$refs.table.clearCurrentRow()
-        this.detail= deepClone(detail)
+        this.detail= deepClone(detailInit)
         this.$refs.detail.resetFields()
         this.showModal= true
       },
@@ -407,14 +440,29 @@ export default {
         })
       },
       clickGive(){
-        this.give= deepClone(give),
+        this.give= deepClone(giveInit),
         this.showGive= true
         this.axios.get('/manage/excel/getBatchId').then( (res) => {
           // console.log(res)
           if(res.success){
             this.give.batch= res.data.batch
+            this.give.id= this.detail.id
           }
         })
+      },
+      closeDetail(){
+        this.$refs.detail.resetFields()
+        this.showModal= false
+      },
+      changeGiveValidDate(val){
+        // console.log('changeGiveValidDate', val)
+        this.give.beginTime= val[0]
+        this.give.endTime= val[1]
+      },
+      changeGetDate(val){
+        // console.log('changeGiveValidDate', val)
+        this.give.wayBegintime= val[0]
+        this.give.wayEndtime= val[1]
       },
       clickUpUser(){
         if(this.give.insuranceId){
@@ -502,7 +550,7 @@ export default {
             this.axios.post('/manage/cupon/createCoupon', {data: this.detail},{baseURL: '/poxy-shqx/'}).then( (res) => {
                // console.log(res)
               if(res.success){
-                 this.showModal= false
+                 this.closeDetail()
                   this.getList()
               }
             })
@@ -520,7 +568,7 @@ export default {
               },{baseURL: '/poxy-shqx/'}).then( (res) => {
               // console.log(res)
               if(res.success){
-                this.showModal= false
+                this.closeDetail()
                 this.getList()
               }
             })
@@ -542,7 +590,18 @@ export default {
         })
       },
       toGive(){
-
+        this.$refs.give.validate(validator=>{
+          if(validator){
+            this.axios.post('/manage/cupon/provideCoupon', {data: this.give},{baseURL: '/poxy-shqx/'}).then( (res) => {
+              // console.log(res)
+              if(res.success){
+                this.$Message.success("发放成功");
+                this.getList()
+                this.showGive= false
+              }
+            })
+          }
+        })
       },
       onRowClick(item) {
         // console.log(item);
