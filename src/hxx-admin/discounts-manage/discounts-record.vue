@@ -31,7 +31,7 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="info">查看</Button>
+      <Button type="info" @click="look">查看</Button>
     </div>
   </common-table>
 </template>
@@ -139,6 +139,9 @@
           }
         })
       },
+      look(){
+        this.$router.push('/discounts-record-detail?aaa=111')
+      },
       changePageSize(size) {
         this.limit = size;
         if (this.page == 1) this.getList();
@@ -151,17 +154,5 @@
   }
 </script>
 <style lang="less">
-  .discounts-modal .ivu-modal-wrap .ivu-modal .ivu-modal-content .ivu-modal-body {
-    height: ~'calc(100% - 45px)';
-  }
 
-  .discounts-modal .form-3 {
-    padding-top: 20px;
-  }
-
-  .discounts-modal .form-3 .ivu-form-item {
-    width: 30%;
-    display: inline-block;
-    margin-bottom: 15px;
-  }
 </style>

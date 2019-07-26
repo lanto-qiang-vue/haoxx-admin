@@ -7,7 +7,7 @@
           <!--<img v-show="!collapsed" :src="maxLogo" key="max-logo" />-->
           <!--<img v-show="collapsed" :src="minLogo" key="min-logo" />-->
           <img src="../../assets/images/haoxiuxiu-logo2.png" />
-           <p v-show="!collapsed">门店管理系统</p>
+           <p v-show="!collapsed">{{loginType=='1002'?'门店': '后台'}}管理系统</p>
            <!--<p v-show="collapsed" >好修修</p>-->
         </div>
       </side-menu>
@@ -56,7 +56,7 @@ import Language from './components/language'
 import PickingNumber from './components/picking-number/picking-number.vue'
 import ChangePassword from './components/change-password/change-password.vue'
 import { mapMutations, mapActions } from 'vuex'
-import { getNewTagList, getNextName } from '@/libs/util'
+import { getNewTagList, getNextName , getUser} from '@/libs/util'
 import minLogo from '@/assets/images/logo-min.jpg'
 import maxLogo from '@/assets/images/logo.jpg'
 import './main.less'
@@ -109,6 +109,9 @@ export default {
     isShow(){
       // alert(this.$store.state.app.outStatus);
       return this.$store.state.app.outStatus
+    },
+    loginType(){
+      return getUser().user.lgType
     }
   },
   methods: {

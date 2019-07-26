@@ -1188,23 +1188,23 @@ export default [
         name: 'discounts-record-detail',
         meta: {
           icon: 'md-funnel',
-          title: '优惠券发放明细',
+          title: '优惠券明细',
           // lgType: "1001",
           // access: '100801',
         },
         component: () => import('@/hxx-admin/discounts-manage/discounts-record-detail.vue')
       },
-      {
-        path: '/activity-trace',
-        name: 'activity-trace',
-        meta: {
-          icon: 'md-funnel',
-          title: '活动跟踪管理',
-          // lgType: "1001",
-          // access: '100801',
-        },
-        component: () => import('@/hxx-admin/discounts-manage/activity-trace.vue')
-      },
+      // {
+      //   path: '/activity-trace',
+      //   name: 'activity-trace',
+      //   meta: {
+      //     icon: 'md-funnel',
+      //     title: '活动跟踪管理',
+      //     // lgType: "1001",
+      //     // access: '100801',
+      //   },
+      //   component: () => import('@/hxx-admin/discounts-manage/activity-trace.vue')
+      // },
     ]
   },
   {

@@ -405,11 +405,13 @@ export const showByAccess = (access, canViewAccess) => {
  * parameters [keyName,returnName,findValue]
  * */
 export const find = (resource,parameters)=>{
-   for(let i in resource){
-     if(resource[i][parameters[0]] == parameters[2]){
-       return resource[i][parameters[1]];
-     }
-   }
+  // if(parameters[0] && parameters[1] && parameters[2]){
+    for(let i in resource){
+      if(resource[i][parameters[0]] == parameters[2]){
+        return resource[i][parameters[1]];
+      }
+    }
+  // }
    return "";
 }
 export const getName = (arr, code) => {
