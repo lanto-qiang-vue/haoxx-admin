@@ -39,8 +39,7 @@
         <Button type="primary" @click="page=1;getList()">
           <Icon type="ios-search" size="24"/>
         </Button>
-
-        <Button type="primary" @click="page=1;getList()">查看全部</Button>
+        <!--<Button type="primary" @click="page=1;getList()">查看全部</Button>-->
       </ButtonGroup>
     </div>
     <div slot="operate">
@@ -66,7 +65,7 @@
         <li>可领取日期：<span>{{detail.aa}}</span></li>
         <li>发券时间：<span>{{detail.createDate}}</span></li>
         <li>领取时间：<span>{{detail.recipientsTime}}</span></li>
-        <li>适用门店：<a>{{detail.tenantnsum? detail.tenantnsum+'家': ''}}</a></li>
+        <li>适用门店：<a @click="$refs.store.open(true)">{{detail.tenantnsum? detail.tenantnsum+'家': ''}}</a></li>
         <li>会员账号/昵称：<a @click="goto(1,detail.username)">{{detail.username}}{{detail.nickname ? '/'+detail.nickname : ''}}</a></li>
         <li>限用车牌号：<span>{{detail.license}}</span></li>
         <li>是否保险公司导入名单：<span>{{detail.recommended == 1 ? '是' : '否'}}</span></li>
@@ -78,7 +77,7 @@
         <Button @click="showModal=false">关闭</Button>
       </div>
     </Modal>
-    <select-stroe :showType="showType" :code="detail.type"></select-stroe>
+    <select-stroe ref="store" :code="detail.code" :type="detail.type"></select-stroe>
   </common-table>
 </template>
 <script>
@@ -86,20 +85,20 @@
   import selectStroe from '@/hxx-components/select-store.vue';
   import ModalTitle from '@/hxx-components/modal-title.vue'
   import {deepClone, getDictGroup, getName, find} from "@/libs/util";
-
+let queryInit= {
+  keyWord: '',
+  startTime_eq: '',
+  endTime_eq: '',
+  type: '',
+  useType: '',
+  isuse: '',
+}
   export default {
     name: "discounts-record-detail",
     components: {commonTable, ModalTitle, selectStroe},
     data() {
       return {
-        query:{
-          keyWord: '',
-          startTime_eq: '',
-          endTime_eq: '',
-          type: '',
-          useType: '',
-          isuse: '',
-        },
+        query: deepClone(queryInit),
         loading: false,
         detail: {},
         useTypeList: [],
@@ -153,13 +152,16 @@
     },
     watch: {
       '$route'(){
-
+        this.getQuery()
+        this.getList();
       }
     },
     activated(){
-
+      this.getQuery()
+      this.getList();
     },
     mounted() {
+      this.getQuery()
       let data = getDictGroup(this.$store.state.app.dict, '1056');
       for (let i in data) {
         this.useTypeList.push(data[i]);
@@ -169,6 +171,13 @@
       this.getList();
     },
     methods: {
+      getQuery(){
+        let query= this.$route.query
+        this.query= deepClone(queryInit)
+        this.query.keyWord= query.name || ''
+        this.query.type= query.type || ''
+        this.query.useType= (query.useType|| '').toString()
+      },
       findName(a,b){
         return find(a,b);
       },

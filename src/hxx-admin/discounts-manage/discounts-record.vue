@@ -31,7 +31,7 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="info" @click="look">查看</Button>
+      <Button type="info" @click="look" :disabled="!detail.type">查看</Button>
     </div>
   </common-table>
 </template>
@@ -140,7 +140,8 @@
         })
       },
       look(){
-        this.$router.push('/discounts-record-detail?aaa=111')
+        let {name, type, useType}= this.detail
+        this.$router.push({path: '/discounts-record-detail', query:{name, type, useType}})
       },
       changePageSize(size) {
         this.limit = size;

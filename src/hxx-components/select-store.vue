@@ -53,6 +53,9 @@
       code: {
         default: null,
       },
+      type: {
+        default: null,
+      },
       selection: {
         default: false,
       },
@@ -117,12 +120,12 @@
       this.getList()
     },
     methods: {
-      open(){
+      open(toquery){
         this.showModal= true
         this.$refs.table.open()
-      },
-      sc(v1, v2){
-        console.log('v1, v2', v1, v2)
+        if(toquery){
+          this.getList()
+        }
       },
       getCategory(){
         this.axios.request({
@@ -172,7 +175,7 @@
           method: 'post',
           data: {
             ...this.query,
-            code: this.code,
+            type: this.type,
             page: this.page,
             limit: this.limit,
           }
