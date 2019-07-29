@@ -4,7 +4,7 @@ import { Message } from 'iview'
 console.log("fly-create");
 const fly = axios.create({
   baseURL: '/poxy-shqx/',
-  timeout: 1000,
+  timeout: 10000,
   transformRequest: [function (data) {
     return JSON.stringify(data)
   }],
@@ -23,7 +23,6 @@ fly.interceptors.request.use(function (config) {
       config.url = config.url + "?userId="+store.state.user.userInfo.user.userId;
     }
   }
-
   return config;
 }, function (error) {
   // 对请求错误做些什么

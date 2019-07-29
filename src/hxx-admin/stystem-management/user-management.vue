@@ -26,7 +26,7 @@
       :mask-closable="false"
       @on-visible-change="visibleChange"
       :transition-names="['', '']">
-      <div slot="header" style="font-weight: bold;font-size: 18px;">
+      <div slot="header" style="font-weight: bold;font-size: 18px;line-height:30px;">
         重置[<span style="color:blue;">{{title}}</span>]的登录密码
       </div>
       <Form :model="formData1"  ref="list1" :rules="rule1" :label-width="120" >

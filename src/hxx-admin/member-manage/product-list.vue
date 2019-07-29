@@ -129,33 +129,7 @@
             render: (h, params) => h('span', (this.page - 1) * this.limit + params.index + 1)
           },
           {
-            title: '名称', key: 'name', minWidth: 320,
-            render: (h, params) => h('div', {
-              on: {
-                mouseenter: (event) => {
-                  console.log(event);
-                  // let a = event.target.firstChild.firstChild || 0;
-                  // let b = 0;
-                  // if(a) b = event.target.firstChild.firstChild.children[0].offsetWidth;
-                  // if(event.target.offsetWidth > b)
-                  // event.target.innerHTML = "22";
-                    event.target.innerHTML = '<div class="ivu-tooltip" style="width: 100%;"><div class="ivu-tooltip-rel"><div style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis; max-width: 100%; display: inline-block; padding-top: 5px;">极简版</div></div> <!----></div>';
-                }
-              }
-            }, [h('Tooltip', {
-              class:'cnm',
-              props: {content: params.row.name,transfer:true,"maxWidth":200},
-              style: {width: "100%"}
-            }, [h('div', {
-              style: {
-                overflow: 'hidden',
-                whiteSpace: "nowrap",
-                textOverflow: 'ellipsis',
-                maxWidth: "100%",
-                display: 'inline-block',
-                paddingTop:"5px",
-              },
-            }, params.row.name)])])
+            title: '名称', key: 'name', minWidth: 220,
           },
           {
             title: '是否上架', key: 'status', minWidth: 120,

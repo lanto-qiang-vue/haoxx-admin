@@ -28,7 +28,26 @@
     <div slot="operate">
       <Button type="success" @click="add()">新增</Button>
       <Button type="info" :disabled="cando" @click="edit()">修改</Button>
+      <Button type="info" :disabled="cando" @click="setPermission">数据权限</Button>
     </div>
+    <!--数据权限另起-->
+    <Modal
+      v-model="permissionModal"
+      title="数据权限"
+      width="400"
+      :mask-closable="false"
+      :scrollable="true"
+      :transfer="true"
+      :footer-hide="false"
+      :transition-names="['', '']"
+    >
+      <Tree :data="data4" ref="permissionTree"  show-checkbox multiple></Tree>
+      <div slot="footer">
+        <Button @click="permissionModal=false">取消</Button>
+        <Button type="info" @click="permissionSubmit">保存</Button>
+      </div>
+    </Modal>
+    <!---->
     <Modal
       v-model="showModal"
       class="table-modal-detail"
@@ -118,6 +137,25 @@
     },
     data() {
       return {
+        roleId:0,//记住修改时使用
+        permissionModal:false,
+        data4: [
+          {
+            title: '运营数据分组',
+            expand: true,
+            selected: true,
+            children: [
+              {
+                title: 'parent 1-1',
+                expand: true,
+              },
+              {
+                title: 'parent 1-2',
+                expand: true,
+              }
+            ]
+          }
+        ],
         treeData: [],
         value1: '1',
         value2: '2',
@@ -165,10 +203,92 @@
       }
     },
     methods: {
+      permissionSubmit(){
+        let arr = this.$refs.permissionTree.getCheckedNodes();
+        let codeIds = [];
+        arr.forEach(function(v){
+          if(v.nodeKey) codeIds.push(v.CODE_ID);
+        });
+        this.$Modal.confirm({
+          title:'系统提示',
+          content:'确认保存吗?',
+          onOk:()=>{
+            this.axios.request({
+              url: '/manage/sys/roles/saveRoleData ',
+              method: 'post',
+              data: {
+                access_token: this.$store.state.user.token,
+                roleId:this.roleId,
+                codeIds:codeIds.join(),
+              }
+            }).then(res => {
+              if (res.success === true) {
+                 this.$Message.success("保存成功");
+                 this.permissionModal = false;
+              }
+            })
+          }
+        });
+      },
+      getPermission(){
+
+      },
       clear(){
         this.search.status = 0;
         this.search.ROLE_CODE_lk = "";
         this.search.ROLE_NAME_lk = "";
+      },
+      setPermission(){
+        this.roleId = this.list.ROLE_ID;
+        //获取已有权限
+        this.axios.request({
+          url: '/manage/sys/roles/group',
+          method: 'post',
+          data: {
+            access_token: this.$store.state.user.token,
+          }
+        }).then(res => {
+          if (res.success === true) {
+            let obj = {
+              title:res.data[0].TYPE_NAME,
+              expand:true,
+            };
+            obj['children'] = [];
+            res.data.forEach(function(v){
+              obj['children'].push({title:v.CODE_DESC,CODE_ID:v.CODE_ID,checked:false});
+            });
+            this.data4 = [obj];
+          //
+            this.axios.request({
+            url: '/manage/sys/roles/getexists',
+              method: 'post',
+              data: {
+              access_token: this.$store.state.user.token,
+                roleId:this.roleId,
+            }
+          }).then(res => {
+          if (res.success === true) {
+            let arr = [];
+            for(let i in res.data){
+              arr.push(res.data[i].code_id);
+            }
+            let str = arr.join();
+            let newData = this.data4[0];
+            // newData.expand = true;
+            for(let i in newData.children){
+              if(str.indexOf(newData.children[i].CODE_ID) > -1){
+                newData.children[i].checked = true;
+              }else{
+                newData.children[i].checked = false;
+              }
+              this.data4[0].children.splice(i,1,newData.children[i]);
+            }
+          }
+        })
+          }
+        })
+        this.list = '';
+        this.permissionModal = true;
       },
       edit(){
         this.update(this.list);
@@ -480,6 +600,7 @@
     },
     mounted() {
       this.showTable = Math.random();
+      this.getPermission();
       this.getList();
     }
   }

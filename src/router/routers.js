@@ -1138,6 +1138,28 @@ export default [
         component: () => import('@/hxx-admin/member-manage/active-list.vue')
       },
       {
+        path: '/manage_etc_userdetail',
+        name: 'manage_etc_userdetail',
+        meta: {
+          icon: 'md-funnel',
+          title: 'ETC访问统计',
+          lgType: "1001",
+          access: '100805',
+        },
+        component: () => import('@/hxx-admin/etc-manage/manage_etc_userdetail.vue')
+      },
+      {
+        path: '/etc-data',
+        name: 'etc-data',
+        meta: {
+          icon: 'md-funnel',
+          title: 'ETC活动数据统计',
+          lgType: "1001",
+          access: '100806',
+        },
+        component: () => import('@/hxx-admin/etc-manage/etc-data.vue')
+      },
+      {
         path: '/active-phone',
         name: 'active-phone',
         meta: {
