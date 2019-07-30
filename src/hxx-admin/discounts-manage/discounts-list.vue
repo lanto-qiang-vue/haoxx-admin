@@ -579,7 +579,7 @@ export default {
         this.$Modal.confirm({
           title: '确定删除？',
           onOk:()=>{
-            this.axios.post('/manage/cupon/deleteProvideCoupon', {data: this.detail},{baseURL: '/poxy-shqx/'}).then( (res) => {
+            this.axios.post('/manage/cupon/deleteProvideCoupon', this.detail,{baseURL: '/poxy-shqx/'}).then( (res) => {
               // console.log(res)
               if(res.success){
                 this.$Message.success("删除成功");
