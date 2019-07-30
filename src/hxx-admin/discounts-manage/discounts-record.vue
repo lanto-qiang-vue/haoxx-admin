@@ -31,7 +31,7 @@
       </ButtonGroup>
     </div>
     <div slot="operate">
-      <Button type="info" @click="look" :disabled="!detail.type">查看</Button>
+      <Button type="info" @click="look" :disabled="!detail.num">查看</Button>
     </div>
   </common-table>
 </template>
