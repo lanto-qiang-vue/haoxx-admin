@@ -77,7 +77,7 @@
         <Button @click="showModal=false">关闭</Button>
       </div>
     </Modal>
-    <select-stroe ref="store" :code="detail.code" :type="detail.type"></select-stroe>
+    <select-stroe ref="store" :code="detail.code" :batch="detail.batch"></select-stroe>
   </common-table>
 </template>
 <script>

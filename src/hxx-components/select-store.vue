@@ -53,7 +53,7 @@
       code: {
         default: null,
       },
-      type: {
+      batch: {
         default: null,
       },
       selection: {
@@ -175,7 +175,7 @@
           method: 'post',
           data: {
             ...this.query,
-            type: this.type,
+            batch: this.batch,
             page: this.page,
             limit: this.limit,
           }
