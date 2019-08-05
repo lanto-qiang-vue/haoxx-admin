@@ -1178,8 +1178,8 @@ export default [
     meta: {
       icon: 'logo-buffer',
       title: '优惠券管理',
-      // lgType: "1001",
-      // access: '1008',
+      lgType: "1001",
+      access: '1011',
     },
     component: Main,
     children:[
@@ -1189,8 +1189,8 @@ export default [
         meta: {
           icon: 'md-funnel',
           title: '优惠券列表',
-          // lgType: "1001",
-          // access: '100801',
+          lgType: "1001",
+          access: '101101',
         },
         component: () => import('@/hxx-admin/discounts-manage/discounts-list.vue')
       },
@@ -1200,8 +1200,8 @@ export default [
         meta: {
           icon: 'md-funnel',
           title: '发放记录',
-          // lgType: "1001",
-          // access: '100801',
+          lgType: "1001",
+          access: '101102',
         },
         component: () => import('@/hxx-admin/discounts-manage/discounts-record.vue')
       },
@@ -1211,8 +1211,8 @@ export default [
         meta: {
           icon: 'md-funnel',
           title: '优惠券明细',
-          // lgType: "1001",
-          // access: '100801',
+          lgType: "1001",
+          access: '101103',
         },
         component: () => import('@/hxx-admin/discounts-manage/discounts-record-detail.vue')
       },
