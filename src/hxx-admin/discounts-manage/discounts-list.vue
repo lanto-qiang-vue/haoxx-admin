@@ -547,6 +547,7 @@ export default {
             if(parseInt(this.detail.useType) ==10561003 && this.detail.discount>1){
               this.detail.discount= this.detail.discount/10
             }
+            this.detail.discount= this.detail.discount|| 0
             this.axios.post('/manage/cupon/createCoupon', {data: this.detail},{baseURL: '/poxy-shqx/'}).then( (res) => {
                // console.log(res)
               if(res.success){
@@ -563,6 +564,7 @@ export default {
             if(parseInt(this.detail.useType) ==10561003 && this.detail.discount>1){
               this.detail.discount= this.detail.discount/10
             }
+            this.detail.discount= this.detail.discount|| 0
             this.axios.post('/manage/cupon/updateCreateCoupon', {
               data: {...this.detail, 'USE_TYPE': this.detail.useType}
               },{baseURL: '/poxy-shqx/'}).then( (res) => {
