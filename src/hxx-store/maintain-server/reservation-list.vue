@@ -29,6 +29,8 @@
 
       <Button type="error" v-if="accessBtn('ban')"  @click="deleteDetailData" :disabled="isOrderSuccess">作废</Button>
       <Button type="info" v-if="accessBtn('edit')" @click="showDetail=Math.random()" :disabled="!detailData">编辑/查看</Button>
+      <Button type="info" v-if="true" @click="toReceive"
+              :disabled="!detailData|| detailData.ORDER_TYPE!='10411003'">车生活预约</Button>
     </div>
     <!--预约详情单-->
     <reservation-list-detail class="table-modal-detail" :showDetail="showDetail"
@@ -101,7 +103,7 @@
     mounted () {
       this.searchSelectOption= getDictGroup(this.$store.state.app.dict, '1042');
       for(let i=0;i<this.searchSelectOption.length;i++){
-        
+
         if(this.searchSelectOption[i].code==="10421004"){
 
         }else{
@@ -140,7 +142,26 @@
         this.detailData= null
         this.isOrderSuccess=true;
       },
-      //页面重置按钮-----
+      toReceive(){
+        this.$Modal.confirm({title:'车生活预约', content: '是否接受预约？', okText: '接受', cancelText: '拒绝', closable: true,
+          onOk(){
+            receive('10421005')
+          },
+          onCancel(){
+            receive('10421004')
+          }
+        })
+        function receive(stu) {
+          this.axios.post('/tenant/repair/ttrepairorder/noAccept',{
+            orderId: this.detailData.ORDER_ID,
+            status: stu
+          }).then(res => {
+            if (res.success) {
+              this.getList()
+            }
+          })
+        }
+      },
       clear(){
 		    for(let i in this.search){
           this.search[i]= ''

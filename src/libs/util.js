@@ -678,3 +678,12 @@ export  const checkVin = (str)=>{
     return false;
   }
 }
+
+
+export  const initVer=(v)=>{
+  let hxxver = localStorage.getItem('hxxver'), ver= parseFloat(v|| 1);
+  if(!hxxver || (hxxver && parseFloat(hxxver)!=ver)){
+    localStorage.clear()
+    localStorage.setItem('hxxver', ver)
+  }
+}

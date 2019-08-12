@@ -8,7 +8,7 @@ import iView from 'iview'
 import i18n from '@/locale'
 import config from '@/config'
 import importDirective from '@/directive'
-import { formatMoney} from '@/libs/util.js'
+import { formatMoney, initVer} from '@/libs/util.js'
 // import 'iview/dist/styles/iview.css'
 // import './index.less'
 import '@/assets/icons/iconfont.css'
@@ -26,6 +26,10 @@ import env from '../config/env'
 import axios from '@/libs/axios'
 import fly  from '@/libs/fly'
 import fxios from '@/libs/fxios'
+
+
+initVer(1)
+
 Vue.use(iView, {
   i18n: (key, value) => i18n.t(key, value)
 })
