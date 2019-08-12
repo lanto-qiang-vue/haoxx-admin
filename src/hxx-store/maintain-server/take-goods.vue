@@ -112,9 +112,11 @@ export default {
       this.$refs.detail.validate(validator =>{
         if(validator){
           this.axios.post('/tenant/supplier/checkin', {
-            invoiceId: this.detail.id,
-            storeId: this.detail.storeId,
-            items: this.detail.items,
+            data:{
+              invoiceId: this.detail.id,
+              storeId: this.detail.storeId,
+              items: this.detail.items,
+            }
           }).then( (res) => {
             console.log(res)
             if(res.success){
