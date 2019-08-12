@@ -318,6 +318,17 @@ export default [
         component: () => import('@/hxx-store/maintain-server/reservation-list.vue')
       },
       {
+        path: '/take-goods',
+        name: 'take-goods',
+        meta: {
+          icon: 'md-funnel',
+          title: '收货管理',
+          lgType: "1002",
+          // access: '100101',
+        },
+        component: () => import('@/hxx-store/maintain-server/take-goods.vue')
+      },
+      {
         path: '/repairOrder-list',
         name: 'repairOrder-list',
         meta: {

@@ -156,6 +156,10 @@
         type:Boolean,
         default:true
       },
+      ellipsis:{
+        type:Boolean,
+        default:true
+      },
       page:{
         type: Number,
         default: 1
@@ -173,13 +177,15 @@
         return this.$store.state.app.windowInnerHeight
       },
       tableColumns(){
-
-        let arr= deepClone(this.columns)
-        for (let i in arr){
-          arr[i].ellipsis= true
-          arr[i].tooltip= true
+        if(this.ellipsis){
+          let arr= deepClone(this.columns)
+          for (let i in arr){
+            arr[i].ellipsis= true
+            arr[i].tooltip= true
+          }
+          return arr
         }
-        return arr
+        else return this.columns
       }
     },
     watch:{
@@ -286,7 +292,7 @@
   height: 100%;
   overflow: hidden;
   position: relative;
-  opacity: 0;
+  opacity: 1;
   transition: opacity .2s;
   .table-search{
     padding-top: 10px;
