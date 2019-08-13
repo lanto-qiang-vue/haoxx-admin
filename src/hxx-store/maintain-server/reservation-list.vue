@@ -30,7 +30,7 @@
       <Button type="error" v-if="accessBtn('ban')"  @click="deleteDetailData" :disabled="isOrderSuccess">作废</Button>
       <Button type="info" v-if="accessBtn('edit')" @click="showDetail=Math.random()" :disabled="!detailData">编辑/查看</Button>
       <Button type="info" v-if="true" @click="toReceive"
-              :disabled="!detailData|| detailData.ORDER_TYPE!='10411003'">车生活预约</Button>
+              :disabled="!detailData|| detailData.ORDER_TYPE!='10411003' || detailData.STATUS!='10421002'">车生活预约</Button>
     </div>
     <!--预约详情单-->
     <reservation-list-detail class="table-modal-detail" :showDetail="showDetail"
