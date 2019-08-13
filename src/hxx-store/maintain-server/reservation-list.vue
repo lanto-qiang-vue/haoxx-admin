@@ -30,7 +30,7 @@
       <Button type="error" v-if="accessBtn('ban')"  @click="deleteDetailData" :disabled="isOrderSuccess">作废</Button>
       <Button type="info" v-if="accessBtn('edit')" @click="showDetail=Math.random()" :disabled="!detailData">编辑/查看</Button>
       <Button type="info" v-if="true" @click="toReceive"
-              :disabled="!detailData|| detailData.ORDER_TYPE!='10411003' || detailData.STATUS!='10421002'">车生活预约</Button>
+              :disabled="!detailData|| detailData.ORDER_TYPE!='10411003' || detailData.STATUS!='10421002'">车生活接单</Button>
     </div>
     <!--预约详情单-->
     <reservation-list-detail class="table-modal-detail" :showDetail="showDetail"
@@ -143,15 +143,7 @@
         this.isOrderSuccess=true;
       },
       toReceive(){
-        this.$Modal.confirm({title:'车生活预约', content: '是否接受预约？', okText: '接受', cancelText: '拒绝', closable: true,
-          onOk(){
-            receive('10421005')
-          },
-          onCancel(){
-            receive('10421004')
-          }
-        })
-        function receive(stu) {
+        let receive=(stu)=> {
           this.axios.post('/tenant/repair/ttrepairorder/noAccept',{
             orderId: this.detailData.ORDER_ID,
             status: stu
@@ -161,6 +153,15 @@
             }
           })
         }
+        this.$Modal.confirm({title:'车生活预约', content: '是否接受预约？', okText: '接受', cancelText: '拒绝', closable: true,
+          onOk(){
+            receive('10421005')
+          },
+          onCancel(){
+            receive('10421004')
+          }
+        })
+
       },
       clear(){
 		    for(let i in this.search){
