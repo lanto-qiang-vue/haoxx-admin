@@ -35,7 +35,7 @@
     <!--预约详情单-->
     <reservation-list-detail class="table-modal-detail" :showDetail="showDetail"
                              :detailData="detailData" @closeDetail="closeDetail" @closeGetList="closeGetList">
-      <Button type="info" v-show="!receiveDesabled" @click="toReceive" slot="foot">车生活接单</Button>
+      <!--<Button type="info" v-show="!receiveDesabled" @click="toReceive" slot="foot">车生活接单</Button>-->
     </reservation-list-detail>
 
   </common-table>
