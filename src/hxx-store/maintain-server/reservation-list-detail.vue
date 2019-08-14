@@ -686,7 +686,7 @@
         return this.detailData&&this.detailData.ORDER_TYPE== '10411003'
       },
       showShuttle(){
-        return (this.detailData&& this.detailData.STATUS== '10421002' || this.isSaved) && !this.isUserAsk
+        return this.detailData&&( this.detailData.STATUS== '10421002' || this.detailData.STATUS== '10421005' || this.isSaved)
       },
       showSave(){
         return !this.detailData ||this.detailData.STATUS== '10421001' && !this.isSaved && !this.isUserAsk
