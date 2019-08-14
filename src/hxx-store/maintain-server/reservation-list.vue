@@ -30,12 +30,13 @@
       <Button type="error" v-if="accessBtn('ban')"  @click="deleteDetailData" :disabled="isOrderSuccess">作废</Button>
       <Button type="info" v-if="accessBtn('edit')" @click="showDetail=Math.random()" :disabled="!detailData">编辑/查看</Button>
       <Button type="info" v-if="true" @click="toReceive"
-              :disabled="!detailData|| detailData.ORDER_TYPE!='10411003' || detailData.STATUS!='10421002'">车生活接单</Button>
+              :disabled="receiveDesabled">车生活接单</Button>
     </div>
     <!--预约详情单-->
     <reservation-list-detail class="table-modal-detail" :showDetail="showDetail"
-                             :detailData="detailData" @closeDetail="closeDetail" @closeGetList="closeGetList"
-      ></reservation-list-detail>
+                             :detailData="detailData" @closeDetail="closeDetail" @closeGetList="closeGetList">
+      <Button type="info" v-show="!receiveDesabled" @click="toReceive" slot="foot">车生活接单</Button>
+    </reservation-list-detail>
 
   </common-table>
 </template>
@@ -98,6 +99,11 @@
         clearTableSelect: null,
         isOrderSuccess:true,//判断是不是预约成功
 
+      }
+    },
+    computed:{
+      receiveDesabled(){
+        return !this.detailData|| this.detailData.ORDER_TYPE!='10411003' || this.detailData.STATUS!='10421002'
       }
     },
     mounted () {
@@ -180,7 +186,7 @@
       },
 
       onRowClick( row, index){
-          console.log('row：',row);
+          // console.log('row：',row);
           if(row.STATUS=="10421003"){
               this.isOrderSuccess=true;
           }else{

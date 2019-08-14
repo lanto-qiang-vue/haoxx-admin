@@ -162,9 +162,10 @@
       <combo-detail :tshow="showItemFlag" :tid="itemDetailId"></combo-detail>
 
       <div slot="footer">
-        <Button v-if="isButton" @click="handleSubmit('listSearch')" size="large" type="primary"  >保存</Button>
-        <Button v-if="isButton" @click="handleCommit('listSearch')" size="large" type="success"  >提交</Button>
-        <Button v-if="isCar" @click="handleCar" size="large" type="success" >维修接车</Button>
+        <Button v-show="showSave" @click="handleSubmit('listSearch')" size="large" type="primary">保存</Button>
+        <Button v-show="showSave" @click="handleCommit('listSearch')" size="large" type="success">提交</Button>
+        <Button v-show="showShuttle" @click="handleCar" size="large" type="success" >维修接车</Button>
+        <slot name="foot"></slot>
         <Button  size="large" type="default" @click="showModal=false;">返回</Button>
       </div>
   </Modal>
@@ -188,6 +189,12 @@
 	export default {
 		name: "reservation-list-detail",
     components: {selectVehicle,selectItemsType,selectParts,selectPartsGroup,selectItemPackage,comboDetail,columnInput, ModalTitle},
+    props:{
+      'showDetail':{},
+      detailData:{
+        default:()=>{}
+      }
+    },
     data(){
             // 联系电话验证
             const validatePass = (rule, value, callback) => {
@@ -309,7 +316,7 @@
           },
           {title: '操作', key: '', sortable: true, width: 100, fixed: 'right',align:'center',
             render: (h, params) => {
-                if(this.titleMsg=='新建'){
+                if(!this.detailData|| !this.detailData.STATUS){
                   return h('div', [
                       h('Button', {
                           props: {
@@ -323,16 +330,11 @@
                           }
                       }, '删除')
                   ]);
-                }else if(this.titleMsg=='已预约'){
+                }else {
                   return h('div', [
-                      h('span', '已预约')
-                  ]);
-                }else if(this.titleMsg=='已接车'){
-                  return h('div', [
-                      h('span', '已接车')
+                      h('span', this.titleMsg)
                   ]);
                 }
-
             }
           },
         ],
@@ -648,11 +650,12 @@
           ],
         },//规则验证
 
-        titleMsg:'新建',
+        // titleMsg:'新建',
         isCar:false,//是否维修接车
         isButton:true,//是否显示保存 提交按钮
         listDisabled:false,//是否禁止修改
         isOrderSuccess:true,//判断是否是预约状态---
+        isSaved: false,
 
 
 
@@ -667,7 +670,28 @@
         // paint_price:null,//油漆面单价-------
       }
     },
-    props:['showDetail', 'detailData'],
+
+    computed: {
+      work_price(){
+        return parseFloat(getUserInfo(this.$store.state.user.userInfo.params, 'P1001'));
+      },
+      paint_price(){
+        return parseFloat(getUserInfo(this.$store.state.user.userInfo.params, 'P1002'));
+      },
+      titleMsg(){
+        let sta= this.detailData? this.detailData.STATUS:''
+        return sta? getName(this.$store.state.app.dict, sta) : '新建'
+      },
+      isUserAsk(){
+        return this.detailData&&this.detailData.ORDER_TYPE== '10411003'
+      },
+      showShuttle(){
+        return (this.detailData&& this.detailData.STATUS== '10421002' || this.isSaved) && !this.isUserAsk
+      },
+      showSave(){
+        return !this.detailData ||this.detailData.STATUS== '10421001' && !this.isSaved && !this.isUserAsk
+      }
+    },
     watch:{
       showDetail(){
         console.log('进来的参数：',this.detailData,);
@@ -720,21 +744,21 @@
           }
 
           if(this.detailData['STATUS']=='10421001'){
-              this.titleMsg="新建";
+              // this.titleMsg="新建";
               this.isCar=false;
               this.isButton=true;
               this.listDisabled=false;
               this.isOrderSuccess=true;
 
           }else if(this.detailData['STATUS']=='10421002'){
-              this.titleMsg="已预约";
+              // this.titleMsg="已预约";
               this.isCar=true;
               this.isButton=false;
               this.listDisabled=true;
               this.isOrderSuccess=false;
 
           }else if(this.detailData['STATUS']=='10421003'){
-              this.titleMsg="已接车";
+              // this.titleMsg="已接车";
               this.isCar=false;
               this.isButton=false;
               this.listDisabled=true;
@@ -745,7 +769,7 @@
 
         }else{
           //新建功能表------
-          this.titleMsg="新建";
+          // this.titleMsg="新建";
           this.isCar=false;
           this.isButton=true;
           this.listDisabled=false;
@@ -764,14 +788,7 @@
       // this.work_price=getUserInfo(this.$store.state.user.userInfo.params, 'P1001');
       // this.paint_price=getUserInfo(this.$store.state.user.userInfo.params, 'P1002');
     },
-    computed: {
-        work_price(){
-            return parseFloat(getUserInfo(this.$store.state.user.userInfo.params, 'P1001'));
-        },
-        paint_price(){
-            return parseFloat(getUserInfo(this.$store.state.user.userInfo.params, 'P1002'));
-        },
-    },
+
     methods:{
       //监听界面变化--------
       visibleChange(status){
@@ -859,11 +876,12 @@
                 }
                 this.$emit('closeGetList');
                 this.$Message.info('提交成功')
-                this.isCar=true;
-                this.isButton=false;
-                this.titleMsg="已预约";
-                this.listDisabled=true;
-                this.isOrderSuccess=false;
+                this.isSaved= true
+                // this.isCar=true;
+                // this.isButton=false;
+                // // this.titleMsg="已预约";
+                // this.listDisabled=true;
+                // this.isOrderSuccess=false;
 
               }
           })
