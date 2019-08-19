@@ -106,6 +106,9 @@
         return !this.detailData|| this.detailData.ORDER_TYPE!='10411003' || this.detailData.STATUS!='10421002'
       }
     },
+    activated(){
+      this.getList()
+    },
     mounted () {
       this.searchSelectOption= getDictGroup(this.$store.state.app.dict, '1042');
       for(let i=0;i<this.searchSelectOption.length;i++){
