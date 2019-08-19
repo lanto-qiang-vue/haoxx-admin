@@ -102,7 +102,7 @@
             </FormItem>
           </Form>
           <!--<Form ref="formInline" slot="content" :label-width="110">
-            
+
           </Form>-->
         <!--</Panel>
       </Collapse>-->
@@ -651,7 +651,7 @@
           {
             title: '小计金额', key: 'PART_MONEY', sortable: true, minWidth: 120,align:'right',
             render: (h, params) => h('span', this.formatMoney(params.row.SALES_PRICE * params.row.PART_NUM))
-            
+
           },
           {
             title: '优惠金额', key: 'PART_DERATE_MONEY', sortable: true, minWidth: 120,align:'right',
@@ -1182,7 +1182,7 @@
           {
             title: '维修项目优惠金额', key: 'itemDerateMoney', minWidth: 150,align:'right',
             render: (h, params) => h('span', this.formatMoney(params.row.itemDerateMoney))
-          },  
+          },
           {
             title: '维修配件优惠金额', key: 'partDerateMoney', minWidth: 140,align:'right',
             render: (h, params) => h('span', this.formatMoney(params.row.partDerateMoney))
@@ -1593,6 +1593,32 @@
 
         this.getShopClassList();
         this.getEmployeeList(this.detailData);
+      },
+      plate(val){
+        if(val){
+          this.axios.get('/insurance/quotation/'+ val,{baseURL: '/poxy-shqx', headers:{'Content-Type': 'application/json; charset=utf-8'}}).then(res => {
+            let re= eval('('+res+')')
+            // console.log('re', re)
+            let data= re.responseList[0]
+            if(data.header.resultCode== '0000'){
+              let sum= 0, date= ''
+              data.bizCoverage.coverageInfoList.map((item)=>{
+                sum+= item.coveragePremium
+              })
+              sum+= data.baseInfo.tpfPremium|| 0
+              sum+= data.baseInfo.bizPremium|| 0
+              sum+= data.vehicleTaxInfo&& data.vehicleTaxInfo.bizPremium|| 0
+
+              date= data.baseInfo.bizEffectDate
+              // console.log('aa', data.vehicleTaxInfo&& data.vehicleTaxInfo.bizPremium)
+
+              this.$Modal.info({
+                title: '保险信息',
+                content: `车险到期日期：${date}\n车险价格：${sum}`
+              })
+            }
+          })
+        }
       }
     },
   //  activated(){
@@ -1600,7 +1626,7 @@
 
   //         console.log("底部高度"+document.querySelector(".ivu-modal-body").scrollTop);
 
-        
+
   //       document.querySelector(".ivu-modal-body").scrollTop=0;
   //   },
     mounted() {
@@ -1640,7 +1666,9 @@
       partsTypeFun() {
         return getDictGroup(this.$store.state.app.dict, '1017');
       },
-
+      plate(){
+        return this.listSearch.PLATE_NUM
+      }
 
     },
     methods: {
@@ -1662,7 +1690,7 @@
               obj.itemId = res.data[i].itemId;
               this.vehicleTeamArr.push(obj);
             }
-            
+
           }
         })
       },
@@ -1692,7 +1720,7 @@
               this.listSearch.FOLLOW_PERSON = this.$store.state.user.userInfo.user.userName;
               this.listSearch.REPAIR_PERSON = this.$store.state.user.userInfo.user.userName;
             }
-            
+
           }
         })
       },
@@ -1736,7 +1764,7 @@
 
                   })
               }
-              
+
             } else {
               this.$Modal.confirm({
                 title: "系统提示!",
@@ -1810,7 +1838,7 @@
 
                   })
               }
-              
+
             } else {
               this.$Modal.confirm({
                 title: "系统提示!",
@@ -1827,7 +1855,7 @@
       commitdata() {
         this.listSearch["STATUS"] = "10201002";
         this.listSearch.COME_DATE = formatDate(this.listSearch.COME_DATE) + ' ' + formatDate(this.listSearch.COME_DATE, 'hh:mm:ss');
-        
+
         this.listSearch.PLAN_END_DATE = formatDate(this.listSearch.PLAN_END_DATE);
         //提交维修项目套餐
         //2019/03/12 后端王旭要求派工传递sign = 1;
@@ -1920,7 +1948,7 @@
       //结算按钮-----------
       handleAccount() {
         this.showSelectAccount = Math.random();
-        
+
       },
       //结算单组建传出来的按钮判断-----
 
@@ -2021,7 +2049,7 @@
             switch (i) {
               case 'REPAIR_ITEM_MONEY':
                 newJson['itemMoney'] = val[i];
-     
+
                 break;
               case 'REPAIR_ITEM_DERATE_MONEY':
                 newJson['itemDerateMoney'] = val[i];
@@ -2109,7 +2137,7 @@
             access_token: this.$store.state.user.token
           }
         }).then(res => {
-          
+
           if (res.success === true) {
             this.selectPartsGroup1(res.data);
             if (res.data.length > 0) {
@@ -2138,7 +2166,7 @@
             access_token: this.$store.state.user.token
           }
         }).then(res => {
-          
+
           if (res.success === true) {
             if (res.data.length > 0) {
               this.commitOtherItem = res.data;
@@ -2178,7 +2206,7 @@
 
       //监听选择车辆----
       selectCar(val) {
-        
+
         this.listSearch["VEHICLE_MODEL"] = val["VEHICLE_MODEL"];
         this.listSearch["PLATE_NUM"] = val["PLATE_NUM"];
         this.listSearch["ORDER_PERSON"] = val["CUSTOMER_NAME"];
@@ -2248,13 +2276,13 @@
           }
           listItemsModel["ITEM_MONEY"] = listItemsModel["REPAIR_TIME"] * this.work_price + listItemsModel["PAINT_NUM"] * this.paint_price + listItemsModel["REPAIR_MONEY"];
           listItemsModel["ITEM_LAST_MONEY"] = listItemsModel["REPAIR_TIME"] * this.work_price + listItemsModel["PAINT_NUM"] * this.paint_price + listItemsModel["REPAIR_MONEY"] - listItemsModel["ITEM_DERATE_MONEY"];
-          
+
           this.commitItem.push(listItemsModel);
         }
         this.computItemMoney();
       },
       sTenanceItem1(val) {
-        
+
         this.getItem = val;
         this.commitItem = [];
         for (let j in this.getItem) {
@@ -2304,7 +2332,7 @@
           }
           listItemsModel["ITEM_MONEY"] = listItemsModel["REPAIR_TIME"] * this.work_price + listItemsModel["PAINT_NUM"] * this.paint_price + listItemsModel["REPAIR_MONEY"];
           listItemsModel["ITEM_LAST_MONEY"] = (listItemsModel["REPAIR_TIME"] * this.work_price + listItemsModel["PAINT_NUM"] * this.paint_price + listItemsModel["REPAIR_MONEY"] - listItemsModel["ITEM_DERATE_MONEY"]).toFixed(2);
-          
+
           this.commitItem.push(listItemsModel);
         }
       },
@@ -2316,7 +2344,7 @@
 
       //获取选择配件数据
       selectPartsItem(val) {
-        
+
         this.getParts = val;
         this.commitParts = [];
 
@@ -2364,11 +2392,11 @@
               } else if (i == "PART_MONEY") {
                 commitParts[i] = this.getParts[j]["SALES_PRICE"] * (this.getParts[j]["PART_NUM"] || 1);
 
-                
+
               } else if (i == "PART_LAST_MONEY") {
                 commitParts[i] = this.getParts[j]["SALES_PRICE"] * (this.getParts[j]["PART_NUM"] || 1);
 
-                
+
               }
             }
             this.commitParts.push(commitParts);
@@ -2424,22 +2452,22 @@
                 commitParts[i] = this.getParts1[j][i];
               } else if (i == "PART_MONEY") {
                 commitParts[i] = this.getParts1[j]["SALES_PRICE"] * (this.getParts1[j]["PART_NUM"] || 1);
-                
+
               } else if (i == "PART_LAST_MONEY") {
                 commitParts[i] = this.getParts1[j]["SALES_PRICE"] * (this.getParts1[j]["PART_NUM"] || 1);
-                
+
               }
             }
             this.commitParts.push(commitParts);
           }
 
         }
-        
+
         this.computItemMoney();
       },
       //获取选择配件档案数据----配件用的是这个
       selectPartsGroup(val) {
-        
+
         this.getParts1 = val;
         this.commitParts = [];
 
@@ -2497,7 +2525,7 @@
         this.computItemMoney();
       },
       selectPartsGroup1(val) {
-        
+
         this.getParts1 = val;
         this.commitParts = [];
 
@@ -2579,7 +2607,7 @@
             }
           }
         }
-        
+
         this.computItemMoney();
       },
       //选择项目套餐按钮-------
@@ -2597,7 +2625,7 @@
         this.$router.push({path: '/service-combo'});
       },
       selectItemGroup(val) {
-        
+
         this.getItemGroup = val;
         //提交维修项目套餐
         this.commitItemGroup = [];
@@ -2730,7 +2758,7 @@
         this.$emit('closeGetList');//重新请求数据
         this.titleMsg = "已结清";
       },
-      
+
       openStartTime(val){
         if(!val){
           if (new Date(this.listSearch.COME_DATE).getTime() >= new Date(this.listSearch.PLAN_END_DATE).getTime()) {
@@ -2744,7 +2772,7 @@
         }
       },
       openEndTime(val){
-        
+
         if(!val){
             if (new Date(this.listSearch.PLAN_END_DATE).getTime() <= new Date(this.listSearch.COME_DATE).getTime()) {
               this.$Modal.confirm({
@@ -2758,7 +2786,7 @@
       //打印测试部分-----------
       printWTS() {
         clearTimeout(this.printTime);
-        
+
         if (this.printFlag1 && this.printFlag2 && this.printFlag3 && this.printFlag4) {
           var listSearch = {};
           var store = this.$store;
@@ -2769,7 +2797,7 @@
                 listSearch[i] = formatDate(this.listSearch[i]) + ' ' + formatDate(this.listSearch[i], 'hh:mm:ss');
                 break;
               case'VEHICLE_COLOR':
-                
+
                 listSearch[i] = getName(this.carColorData, this.listSearch[i]) || '';
                 break;
               case'PLAN_END_DATE':
@@ -2824,7 +2852,7 @@
           if (res.success === true) {
             if (res.data && JSON.stringify(res.data[0]) != "{}") {
               for (let i in res.data) {
-                
+
                 this.itemGroupDetail.push(res.data[i]);
               }
             }
@@ -2837,7 +2865,7 @@
 
 
         clearTimeout(this.printTime);
-        
+
         if (this.printFlag1 && this.printFlag2 && this.printFlag3 && this.printFlag4) {
           var listSearch = {};
           for (let i in this.listSearch) {
@@ -2877,7 +2905,7 @@
 
 
         clearTimeout(this.printTime);
-        
+
         if (this.printFlag1 && this.printFlag2 && this.printFlag3 && this.printFlag4) {
           var temp = null;
 
@@ -2923,10 +2951,10 @@
 
 
           if (this.$store.state.user.userInfo.tenant && this.$store.state.user.userInfo.tenant.businessType == '10331003') {
-            
+
             temp = printAccountFun(this.wtdData, listSearch, this.commitItem, this.commitItemGroup, commitParts, this.commitOtherItem, store, 'styleFlag');
           } else {
-            
+
             temp = printAccountFun(this.wtdData, listSearch, this.commitItem, this.commitItemGroup, commitParts, this.commitOtherItem, store, 'styleFlag');
           }
           var LODOP = getLodop();

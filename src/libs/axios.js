@@ -70,6 +70,7 @@ axiosHxx.interceptors.request.use(config => {
 });
 
 axiosHxx.interceptors.response.use(response => {
+  // console.log('response', response)
   let { data } = response
   if (!data.success || data.success !== true) {
     let flag = data.data ? true : false;
