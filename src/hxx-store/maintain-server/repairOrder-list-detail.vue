@@ -1597,7 +1597,8 @@
       plate(val){
         if(val){
           this.axios.get('/insurance/quotation/'+ val,{baseURL: '/poxy-shqx', headers:{'Content-Type': 'application/json; charset=utf-8'}}).then(res => {
-            let re= eval('('+res+')')
+            // console.log('res', typeof res)
+            let re= typeof res=='string'? eval('('+res+')') : res
             // console.log('re', re)
             let data= re.responseList[0]
             if(data.header.resultCode== '0000'){
@@ -1614,7 +1615,7 @@
 
               this.$Modal.info({
                 title: '保险信息',
-                content: `车险到期日期：${date}\n车险价格：${sum}`
+                content: `车险到期日期：${date}<br/>车险价格：${sum}元`
               })
             }
           })
