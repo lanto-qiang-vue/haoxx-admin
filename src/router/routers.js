@@ -295,7 +295,31 @@ export default [
   //     },
   //   ]
   // },
-{
+  // {
+  //   path: '/car-inspection',
+  //   name: 'car-inspection',
+  //   meta: {
+  //     icon: 'logo-buffer',
+  //     title: '车辆检查',
+  //     // lgType: "1002",
+  //     // access: '1001',
+  //   },
+  //   component: Main,
+  //   children:[
+  //     {
+  //       path: '/car-inspection-list',
+  //       name: 'car-inspection-list',
+  //       meta: {
+  //         icon: 'md-funnel',
+  //         title: '车辆检查',
+  //         // lgType: "1002",
+  //         // access: '100101',
+  //       },
+  //       component: () => import('@/hxx-store/car-inspection/car-inspection-list.vue')
+  //     },
+  //   ]
+  // },
+  {
     path: '/maintain-server',
     name: 'maintain-server',
     meta: {

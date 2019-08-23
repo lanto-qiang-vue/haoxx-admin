@@ -248,7 +248,7 @@ export default {
             }
 
             for(let i in this.listSearch){
-                this.shoukuanSearch[i]=this.listSearch[i];
+                this.shoukuanSearch[i]=this.listSearch[i]|| 0;
             }
             this.shoukuanSearch["LESS_MONEY"]=(this.listSearch['REPAIR_ITEM_DERATE_MONEY']+this.listSearch['REPAIR_PART_DERATE_MONEY'])||0;
 

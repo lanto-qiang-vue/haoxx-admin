@@ -500,6 +500,7 @@ export default {
           if(res.success){
             this.giveOthers.userNum= res.data.sum
             this.$refs.upUser.close()
+            this.$refs.give.validate()
           }
         })
       },

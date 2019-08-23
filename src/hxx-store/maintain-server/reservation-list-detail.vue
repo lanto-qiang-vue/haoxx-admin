@@ -281,7 +281,7 @@
                                             // }
                                             // console.log("params.row.ITEM_DERATE_MONEY",params.row.ITEM_DERATE_MONEY);
                                             params.row.ITEM_DERATE_MONEY=val;
-                                            console.log(params.row.ITEM_DERATE_MONEY);
+                                            // console.log(params.row.ITEM_DERATE_MONEY);
                                             this.commitItem[params.index]=params.row;
                                             this.commitItem[params.index]['ITEM_LAST_MONEY']=(params.row.REPAIR_TIME*this.work_price+params.row.PAINT_NUM*this.paint_price-val).toFixed(2);
                                             this.computItemMoney();
@@ -694,7 +694,7 @@
     },
     watch:{
       showDetail(){
-        console.log('进来的参数：',this.detailData,);
+        // console.log('进来的参数：',this.detailData,);
         this.showModal=true;
         //清空公共数据值------
         this.getParts=[];
@@ -764,7 +764,7 @@
               this.listDisabled=true;
               this.isOrderSuccess=false;
           }else{
-            console.log("不满足条件");
+            // console.log("不满足条件");
           }
 
         }else{
@@ -778,7 +778,7 @@
         }
       },
       commitParts(obj){
-          console.log('xxxxxxxx',obj);
+          // console.log('xxxxxxxx',obj);
 
       }
     },
@@ -932,8 +932,8 @@
               access_token: this.$store.state.user.token
             }
           }).then(res => {
-            console.log(11111)
-            console.log(res)
+            // console.log(11111)
+            // console.log(res)
             if (res.success === true) {
               this.commitParts=res.data;
 
@@ -941,14 +941,14 @@
               for(let i in res.data){
                 this.listSearch["REPAIR_PART_MONEY"]+=res.data[i]['PART_MONEY'];
               }
-              console.log("this.listSearch",this.listSearch);
+              // console.log("this.listSearch",this.listSearch);
             }
           })
       },
 
       //监听选择车辆----
       selectCar(val){
-        console.log(val);
+        // console.log(val);
         this.listSearch["VEHICLE_MODEL"]=val["VEHICLE_MODEL"];
         this.listSearch["PLATE_NUM"]=val["PLATE_NUM"];
         this.listSearch["ORDER_PERSON"]=val["CUSTOMER_NAME"];
@@ -973,7 +973,7 @@
       },
       //获取维修项目数据-------
       sTenanceItem(val){
-          console.log("父级收到数据",val);
+          // console.log("父级收到数据",val);
           this.commitItem=[];
           for(let j in val){
             var listItemsModel={
@@ -1031,7 +1031,7 @@
       },
       //获取选择配件数据
       selectPartsItem(val){
-        console.log("选择配件数据",val);
+        // console.log("选择配件数据",val);
         this.getParts=val;
         this.commitParts=[];
         for(let j in this.getParts){
@@ -1141,7 +1141,7 @@
       },
       //获取选择配件档案数据----
       selectPartsGroup(val){
-        console.log("选择配件数据组",val);
+        // console.log("选择配件数据组",val);
         this.getParts1=val;
         this.commitParts=[];
         for(let j in this.getParts){
@@ -1240,7 +1240,7 @@
 
                 commitParts['PART_MONEY']=this.getParts1[j]["SALES_PRICE"]*(this.getParts1[j]["PART_NUM"]||1);
                 commitParts['PART_LAST_MONEY']=commitParts['PART_MONEY']-commitParts["PART_DERATE_MONEY"];
-              console.log('最后得到的配件数据---------',commitParts);
+              // console.log('最后得到的配件数据---------',commitParts);
               this.commitParts.push(commitParts);
           }
 
@@ -1277,7 +1277,7 @@
             }
           }
         }
-        console.log(index,STOCK_ID,PART_ID);
+        // console.log(index,STOCK_ID,PART_ID);
         this.computItemMoney();
       },
       //选择项目套餐按钮-------
@@ -1291,7 +1291,7 @@
           this.itemDetailId=val.GROUP_ID;
       },
       selectItemGroup(value){
-        console.log("传过来的字段值：",value);
+        // console.log("传过来的字段值：",value);
 
         //提交维修项目套餐
           this.commitItemGroup=[];
@@ -1378,7 +1378,7 @@
       },
       //维修接车----
       handleCar(){
-        console.log(this.$store.state.user.userInfo.user.userId);
+        // console.log(this.$store.state.user.userInfo.user.userId);
         this.axios.request({
               url: '/tenant/repair/ttrepairorder/get_wxkd',
               method: 'post',

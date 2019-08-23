@@ -80,15 +80,17 @@ axiosHxx.interceptors.response.use(response => {
       store.dispatch('handleLogOut')
       // return false;
     }
-    // if(data.hasOwnProperty("Exception")){
-    //   if(data["Exception"].hasOwnProperty("message")){
-    //     Message.error(data.Exception.message || '服务内部错误3')
-    //   }else{
-    //     Message.error(data.title || '服务内部错误2')
-    //   }
-    // }else{
-    //   Message.error(data.title || '服务内部错误1')
-    // }
+    let msg= ''
+    if(data.hasOwnProperty("Exception")){
+      if(data["Exception"].hasOwnProperty("message")){
+        msg= data.Exception.message
+      }else{
+        msg= data.title
+      }
+    }else{
+      msg= data.title
+    }
+    if(msg) Message.error(msg)
   }
   return data;
 }, error => {
