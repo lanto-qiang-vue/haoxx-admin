@@ -175,7 +175,7 @@ let queryInit= {
       getQuery(){
         let query= this.$route.query
         this.query= deepClone(queryInit)
-        this.query.keyWord= query.name || ''
+        // this.query.keyWord= query.name || ''
         this.query.type= query.type
         this.query.userid= query.userid || ''
         this.query.name= query.name || ''
