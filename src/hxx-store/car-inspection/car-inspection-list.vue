@@ -63,16 +63,16 @@
             <Input v-model="checkDetail.vehicleOwner"/>
           </FormItem>
           <FormItem label="联系电话:" prop="telphone">
-            <Input v-model="checkDetail.telphone"/>
+            <Input v-model="checkDetail.telphone" :maxlength="11"/>
           </FormItem>
           <FormItem label="车检日期:" prop="inspectDate">
             <DatePicker type="date" format="yyyy-MM-dd" placeholder="请选择" transfer
-                        v-model="checkDetail.inspectDate"
+                        @on-change="checkDetail.inspectDate= $event"
             ></DatePicker>
           </FormItem>
 
-          <template v-if="checkDetail.groupItems">
-            <FormItem :label-width="0" v-for="(proj, key) in checkDetail.groupItems" :key="key"
+          <template v-if="checkDetail.data">
+            <FormItem :label-width="0" v-for="(proj, key) in checkDetail.data" :key="key"
                       style="width: 100%;margin-bottom: 25px" class="group-items" :prop="'groupItems'+key">
             <div class="check-items ivu-input" >
               <p>{{proj.typeName}}</p>
@@ -105,11 +105,10 @@
             </FormItem>
           </template>
         </Form>
-
       </div>
       <div slot="footer">
-        <Button type="primary" @click="check">保存</Button>
-        <Button type="success" @click="check">提交</Button>
+        <Button type="primary" @click="submit('10571001')">保存</Button>
+        <Button type="success" @click="submit('10571002')">提交</Button>
         <Button @click="showCreate= false">取消</Button>
       </div>
     </Modal>
@@ -128,7 +127,7 @@ let initCheckDetail={
   vehicleOwner: '',
   telphone: '',
   inspectDate: '',
-  groupItems: [],
+  data: [],
 
 }
 export default {
@@ -182,7 +181,7 @@ export default {
       ]
     },
     groupItems(){
-      return this.checkDetail.groupItems
+      return this.checkDetail.data
     },
     checkRule(){
       let rule= { required: true, message:'必填项不能为空'}
@@ -217,11 +216,11 @@ export default {
   methods:{
     upImg(i1, i2){
       upImg(this, (url)=>{
-        this.checkDetail.groupItems[i1].items[i2].url.push(url)
+        this.checkDetail.data[i1].items[i2].url.push(url)
       })
     },
     delImg(i1,i2,i3){
-      this.checkDetail.groupItems[i1].items[i2].url.splice(i3, 1)
+      this.checkDetail.data[i1].items[i2].url.splice(i3, 1)
     },
     check(){
       this.axios.get('/insurance/quotation/'+ this.licenseNo,{baseURL: '/poxy-shqx', headers:{'Content-Type': 'application/json; charset=utf-8'}}).then(res => {
@@ -238,14 +237,23 @@ export default {
           // flag= true
         }
         if(flag){
-          this.checkDetail= deepClone(initCheckDetail)
-            this.checkDetail.insuranceExpireDate= data.baseInfo.bizEffectDate
+          let expire= data.baseInfo.bizEffectDate
+          this.axios.get('/tenant/check/have',{params:{
+              plate: this.licenseNo,
+              expireDate: expire,
+            }}).then(res => {
+            if(res.success && res.data){
+              this.initCreat({insuranceExpireDate: expire})
+            }else{
+              this.$Message.error("此车牌不用检测");
+            }
             this.showCheck= false
-            this.initCreat()
+          })
+        }else{
+          this.$Message.error("此车牌不用检测");
+          this.showCheck= false
         }
       })
-      // this.showCheck= false
-      // this.initCreat()
     },
     getList(){
       this.loading= true
@@ -276,9 +284,9 @@ export default {
 
           let data= res.data
           data.map((proj)=>{
-            proj.tester= ''
-            proj.items.map((item)=>{
-              item.description= item.name.indexOf('：')>=0? item.name.split('：')[1]: ''
+            proj.tester= 'ma'
+            proj.items.map((item, ind)=>{
+              item.description= item.name.indexOf('：')>=0? item.name.split('：')[1]: ind+1
               item.advise= ''
               item.url= []
             })
@@ -288,12 +296,31 @@ export default {
         }
       })
     },
-    initCreat(){
+    initCreat(obj){
+      // this.checkDetail= deepClone(initCheckDetail)
+      this.checkDetail.data= deepClone(this.checkItems)
+      setTimeout(()=>{
+        this.$refs.checkDetail.resetFields()
+        this.checkDetail.plate= this.licenseNo
 
-      this.checkDetail.plate= this.licenseNo
-      this.checkDetail.groupItems= deepClone(this.checkItems)
-      this.$refs.checkDetail.resetFields()
+        if(obj){
+          Object.assign(this.checkDetail,obj)
+        }
+      }, 100)
+
       this.showCreate= true
+    },
+    submit(status){
+      this.$refs.checkDetail.validate(validator=>{
+        if(validator){
+          this.checkDetail.status= status
+          this.axios.post('/tenant/check/saveReport', this.checkDetail).then( (res) => {
+
+          })
+        }else{
+          this.$Message.error("请输入必填项");
+        }
+      })
     },
     onRowClick(item) {
       item.items.map((o)=>{
@@ -304,7 +331,7 @@ export default {
     },
     closeDetail(){
 
-      this.showModal= false
+      this.showCreate= false
     },
     changePageSize(size) {
       this.limit = size;

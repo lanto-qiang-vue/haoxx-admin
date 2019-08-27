@@ -4,9 +4,9 @@
                 ref="table"
   class="discounts-list">
     <div slot="search">
-      <div class="search-block">
-        <Input placeholder="会员账号/门店名称/兑换码" v-model="query.keyWord" clearable></Input>
-      </div>
+      <!--<div class="search-block">-->
+        <!--<Input placeholder="会员账号/门店名称/兑换码" v-model="query.keyWord" clearable></Input>-->
+      <!--</div>-->
       <div class="search-block">
         <DatePicker type="daterange" :options="option" format="yyyy-MM-dd" placeholder="创建日期" clearable
                     style="width:100%;" @on-change="queryDateC"></DatePicker>

@@ -157,10 +157,10 @@ let queryInit= {
     //     this.getList();
     //   }
     // },
-    activated(){
-        this.getQuery()
-        this.getList();
-    },
+    // activated(){
+    //     this.getQuery()
+    //     this.getList();
+    // },
     mounted() {
       this.getQuery()
       let data = getDictGroup(this.$store.state.app.dict, '1056');

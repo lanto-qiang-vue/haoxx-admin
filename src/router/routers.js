@@ -1248,6 +1248,7 @@ export default [
           title: '优惠券明细',
           lgType: "1001",
           access: '101103',
+          notCache: true
         },
         component: () => import('@/hxx-admin/discounts-manage/discounts-record-detail.vue')
       },
