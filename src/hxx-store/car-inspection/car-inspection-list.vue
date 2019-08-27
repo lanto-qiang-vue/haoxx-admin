@@ -157,7 +157,7 @@ let initCheckDetail={
 }
 export default {
   name: "car-inspection-list",
-  components: {commonTable, ModalTitle,},
+  components: {commonTable, ModalTitle},
   data() {
     return{
       query:{
