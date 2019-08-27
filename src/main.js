@@ -26,10 +26,11 @@ import env from '../config/env'
 import axios from '@/libs/axios'
 import fly  from '@/libs/fly'
 import fxios from '@/libs/fxios'
-
+import VueImg from 'v-img'
 
 initVer(1)
 
+Vue.use(VueImg);
 Vue.use(iView, {
   i18n: (key, value) => i18n.t(key, value)
 })

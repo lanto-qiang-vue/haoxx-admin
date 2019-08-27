@@ -15,13 +15,13 @@
       :scrollable="true"
       :transfer="false"
       :transition-names="['', '']">
-      <div >
+      <div>
         <p style="text-align: center;margin-bottom: 10px;color: #999;font-size: 12px">车辆保险到期时间≤2个月才可进行免费车检</p>
         <Input type="text" v-model="licenseNo" placeholder="车牌号"></Input>
       </div>
 
       <div slot="footer">
-        <Button @click="showModal= false">取消</Button>
+        <Button @click="showCheck= false">取消</Button>
         <Button type="primary" @click="check">提交</Button>
       </div>
     </Modal>
@@ -37,32 +37,37 @@
       :transition-names="['', '']">
       <modal-title slot="header" title="车辆检查" @clickBack="closeDetail"></modal-title>
       <div>
-        <Form :label-width="80" :model="checkDetail" ref="checkDetail" :rules="checkRule" class="common-form">
-          <FormItem label="车牌:" prop="name">
-            <span>AAA</span>
+        <Form :label-width="90" :model="checkDetail" ref="checkDetail" :rules="checkRule" class="common-form">
+          <FormItem label="车牌:" prop="plate">
+            <span>{{checkDetail.plate}}</span>
           </FormItem>
-          <FormItem :label-width="120" label="保险到期时间:" prop="name">
-            <span>2019-1-1</span>
+          <FormItem :label-width="120" label="保险到期时间:" prop="insuranceExpireDate">
+            <span>{{checkDetail.insuranceExpireDate}}</span>
           </FormItem>
-          <FormItem label="保险公司:" prop="name">
-            <span>太平</span>
+          <FormItem label="保险公司:" prop="insuranceCompany">
+            <Select v-model="checkDetail.insuranceCompany" placeholder="请选择">
+              <Option v-for="(item, index) in insuranceComs"
+                      :key="index" :value="item.name">{{item.name}}</Option>
+            </Select>
           </FormItem>
           <br/>
-          <FormItem :label-width="0" prop="name" style="width: auto">
-            <RadioGroup>
-              <Radio label="车主"></Radio>
-              <Radio label="驾驶员"></Radio>
+          <FormItem :label-width="0" prop="carDriver" style="width: auto">
+            <RadioGroup v-model="checkDetail.carDriver">
+              <!--<Radio label="车主" true-value="10591001"></Radio>-->
+              <!--<Radio label="驾驶员" true-value="10591002"></Radio>-->
+              <Radio label="10591001">车主</Radio>
+              <Radio label="10591002">驾驶员</Radio>
             </RadioGroup>
           </FormItem>
-          <FormItem label="姓名:" prop="name">
-            <Input v-model="checkDetail.name"/>
+          <FormItem label="姓名:" prop="vehicleOwner">
+            <Input v-model="checkDetail.vehicleOwner"/>
           </FormItem>
-          <FormItem label="联系电话:" prop="name">
-            <Input v-model="checkDetail.name"/>
+          <FormItem label="联系电话:" prop="telphone">
+            <Input v-model="checkDetail.telphone"/>
           </FormItem>
-          <FormItem label="车检日期:" prop="name">
+          <FormItem label="车检日期:" prop="inspectDate">
             <DatePicker type="date" format="yyyy-MM-dd" placeholder="请选择" transfer
-                        v-model="checkDetail.getrange"
+                        v-model="checkDetail.inspectDate"
             ></DatePicker>
           </FormItem>
 
@@ -86,10 +91,10 @@
                     <td>{{item.name}}</td>
                     <td><Input v-model="item.description"/></td>
                     <td>
-                      <li v-for="(url, inde) in item.url" :key="inde">
-                        <img :src="url"/><i class="fa fa-times-circle"></i>
+                      <li v-for="(url, inde) in item.url" :key="inde" class="img">
+                        <img :src="url" v-img/><i class="fa fa-times-circle" @click="delImg(key, index, inde)"></i>
                       </li>
-                      <i class="fa fa-plus-square-o"></i>
+                      <i class="fa fa-plus-square-o" @click="upImg(key, index)"></i>
                     </td>
                     <td><Input v-model="item.advise"/></td>
                     <td class="rowspan" rowspan="100" v-if="index==0"><Input v-model="proj.tester"/></td>
@@ -114,10 +119,21 @@
 <script>
 import commonTable from '@/hxx-components/common-table.vue'
 import ModalTitle from '@/hxx-components/modal-title.vue'
-import {deepClone, getDictGroup} from "@/libs/util";
+import {deepClone, upImg} from "@/libs/util"
+let initCheckDetail={
+  plate: '',
+  insuranceExpireDate: '',
+  insuranceCompany: '',
+  carDriver: '10591001',
+  vehicleOwner: '',
+  telphone: '',
+  inspectDate: '',
+  groupItems: [],
+
+}
 export default {
   name: "car-inspection-list",
-  components: {commonTable, ModalTitle},
+  components: {commonTable, ModalTitle,},
   data() {
     return{
       detail: {},
@@ -131,9 +147,10 @@ export default {
       loading: true,
       page: 1,
       limit: 25,
-      licenseNo: '',
-      checkDetail: {},
+      licenseNo: '沪B5J763',
+      checkDetail: deepClone(initCheckDetail),
       checkItems: [],
+      insuranceComs: [],
 
     }
   },
@@ -164,17 +181,48 @@ export default {
         },
       ]
     },
+    groupItems(){
+      return this.checkDetail.groupItems
+    },
     checkRule(){
-      return{
-        groupItems0: {required: true}
+      let rule= { required: true, message:'必填项不能为空'}
+      let rules= {
+        vehicleOwner: rule,
+        telphone: rule,
+        inspectDate: rule,
       }
+      if( this.groupItems)
+      this.groupItems.map((item, index)=>{
+        rules['groupItems'+ index]= { validator: (rule, value, callback) => {
+            let thisItem= this.groupItems[index], flag= true
+            thisItem.items.map((ite)=>{
+              if(!ite.description) flag= false
+            })
+            if( flag && thisItem.tester){
+              callback()
+            }else{
+              callback(new Error('必填项不能为空'))
+            }
+          }}
+      })
+
+      return rules
     },
   },
   mounted(){
     this.getList()
     this.getItems()
+    this.getInsuranceComs()
   },
   methods:{
+    upImg(i1, i2){
+      upImg(this, (url)=>{
+        this.checkDetail.groupItems[i1].items[i2].url.push(url)
+      })
+    },
+    delImg(i1,i2,i3){
+      this.checkDetail.groupItems[i1].items[i2].url.splice(i3, 1)
+    },
     check(){
       this.axios.get('/insurance/quotation/'+ this.licenseNo,{baseURL: '/poxy-shqx', headers:{'Content-Type': 'application/json; charset=utf-8'}}).then(res => {
           // console.log('res', typeof res)
@@ -190,12 +238,14 @@ export default {
           // flag= true
         }
         if(flag){
-          this.showCheck= false
-          this.initCreat()
+          this.checkDetail= deepClone(initCheckDetail)
+            this.checkDetail.insuranceExpireDate= data.baseInfo.bizEffectDate
+            this.showCheck= false
+            this.initCreat()
         }
       })
-      this.showCheck= false
-      this.initCreat()
+      // this.showCheck= false
+      // this.initCreat()
     },
     getList(){
       this.loading= true
@@ -209,6 +259,14 @@ export default {
           this.total= res.total
           this.tableData= res.data
           this.loading= false
+        }
+      })
+    },
+    getInsuranceComs(){
+      this.axios.get('/common/method/getInsuranceList', {baseURL: '/poxy-shqx/'}).then( (res) => {
+        // console.log(res)
+        if(res.success){
+          this.insuranceComs= res.data
         }
       })
     },
@@ -231,6 +289,8 @@ export default {
       })
     },
     initCreat(){
+
+      this.checkDetail.plate= this.licenseNo
       this.checkDetail.groupItems= deepClone(this.checkItems)
       this.$refs.checkDetail.resetFields()
       this.showCreate= true
@@ -308,6 +368,7 @@ export default {
               font-size: 28px;
               color: #666666;
               cursor: pointer;
+              vertical-align: middle;
             }
             &:first-child{
               text-align: center;
@@ -329,6 +390,28 @@ export default {
           }
         }
       }
+      .img{
+        display: inline-block;
+        width: 30px;
+        height: 30px;
+        position: relative;
+        vertical-align: middle;
+        margin-right: 5px;
+        img{
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        i{
+          position: absolute;
+          top: -2px;
+          right: -2px;
+          color: #333333;
+          cursor: pointer;
+          background-color: white;
+          border-radius: 100%;
+        }
+      }
     }
   }
 }
@@ -339,8 +422,12 @@ export default {
     .ivu-form-item-content{
       line-height: 0;
       .check-items {
-        .ivu-form-item-error .ivu-input {
+        .ivu-input {
           border: 1px solid #dcdee2;
+          &:focus{
+            border-color: #46a6ff;
+            box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+          }
         }
       }
     }

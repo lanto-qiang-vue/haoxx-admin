@@ -2,7 +2,26 @@ import Axios from 'axios'
 import baseURL from '_conf/url'
 import { Message } from 'iview'
 import store from '@/store'
-import { getParams, setParams} from '@/libs/util.js'
+// import { getParams, setParams} from '@/libs/util.js'
+
+let getParams = url => {
+  let paramObj = {}, arr= url.split('?')
+  if(arr.length>1){
+    let keyValueArr = arr[1].split('&')
+    keyValueArr.forEach(item => {
+      const keyValue = item.split('=')
+      paramObj[keyValue[0]] = keyValue[1]
+    })
+  }
+  return paramObj
+}
+let setParams = obj => {
+  let arr=[]
+  for(let key in obj){
+    arr.push(`${key}=${obj[key]}`)
+  }
+  return `?${arr.join('&')}`
+}
 
 let axiosHxx= Axios.create({
   baseURL: baseURL,

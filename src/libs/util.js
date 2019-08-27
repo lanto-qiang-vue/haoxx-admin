@@ -1,6 +1,7 @@
 // import Cookies from 'js-cookie'
 // cookie保存的天数
 // import config from '@/config'
+// import axios from './axios.js'
 import { forEach, hasOneOf } from '@/libs/tools'
 export const TOKEN_KEY = 'ACCESSTOKEN'
 export const USERINFO_KEY = 'USERINFO'
@@ -518,6 +519,37 @@ export const deepClone = (data) => {
   return obj;
 }
 
+
+export const  base64ToBlob= (dataurl) => {
+  var arr = dataurl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+    bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+  return new Blob([u8arr], { type: mime });
+}
+
+export const imgUrlToBase64 = (url, callBack) => {
+  var image = new Image();
+
+  image.onload=function(){
+
+    // for( let key in image){
+    // console.log('key', key)
+    // }
+    // console.log('image.currentSrc', image.currentSrc)
+    var width = image.width;
+    var height = image.height;
+    _compress( url,
+      {width: width, height:height, quality: 0.6, type: ''} ,
+      image.name,
+      callBack
+    )
+  };
+  image.src= url;
+
+}
+
 /**
  * @param {thisfile} 图片文件
  * @param {callBack} 回调函数
@@ -679,11 +711,33 @@ export  const checkVin = (str)=>{
   }
 }
 
-
 export  const initVer=(v)=>{
   let hxxver = localStorage.getItem('hxxver'), ver= parseFloat(v|| 1);
   if(!hxxver || (hxxver && parseFloat(hxxver)!=ver)){
     localStorage.clear()
     localStorage.setItem('hxxver', ver)
   }
+}
+
+export const upImg= ({axios, $store}, callback) => {
+    let input = document.createElement("input");
+    input.setAttribute("type", 'file');
+    input.setAttribute("accept", "image/*");
+    input.onchange= ()=>{
+      let img= input.files[0]
+      // console.log('input.files[0]', input.files[0])
+      imgToBase64(img, (base64, name ) => {
+        let formdata = new FormData();
+        formdata.append('file' , base64ToBlob(base64), name);
+        // formdata.append('access_token' , $store.state.user.token);
+        axios.post('/tenant/upload/picture ', formdata,
+          {headers: {'Content-Type': 'multipart/form-data'}}
+        ).then( (res) => {
+          if(res.success && callback){
+            callback(res.data.path, base64)
+          }
+        })
+      })
+    }
+    input.click()
 }

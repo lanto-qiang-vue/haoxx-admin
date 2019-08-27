@@ -1,4 +1,4 @@
-import { getBreadCrumbList, setTagNavListInLocalstorage, getMenuByRouter, getTagNavListFromLocalstorage, getHomeRoute, setDict, getDict,getTenant,setTenant,setOutStatus,getOutStatus,setAccount,getAccount,setAdmin,getAdmin,setIsAuthorize,getIsAuthorize,setTenantId,getTenantId} from '@/libs/util'
+import { getBreadCrumbList, setTagNavListInLocalstorage, getMenuByRouter, getTagNavListFromLocalstorage, getHomeRoute, setDict, getDict,getTenant,setTenant,setOutStatus,getOutStatus,setAccount,setAdmin,getAdmin,setIsAuthorize,getIsAuthorize,setTenantId,getTenantId} from '@/libs/util'
 import routers from '@/router/routers'
 import axios from '@/libs/api.request'
 export default {
@@ -56,9 +56,6 @@ export default {
       state.account = info;
       setAccount(info)
     },
-    // getAccount(){
-    //   return 22;
-    // },
     setDict (state, info) {
       state.dict = info
       setDict(info)

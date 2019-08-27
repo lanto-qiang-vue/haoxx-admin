@@ -140,8 +140,8 @@
         })
       },
       look(){
-        let {name, type, useType}= this.detail
-        this.$router.push({path: '/discounts-record-detail', query:{ type, useType}})
+        let {name, type, useType, userid}= this.detail
+        this.$router.push({path: '/discounts-record-detail', query:{ type, useType, userid}})
       },
       changePageSize(size) {
         this.limit = size;

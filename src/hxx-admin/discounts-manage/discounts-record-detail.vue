@@ -92,6 +92,7 @@ let queryInit= {
   type: '',
   useType: '',
   isuse: '',
+  userid: '',
 }
   export default {
     name: "discounts-record-detail",
@@ -150,15 +151,15 @@ let queryInit= {
     computed:{
 
     },
-    watch: {
-      '$route'(){
+    // watch: {
+    //   '$route'(){
+    //     this.getQuery()
+    //     this.getList();
+    //   }
+    // },
+    activated(){
         this.getQuery()
         this.getList();
-      }
-    },
-    activated(){
-      this.getQuery()
-      this.getList();
     },
     mounted() {
       this.getQuery()
@@ -175,7 +176,8 @@ let queryInit= {
         let query= this.$route.query
         this.query= deepClone(queryInit)
         this.query.keyWord= query.name || ''
-        this.query.type= query.type || ''
+        this.query.type= query.type
+        this.query.userid= query.userid || ''
         this.query.useType= (query.useType|| '').toString()
       },
       findName(a,b){
