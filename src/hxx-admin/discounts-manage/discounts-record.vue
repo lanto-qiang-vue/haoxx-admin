@@ -141,7 +141,7 @@
       },
       look(){
         let {name, type, useType, userid}= this.detail
-        this.$router.push({path: '/discounts-record-detail', query:{ type, useType, userid}})
+        this.$router.push({path: '/discounts-record-detail', query:{ type, useType, userid, name}})
       },
       changePageSize(size) {
         this.limit = size;

@@ -317,6 +317,17 @@ export default [
         },
         component: () => import('@/hxx-store/car-inspection/car-inspection-list.vue')
       },
+      {
+        path: '/inspection-report-head',
+        name: 'inspection-report-head',
+        meta: {
+          icon: 'md-funnel',
+          title: '报告统计（总店）',
+          // lgType: "1002",
+          // access: '100101',
+        },
+        component: () => import('@/hxx-store/car-inspection/inspection-report-head.vue')
+      },
     ]
   },
   {

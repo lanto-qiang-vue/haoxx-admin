@@ -11,18 +11,14 @@
         <Input placeholder="车主/联系电话" v-model="query.keyWord" clearable></Input>
       </div>
       <div class="search-block">
-        <Select placeholder="请选择用途" clearable v-model="query.type">
-          <Option v-for="(item, index) in useList"
-                  :key="index" :value="item.id">{{item.name}}
-          </Option>
+        <Select placeholder="请选择状态" clearable v-model="query.reportStatus">
+          <Option :value="1">有效</Option>
+          <Option :value="0">无效</Option>
         </Select>
       </div>
       <div class="search-block">
-        <Select placeholder="请选择类型" clearable v-model="query.useType">
-          <Option v-for="(item, index) in typeList"
-                  :key="index" :value="item.code">{{item.name}}
-          </Option>
-        </Select>
+        <DatePicker type="daterange" format="yyyy-MM-dd" placeholder="创建日期" clearable
+                    style="width:100%;" @on-change="queryDateC"></DatePicker>
       </div>
       <ButtonGroup size="small">
         <Button type="primary" @click="page=1;getList()">
@@ -73,7 +69,7 @@
             <span>{{checkDetail.insuranceExpireDate}}</span>
           </FormItem>
           <FormItem label="保险公司:" prop="insuranceCompany">
-            <Select v-model="checkDetail.insuranceCompany" placeholder="请选择">
+            <Select v-model="checkDetail.insuranceCompany" placeholder="请选择" :disabled="disabledEdit">
               <Option v-for="(item, index) in insuranceComs"
                       :key="index" :value="item.name">{{item.name}}</Option>
             </Select>
@@ -88,14 +84,14 @@
             </RadioGroup>
           </FormItem>
           <FormItem label="姓名:" prop="vehicleOwner">
-            <Input v-model="checkDetail.vehicleOwner"/>
+            <Input v-model="checkDetail.vehicleOwner" :readonly="disabledEdit"/>
           </FormItem>
           <FormItem label="联系电话:" prop="telphone">
-            <Input v-model="checkDetail.telphone" :maxlength="11"/>
+            <Input v-model="checkDetail.telphone" :maxlength="11" :readonly="disabledEdit"/>
           </FormItem>
           <FormItem label="车检日期:" prop="inspectDate">
-            <DatePicker type="date" format="yyyy-MM-dd" placeholder="请选择" transfer
-                        @on-change="checkDetail.inspectDate= $event"
+            <DatePicker type="date" format="yyyy-MM-dd" placeholder="请选择" transfer :disabled="disabledEdit"
+                        @on-change="checkDetail.inspectDate= $event" :value="checkDetail.inspectDate"
             ></DatePicker>
           </FormItem>
 
@@ -117,14 +113,15 @@
                   <tr v-for="(item, index) in proj.items" :key="index">
                     <td>{{index+1}}</td>
                     <td>{{item.name}}</td>
-                    <td><Input v-model="item.description"/></td>
+                    <td><Input v-model="item.description" :readonly="disabledEdit"/></td>
                     <td>
                       <li v-for="(url, inde) in item.url" :key="inde" class="img">
-                        <img :src="url" v-img/><i class="fa fa-times-circle" @click="delImg(key, index, inde)"></i>
+                        <img :src="url" v-img/>
+                        <i class="fa fa-times-circle" @click="delImg(key, index, inde)" v-show="!disabledEdit"></i>
                       </li>
-                      <i class="fa fa-plus-square-o" @click="upImg(key, index)"></i>
+                      <i class="fa fa-plus-square-o" @click="upImg(key, index)" v-show="!disabledEdit"></i>
                     </td>
-                    <td><Input v-model="item.advise"/></td>
+                    <td><Input v-model="item.advise" :readonly="disabledEdit"/></td>
                     <td class="rowspan" rowspan="100" v-if="index==0"><Input v-model="proj.tester"/></td>
                   </tr>
                 </table>
@@ -135,8 +132,8 @@
         </Form>
       </div>
       <div slot="footer">
-        <Button type="primary" @click="submit('10571001')">保存</Button>
-        <Button type="success" @click="submit('10571002')">提交</Button>
+        <Button type="primary" @click="submit('10571001')" v-show="!disabledEdit">保存</Button>
+        <Button type="success" @click="submit('10571002')" v-show="!disabledEdit">提交</Button>
         <Button @click="showCreate= false">取消</Button>
       </div>
     </Modal>
@@ -165,7 +162,7 @@ export default {
     return{
       query:{
         keyWord: '',
-        reportStatus: null,
+        reportStatus: '',
         CREATE_DATE_gte: '',
         CREATE_DATE_lte: '',
       },
@@ -192,22 +189,31 @@ export default {
       return [
         {title: '序号', key: 'id', type:'index' , width: 70, align: 'center'},
         {title: '车主', key: 'vehicle_owner', minWidth: 100},
-        {title: '联系电话', key: 'telphone', minWidth: 100},
+        {title: '联系电话', key: 'telphone', minWidth: 110},
         {title: '车牌号', key: 'plate', minWidth: 100},
         // {title: '车型', key: 'id', minWidth: 200},
-        {title: '车检日期', key: 'inspect_date', minWidth: 100},
+        {title: '车检日期', key: 'inspect_date', minWidth: 160},
         {title: '保险公司', key: 'insurance_company', minWidth: 200},
-        {title: '保险到期时间', key: 'id', minWidth: 200},
-        {title: '信息状态', key: 'id', minWidth: 200},
-        {title: '车检单号', key: 'id', minWidth: 200},
-        {title: '操作', key: 'id', minWidth: 100, align: 'center', render:(h,params) => {
+        {title: '保险到期时间', key: 'insurance_expire_date', minWidth: 200},
+        {title: '信息状态', key: 'report_status', width: 80,render:(h,params) => {
+            return h('div',  params.row.report_status? '有效': '无效');
+          }},
+        {title: '车检单号', key: 'report_no', minWidth: 200},
+        {title: '创建时间', key: 'create_date', minWidth: 200},
+        {title: '操作', key: 'id', width: 70, align: 'center', fixed: 'right', render:(h,params) => {
+          let isSave= params.row.status== '10571001'
             return h('i',{
-              // class: 'fa fa-pencil'
-              class: 'fa fa-search',
+              class: isSave?'fa fa-pencil' :'fa fa-search',
               style: {
                 // color: 'red',
                 fontSize: '16px',
                 cursor: 'pointer',
+              },
+              on: {
+                click:()=>{
+                  console.log('click')
+                  this.open(params.row.id)
+                }
               },
             })
           }
@@ -241,6 +247,9 @@ export default {
 
       return rules
     },
+    disabledEdit(){
+      return this.checkDetail.status!='10571001'
+    }
   },
   mounted(){
     this.getList()
@@ -248,6 +257,10 @@ export default {
     this.getInsuranceComs()
   },
   methods:{
+    queryDateC(val){
+      this.query.CREATE_DATE_gte= val[0]
+      this.query.CREATE_DATE_lte= val[1]
+    },
     upImg(i1, i2){
       upImg(this, (url)=>{
         this.checkDetail.groupItems[i1].items[i2].url.push(url)
@@ -279,12 +292,12 @@ export default {
             if(res.success && res.data){
               this.initCreat({insuranceExpireDate: expire})
             }else{
-              this.$Message.error("此车牌不用检测");
+              this.$Message.error("该车近期做过检测");
             }
             this.showCheck= false
           })
         }else{
-          this.$Message.error("此车牌不用检测");
+          this.$Message.error("未买保险或保险到期>2个月，不可检测");
           this.showCheck= false
         }
       })
@@ -293,6 +306,7 @@ export default {
       this.loading= true
       this.detail= {}
       this.axios.post('/tenant/check/list', {
+          ...this.query,
           limit:this.limit,
           page:this.page,
       }).then( (res) => {
@@ -344,6 +358,27 @@ export default {
 
       this.showCreate= true
     },
+    open(id){
+      this.$Spin.show();
+      this.axios.get('/tenant/check/query?id='+ id).then( (res) => {
+        if(res.success){
+          this.checkDetail= {
+            id: res.data.id,
+            status: res.data.status,
+            plate: res.data.plate,
+            insuranceExpireDate: res.data.insurance_expire_date,
+            insuranceCompany: res.data.insurance_company,
+            carDriver: res.data.car_driver,
+            vehicleOwner: res.data.vehicle_owner,
+            telphone: res.data.telphone,
+            inspectDate: res.data.inspect_date,
+            groupItems: JSON.parse(res.data.group_items),
+          }
+          this.$Spin.hide()
+          this.showCreate= true
+        }
+      })
+    },
     submit(status){
       this.$refs.checkDetail.validate(validator=>{
         if(validator){
@@ -360,11 +395,7 @@ export default {
       })
     },
     onRowClick(item) {
-      item.items.map((o)=>{
-        o.num= null;
-        o.id= o.goodsId;
-      })
-      this.detail = item;
+
     },
     closeDetail(){
 

@@ -178,6 +178,7 @@ let queryInit= {
         this.query.keyWord= query.name || ''
         this.query.type= query.type
         this.query.userid= query.userid || ''
+        this.query.name= query.name || ''
         this.query.useType= (query.useType|| '').toString()
       },
       findName(a,b){
