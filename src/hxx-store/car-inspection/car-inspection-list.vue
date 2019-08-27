@@ -3,6 +3,34 @@
                 :total="total" :page="page" @onRowClick="onRowClick" :ellipsis="false"
                 ref="table" :loading="loading"
                 class="car-inspection-list">
+    <div slot="search">
+      <!--<div class="search-block">-->
+      <!--<Input placeholder="会员账号/门店名称/兑换码" v-model="query.keyWord" clearable></Input>-->
+      <!--</div>-->
+      <div class="search-block">
+        <Input placeholder="车主/联系电话" v-model="query.keyWord" clearable></Input>
+      </div>
+      <div class="search-block">
+        <Select placeholder="请选择用途" clearable v-model="query.type">
+          <Option v-for="(item, index) in useList"
+                  :key="index" :value="item.id">{{item.name}}
+          </Option>
+        </Select>
+      </div>
+      <div class="search-block">
+        <Select placeholder="请选择类型" clearable v-model="query.useType">
+          <Option v-for="(item, index) in typeList"
+                  :key="index" :value="item.code">{{item.name}}
+          </Option>
+        </Select>
+      </div>
+      <ButtonGroup size="small">
+        <Button type="primary" @click="page=1;getList()">
+          <Icon type="ios-search" size="24"/>
+        </Button>
+      </ButtonGroup>
+    </div>
+
     <div slot="operate">
       <Button type="primary" @click="showCheck= true">新增</Button>
     </div>
@@ -71,8 +99,8 @@
             ></DatePicker>
           </FormItem>
 
-          <template v-if="checkDetail.data">
-            <FormItem :label-width="0" v-for="(proj, key) in checkDetail.data" :key="key"
+          <template v-if="checkDetail.groupItems">
+            <FormItem :label-width="0" v-for="(proj, key) in checkDetail.groupItems" :key="key"
                       style="width: 100%;margin-bottom: 25px" class="group-items" :prop="'groupItems'+key">
             <div class="check-items ivu-input" >
               <p>{{proj.typeName}}</p>
@@ -127,7 +155,7 @@ let initCheckDetail={
   vehicleOwner: '',
   telphone: '',
   inspectDate: '',
-  data: [],
+  groupItems: [],
 
 }
 export default {
@@ -135,6 +163,12 @@ export default {
   components: {commonTable, ModalTitle,},
   data() {
     return{
+      query:{
+        keyWord: '',
+        reportStatus: null,
+        CREATE_DATE_gte: '',
+        CREATE_DATE_lte: '',
+      },
       detail: {},
       // columns: [],
       tableData: [
@@ -157,12 +191,12 @@ export default {
     columns(){
       return [
         {title: '序号', key: 'id', type:'index' , width: 70, align: 'center'},
-        {title: '车主', key: 'id', minWidth: 100},
-        {title: '联系电话', key: 'id', minWidth: 100},
-        {title: '车牌号', key: 'id', minWidth: 100},
-        {title: '车型', key: 'id', minWidth: 200},
-        {title: '车检日期', key: 'id', minWidth: 100},
-        {title: '保险公司', key: 'id', minWidth: 200},
+        {title: '车主', key: 'vehicle_owner', minWidth: 100},
+        {title: '联系电话', key: 'telphone', minWidth: 100},
+        {title: '车牌号', key: 'plate', minWidth: 100},
+        // {title: '车型', key: 'id', minWidth: 200},
+        {title: '车检日期', key: 'inspect_date', minWidth: 100},
+        {title: '保险公司', key: 'insurance_company', minWidth: 200},
         {title: '保险到期时间', key: 'id', minWidth: 200},
         {title: '信息状态', key: 'id', minWidth: 200},
         {title: '车检单号', key: 'id', minWidth: 200},
@@ -181,7 +215,7 @@ export default {
       ]
     },
     groupItems(){
-      return this.checkDetail.data
+      return this.checkDetail.groupItems
     },
     checkRule(){
       let rule= { required: true, message:'必填项不能为空'}
@@ -216,11 +250,11 @@ export default {
   methods:{
     upImg(i1, i2){
       upImg(this, (url)=>{
-        this.checkDetail.data[i1].items[i2].url.push(url)
+        this.checkDetail.groupItems[i1].items[i2].url.push(url)
       })
     },
     delImg(i1,i2,i3){
-      this.checkDetail.data[i1].items[i2].url.splice(i3, 1)
+      this.checkDetail.groupItems[i1].items[i2].url.splice(i3, 1)
     },
     check(){
       this.axios.get('/insurance/quotation/'+ this.licenseNo,{baseURL: '/poxy-shqx', headers:{'Content-Type': 'application/json; charset=utf-8'}}).then(res => {
@@ -298,7 +332,7 @@ export default {
     },
     initCreat(obj){
       // this.checkDetail= deepClone(initCheckDetail)
-      this.checkDetail.data= deepClone(this.checkItems)
+      this.checkDetail.groupItems= deepClone(this.checkItems)
       setTimeout(()=>{
         this.$refs.checkDetail.resetFields()
         this.checkDetail.plate= this.licenseNo
@@ -314,8 +348,11 @@ export default {
       this.$refs.checkDetail.validate(validator=>{
         if(validator){
           this.checkDetail.status= status
-          this.axios.post('/tenant/check/saveReport', this.checkDetail).then( (res) => {
-
+          this.axios.post('/tenant/check/saveReport', {data: this.checkDetail}).then( (res) => {
+            if(res.success && res.data){
+              this.showCreate= false
+              this.getList()
+            }
           })
         }else{
           this.$Message.error("请输入必填项");
