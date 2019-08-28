@@ -214,7 +214,7 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                 for(let key in this.listSearch){
                     switch (key){
                         case 'MILEAGE':
-                        case 'OTHER_MONEY':
+                        // case 'OTHER_MONEY':
                         case 'REPAIR_ITEM_MONEY':
                         case 'REPAIR_PART_MONEY':
                         case 'REPAIR_ITEM_DERATE_MONEY':
@@ -273,7 +273,7 @@ import selectShoukuanOrder from '@/hxx-components/select-shoukuanOrder.vue'
                 for(let i in this.shoukuanSearch){
                     switch(i){
                         case 'LESS_MONEY':
-                            this.shoukuanSearch[i]=this.listSearch['REPAIR_ITEM_DERATE_MONEY']+this.listSearch['REPAIR_PART_DERATE_MONEY'];
+                            this.shoukuanSearch[i]=(this.listSearch['REPAIR_ITEM_DERATE_MONEY']||0)+(this.listSearch['REPAIR_PART_DERATE_MONEY']||0);
                         break;
                         case 'OUT_DATE':
                             this.shoukuanSearch[i]=new Date();

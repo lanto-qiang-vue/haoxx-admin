@@ -1669,8 +1669,10 @@
       },
       plate(){
         return this.listSearch.PLATE_NUM
-      }
+      },
+      canAccount(){
 
+      }
     },
     methods: {
       //得到机修班组数据
