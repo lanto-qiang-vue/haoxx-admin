@@ -94,7 +94,7 @@
       :scrollable="true"
       :transfer="false"
       :transition-names="['', '']">
-      <modal-title slot="header" title="优惠券发放" @clickBack="showGive=false"></modal-title>
+      <modal-title slot="header" title="优惠券发放" @clickBack="closeGive"></modal-title>
       <Form :label-width="120" ref="give" :model="give" :rules="giveRule" style="padding: 10px">
         <FormItem label="优惠券:">
           <span>{{detail.name}}</span>
@@ -146,7 +146,7 @@
         </FormItem>
       </Form>
       <div slot="footer">
-        <Button @click="showGive=false">取消</Button>
+        <Button @click="closeGive">取消</Button>
         <Button type="primary" @click="toGive">发放</Button>
       </div>
     </Modal>
@@ -440,7 +440,7 @@ export default {
         })
       },
       clickGive(){
-        this.give= deepClone(giveInit),
+        this.$refs.give.resetFields()
         this.showGive= true
         this.axios.get('/manage/excel/getBatchId').then( (res) => {
           // console.log(res)
@@ -453,6 +453,13 @@ export default {
       closeDetail(){
         this.$refs.detail.resetFields()
         this.showModal= false
+      },
+      closeGive(){
+        this.give= deepClone(giveInit)
+        for(let key in this.giveOthers){
+          this.giveOthers[key]= 0
+        }
+        this.showGive=false
       },
       changeGiveValidDate(val){
         // console.log('changeGiveValidDate', val)
@@ -600,7 +607,7 @@ export default {
               if(res.success){
                 this.$Message.success("发放成功");
                 this.getList()
-                this.showGive= false
+                this.closeGive()
               }
             })
           }
