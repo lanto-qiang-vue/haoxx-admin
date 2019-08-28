@@ -27,7 +27,7 @@
     <div slot="operate">
       <Button type="success" v-if="accessBtn('add')" @click="detailData=null,showDetail=Math.random()">新增</Button>
 
-      <Button type="error" v-if="accessBtn('ban')"  @click="deleteDetailData" :disabled="isOrderSuccess">作废</Button>
+      <Button type="error" v-if="accessBtn('ban')"  @click="deleteDetailData" :disabled="isOrderSuccess">取消</Button>
       <Button type="info" v-if="accessBtn('edit')" @click="showDetail=Math.random()" :disabled="!detailData">编辑/查看</Button>
       <Button type="info" v-if="true" @click="toReceive"
               :disabled="receiveDesabled">车生活接单</Button>
@@ -211,14 +211,14 @@
       closeGetList(){
         this.getList();
       },
-      //作废按钮---------
+      //取消按钮---------
       deleteDetailData(){
           if(this.detailData == null){
             this.$Message.info("未选择到数据!");
           }else{
               this.$Modal.confirm({
                   title:"系统提示!",
-                  content:"确定要作废吗？",
+                  content:"确定要取消吗？",
                   onOk:this.del,
 
               })
@@ -234,7 +234,7 @@
             }
           }).then(res => {
             if (res.success === true) {
-              this.$Message.info("数据作废成功!");
+              this.$Message.info("数据取消成功!");
               this.detailData=null;
               this.getList();
             }

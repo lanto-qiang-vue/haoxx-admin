@@ -3,7 +3,7 @@
                 :total="total" :page="page" @onRowClick="onRowClick" :ellipsis="false"
                 ref="table" :loading="loading"
                 class="car-inspection-list">
-    <div slot="search">
+    <div slot="search" v-if="isPage">
       <!--<div class="search-block">-->
       <!--<Input placeholder="会员账号/门店名称/兑换码" v-model="query.keyWord" clearable></Input>-->
       <!--</div>-->
@@ -27,7 +27,7 @@
       </ButtonGroup>
     </div>
 
-    <div slot="operate">
+    <div slot="operate" v-if="isPage">
       <Button type="primary" @click="showCheck= true">新增</Button>
     </div>
 
@@ -52,15 +52,16 @@
 
     <Modal
       v-model="showCreate"
-      class="table-modal-detail full-height discounts-modal"
-      width="100"
+      :class="{'full-height': isPage, 'table-modal-detail': true}"
+      :width="isPage? 100: 90"
       heigh="100"
       :mask-closable="false"
       :scrollable="true"
-      :transfer="false"
+      :transfer="isPage? false: true"
+      title="车辆检查"
       :transition-names="['', '']">
-      <modal-title slot="header" title="车辆检查" @clickBack="closeDetail"></modal-title>
-      <div>
+      <modal-title slot="header" v-if="isPage" title="车辆检查" @clickBack="closeDetail"></modal-title>
+      <div class="car-inspection-list-form">
         <Form :label-width="90" :model="checkDetail" ref="checkDetail" :rules="checkRule" class="common-form">
           <FormItem label="车牌:" prop="plate">
             <span>{{checkDetail.plate}}</span>
@@ -158,6 +159,14 @@ let initCheckDetail={
 export default {
   name: "car-inspection-list",
   components: {commonTable, ModalTitle},
+  props: {
+    tenantId: {
+      default: null
+    },
+    isPage: {
+      default: true
+    },
+  },
   data() {
     return{
       query:{
@@ -201,9 +210,9 @@ export default {
         {title: '车检单号', key: 'report_no', minWidth: 200},
         {title: '创建时间', key: 'create_date', minWidth: 200},
         {title: '操作', key: 'id', width: 70, align: 'center', fixed: 'right', render:(h,params) => {
-          let isSave= params.row.status== '10571001'
+          // let isSave= params.row.status== '10571001'
             return h('i',{
-              class: isSave?'fa fa-pencil' :'fa fa-search',
+              class: this.disabledEdit? 'fa fa-search': 'fa fa-pencil',
               style: {
                 // color: 'red',
                 fontSize: '16px',
@@ -211,7 +220,7 @@ export default {
               },
               on: {
                 click:()=>{
-                  console.log('click')
+                  // console.log('click')
                   this.open(params.row.id)
                 }
               },
@@ -248,12 +257,14 @@ export default {
       return rules
     },
     disabledEdit(){
-      return this.checkDetail.status!='10571001'
-    }
+      return this.checkDetail.status!='10571001' || !this.isPage
+    },
   },
   mounted(){
-    this.getList()
-    this.getItems()
+    if(this.isPage){
+      this.getList()
+      this.getItems()
+    }
     this.getInsuranceComs()
   },
   methods:{
@@ -302,21 +313,41 @@ export default {
         }
       })
     },
-    getList(){
+    getList( page1){
+      if(page1){
+        this.page= 1
+      }
       this.loading= true
       this.detail= {}
-      this.axios.post('/tenant/check/list', {
+      if(this.isPage){
+        this.axios.post('/tenant/check/list', {
           ...this.query,
           limit:this.limit,
           page:this.page,
-      }).then( (res) => {
-        console.log(res)
-        if(res.success){
-          this.total= res.total
-          this.tableData= res.data
-          this.loading= false
-        }
-      })
+        }).then( (res) => {
+          // console.log(res)
+          if(res.success){
+            this.total= res.total
+            this.tableData= res.data
+            this.loading= false
+          }
+        })
+      }else{
+        this.axios.get('/manage/count/detailist', { params:{
+            tenantId: this.tenantId,
+            limit:this.limit,
+            page:this.page,
+          }}).then( (res) => {
+          // console.log(res)
+          if(res.success){
+            this.total= res.total
+            this.tableData= res.data
+            this.loading= false
+          }
+        })
+
+      }
+
     },
     getInsuranceComs(){
       this.axios.get('/common/method/getInsuranceList', {baseURL: '/poxy-shqx/'}).then( (res) => {
@@ -360,7 +391,8 @@ export default {
     },
     open(id){
       this.$Spin.show();
-      this.axios.get('/tenant/check/query?id='+ id).then( (res) => {
+      let url=  this.isPage? '/tenant/check/query': '/manage/count/getReport'
+      this.axios.get(`${url}?id=${id}`).then( (res) => {
         if(res.success){
           this.checkDetail= {
             id: res.data.id,
@@ -374,9 +406,9 @@ export default {
             inspectDate: res.data.inspect_date,
             groupItems: JSON.parse(res.data.group_items),
           }
-          this.$Spin.hide()
           this.showCreate= true
         }
+        this.$Spin.hide()
       })
     },
     submit(status){
@@ -415,7 +447,7 @@ export default {
 </script>
 
 <style scoped lang="less">
-.car-inspection-list{
+.car-inspection-list-form{
   .check-items{
     /*border: 1px solid #dcdee2;*/
     /*margin-bottom: 20px;*/
@@ -512,7 +544,7 @@ export default {
 }
 </style>
 <style lang="less">
-.car-inspection-list{
+.car-inspection-list-form{
   .group-items{
     .ivu-form-item-content{
       line-height: 0;

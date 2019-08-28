@@ -16,16 +16,39 @@
       </Button>
     </ButtonGroup>
   </div>
+  <div slot="operate">
+    <Button type="primary" @click="openTenant" :disabled="!detail.tenantid">查看</Button>
+  </div>
+
+  <Modal
+    v-model="tenantShow"
+    class="table-modal-detail full-height"
+    width="100"
+    heigh="100"
+    :mask-closable="false"
+    :scrollable="true"
+    :footer-hide="false"
+    :transfer="false"
+    :transition-names="['', '']">
+    <modal-title slot="header" :title="`检查列表(${detail.tenantname})`" @clickBack="closeDetail"></modal-title>
+    <car-inspection-list :tenantId="detail.tenantid" :isPage="false"
+                         ref="carInspectionList"></car-inspection-list>
+    <div slot="footer">
+      <Button @click="closeDetail">取消</Button>
+    </div>
+  </Modal>
+
 </common-table>
 </template>
 
 <script>
   import commonTable from '@/hxx-components/common-table.vue'
   import ModalTitle from '@/hxx-components/modal-title.vue'
+  import CarInspectionList from '@/hxx-store/car-inspection/car-inspection-list.vue'
   import {deepClone, upImg} from "@/libs/util"
 export default {
   name: "inspection-report-head",
-  components: {commonTable, ModalTitle},
+  components: {commonTable, ModalTitle, CarInspectionList},
   data() {
     return{
       query:{
@@ -40,14 +63,32 @@ export default {
         {title: '报告数量', key: 'count', minWidth: 100},
         {title: '真实数量', key: 'realnum', minWidth: 100},
         {title: '真实率', key: 'truthrate', minWidth: 100, render:(h,params) => {
-            return h('div',  params.row.truthrate*100 +'%');
+            return h('div',  (params.row.truthrate || 0)*100 +'%');
           }},
+        // {title: '操作', key: 'id', width: 70, align: 'center', fixed: 'right', render:(h,params) => {
+        //     return h('i',{
+        //       class: 'fa fa-search',
+        //       style: {
+        //         // color: 'red',
+        //         fontSize: '16px',
+        //         cursor: 'pointer',
+        //       },
+        //       on: {
+        //         click:()=>{
+        //           console.log('click')
+        //           this.open(params.row.id)
+        //         }
+        //       },
+        //     })
+        //   }
+        // },
       ],
       tableData: [],
       total: 0,
-      loading: true,
       page: 1,
       limit: 25,
+      loading: true,
+      tenantShow: false,
     }
   },
   mounted(){
@@ -71,12 +112,17 @@ export default {
         }
       })
     },
+    openTenant(){
+      this.tenantShow= true
+      this.$refs.carInspectionList.getList(true)
+    },
     onRowClick(item) {
-
+      this.detail= item
     },
     closeDetail(){
-
-      this.showCreate= false
+      this.detail={}
+      this.$refs.table.clearCurrentRow()
+      this.tenantShow= false
     },
     changePageSize(size) {
       this.limit = size;

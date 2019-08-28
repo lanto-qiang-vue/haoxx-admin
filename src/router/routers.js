@@ -301,8 +301,8 @@ export default [
     meta: {
       icon: 'logo-buffer',
       title: '车辆检查',
-      // lgType: "1002",
-      // access: '1001',
+      lgType: "1002111",
+      access: '1001111',
     },
     component: Main,
     children:[
@@ -327,6 +327,17 @@ export default [
           // access: '100101',
         },
         component: () => import('@/hxx-store/car-inspection/inspection-report-head.vue')
+      },
+      {
+        path: '/inspection-report-statistics',
+        name: 'inspection-report-statistics',
+        meta: {
+          icon: 'md-funnel',
+          title: '报告统计（保险公司）',
+          // lgType: "1002",
+          // access: '100101',
+        },
+        component: () => import('@/hxx-store/car-inspection/inspection-report-statistics.vue')
       },
     ]
   },
