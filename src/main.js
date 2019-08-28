@@ -28,7 +28,7 @@ import fly  from '@/libs/fly'
 import fxios from '@/libs/fxios'
 import VueImg from 'v-img'
 
-initVer(1)
+initVer(2)
 
 Vue.use(VueImg);
 Vue.use(iView, {

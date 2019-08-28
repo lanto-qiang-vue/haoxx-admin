@@ -27,7 +27,7 @@
     <div slot="operate">
       <Button type="success" v-if="accessBtn('add')" @click="detailData=null,showDetail=Math.random()">新增</Button>
 
-      <Button type="error" v-if="accessBtn('ban')"  @click="deleteDetailData" :disabled="isOrderSuccess">取消</Button>
+      <Button type="error" v-if="accessBtn('ban')"  @click="deleteDetailData" :disabled="disableBan">取消</Button>
       <Button type="info" v-if="accessBtn('edit')" @click="showDetail=Math.random()" :disabled="!detailData">编辑/查看</Button>
       <Button type="info" v-if="true" @click="toReceive"
               :disabled="receiveDesabled">车生活接单</Button>
@@ -104,6 +104,18 @@
     computed:{
       receiveDesabled(){
         return !this.detailData|| this.detailData.ORDER_TYPE!='10411003' || this.detailData.STATUS!='10421002'
+      },
+      disableBan(){
+        let disable= true
+        if(this.detailData && this.detailData.STATUS)
+        switch (this.detailData.STATUS){
+          case '10421001':
+          case '10421002':{
+            disable= false
+            break
+          }
+        }
+        return disable
       }
     },
     activated(){
