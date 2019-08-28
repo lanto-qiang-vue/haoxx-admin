@@ -3,7 +3,7 @@
   <div class="pie">
     <div id="pie"></div>
     <div class="sum">
-      <span>1000</span>
+      <span>{{allNum}}</span>
       <p>报告总数量</p>
     </div>
   </div>
@@ -11,33 +11,59 @@
   <common-table v-model="tableData" :columns="columns" @changePageSize="changePageSize" @changePage="changePage"
                 :total="total" :page="page" :ellipsis="false"
                 ref="table" :loading="loading" class="table"></common-table>
+  <car-inspection-list :isPage="false" ref="carInspectionList" v-show="false"></car-inspection-list>
 </div>
 </template>
 
 <script>
 import commonTable from '@/hxx-components/common-table.vue'
+import CarInspectionList from '@/hxx-store/car-inspection/car-inspection-list.vue'
 import echarts from 'echarts'
 export default {
   name: "inspection-report-statistics",
-  components: {commonTable},
+  components: {commonTable, CarInspectionList},
   data(){
     return{
       EApp:null,
       columns: [
-
+        {title: '序号', key: 'id', type:'index' , width: 70, align: 'center'},
+        {title: '车主', key: 'vehicle_owner', minWidth: 90},
+        {title: '联系电话', key: 'telphone', minWidth: 110},
+        // {title: '车牌号', key: 'vehicle_owner', minWidth: 100},
+        {title: '车检日期', key: 'inspect_date', minWidth: 200},
+        {title: '保险到期时间', key: 'insurance_expire_date', minWidth: 200},
+        {title: '查看报告', key: 'id', width: 90, align: 'center', fixed: 'right', render:(h,params) => {
+            return h('i',{
+              class: 'fa fa-search',
+              style: {
+                fontSize: '16px',
+                cursor: 'pointer',
+              },
+              on: {
+                click:()=>{
+                  // console.log('click')
+                  this.open(params.row.id)
+                }
+              },
+            })
+          }
+        },
       ],
       tableData: [],
       total: 0,
       loading: true,
       page: 1,
       limit: 25,
+      allNum: 0
     }
   },
   mounted(){
-    this.getList()
+    this.getList((obj)=>{
+      this.setChart(obj)
+    })
   },
   methods:{
-    getList(){
+    getList( callback){
       this.loading= true
       this.axios.post('/manage/count/all', {
         limit:this.limit,
@@ -46,52 +72,18 @@ export default {
         // console.log(res)
         if(res.success){
           this.total= res.total
-          this.tableData= res.data
+          this.tableData= res.data.items
           this.loading= false
-          this.setChart()
+          if(callback){
+            callback(res.data.count[0])
+          }
         }
       })
     },
-    setChart(){
+    setChart({num, realnum, truthrate}){
       this.EApp = echarts.init(document.getElementById('pie'));
-      let option1 = {
-        // title : {
-        //   text: '某站点用户访问来源',
-        //   subtext: '纯属虚构',
-        //   x:'center'
-        // },
-        tooltip : {
-          trigger: 'item',
-          formatter: "{a} <br/>{b} : {c} ({d}%)"
-        },
-        // legend: {
-        //   orient: 'vertical',
-        //   left: 'left',
-        //   data: ['直接访问','邮件营销','联盟广告','视频广告','搜索引擎']
-        // },
-        series : [
-          {
-            name: '访问来源',
-            type: 'pie',
-            radius : '55%',
-            center: ['50%', '60%'],
-            data:[
-              {value:335, name:'真实数量700\n真实率70%'},
-              {value:310, name:'邮件营销'},
-              {value:234, name:'联盟广告'},
-              {value:135, name:'视频广告'},
-              {value:1548, name:'搜索引擎'}
-            ],
-            // itemStyle: {
-            //   emphasis: {
-            //     shadowBlur: 10,
-            //     shadowOffsetX: 0,
-            //     shadowColor: 'rgba(0, 0, 0, 0.5)'
-            //   }
-            // }
-          }
-        ]
-      };
+      this.allNum= num
+      let fake= parseInt(num)- parseInt(realnum)
       let option = {
         title: {
           text:'车辆检查报告统计',
@@ -101,16 +93,6 @@ export default {
           trigger: 'item',
           formatter: "{a} <br/>{b}: {c} ({d}%)"
         },
-        // legend: {
-        //   orient: 'vertical',
-        //   // x: 'left',
-        //   bottom: 0,
-        //   data:['真实数量','虚假数量']
-        // },
-        // markLine:{
-        //   label: 'markLine',
-        //   show: true
-        // },
         color:['#5C8FEF','#E2EBFC'],
         series: [{
           name:'车辆检查报告统计',
@@ -141,8 +123,8 @@ export default {
           //   }
           // },
           data:[
-            {value:4380, name: '真实数量'},
-            {value:1620, name: '虚假数量'},
+            {value: realnum, name: '真实数量'},
+            {value: fake, name: '虚假数量'},
           ],
           // itemStyle: {
           //   emphasis: {
@@ -154,6 +136,9 @@ export default {
         }]
       };
       this.EApp.setOption(option);
+    },
+    open(id){
+      this.$refs.carInspectionList.open(id)
     },
     changePageSize(size) {
       this.limit = size;

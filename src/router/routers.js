@@ -296,13 +296,13 @@ export default [
   //   ]
   // },
   {
-    path: '/car-inspection',
-    name: 'car-inspection',
+    path: '/car-inspection1',
+    name: 'car-inspection1',
     meta: {
       icon: 'logo-buffer',
       title: '车辆检查',
-      lgType: "1002111",
-      access: '1001111',
+      lgType: "1002",
+      access: '1011',
     },
     component: Main,
     children:[
@@ -312,19 +312,32 @@ export default [
         meta: {
           icon: 'md-funnel',
           title: '车辆检查',
-          // lgType: "1002",
-          // access: '100101',
+          lgType: "1002",
+          access: '101101',
         },
         component: () => import('@/hxx-store/car-inspection/car-inspection-list.vue')
-      },
+      }
+    ]
+  },
+  {
+    path: '/car-inspection2',
+    name: 'car-inspection2',
+    meta: {
+      icon: 'logo-buffer',
+      title: '车辆检查',
+      lgType: "1001",
+      access: '1012',
+    },
+    component: Main,
+    children:[
       {
         path: '/inspection-report-head',
         name: 'inspection-report-head',
         meta: {
           icon: 'md-funnel',
           title: '报告统计（总店）',
-          // lgType: "1002",
-          // access: '100101',
+          lgType: "1001",
+          access: '101201',
         },
         component: () => import('@/hxx-store/car-inspection/inspection-report-head.vue')
       },
@@ -334,8 +347,8 @@ export default [
         meta: {
           icon: 'md-funnel',
           title: '报告统计（保险公司）',
-          // lgType: "1002",
-          // access: '100101',
+          lgType: "1001",
+          access: '101201',
         },
         component: () => import('@/hxx-store/car-inspection/inspection-report-statistics.vue')
       },

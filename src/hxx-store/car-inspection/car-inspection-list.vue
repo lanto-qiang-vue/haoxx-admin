@@ -363,9 +363,9 @@ export default {
 
           let data= res.data
           data.map((proj)=>{
-            proj.tester= 'ma'
+            proj.tester= ''
             proj.items.map((item, ind)=>{
-              item.description= item.name.indexOf('：')>=0? item.name.split('：')[1]: ind+1
+              item.description= item.name.indexOf('：')>=0? item.name.split('：')[1]: ''
               item.advise= ''
               item.url= []
             })
