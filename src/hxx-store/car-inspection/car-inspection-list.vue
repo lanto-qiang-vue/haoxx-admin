@@ -41,7 +41,7 @@
       :transition-names="['', '']">
       <div>
         <p style="text-align: center;margin-bottom: 10px;color: #999;font-size: 12px">车辆保险到期时间≤2个月才可进行免费车检</p>
-        <Input type="text" v-model="licenseNo" placeholder="车牌号"></Input>
+        <Input type="text" v-model="vehicle" placeholder="车牌号" :maxlength="8"></Input>
       </div>
 
       <div slot="footer">
@@ -144,7 +144,7 @@
 <script>
 import commonTable from '@/hxx-components/common-table.vue'
 import ModalTitle from '@/hxx-components/modal-title.vue'
-import {deepClone, upImg} from "@/libs/util"
+import {deepClone, upImg, reg} from "@/libs/util"
 let initCheckDetail={
   plate: '',
   insuranceExpireDate: '',
@@ -186,7 +186,7 @@ export default {
       loading: true,
       page: 1,
       limit: 25,
-      licenseNo: '沪B5J763',
+      licenseNo: '',
       checkDetail: deepClone(initCheckDetail),
       checkItems: [],
       insuranceComs: [],
@@ -228,6 +228,14 @@ export default {
           }
         },
       ]
+    },
+    vehicle:{
+      get(){
+        return this.licenseNo;
+      },
+      set(val){
+        this.licenseNo = val.toUpperCase();
+      }
     },
     groupItems(){
       return this.checkDetail.groupItems
@@ -281,6 +289,10 @@ export default {
       this.checkDetail.groupItems[i1].items[i2].url.splice(i3, 1)
     },
     check(){
+      if(!reg.vehicle.test(value)){
+        this.$Message.error("请输入正确车牌");
+        return
+      }
       this.axios.get('/insurance/quotation/'+ this.licenseNo,{baseURL: '/poxy-shqx', headers:{'Content-Type': 'application/json; charset=utf-8'}}).then(res => {
           // console.log('res', typeof res)
           let re= typeof res=='string'? eval('('+res+')') : res
