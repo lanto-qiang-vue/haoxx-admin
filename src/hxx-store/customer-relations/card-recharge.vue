@@ -683,13 +683,13 @@
           '<td>储值卡产品</td>' +
           '<td>' + this.list.CARD_NAME + '</td>' +
           '<td>售价</td>' +
-          '<td><div align="right">' + this.list.SALES_MONEY.toFixed(2) + '</div></td>' +
+          '<td><div align="right">' + (this.list.SALES_MONEY ||0).toFixed(2) + '</div></td>' +
           '</tr>' +
           '<tr>' +
           '<td>赠送价值</td>' +
-          '<td><div align="right">' + this.list.DERATE_MONEY.toFixed(2) + '</div></td>' +
+          '<td><div align="right">' + (this.list.DERATE_MONEY || 0).toFixed(2) + '</div></td>' +
           '<td>总价值</td>' +
-          '<td><div align="right">' + this.list.SUM_MONEY.toFixed(2) + '</div></td>' +
+          '<td><div align="right">' + (this.list.SUM_MONEY || 0).toFixed(2) + '</div></td>' +
           '</tr>' +
           '<tr>' +
           '<td>办理人</td>' +

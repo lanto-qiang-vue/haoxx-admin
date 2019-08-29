@@ -123,7 +123,7 @@
       :transition-names="['', '']">
       <Form :model="payData" ref="payData" :rules="payRule" :label-width="120" class="common-form">
         <FormItem label="合计金额:" style="width:40%;">
-          <div><span style="padding-left:50px;color:red;font-size:18px;">{{payData.SUM_MONEY.toFixed(2) + '元'}}</span>
+          <div><span style="padding-left:50px;color:red;font-size:18px;">{{(payData.SUM_MONEY || 0).toFixed(2) + '元'}}</span>
           </div>
         </FormItem>
         <FormItem label="支付金额:" style="width:40%;">
@@ -526,15 +526,15 @@
                 '<td><div align="right">' + data[i].PART_NUM + '</div></td>' +
                 '<td>' + (getName(this.list1015, data[i].UNIT) || "") + '</td>' +
                 '<td>' + (getName(this.list1016, data[i].BRAND) || "") + '</td>' +
-                '<td><div align="right">' + data[i].PURCHASE_PRICE.toFixed(2) + '</div></td>' +
-                '<td><div align="right">' + data[i].SUM_MONEY.toFixed(2) + '</div></td>' +
+                '<td><div align="right">' + (data[i].PURCHASE_PRICE || 0).toFixed(2) + '</div></td>' +
+                '<td><div align="right">' + (data[i].SUM_MONEY || 0).toFixed(2) + '</div></td>' +
                 '</tr>';
             }
             temp += '<tr>'+
               '<td colspan="3"><div align="center"><strong>采购总数量</strong></div></td>'+
               '<td><div align="right">'+ partNum+'</div></td>'+
               '<td colspan="3"><div align="center"><strong>采购总金额</strong></div></td>'+
-              '<td><div align="right">'+countMoney.toFixed(2)+'</div></td>'+
+              '<td><div align="right">'+ (countMoney || 0).toFixed(2)+'</div></td>'+
               '</tr>';
             temp += '</tbody>' +
               '</table>' +

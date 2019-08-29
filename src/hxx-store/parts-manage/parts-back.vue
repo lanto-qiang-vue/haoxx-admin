@@ -519,8 +519,8 @@
                 '<td><div align="right">' + data[i].PART_NUM + '</div></td>' +
                 '<td>' + (getName(this.list1015, data[i].UNIT) || "") + '</td>' +
                 '<td>' + (getName(this.list1016, data[i].BRAND) || "") + '</td>' +
-                '<td><div align="right">' + data[i].PURCHASE_PRICE.toFixed(2) + '</div></td>' +
-                '<td><div align="right">' + data[i].SUM_MONEY.toFixed(2) + '</div></td>' +
+                '<td><div align="right">' + (data[i].PURCHASE_PRICE ||0).toFixed(2) + '</div></td>' +
+                '<td><div align="right">' + (data[i].SUM_MONEY || 0).toFixed(2) + '</div></td>' +
                 '</tr>';
             }
             temp += '<tr>' +

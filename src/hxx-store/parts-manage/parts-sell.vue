@@ -658,19 +658,19 @@
                 '<td>' + data[i].FACTORY_NO + '</td>' +
                 '<td><div align="right">' + data[i].PART_NUM + '</div></td>' +
                 '<td>' + (getName(this.list1015, data[i].UNIT) || "") + '</td>' +
-                '<td><div align="right">' + data[i].SALES_PRICE.toFixed(2) + '</div></td>' +
-                '<td><div align="right">' + data[i].SUM_MONEY.toFixed(2) + '</div></td>' +
-                '<td><div align="right">' + data[i].LESS_MONEY.toFixed(2) + '</div></td>' +
-                '<td><div align="right">' + data[i].REAL_MONEY.toFixed(2) + '</div></td>' +
+                '<td><div align="right">' + (data[i].SALES_PRICE || 0).toFixed(2) + '</div></td>' +
+                '<td><div align="right">' + (data[i].SUM_MONEY || 0).toFixed(2) + '</div></td>' +
+                '<td><div align="right">' + (data[i].LESS_MONEY || 0).toFixed(2) + '</div></td>' +
+                '<td><div align="right">' + (data[i].REAL_MONEY || 0).toFixed(2) + '</div></td>' +
                 '</tr>';
             }
             temp += '<tr>' +
               '<td colspan="3"><div align="center"><strong>数量汇总</strong></div></td>' +
               '<td><div align="right">' + countNumber + '</div></td>' +
               '<td colspan="2"><div align="center"><strong>金额汇总</strong></div></td>' +
-              '<td><div align="right">' + countMoney.toFixed(2) + '</div></td>' +
-              '<td><div align="right">' + countless.toFixed(2) + '</div></td>' +
-              '<td><div align="right">' + countreal.toFixed(2) + '</div></td>' +
+              '<td><div align="right">' + (countMoney || 0).toFixed(2) + '</div></td>' +
+              '<td><div align="right">' + (countless || 0).toFixed(2) + '</div></td>' +
+              '<td><div align="right">' + (countreal || 0).toFixed(2) + '</div></td>' +
               '</tr>';
             temp += '</tbody>' +
               '</table>' +

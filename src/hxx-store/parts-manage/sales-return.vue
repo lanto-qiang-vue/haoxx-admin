@@ -126,7 +126,7 @@
       <Form :model="collectionData" ref="collectionData" :rules="rule2" :label-width="120" class="common-form">
         <FormItem label="合计金额:" style="width:40%;">
           <div><span
-            style="padding-left:50px;color:red;font-size:18px;">{{collectionData.SUM_MONEY.toFixed(2) + '元'}}</span>
+            style="padding-left:50px;color:red;font-size:18px;">{{(collectionData.SUM_MONEY || 0).toFixed(2) + '元'}}</span>
           </div>
         </FormItem>
         <FormItem label="支付金额:" style="width:40%;">
@@ -553,15 +553,15 @@
                 '<td>' + data[i].FACTORY_NO + '</td>' +
                 '<td><div align="right">' + data[i].PART_NUM + '</div></td>' +
                 '<td>' + getName(this.list1015, data[i].UNIT) + '</td>' +
-                '<td><div align="right">' + data[i].SALES_PRICE.toFixed(2) + '</div></td>' +
-                '<td><div align="right">' + data[i].SUM_MONEY.toFixed(2) + '</div></td>' +
+                '<td><div align="right">' + (data[i].SALES_PRICE || 0).toFixed(2) + '</div></td>' +
+                '<td><div align="right">' + (data[i].SUM_MONEY || 0).toFixed(2) + '</div></td>' +
                 '</tr>';
             }
             temp += '<tr>'+
               '<td colspan="3"><div align="center"><strong>数量汇总</strong></div></td>'+
-              '<td><div align="right">'+ countNumber.toFixed(2)+'</div></td>'+
+              '<td><div align="right">'+ (countNumber || 0).toFixed(2)+'</div></td>'+
               '<td colspan="2"><div align="center"><strong>金额汇总</strong></div></td>'+
-              '<td><div align="right">'+ countMoney.toFixed(2)+'</div></td>'+
+              '<td><div align="right">'+ (countMoney || 0).toFixed(2)+'</div></td>'+
               '</tr>';
               temp += '</tbody>' +
                 '</table>' +
