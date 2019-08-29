@@ -289,7 +289,7 @@ export default {
       this.checkDetail.groupItems[i1].items[i2].url.splice(i3, 1)
     },
     check(){
-      if(!reg.vehicle.test(value)){
+      if(!reg.vehicle.test(this.licenseNo)){
         this.$Message.error("请输入正确车牌");
         return
       }
