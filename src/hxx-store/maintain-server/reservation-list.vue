@@ -231,6 +231,7 @@
               this.$Modal.confirm({
                   title:"系统提示!",
                   content:"确定要取消吗？",
+                  okText: '确定', cancelText: '取消',
                   onOk:this.del,
 
               })
