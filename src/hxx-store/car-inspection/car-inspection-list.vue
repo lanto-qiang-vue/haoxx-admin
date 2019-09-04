@@ -28,7 +28,7 @@
     </div>
 
     <div slot="operate" v-if="isPage">
-      <Button type="primary" @click="this.licenseNo= '';showCheck= true">新增</Button>
+      <Button type="primary" @click="licenseNo= '';showCheck= true">新增</Button>
     </div>
 
     <Modal
