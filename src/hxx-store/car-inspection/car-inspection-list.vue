@@ -265,7 +265,7 @@ export default {
       return rules
     },
     disabledEdit(){
-      return this.checkDetail.status!='10571001' || !this.isPage
+      return (this.checkDetail.status && this.checkDetail.status!='10571001') || !this.isPage
     },
   },
   mounted(){
@@ -315,12 +315,13 @@ export default {
             if(res.success && res.data){
               this.initCreat({insuranceExpireDate: expire})
             }else{
-              this.$Message.error("该车近期做过检测");
+              this.$Message.warning({content: "该车近期做过检测", duration: 6});
             }
+            this.licenseNo= ''
             this.showCheck= false
           })
         }else{
-          this.$Message.error("未买保险或保险到期>2个月，不可检测");
+          this.$Message.warning({content: "未买保险或保险到期>2个月，不可检测", duration: 6});
           this.showCheck= false
         }
       })
