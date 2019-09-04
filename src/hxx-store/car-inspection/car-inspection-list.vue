@@ -210,9 +210,9 @@ export default {
         {title: '车检单号', key: 'report_no', minWidth: 200},
         {title: '创建时间', key: 'create_date', minWidth: 200},
         {title: '操作', key: 'id', width: 70, align: 'center', fixed: 'right', render:(h,params) => {
-          // let isSave= params.row.status== '10571001'
+          let noSave= params.row.status!= '10571001'
             return h('i',{
-              class: this.disabledEdit? 'fa fa-search': 'fa fa-pencil',
+              class: (this.disabledEdit || noSave)? 'fa fa-search': 'fa fa-pencil',
               style: {
                 // color: 'red',
                 fontSize: '16px',
