@@ -28,7 +28,7 @@
     </div>
 
     <div slot="operate" v-if="isPage">
-      <Button type="primary" @click="showCheck= true">新增</Button>
+      <Button type="primary" @click="this.licenseNo= '';showCheck= true">新增</Button>
     </div>
 
     <Modal
@@ -317,7 +317,6 @@ export default {
             }else{
               this.$Message.warning({content: "该车近期做过检测", duration: 6});
             }
-            this.licenseNo= ''
             this.showCheck= false
           })
         }else{
