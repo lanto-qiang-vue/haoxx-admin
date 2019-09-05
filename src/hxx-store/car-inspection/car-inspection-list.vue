@@ -221,7 +221,7 @@ export default {
               on: {
                 click:()=>{
                   // console.log('click')
-                  this.open(params.row.id)
+                  this.open(params.row.id, params.row.id.insurance_expire_date|| '')
                 }
               },
             })
@@ -401,10 +401,10 @@ export default {
 
       this.showCreate= true
     },
-    open(id){
+    open(id, insucompany){
       this.$Spin.show();
       let url=  this.isPage? '/tenant/check/query': '/manage/count/getReport'
-      this.axios.get(`${url}?id=${id}`).then( (res) => {
+      this.axios.get(url, {params:{id, insucompany}}).then( (res) => {
         if(res.success){
           this.checkDetail= {
             id: res.data.id,
