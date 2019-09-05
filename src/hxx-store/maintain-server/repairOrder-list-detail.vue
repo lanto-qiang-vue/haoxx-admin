@@ -2721,7 +2721,11 @@
               break
           }
         }
-        this.listSearch["SUM_MONEY"] = (this.listSearch["REPAIR_ITEM_MONEY"] + this.listSearch["REPAIR_PART_MONEY"] + this.listSearch["OTHER_MONEY"] - this.listSearch["REPAIR_ITEM_DERATE_MONEY"] - this.listSearch["REPAIR_PART_DERATE_MONEY"]).toFixed(2);
+        this.listSearch["SUM_MONEY"] = (parseFloat(this.listSearch["REPAIR_ITEM_MONEY"] || 0)  +
+          parseFloat( this.listSearch["REPAIR_PART_MONEY"] || 0) +
+          parseFloat(this.listSearch["OTHER_MONEY"]|| 0) -
+          parseFloat(this.listSearch["REPAIR_ITEM_DERATE_MONEY"] || 0) -
+          parseFloat(this.listSearch["REPAIR_PART_DERATE_MONEY"]|| 0)).toFixed(2);
         this.listSearch["REPAIR_ITEM_MONEY"] = (this.listSearch["REPAIR_ITEM_MONEY"]).toFixed(2);
         this.listSearch["REPAIR_PART_MONEY"] = (this.listSearch["REPAIR_PART_MONEY"]).toFixed(2);
         this.listSearch["OTHER_MONEY"] = (this.listSearch["OTHER_MONEY"]).toFixed(2);
