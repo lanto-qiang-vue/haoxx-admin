@@ -295,7 +295,7 @@ export default {
       }
       this.axios.get('/insurance/quotation/'+ this.licenseNo,{baseURL: '/poxy-shqx', headers:{'Content-Type': 'application/json; charset=utf-8'}}).then(res => {
           // console.log('res', typeof res)
-          let re= typeof res=='string'? eval('('+res+')') : res
+          let re= typeof res=='string'? eval('('+res.replace(/\n/g, '')+')') : res
         // console.log('re', re)
         let data= re.responseList[0], flag= false
         if(data.header.resultCode== '0000'){
