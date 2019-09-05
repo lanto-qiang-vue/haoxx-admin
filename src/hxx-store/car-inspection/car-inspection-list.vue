@@ -388,7 +388,7 @@ export default {
       })
     },
     initCreat(obj){
-      // this.checkDetail= deepClone(initCheckDetail)
+      this.checkDetail= deepClone(initCheckDetail)
       this.checkDetail.groupItems= deepClone(this.checkItems)
       setTimeout(()=>{
         this.$refs.checkDetail.resetFields()
