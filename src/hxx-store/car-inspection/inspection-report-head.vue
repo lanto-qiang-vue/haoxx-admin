@@ -114,7 +114,7 @@ export default {
     },
     openTenant(){
       this.tenantShow= true
-      this.$refs.carInspectionList.getList(true)
+      this.$refs.carInspectionList.getList(true, this.detail.insucompany)
     },
     onRowClick(item) {
       this.detail= item

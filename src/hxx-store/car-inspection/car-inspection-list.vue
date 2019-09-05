@@ -221,7 +221,7 @@ export default {
               on: {
                 click:()=>{
                   // console.log('click')
-                  this.open(params.row.id, params.row.id.insurance_expire_date|| '')
+                  this.open(params.row.id)
                 }
               },
             })
@@ -325,7 +325,7 @@ export default {
         }
       })
     },
-    getList( page1){
+    getList( page1, insucompany){
       if(page1){
         this.page= 1
       }
@@ -349,6 +349,7 @@ export default {
             tenantId: this.tenantId,
             limit:this.limit,
             page:this.page,
+            insucompany: insucompany|| ''
           }}).then( (res) => {
           // console.log(res)
           if(res.success){
@@ -401,10 +402,10 @@ export default {
 
       this.showCreate= true
     },
-    open(id, insucompany){
+    open(id){
       this.$Spin.show();
       let url=  this.isPage? '/tenant/check/query': '/manage/count/getReport'
-      this.axios.get(url, {params:{id, insucompany}}).then( (res) => {
+      this.axios.get(url, {params:{id}}).then( (res) => {
         if(res.success){
           this.checkDetail= {
             id: res.data.id,
