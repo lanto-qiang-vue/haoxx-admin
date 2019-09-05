@@ -212,7 +212,7 @@ export default {
         {title: '操作', key: 'id', width: 70, align: 'center', fixed: 'right', render:(h,params) => {
           let noSave= params.row.status!= '10571001'
             return h('i',{
-              class: (this.disabledEdit || noSave)? 'fa fa-search': 'fa fa-pencil',
+              class: (!this.isPage || noSave)? 'fa fa-search': 'fa fa-pencil',
               style: {
                 // color: 'red',
                 fontSize: '16px',

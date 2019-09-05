@@ -730,7 +730,7 @@ export const upImg= ({axios, $store}, callback) => {
         let formdata = new FormData();
         formdata.append('file' , base64ToBlob(base64), name);
         // formdata.append('access_token' , $store.state.user.token);
-        axios.post('/tenant/upload/picture ', formdata,
+        axios.post('/tenant/upload/picture', formdata,
           {headers: {'Content-Type': 'multipart/form-data'}}
         ).then( (res) => {
           if(res.success && callback){
