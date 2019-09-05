@@ -2693,22 +2693,22 @@
         if (flag) {
           for (let i in this.commitItem) {
             this.listSearch["REPAIR_ITEM_MONEY"] += this.commitItem[i]["ITEM_MONEY"];
-            this.listSearch["REPAIR_ITEM_DERATE_MONEY"] += this.commitItem[i]["ITEM_DERATE_MONEY"];
+            this.listSearch["REPAIR_ITEM_DERATE_MONEY"] += (this.commitItem[i]["ITEM_DERATE_MONEY"] ||0);
           }
         } else {
           for (let i in this.commitItem) {
             this.listSearch["REPAIR_ITEM_MONEY"] += this.commitItem[i]["REPAIR_TIME"] * this.work_price + this.commitItem[i]["PAINT_NUM"] * this.paint_price + this.commitItem[i]["REPAIR_MONEY"];
-            this.listSearch["REPAIR_ITEM_DERATE_MONEY"] += this.commitItem[i]["ITEM_DERATE_MONEY"];
+            this.listSearch["REPAIR_ITEM_DERATE_MONEY"] += (this.commitItem[i]["ITEM_DERATE_MONEY"]|| 0);
           }
         }
 
         for (let i in this.commitItemGroup) {
           this.listSearch["REPAIR_ITEM_MONEY"] += this.commitItemGroup[i]["SALES_PRICE"];
-          this.listSearch["REPAIR_ITEM_DERATE_MONEY"] += this.commitItemGroup[i]["ITEM_DERATE_MONEY"];
+          this.listSearch["REPAIR_ITEM_DERATE_MONEY"] += (this.commitItemGroup[i]["ITEM_DERATE_MONEY"]||0);
         }
         for (let i in this.commitParts) {
           this.listSearch["REPAIR_PART_MONEY"] += this.commitParts[i]["SALES_PRICE"] * (this.commitParts[i]["PART_NUM"] || 1);
-          this.listSearch["REPAIR_PART_DERATE_MONEY"] += this.commitParts[i]["PART_DERATE_MONEY"];
+          this.listSearch["REPAIR_PART_DERATE_MONEY"] += (this.commitParts[i]["PART_DERATE_MONEY"]||0);
         }
         for (let key in this.commitOtherItem[0]) {
           switch (key) {
@@ -2729,8 +2729,8 @@
         this.listSearch["REPAIR_ITEM_MONEY"] = (this.listSearch["REPAIR_ITEM_MONEY"]).toFixed(2);
         this.listSearch["REPAIR_PART_MONEY"] = (this.listSearch["REPAIR_PART_MONEY"]).toFixed(2);
         this.listSearch["OTHER_MONEY"] = (this.listSearch["OTHER_MONEY"]).toFixed(2);
-        this.listSearch["REPAIR_ITEM_DERATE_MONEY"] = (this.listSearch["REPAIR_ITEM_DERATE_MONEY"]).toFixed(2);
-        this.listSearch["REPAIR_PART_DERATE_MONEY"] = (this.listSearch["REPAIR_PART_DERATE_MONEY"]).toFixed(2);
+        this.listSearch["REPAIR_ITEM_DERATE_MONEY"] = (this.listSearch["REPAIR_ITEM_DERATE_MONEY"]||0).toFixed(2);
+        this.listSearch["REPAIR_PART_DERATE_MONEY"] = (this.listSearch["REPAIR_PART_DERATE_MONEY"]||0).toFixed(2);
       },
 
       //删除维修项目组数据
