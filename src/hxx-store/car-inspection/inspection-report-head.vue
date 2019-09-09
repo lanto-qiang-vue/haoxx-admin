@@ -31,7 +31,7 @@
     :transfer="false"
     :transition-names="['', '']">
     <modal-title slot="header" :title="`检查列表(${detail.tenantname})`" @clickBack="closeDetail"></modal-title>
-    <car-inspection-list :tenantId="detail.tenantid" :isPage="false"
+    <car-inspection-list :tenantId="detail.tenantid" :isPage="false" :insucompany="detail.insucompany"
                          ref="carInspectionList"></car-inspection-list>
     <div slot="footer">
       <Button @click="closeDetail">取消</Button>
@@ -89,6 +89,7 @@ export default {
       limit: 25,
       loading: true,
       tenantShow: false,
+      insucompany: null
     }
   },
   mounted(){
@@ -114,7 +115,8 @@ export default {
     },
     openTenant(){
       this.tenantShow= true
-      this.$refs.carInspectionList.getList(true, this.detail.insucompany)
+      this.$refs.carInspectionList.page= 1
+      this.$refs.carInspectionList.getList(true)
     },
     onRowClick(item) {
       this.detail= item

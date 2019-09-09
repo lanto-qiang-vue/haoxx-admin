@@ -163,6 +163,9 @@ export default {
     tenantId: {
       default: null
     },
+    insucompany: {
+      default: null
+    },
     isPage: {
       default: true
     },
@@ -325,10 +328,7 @@ export default {
         }
       })
     },
-    getList( page1, insucompany){
-      if(page1){
-        this.page= 1
-      }
+    getList(){
       this.loading= true
       this.detail= {}
       if(this.isPage){
@@ -349,7 +349,7 @@ export default {
             tenantId: this.tenantId,
             limit:this.limit,
             page:this.page,
-            insucompany: insucompany|| ''
+            insucompany: this.insucompany|| ''
           }}).then( (res) => {
           // console.log(res)
           if(res.success){
