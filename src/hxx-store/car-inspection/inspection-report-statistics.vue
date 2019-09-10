@@ -142,12 +142,17 @@ export default {
     },
     changePageSize(size) {
       this.limit = size;
-      if (this.page == 1) this.getList();
+      if (this.page == 1)
+        this.getList((obj)=>{
+          this.setChart(obj)
+        });
     },
     changePage(page) {
       // console.log("changePage");
       this.page = page;
-      this.getList();
+      this.getList((obj)=>{
+        this.setChart(obj)
+      });
     }
   }
 }
