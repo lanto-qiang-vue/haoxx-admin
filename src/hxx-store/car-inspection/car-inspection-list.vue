@@ -1,7 +1,7 @@
 <template>
   <common-table v-model="tableData" :columns="columns" @changePageSize="changePageSize" @changePage="changePage"
-                :total="total" :page="page" @onRowClick="onRowClick" :ellipsis="false"
-                ref="table" :loading="loading"
+                @onRowClick="onRowClick" @on-current-change="console.log('current')"
+                :ellipsis="false" ref="table" :loading="loading" :total="total" :page="page"
                 class="car-inspection-list">
     <div slot="search" v-if="isPage">
       <!--<div class="search-block">-->
@@ -30,6 +30,8 @@
     <div slot="operate" v-if="isPage">
       <Button type="primary" @click="licenseNo= '';showCheck= true">新增</Button>
     </div>
+
+    <slot name="operate" slot="operate"></slot>
 
     <Modal
       v-model="showCheck"
@@ -135,7 +137,7 @@
       <div slot="footer">
         <Button type="primary" @click="submit('10571001')" v-show="!disabledEdit">保存</Button>
         <Button type="success" @click="submit('10571002')" v-show="!disabledEdit">提交</Button>
-        <Button @click="showCreate= false">取消</Button>
+        <Button @click="closeDetail">取消</Button>
       </div>
     </Modal>
   </common-table>
@@ -430,7 +432,8 @@ export default {
           this.checkDetail.status= status
           this.axios.post('/tenant/check/saveReport', {data: this.checkDetail}).then( (res) => {
             if(res.success && res.data){
-              this.showCreate= false
+              // this.showCreate= false
+              this.closeDetail()
               this.getList()
             }
           })
@@ -440,11 +443,12 @@ export default {
       })
     },
     onRowClick(item) {
-
+      this.$emit('select', item)
     },
     closeDetail(){
-
       this.showCreate= false
+      this.$refs.table.clearCurrentRow()
+      this.$emit('select', {})
     },
     changePageSize(size) {
       this.limit = size;

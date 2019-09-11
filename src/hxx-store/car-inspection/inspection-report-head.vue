@@ -32,7 +32,9 @@
     :transition-names="['', '']">
     <modal-title slot="header" :title="`检查列表(${detail.tenantname})`" @clickBack="closeDetail"></modal-title>
     <car-inspection-list :tenantId="detail.tenantid" :isPage="false" :insucompany="detail.insucompany"
-                         ref="carInspectionList"></car-inspection-list>
+                         ref="carInspectionList" @select="inspection= $event">
+      <Button :type="isInvalid?'success':'error'" :disabled="!inspection.id" @click="changeStatus" slot="operate">设为{{isInvalid?'有效':'无效'}}</Button>
+    </car-inspection-list>
     <div slot="footer">
       <Button @click="closeDetail">取消</Button>
     </div>
@@ -84,12 +86,18 @@ export default {
         // },
       ],
       tableData: [],
+      inspection: {},
       total: 0,
       page: 1,
       limit: 25,
       loading: true,
       tenantShow: false,
       insucompany: null
+    }
+  },
+  computed:{
+    isInvalid(){
+      return this.inspection.report_status=== 0
     }
   },
   mounted(){
@@ -118,11 +126,25 @@ export default {
       this.$refs.carInspectionList.page= 1
       this.$refs.carInspectionList.getList(true)
     },
+    changeStatus(){
+      this.axios.get('/manage/count/editstatus', {
+        params:{
+          id: this.inspection.id,
+          reportStatus: this.isInvalid? 1: 0
+        }}).then( (res) => {
+        console.log(res)
+        if(res.success){
+          this.inspection={}
+          this.openTenant()
+        }
+      })
+    },
     onRowClick(item) {
       this.detail= item
     },
     closeDetail(){
       this.detail={}
+      this.inspection={}
       this.$refs.table.clearCurrentRow()
       this.tenantShow= false
     },
