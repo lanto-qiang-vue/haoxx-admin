@@ -48,7 +48,7 @@
 
       <div slot="footer">
         <Button @click="showCheck= false">取消</Button>
-        <Button type="primary" @click="check">提交</Button>
+        <Button type="primary" @click="check">检测</Button>
       </div>
     </Modal>
 
@@ -72,11 +72,11 @@
             <span>{{checkDetail.insuranceExpireDate}}</span>
           </FormItem>
           <FormItem label="保险公司:" prop="insuranceCompany">
-            <Select v-model="checkDetail.insuranceCompany" placeholder="请选择" :disabled="disabledEdit">
-              <Option v-for="(item, index) in insuranceComs"
-                      :key="index" :value="item.name">{{item.name}}</Option>
-            </Select>
-          </FormItem>
+          <Select v-model="checkDetail.insuranceCompany" placeholder="请选择" :disabled="disabledEdit">
+            <Option v-for="(item, index) in insuranceComs"
+                    :key="index" :value="item.name">{{item.name}}</Option>
+          </Select>
+        </FormItem>
           <br/>
           <FormItem :label-width="0" prop="carDriver" style="width: auto">
             <RadioGroup v-model="checkDetail.carDriver">
@@ -97,6 +97,9 @@
                         @on-change="checkDetail.inspectDate= $event" :value="checkDetail.inspectDate"
             ></DatePicker>
           </FormItem>
+          <FormItem label="检测人:" prop="tester">
+            <Input v-model="checkDetail.tester" :readonly="disabledEdit"/>
+          </FormItem>
 
           <template v-if="checkDetail.groupItems">
             <FormItem :label-width="0" v-for="(proj, key) in checkDetail.groupItems" :key="key"
@@ -111,7 +114,7 @@
                     <th width="400"><i>*</i>检测描述</th>
                     <th width="200">上传图片</th>
                     <th width="200">相关建议</th>
-                    <th width="100"><i>*</i>检测人</th>
+                    <!--<th width="100"><i>*</i>检测人</th>-->
                   </tr>
                   <tr v-for="(item, index) in proj.items" :key="index">
                     <td>{{index+1}}</td>
@@ -125,7 +128,7 @@
                       <i class="fa fa-plus-square-o" @click="upImg(key, index)" v-show="!disabledEdit"></i>
                     </td>
                     <td><Input v-model="item.advise" :readonly="disabledEdit"/></td>
-                    <td class="rowspan" rowspan="100" v-if="index==0"><Input v-model="proj.tester"/></td>
+                    <!--<td class="rowspan" rowspan="100" v-if="index==0"><Input v-model="proj.tester"/></td>-->
                   </tr>
                 </table>
               </div>
@@ -156,7 +159,7 @@ let initCheckDetail={
   telphone: '',
   inspectDate: '',
   groupItems: [],
-
+  tester: ''
 }
 export default {
   name: "car-inspection-list",
@@ -251,6 +254,7 @@ export default {
         vehicleOwner: rule,
         telphone: rule,
         inspectDate: rule,
+        tester: rule
       }
       if( this.groupItems)
       this.groupItems.map((item, index)=>{
@@ -259,7 +263,9 @@ export default {
             thisItem.items.map((ite)=>{
               if(!ite.description) flag= false
             })
-            if( flag && thisItem.tester){
+            if( flag
+              // && thisItem.tester
+            ){
               callback()
             }else{
               callback(new Error('必填项不能为空'))
@@ -273,14 +279,25 @@ export default {
       return (this.checkDetail.status && this.checkDetail.status!='10571001') || !this.isPage
     },
   },
+  activated(){
+    this.hasPlate()
+  },
   mounted(){
     if(this.isPage){
       this.getList()
       this.getItems()
     }
     this.getInsuranceComs()
+    this.hasPlate()
   },
   methods:{
+    hasPlate(){
+      let plate= this.$route.query.PLATE_NUM
+      if(plate){
+        this.licenseNo= plate
+        this. showCheck= true
+      }
+    },
     queryDateC(val){
       this.query.CREATE_DATE_gte= val[0]
       this.query.CREATE_DATE_lte= val[1]
@@ -409,6 +426,7 @@ export default {
       let url=  this.isPage? '/tenant/check/query': '/manage/count/getReport'
       this.axios.get(url, {params:{id}}).then( (res) => {
         if(res.success){
+          let items= JSON.parse(res.data.group_items)
           this.checkDetail= {
             id: res.data.id,
             status: res.data.status,
@@ -419,7 +437,8 @@ export default {
             vehicleOwner: res.data.vehicle_owner,
             telphone: res.data.telphone,
             inspectDate: res.data.inspect_date,
-            groupItems: JSON.parse(res.data.group_items),
+            groupItems: items,
+            tester: items[0].tester
           }
           this.showCreate= true
         }
@@ -427,16 +446,33 @@ export default {
       })
     },
     submit(status){
+      let req= ()=>{
+        this.checkDetail.status= status
+        this.axios.post('/tenant/check/saveReport', {data: this.checkDetail}).then( (res) => {
+          if(res.success && res.data){
+            // this.showCreate= false
+            this.closeDetail()
+            this.getList()
+          }
+        })
+      }
       this.$refs.checkDetail.validate(validator=>{
         if(validator){
-          this.checkDetail.status= status
-          this.axios.post('/tenant/check/saveReport', {data: this.checkDetail}).then( (res) => {
-            if(res.success && res.data){
-              // this.showCreate= false
-              this.closeDetail()
-              this.getList()
-            }
+          this.checkDetail.map((item)=>{
+            item.tester= this.checkDetail.tester
           })
+          if(status=='10571002'){
+            this.$Modal.confirm({
+              title: '确认提交？',
+              content: '提交后不能修改,请确认',
+              onOk(){
+                req()
+              }
+            })
+          }else{
+            req()
+          }
+
         }else{
           this.$Message.error("请输入必填项");
         }

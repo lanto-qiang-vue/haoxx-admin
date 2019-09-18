@@ -35,7 +35,7 @@
     <!--预约详情单-->
     <reservation-list-detail class="table-modal-detail" :showDetail="showDetail"
                              :detailData="detailData" @closeDetail="closeDetail" @closeGetList="closeGetList">
-      <!--<Button type="info" v-show="!receiveDesabled" @click="toReceive" slot="foot">车生活接单</Button>-->
+      <Button type="success" v-show="detailData&& detailData.REPAIR_TYPE=='10191012'" @click="goToCheck" slot="foot">车辆检查</Button>
     </reservation-list-detail>
 
   </common-table>
@@ -253,7 +253,10 @@
             }
           })
       },
+      goToCheck(){
+		    this.$router.push('/car-inspection-list?PLATE_NUM='+ this.detailData.PLATE_NUM)
 
+      }
 
     },
 

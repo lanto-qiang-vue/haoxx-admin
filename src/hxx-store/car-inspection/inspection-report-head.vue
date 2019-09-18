@@ -33,7 +33,8 @@
     <modal-title slot="header" :title="`检查列表(${detail.tenantname})`" @clickBack="closeDetail"></modal-title>
     <car-inspection-list :tenantId="detail.tenantid" :isPage="false" :insucompany="detail.insucompany"
                          ref="carInspectionList" @select="inspection= $event">
-      <Button :type="isInvalid?'success':'error'" :disabled="!inspection.id" @click="changeStatus" slot="operate">设为{{isInvalid?'有效':'无效'}}</Button>
+      <Button :type="isInvalid?'success':'error'" :disabled="!inspection.id"
+              v-if="accessBtn('edit')" @click="changeStatus" slot="operate">设为{{isInvalid?'有效':'无效'}}</Button>
     </car-inspection-list>
     <div slot="footer">
       <Button @click="closeDetail">取消</Button>
