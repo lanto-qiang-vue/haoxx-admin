@@ -118,7 +118,8 @@
         return disable
       },
       canCheck(){
-        return this.detailData&& this.detailData.REPAIR_TYPE=='10191012' &&  this.detailData.STATUS== '10421005'
+        return this.detailData&& this.detailData.REPAIR_TYPE=='10191012' &&
+          (this.detailData.STATUS== '10421005'|| this.detailData.STATUS== '10421003')
       }
     },
     activated(){
