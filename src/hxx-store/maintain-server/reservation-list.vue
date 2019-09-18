@@ -124,6 +124,7 @@
     activated(){
       this.closeDetail()
       this.getList()
+      this.showDetail= false
     },
     mounted () {
       this.searchSelectOption= getDictGroup(this.$store.state.app.dict, '1042');
