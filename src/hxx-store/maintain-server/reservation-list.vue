@@ -35,7 +35,7 @@
     <!--预约详情单-->
     <reservation-list-detail class="table-modal-detail" :showDetail="showDetail"
                              :detailData="detailData" @closeDetail="closeDetail" @closeGetList="closeGetList">
-      <Button type="success" v-show="detailData&& detailData.REPAIR_TYPE=='10191012'" @click="goToCheck" slot="foot">车辆检查</Button>
+      <Button type="success" v-show="canCheck" @click="goToCheck" slot="foot">车辆检查</Button>
     </reservation-list-detail>
 
   </common-table>
@@ -116,9 +116,13 @@
           }
         }
         return disable
+      },
+      canCheck(){
+        return this.detailData&& this.detailData.REPAIR_TYPE=='10191012' &&  this.detailData.STATUS== '10421005'
       }
     },
     activated(){
+      this.closeDetail()
       this.getList()
     },
     mounted () {

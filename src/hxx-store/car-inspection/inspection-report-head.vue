@@ -37,7 +37,7 @@
               v-if="accessBtn('edit')" @click="changeStatus" slot="operate">设为{{isInvalid?'有效':'无效'}}</Button>
     </car-inspection-list>
     <div slot="footer">
-      <Button @click="closeDetail">取消</Button>
+      <Button @click="closeDetail">返回</Button>
     </div>
   </Modal>
 

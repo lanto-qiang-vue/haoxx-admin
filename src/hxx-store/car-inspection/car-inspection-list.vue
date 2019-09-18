@@ -464,7 +464,7 @@ export default {
           if(status=='10571002'){
             this.$Modal.confirm({
               title: '确认提交？',
-              content: '提交后不能修改,请确认',
+              content: '提交后不能修改,请确认!',
               onOk(){
                 req()
               }
