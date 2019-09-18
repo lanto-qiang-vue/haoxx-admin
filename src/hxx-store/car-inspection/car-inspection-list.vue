@@ -140,7 +140,7 @@
       <div slot="footer">
         <Button type="primary" @click="submit('10571001')" v-show="!disabledEdit">保存</Button>
         <Button type="success" @click="submit('10571002')" v-show="!disabledEdit">提交</Button>
-        <Button @click="closeDetail">取消</Button>
+        <Button @click="closeDetail">返回</Button>
       </div>
     </Modal>
   </common-table>

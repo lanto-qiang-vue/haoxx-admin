@@ -49,9 +49,11 @@
   import ModalTitle from '@/hxx-components/modal-title.vue'
   import CarInspectionList from '@/hxx-store/car-inspection/car-inspection-list.vue'
   import {deepClone, upImg} from "@/libs/util"
+  import mixin from '@/hxx-components/mixin'
 export default {
   name: "inspection-report-head",
   components: {commonTable, ModalTitle, CarInspectionList},
+  mixins: [mixin],
   data() {
     return{
       query:{
