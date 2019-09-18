@@ -458,7 +458,7 @@ export default {
       }
       this.$refs.checkDetail.validate(validator=>{
         if(validator){
-          this.checkDetail.map((item)=>{
+          this.checkDetail.groupItems.map((item)=>{
             item.tester= this.checkDetail.tester
           })
           if(status=='10571002'){
@@ -472,7 +472,6 @@ export default {
           }else{
             req()
           }
-
         }else{
           this.$Message.error("请输入必填项");
         }
