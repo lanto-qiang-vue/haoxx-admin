@@ -33,7 +33,7 @@
               :disabled="receiveDesabled">车生活接单</Button>
     </div>
     <!--预约详情单-->
-    <reservation-list-detail class="table-modal-detail" :showDetail="showDetail"
+    <reservation-list-detail class="table-modal-detail" :showDetail="showDetail" ref="reservationdetail"
                              :detailData="detailData" @closeDetail="closeDetail" @closeGetList="closeGetList">
       <Button type="success" v-show="canCheck" @click="goToCheck" slot="foot">车辆检查</Button>
     </reservation-list-detail>
@@ -124,7 +124,7 @@
     activated(){
       this.closeDetail()
       this.getList()
-      this.showDetail= false
+      this.$refs.reservationdetail.showModal= false
     },
     mounted () {
       this.searchSelectOption= getDictGroup(this.$store.state.app.dict, '1042');
